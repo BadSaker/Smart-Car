@@ -1,0 +1,7 @@
+Executed 32 asynchronous Wi-Fi scenarios; see exit status and log.
+test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.843s
+
+OK

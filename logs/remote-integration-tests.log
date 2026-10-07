@@ -1,0 +1,24 @@
+test_real_remote_pipeline (__main__.RemoteIntegrationTests.test_real_remote_pipeline)
+错误的模块交接、油门续期、重连门控或S3锁存会导致实际输出断言失败。 ... ok
+PASS: 1378 integration checks
+
+----------------------------------------------------------------------
+Ran 1 test in 0.423s
+
+OK
+test_real_remote_pipeline (__main__.RemoteIntegrationTests.test_real_remote_pipeline)
+错误的模块交接、油门续期、重连门控或S3锁存会导致实际输出断言失败。 ... ok
+PASS: 1379 integration checks
+
+----------------------------------------------------------------------
+Ran 1 test in 0.388s
+
+OK
+test_real_remote_pipeline (__main__.RemoteIntegrationTests.test_real_remote_pipeline)
+错误的模块交接、油门续期、重连门控或S3锁存会导致实际输出断言失败。 ... ok
+PASS: 1594 integration checks
+
+----------------------------------------------------------------------
+Ran 1 test in 0.309s
+
+OK

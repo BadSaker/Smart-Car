@@ -1,0 +1,8 @@
+test_export_failure_preserves_previous_complete_set (__main__.BuildExportTests.test_export_failure_preserves_previous_complete_set) ... ok
+test_missing_exporter_fails_without_publishing (__main__.BuildExportTests.test_missing_exporter_fails_without_publishing) ... ok
+test_success_publishes_all_three_new_files (__main__.BuildExportTests.test_success_publishes_all_three_new_files) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.505s
+
+OK

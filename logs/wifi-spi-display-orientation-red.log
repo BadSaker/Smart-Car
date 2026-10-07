@@ -1,0 +1,21 @@
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... 
+  test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='spi-gray') ... FAIL
+
+======================================================================
+FAIL: test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='spi-gray')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_camera_debug.py", line 116, in test_protocol_profiles
+    self.assertEqual(result.returncode,0,f'{name}/{scenario}: '+result.stdout+result.stderr)
+AssertionError: 3 != 0 : spi-gray/0: Assertion failed!
+
+Program: C:\Users\Lynn\Desktop\Files\Autodrive\tmp\camera-debug-tests\spi-gray.exe
+File: C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_camera_debug.c, Line 81
+
+Expression: kind == IPS200_TYPE_SPI && display_dir_set
+
+
+----------------------------------------------------------------------
+Ran 1 test in 4.933s
+
+FAILED (failures=1)

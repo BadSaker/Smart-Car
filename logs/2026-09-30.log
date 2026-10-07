@@ -1,0 +1,58 @@
+[2026-09-30 +08:00] 任务：项目初始化与摄像头组工程迁入
+授权：用户批准前轮初始化计划，并追加outputs目录、迁入有用例程、整理工程和编译测试。随后确认C车模、逐飞MIMXRT1064DVL6B、MT9V034、无屏幕、DRV8701、1024线增量式编码器。
+范围：AGENTS.md、docs/、car/、outputs/、tmp/、logs/。原始参考/及SeekFree/不修改；根目录不是Git仓库，不创建Git、不提交。
+决策：应用层以镜头组例程.zip为参考，供应商依赖统一到V3.11.2（1223cdb），仅复制一份到car/library。避免混用压缩包V3.5.5库。
+决策：用户无屏幕，TFT180默认关闭；初始调试固件电机/舵机输出默认关闭，目标编码器计数0。没有实现比赛元素/急停/终点停车，不能作为比赛发车程序。
+备份：原car/autocar.uvprojx、uvoptx、uvguix.Lynn保存在outputs/backups/initial-car。
+变更：迁入main/isr/img_process/pid，拆分src/include/config/mdk/library，加入构建与原生算法测试脚本。
+回归证据：实际参考算法初次测试7通过12失败；修复直方图清零字节数、行边界默认值、PID积分限幅、非正采样周期后19通过0失败。日志algorithm-tests-before.log、algorithm-tests.log。
+构建：本机MDK5.24a、ARM Compiler6.7、DFP19.0.0；首次51错误，根因是ClangAsOpt新选项未被旧IDE识别导致启动文件使用armasm。加入uClangAs=1后全量重建0错误0警告。
+构建统计：Code=70592，RO-data=5452，RW-data=292，ZI-data=80152（字节）。
+工具链决策：Device选MIMXRT1064DVL6B；vendor旧SDK仅接受A系列处理器宏，保留CPU_MIMXRT1064DVL6A作为共用RT1064头选择宏，硬件修订差异留待上板验证。
+临时文件：tmp/initialization、tmp/build-autocar、tmp/algorithm-tests仅属本任务，待最终检查归档后清理。
+阶段：工程已编译，独立代码审查、全部文档链接/例程覆盖和临时目录清理尚在进行。最终结果以本日志后续追加条目为准。
+
+[2026-09-30 19:09:59 +0800] 完成：项目初始化、文档与例程整理、工程迁入和编译测试
+最终验证：Keil全量重建0错误0警告；19算法检查及3构建导出场景检查通过。固件AXF/HEX/BIN齐全，HEX与BIN的83008字节数据一致。
+引用验证：25份文档、858处本地链接、100处锚点无断链；84例程全覆盖；335条工程文件引用存在；519个库文件逐字节一致；来源manifest的523项哈希检查通过。
+审查修复：导出工具缺失/失败的回归先复现2失败1通过，改为先验证完整临时产物后复制，最终3通过。
+非阻塞保留：算法日志可含多次运行汇总，无逐次时间边界；以当前命令退出码、最后汇总及本日志确认本轮结果。
+配置：VS Code配置同步ARMCLANG与工程include/defines，原配置另存outputs/backups/initial-car/.vscode。保留Device DVL6B、旧SDK A宏兼容选择、188x120图像/固定10ms采样；方向、计数倍率、SDRAM和舵机限位需硬件验证。
+收尾：本任务tmp子目录已删除，tmp根为空；删除本次自动生成autocar.BAT及已确认空的旧Objects/Listings目录；最终固件/报告/备份和日志保留。未修改参考或SeekFree来源仓库。
+交付边界：执行器和屏幕默认关闭；没有烧录/实车测试，没有实现完整赛道元素、失线/急停/终点停车，不把构建通过视为实车验收。
+
+[2026-09-30 19:26:20 +0800] 任务完成：新版Keil与逐飞模板兼容性验证
+授权：用户审核同意检查新安装并在临时副本中全量编译原始模板与当前car工程。
+环境：D:/Keil_v5，MDK5.39，Arm Compiler for Embedded6.21；设备包根D:/Arm/Packs，NXP.MIMXRT1064_DFP19.0.0。
+验证：原始V3.11.2模板及现有car完整副本均保持原样，Keil -r退出码0，各0错误0警告，新的AXF产生；日志均显示实际使用V6.21。
+结论：新版兼容原始模板。模板ClangAsOpt=1、car当前ClangAsOpt=2均可编译，两者均无uClangAs；无需旧版汇编兼容项。pCCUsed旧6.19/6.7记录未阻止实际6.21被采用。
+保留：539个原始car/模板文件哈希未变；没有修改主工程、替换outputs/firmware或烧录。
+文档：outputs/reports/keil-compatibility-2026-09-30.md及.json；同步docs/environment-and-build.md、examples/README.md、known-issues.md的环境事实。日志logs/keil-compat-01-template-original.log、keil-compat-02-car-original.log。
+收尾：清理本任务tmp/keil-compat-20260930；保留本轮开始前已有的tmp/build-autocar；未进行硬件/实车验证。
+
+[2026-09-30 19:28:18 +08:00] 任务完成：明确各类型文件命名规范
+授权：用户批准命名规范方案并指示“执行”。
+范围：AGENTS.md、docs/standards/naming.md、logs/2026-09-30.log。
+变更：AGENTS.md集中维护11类文件命名规则与示例，明确清晰直观、禁止模糊名称、上海时间戳、固定名称和第三方原名例外；区分固定固件输出与归档、每日修改日志与工具运行日志。naming.md改为引用主规则并保留接口和单位约定，移除旧冲突条款。
+验证：PowerShell文档检查退出码0；两份文档严格UTF-8解码通过；11类文件及必要例外齐全；22处本地链接及所用命名规范锚点有效；回读审阅规则和示例，无旧冲突条款。纯文档修改，未运行编译或硬件测试。
+产物：AGENTS.md文件命名规范章节、docs/standards/naming.md同步说明。
+未解决：无。本次未重命名既有文件、未修改工程及原始资料，未创建临时材料。
+
+[2026-09-30 19:51:11 +0800] 任务完成：生成文件命名与报告目录整理
+授权：用户批准按AGENTS命名规则重命名生成文件，将具体命名规则集中至naming.md，并精简reports只留重要报告。
+规范：AGENTS.md删除具体文件命名表及日志命名细节，只保留导航；全部文件命名规则、示例、固定名称例外整合至docs/standards/naming.md，原接口与单位规范保留。
+重命名：outputs/reports/initialization-report.md -> outputs/reports/project-initialization-2026-09-30.md
+重命名：outputs/backups/initial-car -> outputs/backups/car_before-project-initialization_20260930_184639
+重命名：logs/algorithm-tests-before.log -> logs/algorithm-tests-20260930-185011.log
+重命名：logs/build-script-tests-before.log -> logs/build-script-tests-20260930-190216.log
+重命名：logs/keil-compat-01-template-original.log -> logs/keil-template-compatibility-20260930-192147.log
+重命名：logs/keil-compat-02-car-original.log -> logs/keil-car-compatibility-20260930-192153.log
+删除辅助产物：outputs/reports/autocar.map
+删除辅助产物：outputs/reports/source-manifest.json
+删除辅助产物：outputs/reports/verification.json
+删除辅助产物：outputs/reports/keil-compatibility-2026-09-30.json
+保留报告：project-initialization-2026-09-30.md、keil-compatibility-2026-09-30.md。必要版本、来源、历史验收指标与固件/验证产物哈希已并入主报告，不另外存放重复JSON。
+脚本：car/scripts/build.ps1取消reports目录创建和map导出，map只位于临时构建目录。测试夹具按运行隔离，新增map不导出且报告不被改写的行为检查。
+测试：原脚本复现3通过1失败（意外导出autocar.map）；修改后4项全部通过。记录logs/folder-cleanup-tests.log。本次未重编译固件，应用及工程配置未改动。
+验证：26份文档，871处本地链接，104处锚点，0断链；543个应用/库/固件/备份/迁名日志文件哈希一致。活动引用无旧路径，历史每日日志不改写，以本次重命名映射追溯。
+收尾：仅清理本任务tmp/folder-cleanup和tmp/build-script-tests；保留任务开始前已存在的tmp/build-autocar。

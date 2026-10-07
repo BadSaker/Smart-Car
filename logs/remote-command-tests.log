@@ -1,0 +1,181 @@
+RED: parsing behavior intentionally absent; initialization-only scaffold.
+test_all_eight_exact_keys_and_order (test_remote_command.RemoteCommandTests.test_all_eight_exact_keys_and_order) ... FAIL
+test_counters_saturate_without_losing_events (test_remote_command.RemoteCommandTests.test_counters_saturate_without_losing_events) ... FAIL
+test_every_stream_split_and_bytewise_delivery (test_remote_command.RemoteCommandTests.test_every_stream_split_and_bytewise_delivery) ... FAIL
+test_independent_parsers_and_null_context (test_remote_command.RemoteCommandTests.test_independent_parsers_and_null_context) ... FAIL
+test_malformed_crlf_poison_until_delimiter (test_remote_command.RemoteCommandTests.test_malformed_crlf_poison_until_delimiter) ... FAIL
+test_no_action_before_complete_crlf (test_remote_command.RemoteCommandTests.test_no_action_before_complete_crlf) ... FAIL
+test_non_ascii_and_binary_prefix_never_become_commands (test_remote_command.RemoteCommandTests.test_non_ascii_and_binary_prefix_never_become_commands) ... FAIL
+test_null_arguments_and_zero_length_keep_partial_line (test_remote_command.RemoteCommandTests.test_null_arguments_and_zero_length_keep_partial_line) ... FAIL
+test_null_handler_consumes_without_replaying (test_remote_command.RemoteCommandTests.test_null_handler_consumes_without_replaying) ... FAIL
+test_overlong_line_is_bounded_and_recovers (test_remote_command.RemoteCommandTests.test_overlong_line_is_bounded_and_recovers) ... FAIL
+test_reset_discards_partial_and_rejected_line (test_remote_command.RemoteCommandTests.test_reset_discards_partial_and_rejected_line) ... FAIL
+test_unknown_case_whitespace_and_empty_lines (test_remote_command.RemoteCommandTests.test_unknown_case_whitespace_and_empty_lines) ... FAIL
+
+======================================================================
+FAIL: test_all_eight_exact_keys_and_order (test_remote_command.RemoteCommandTests.test_all_eight_exact_keys_and_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 40, in test_all_eight_exact_keys_and_order
+    self.run_case("mapping")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: one ordered callback per accepted line
+
+
+======================================================================
+FAIL: test_counters_saturate_without_losing_events (test_remote_command.RemoteCommandTests.test_counters_saturate_without_losing_events)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 70, in test_counters_saturate_without_losing_events
+    self.run_case("saturation")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: diagnostic counters saturate without wrapping
+
+
+======================================================================
+FAIL: test_every_stream_split_and_bytewise_delivery (test_remote_command.RemoteCommandTests.test_every_stream_split_and_bytewise_delivery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 43, in test_every_stream_split_and_bytewise_delivery
+    self.run_case("chunks")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: one ordered callback per accepted line
+
+
+======================================================================
+FAIL: test_independent_parsers_and_null_context (test_remote_command.RemoteCommandTests.test_independent_parsers_and_null_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 73, in test_independent_parsers_and_null_context
+    self.run_case("contexts")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: first parser owns its partial text and callback context
+
+
+======================================================================
+FAIL: test_malformed_crlf_poison_until_delimiter (test_remote_command.RemoteCommandTests.test_malformed_crlf_poison_until_delimiter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 52, in test_malformed_crlf_poison_until_delimiter
+    self.run_case("malformed")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: one rejected count per malformed CRLF line
+
+
+======================================================================
+FAIL: test_no_action_before_complete_crlf (test_remote_command.RemoteCommandTests.test_no_action_before_complete_crlf)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 46, in test_no_action_before_complete_crlf
+    self.run_case("incomplete")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: one ordered callback per accepted line
+
+
+======================================================================
+FAIL: test_non_ascii_and_binary_prefix_never_become_commands (test_remote_command.RemoteCommandTests.test_non_ascii_and_binary_prefix_never_become_commands)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 55, in test_non_ascii_and_binary_prefix_never_become_commands
+    self.run_case("binary")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: non-printable or non-ASCII prefix poisons the entire line
+
+
+======================================================================
+FAIL: test_null_arguments_and_zero_length_keep_partial_line (test_remote_command.RemoteCommandTests.test_null_arguments_and_zero_length_keep_partial_line)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 61, in test_null_arguments_and_zero_length_keep_partial_line
+    self.run_case("null")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: NULL and zero-length calls retain the pending CR
+
+
+======================================================================
+FAIL: test_null_handler_consumes_without_replaying (test_remote_command.RemoteCommandTests.test_null_handler_consumes_without_replaying)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 64, in test_null_handler_consumes_without_replaying
+    self.run_case("null-handler")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: NULL callback still consumes and counts complete lines
+
+
+======================================================================
+FAIL: test_overlong_line_is_bounded_and_recovers (test_remote_command.RemoteCommandTests.test_overlong_line_is_bounded_and_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 58, in test_overlong_line_is_bounded_and_recovers
+    self.run_case("long")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: overlong line drops command suffix then recovers at CRLF
+
+
+======================================================================
+FAIL: test_reset_discards_partial_and_rejected_line (test_remote_command.RemoteCommandTests.test_reset_discards_partial_and_rejected_line)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 67, in test_reset_discards_partial_and_rejected_line
+    self.run_case("reset")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: reset drops incomplete prior line
+
+
+======================================================================
+FAIL: test_unknown_case_whitespace_and_empty_lines (test_remote_command.RemoteCommandTests.test_unknown_case_whitespace_and_empty_lines)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 49, in test_unknown_case_whitespace_and_empty_lines
+    self.run_case("unknown")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_command.py", line 36, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: one ordered callback per accepted line
+
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.786s
+
+FAILED (failures=12)
+RED confirmed: exit 1 from behavioral assertions, compilation succeeded.
+GREEN: strict bounded text parser implementation.
+test_all_eight_exact_keys_and_order (test_remote_command.RemoteCommandTests.test_all_eight_exact_keys_and_order) ... ok
+test_counters_saturate_without_losing_events (test_remote_command.RemoteCommandTests.test_counters_saturate_without_losing_events) ... ok
+test_every_stream_split_and_bytewise_delivery (test_remote_command.RemoteCommandTests.test_every_stream_split_and_bytewise_delivery) ... ok
+test_independent_parsers_and_null_context (test_remote_command.RemoteCommandTests.test_independent_parsers_and_null_context) ... ok
+test_malformed_crlf_poison_until_delimiter (test_remote_command.RemoteCommandTests.test_malformed_crlf_poison_until_delimiter) ... ok
+test_no_action_before_complete_crlf (test_remote_command.RemoteCommandTests.test_no_action_before_complete_crlf) ... ok
+test_non_ascii_and_binary_prefix_never_become_commands (test_remote_command.RemoteCommandTests.test_non_ascii_and_binary_prefix_never_become_commands) ... ok
+test_null_arguments_and_zero_length_keep_partial_line (test_remote_command.RemoteCommandTests.test_null_arguments_and_zero_length_keep_partial_line) ... ok
+test_null_handler_consumes_without_replaying (test_remote_command.RemoteCommandTests.test_null_handler_consumes_without_replaying) ... ok
+test_overlong_line_is_bounded_and_recovers (test_remote_command.RemoteCommandTests.test_overlong_line_is_bounded_and_recovers) ... ok
+test_reset_discards_partial_and_rejected_line (test_remote_command.RemoteCommandTests.test_reset_discards_partial_and_rejected_line) ... ok
+test_unknown_case_whitespace_and_empty_lines (test_remote_command.RemoteCommandTests.test_unknown_case_whitespace_and_empty_lines) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.292s
+
+OK
+PASS: remote command mapping
+PASS: remote command saturation
+PASS: remote command chunks
+PASS: remote command contexts
+PASS: remote command malformed
+PASS: remote command incomplete
+PASS: remote command binary
+PASS: remote command null
+PASS: remote command null-handler
+PASS: remote command long
+PASS: remote command reset
+PASS: remote command unknown

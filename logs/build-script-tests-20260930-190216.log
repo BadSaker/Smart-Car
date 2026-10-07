@@ -1,0 +1,29 @@
+test_export_failure_preserves_previous_complete_set (__main__.BuildExportTests.test_export_failure_preserves_previous_complete_set) ... FAIL
+test_missing_exporter_fails_without_publishing (__main__.BuildExportTests.test_missing_exporter_fails_without_publishing) ... FAIL
+test_success_publishes_all_three_new_files (__main__.BuildExportTests.test_success_publishes_all_three_new_files) ... ok
+
+======================================================================
+FAIL: test_export_failure_preserves_previous_complete_set (__main__.BuildExportTests.test_export_failure_preserves_previous_complete_set)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_build_script.py", line 92, in test_export_failure_preserves_previous_complete_set
+    self.assert_artifacts('old')
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_build_script.py", line 83, in assert_artifacts
+    self.assertEqual((self.out / ('autocar.' + ext)).read_text(), prefix + '-' + ext)
+AssertionError: 'new-axf' != 'old-axf'
+- new-axf
++ old-axf
+
+
+======================================================================
+FAIL: test_missing_exporter_fails_without_publishing (__main__.BuildExportTests.test_missing_exporter_fails_without_publishing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_build_script.py", line 86, in test_missing_exporter_fails_without_publishing
+    self.assertNotEqual(self.run_build().returncode, 0)
+AssertionError: 0 == 0
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.551s
+
+FAILED (failures=2)

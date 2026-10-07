@@ -1,0 +1,21 @@
+#ifndef AUTOCAR_REMOTE_CONTROL_CONFIG_H
+#define AUTOCAR_REMOTE_CONTROL_CONFIG_H
+
+/* 1为虚拟手柄遥控，0恢复原C12电机测试/S2舵机测试；两种输出模式互斥。 */
+#ifndef REMOTE_CONTROL_ENABLED
+#define REMOTE_CONTROL_ENABLED 1
+#endif
+/* 手柄为文本事件，无已证实的松手报文；仅行驶命令续期，转向不续期油门。 */
+#define REMOTE_CONTROL_DRIVE_LEASE_MS 300U
+#define REMOTE_CONTROL_DIRECTION_GAP_MS 100U
+#define REMOTE_CONTROL_MAX_DUTY_PERMILLE 100
+#define REMOTE_CONTROL_RX_CHUNK_SIZE 64U
+#define REMOTE_CONTROL_RX_MAX_BLOCK_MS 50U
+/* 主循环长时间未服务遥控后，丢弃积压并要求重新本地允许。 */
+#define REMOTE_CONTROL_MAIN_LOOP_TIMEOUT_MS 300U
+/* 转向不续期油门；1.5s活动窗口配合2us/20ms渐变；到位仍依赖及时轮询。 */
+#define REMOTE_CONTROL_STEERING_TIMEOUT_MS 1500U
+#if REMOTE_CONTROL_ENABLED != 0 && REMOTE_CONTROL_ENABLED != 1
+#error "遥控模式只允许0或1"
+#endif
+#endif

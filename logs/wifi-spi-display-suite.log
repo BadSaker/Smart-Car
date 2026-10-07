@@ -1,0 +1,20 @@
+spi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/1: PASS: network initialization failure preserves local preview
+spi-gray/2: PASS: network initialization failure preserves local preview
+spi-gray/3: PASS: failed send stops output; reinitialization restores it
+spi-gray/4: PASS: failed send stops output; reinitialization restores it
+spi-binary/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-boundaries/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-decimated/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-missing-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-long-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-ip/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-port/0: PASS: invalid network configuration rejected; preview still works
+......
+----------------------------------------------------------------------
+wifi-open/0: PASS: packet bytes, image snapshot, real boundaries and transport
+disabled/0: PASS: local preview works with network disabled
+Ran 6 tests in 6.504s
+
+OK
+PASS: zero length, first timeout, partial timeout, chunk bytes and recovery

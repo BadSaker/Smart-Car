@@ -1,0 +1,191 @@
+
+[2026-10-03 13:44:38 +0800] 任务阶段交付：IPS200 SPI本地显示与Wi-Fi SPI图传
+授权：用户批准整合屏幕与Wi-Fi SPI、删除心跳诊断/DAP图传、自查编译并提供逐飞助手操作；确认RT1064 V3.0主板、普通IPS200 SPI、7.4V电池。另明确授权computer-use查网络并将现有电脑热点固定2.4GHz开启，保留名称/密码。
+来源：参考/RT1064 V3.0主板硬件说明 V1.0.pdf（PDF17、20-21、26、29-31页）、V3.0.1.2原理图3-5页、官方E6_09 Wi-Fi SPI MT9V03X及E8_14 IPS200 SPI例程、逐飞助手说明书V1.4与运行中的V1.2.7界面。
+引脚：IPS200 SPI3 B0/B1/B2/C19/B3/C18，P6；Wi-Fi SPI1 D12/D14/D15/D13/B17/B16，P7；CSI摄像头P2。当前三者无引脚冲突，普通并口IPS200不可混用。
+实现：新增camera_display.c/.h，先设置横屏再init(IPS200_TYPE_SPI)，原始188x120灰度等比例显示282x180，顶部初始化/目标地址和底部网络状态。camera_debug改为Wi-Fi SPI STA/TCP Client，复用真实逐飞图像及X_BOUNDARY协议；屏幕和默认网络灰度来自同一应用快照。
+清理：删除camera_diagnostics.c/.h及其两测试，移除诊断宏/ISR计数/应用DAP图传及Wi-Fi UART分支，替换工程文件注册。通用库debug_init保留为库基础调试，应用不通过DAP输出图像或心跳。SWD配置未改。
+边界：应用检查SSID非空及<=32字节、SSID+密码<=59字节、禁止凭据换行、IPv4/远端端口/本地端口，开放热点空密码传NULL；未声称TCP READY或发送返回成功等于PC已收图。任意发送块失败锁停后续数据，需修复后复位，不自动重连。网络调用同步阻塞，错误返回后本地显示继续，启动连接等待期间尚未进入图像循环。
+供应商副本：仅car/library/zf_device/zf_device_wifi_spi.c的wifi_spi_send_buffer局部temp_packets补={0}，修复零长度/首包等待超时读未初始化对象；GBK及版权保持，原始SeekFree与参考未改。519个依赖文件仅此1处变化。
+测试：新增行为先观察旧适配器未调用SPI初始化失败；修复后14个协议/快照/本地显示/配置校验/错误锁停场景通过。真实Wi-Fi SPI驱动覆盖零长度、首包1秒超时、4088字节后超时返回912、两块5000字节一致及失败恢复。4项构建脚本测试及19项算法通过。完整unittest discover为6项、退出0；日志wifi-spi-display-suite.log。
+审查：独立审查发现屏幕方向需在init前设置，已据真实驱动核实，并加入能检出旧顺序的红→绿测试；修复后复查无未解决Critical/Important。CSI双缓冲复制仍是供应商机制，不承诺DMA无撕裂/零丢帧或实际FPS。
+构建：Keil MDK5.39、Compiler6.21，最终全量构建0错误0警告；Code82560/RO13880/RW312/ZI104140字节。使用真实car绝对路径的临时工程副本，保留预存tmp/build-autocar。340文件引用存在，最终HEX校验和、0x70000000基址及内容与103296字节BIN一致。
+电脑配置：computer-use（node_repl @oai/sky）核对当前SEU-WLAN、已有移动热点，经授权设2.4GHz并开启；热点SSID DESKTOP-AMQIB6T 7163。用Windows运行时只读接口取得热点凭据并直接写本机camera_debug_config.h，不将密码写日志/报告；电脑目标IPv4经Wi-Fi Direct网卡核对192.168.137.1，端口8080，模块本地6666。
+助手界面：已切图像传输/实时图像/网络/TCP Server；当前列表未列出热点虚拟网卡，因此选0.0.0.0全接口侦听地址，端口8080，尚未点击侦听或触发防火墙许可。车端仍以192.168.137.1为目标，不使用0.0.0.0。
+工具诊断：读取热点时默认PS运行时不支持WinRT；后用原生Windows PowerShell运行时只读查询成功。Get-NetIPAddress因权限失败，改用.NET NetworkInterface读取IP成功。未提升权限或更改系统安全策略。首个SPI主机测试缺少硬件占位符导致链接失败，补足占位后通过，未归因于产品代码。
+供电进展：用户说7.4V电池、开关开、舵机与5V灯亮但CSI3.3V/5V_EXT灭，DAP仍USB连接。原理图U4/U6/U5共用CR使能；核心板手册说明CR来自内核电源时序，不是GPIO。用户按独立电池对照回复全亮；等待不接DAP逐个恢复外设的结果，未判定故障根因或器件损坏，不短接CR/EN、不拆焊、不烧eFuse。
+文档：更新主导航、应用README、硬件/构建/已知问题/逐飞助手指南与例程中的旧无屏幕假设。备份outputs/backups/car_before-wifi-spi-display_20261003_130715.zip。
+限制：未自动烧录、控制车辆、实际读取摄像头或证明屏幕/无线已工作；最终固件需用户在供电正常后下载，先开启热点与助手8080侦听，再复位。reports维持原两份重要报告。
+最终补充：用户确认独立电池供电并逐个接回摄像头/IPS屏/Wi-Fi后，电源灯仍全亮。该条件下电源可用；原异常集中于DAP接入或上电顺序，未判定具体机制。建议烧录后完全断电、移除DAP排线，再用电池运行，屏幕与图传尚待新固件实测。
+配置验证：初次用BIN中搜索连续密码字节作为核验的断言不成立，编译器可能以指令常量分段构造局部字符串；改为编译实际配置头并在本地内存比较C字符串字节，SSID/密码/IPv4全部匹配。扫描全部docs/logs无热点密码明文或C转义形式，884个本地Markdown链接目标有效。没有输出密码。
+发布：最终IPS200 SPI+Wi-Fi SPI固件AXF/HEX/BIN已替换outputs/firmware对应固定文件，复制后哈希一致。原诊断固件及工程保存在本轮备份。未自动烧录、未开启助手侦听、未修改防火墙。
+固件：autocar.axf bytes=893464 sha256=b2409c690d075c355e87399d714214ebee333b27d638fe034f37e3f998745cc3
+固件：autocar.hex bytes=290588 sha256=db707be6282bdaa41cbd0676c69a5417efd8c2149edda1b40dd748bbcb439c46
+固件：autocar.bin bytes=103296 sha256=c1faf9a184c72af1b7a9ab9c7567110c5f67db05a4bcd8d73f664e4c84cb0e37
+收尾热点状态：已确认保存2.4GHz，但最终只读查询为Off；设置页此前启用无设备时节能关闭。尝试按已有授权恢复窗口时computer-use报告用户输入，后状态最小化，停止自动操作，不宣称重新开启成功。请用户开始联调前手动开启热点。
+清理完成：仅删除本轮wifi-spi-display、wifi-spi-reference、wifi-spi-tests、camera-debug-tests、build-script-tests、algorithm-tests；包括network-private.json临时凭据。原先已有tmp/build-autocar保留。outputs固件/备份/两份重要报告保留。
+
+[2026-10-03 14:07:06 +08:00] 联调进展：Wi-Fi只传一帧后停止
+用户证据：连接后仅收到一帧；IPS图像仍随镜头变化，屏幕底部Wi-Fi send failed; reset to retry；客户端地址仍显示但FPS为0。用户确认停图后手动断开过助手。
+只读核验：camera_debug_transfer在wifi_spi_send_buffer返回非0剩余长度时设SEND_ERROR，后续send/capture网络分支永久停传至重新初始化；本地显示在该条件外，故继续刷新符合代码。驱动发送函数在模块INT/B17未就绪等待约1秒后返回剩余字节，或忙状态直接返回；当前主循环单线程发送，仍须区分瞬时忙、持续模块异常与网络背压。
+PC证据：当时192.168.137.1:8080到192.168.137.82:6666为FinWait2，8080无侦听；热点网卡Up。助手按钮为侦听、图像宽188高120且FPS/字节为0。由于用户随后确认手动断开，不能把该PC关闭状态当停图起因，客户端下拉旧地址不代表活动连接。
+下一步：请求用户在助手串口助手页面保留网络TCP Server/8080，关闭显示接收，重新侦听及RESET，对照5秒内原始接收计数及屏幕发送失败状态。尚未更改固件、速率或恢复策略。
+工具情况：只读网络及代码检查成功；computer-use切换页面时报告输入位置不可用，随后读取报告前台进程不可用，已停止UI操作并由用户手动完成对照。未运行新的编译/测试，未自动烧录，不新增临时文件。
+
+[2026-10-03 14:32:41 +08:00] 任务阶段交付：Wi-Fi图传有限重试与自动重连
+授权：用户批准剩余字节有限重试、持续失败后间隔重建连接、新连接完整图像包、屏幕故障统计以及测试编译；本轮不自动烧录。
+已知现象：用户本地IPS画面持续更新，PC仅一帧，屏幕Wi-Fi send failed，RESET可短暂恢复。已确认旧应用失败后永久锁停；最初触发底层失败的电气/无线/背压原因仍未确定。PC旧FinWait2是用户停图后手动断开的结果。
+变更：camera_debug.c/.h添加未发送后缀最多2次重试、每次20ms；非法剩余长度立即判错；重试用尽后阻止协议后续块与后续帧。记录累计成功帧、失败事件、额外重试次数、重连次数、最近失败阶段及剩余字节。
+恢复：camera_debug_poll每圈主循环调用，不依赖相机帧。失败同步调用返回后首次poll启动5秒回退，支持uint32毫秒回绕；到期先best-effort关闭旧socket，再wifi_spi_init执行硬件RST丢弃模块旧队列/连接，再建TCP。关闭失败也继续RST。失败后重新从返回后计时，不使用过期now立即再次重连。
+帧边界：自动重连不重置累计统计；清除frame_available，成功后必须重新capture才发送，旧半包不会接到新TCP字节流。模块源端口由6666改为0自动分配，SSID/密码/电脑IPv4/目标8080保持原值。
+计时与显示：PIT_CH0每10ms累计app_uptime_ms，main传给poll；供应商延时使用GPT2，两者独立。网络操作在主循环。屏幕顶部约250ms更新TX/E/R，故障底部显示head/image/b-head/left/middle/right和rem。配置错误不自动重试。
+验证：初始部分发送回归观察到旧代码缺失后续字节的失败，改后通过。完整unittest discover退出0共6项，包含24个应用/协议/恢复/屏幕场景、真实SPI驱动边界、4项构建脚本；19算法检查通过。覆盖1000次瞬时部分发送、0进展/持续进展耗尽、非法remaining、各边线阶段、失败关闭后的硬件重置、累计成功计数、长阻塞后的回退、时间回绕和新连接完整数据。最终界面标签更新后15个灰度恢复场景再次通过。
+独立审查：无Critical/Important，提出的旧文档锁停说明已同步。供应商后缀长度语义、协议回调次序、端口0、模块RST、PIT/GPT独立与39字屏幕布局已核对。
+Keil：MDK5.39/Compiler6.21，最后全量构建0错误0警告；Code83664/RO13936/RW312/ZI104192字节。使用真实car源码绝对路径临时项目，保留原先tmp/build-autocar。最终HEX校验和/0x70000000地址/内容与104448字节BIN一致。
+保护校验：本轮519供应商依赖哈希全部保持不变；340工程引用存在，884本地Markdown目标存在。热点参数按解码后C字符串与备份比较一致，docs/logs无密码；初次比对误将备份CRLF尾CR当值差异，归一化解析后通过，没有修改真实凭据。源码写入时检测并修正一个转义产生的NUL字面量，修正后无NUL、测试与编译通过。
+产物：outputs/firmware/autocar.axf、autocar.hex、autocar.bin已发布且复制后哈希一致。备份outputs/backups/car_before-wifi-recovery_20261003_141356.zip（含原工程配置和固件）。报告目录仍保留原两份重要报告。
+日志：wifi-recovery-red-tests.log、wifi-recovery-tests.log、wifi-recovery-suite.log、wifi-recovery-final-smoke.log、wifi-recovery-build.log；同步docs逐飞助手指南/已知问题/环境/概况及car README。
+限制：供应商连接接口为同步调用，Wi-Fi单次等待参数10秒、TCP50秒且函数可能多次等待，重连期间屏幕可暂停较长时间；5秒仅为两次失败返回后的回退间隔，不是整次恢复时限。TX表示驱动接受完整帧而非PC确认收到。未改SPI时钟/抽帧，未自动操作助手/电脑热点、未烧录或宣称持续实物图传已恢复。
+下一步：用户先保持热点和助手TCP Server8080侦听，重新Rebuild下载。烧录后完全断电、移除DAP排线，仅电池启动。观察TX/E/R与失败阶段/rem，以验证恢复并继续定位首次失败原因。
+固件：autocar.axf bytes=898704 sha256=20331eb31fb94618caf296ba70e15d70e60464ee7c2850f2a58ecefd3ce0d38a
+固件：autocar.hex bytes=293828 sha256=719f7417a4a0d98d180c57b757d466bf5fde6d7281f58067a76b41e2fab2a8b0
+固件：autocar.bin bytes=104448 sha256=48bfcdf148a78e1d88153aa2537f3d30243209f86caf8e48f0043a77a50a225a
+收尾：已验证绝对路径/重解析点并清理本任务wifi-stream-recovery、camera-debug-tests、wifi-spi-tests、build-script-tests、algorithm-tests，保留预存tmp/build-autocar；最终固件、备份、日志及两份重要报告保留。
+
+[2026-10-03 16:57:29 +08:00] 任务阶段交付：屏幕优先非阻塞图传、S-U400按键测试与中文注释
+授权：用户确认Wi-Fi部分调试完毕，批准解除网络等待对屏幕的阻塞、增加S-U400接口1及main测试、自有代码注释中文化。注释范围明确为car/src、include、config、scripts、tests，第三方及版权许可原文保留。
+硬件补充：RT1064 V3.0；用户再次确认普通IPS200 SPI屏只用P6上排对应8针，与Wi-Fi SPI P7不复用。舵机S-U400接P16接口1/C30，初始5V；依据官方6.0–7.4V说明后用户确认已调6.0V。舵盘和拉杆保留、过去已校准但无脉宽记录，明确同意小幅参考测试。
+官方依据：https://www.rc.futaba.co.jp/products/detail/I00000423 列1520us型号规格；官方目录W9C1819N2310231413bk2in.pdf列S-U400 6.0–7.4V；说明书WCI00000087N2106211007dfrhu.pdf明确传统PWM自动识别及失信号hold。不能把型号1520us等同当前车轮实测中位，S3停PWM不保证卸力。
+网络实现：新增wifi_spi_async.c/.h及wifi_spi_async_config.h，沿用供应商线上协议和SPI/GPIO原语，不调用旧阻塞wifi_spi_init/socket_connect/send_buffer或延时等待。RST低、启动、版本、入网、TCP、模块忙、超时和5秒回退均跨poll推进；每poll至多一笔CS、一次INT读取、1024字节发送，已知RX余量每轮最多32字节，不循环排空。
+图像队列：camera_debug改为真实逐飞协议先序列化完整稳定帧，再由异步模块分块发送。屏幕每个相机处理帧先显示原始灰度，图传队列忙则跳过新图传帧。下一帧图像/边线不会覆盖正在发送的队列；SPI交出数据同时报错时先处理错误，清旧半帧，不误计成功，新连接须新capture。
+调度：main优先处理servo按键、本地预览/图像算法，然后一次networkpoll。PIT0保留10ms编码器/控制，PIT1新增1ms app_uptime_ms；板级编译约束时间基准为1ms，网络poll每次即时读取。中断中没有屏幕/网络操作，GPIO/SPI电气移位仍使用同步原语，仅正常总线事务长度有界，不承诺控制器故障硬实时上界。
+舵机：新增servo_control.c/.h、servo_config.h，C30由此模块独占，删除旧main循迹打角及旧角度全行程宏。上电C30 GPIO低，无有效PWM；S2/C15稳定释放后新按下30ms启动，S3/C14优先撤销待启动与PWM并切GPIO低。参考50Hz/1520→1480→1560→1520us，每20ms最多2us，不追赶积压，端点停留300ms，初中心500ms；结束保持中心。按键响应受一次刷屏等最长单步耗时限制，S-U400失信号仍保持，异常用力须切实际电源。
+显示：320x240横屏，原始灰度282x180；顶部TX/E/R，中间舵机状态/命令脉宽/S2-S3提示，底部网络状态。1520±40us是获准参考窗口，实际方向、首个归中幅度和机械干涉仍需用户观察。
+中文注释：8个既有非整合文件做纯注释/docstring翻译，其余集成文件同步中文化，版权/来源声明保留。受委托文件C非注释内容和Python AST核验一致；isr后续另作明确的1ms时钟功能改动。自然语言注释扫描无未处理纯英文说明，UTF8保留，未批量转码供应商文件。代码标准和AGENTS入口已同步。
+TDD与回归：旧适配器被初始化不得阻塞网络的回归检出；新队列11场景通过，覆盖断网/入网/TCP/回退/队列忙下1000次持续预览、稳定字节、错误后新TCP完整帧。异步模块先15红后实现，最终30场景通过；舵机6配置通过（默认、欠压/过压、上限电压、不同PWM尺度、非整除步长），6种保护变异均被检出。完整unittest discover 8项退出0，另19算法检查通过；旧SPI输送边界和4构建脚本检查保留通过。
+独立审查：发现事务保护间隔若用事务前now_ms会被SPI/ISR耗时提前耗尽。补跨tick、120秒ISR模拟、回绕红测试后改为事务后下一poll锚定、再跨至少2 tick；阶段超时不被反复重置。新增4保护场景通过，复查无未解决Critical/Important。并核对SPI1/3时钟、PIT双通道不互相复位、队列错误优先、按键/PWM/保持语义和注释范围。
+Keil：最终MDK5.39/Compiler6.21全量构建0错误0警告，Code86952/RO14036/RW312/ZI126212字节；本任务临时项目引用真实car源码，保留预存tmp/build-autocar。工程追加6引用后共346全部存在，Flash/SWD配置不变。HEX校验和/0x70000000地址/内容与107840字节BIN一致。
+保护验证：519份供应商依赖本轮哈希不变，SSID/密码/PC目标/端口全保留且未输出密码；900本地Markdown链接目标有效，报告目录仅原两份重要报告。最终校验脚本初用默认GBK读取新中文配置失败，改显式UTF8后通过，未修改实际源编码或凭据。
+文档：新增docs/servo-debugging.md，更新屏幕图传指南、硬件事实、已知问题、构建/概况、README、中文注释标准和AGENTS导航。原始参考和SeekFree未修改。
+产物：outputs/firmware/autocar.axf、autocar.hex、autocar.bin已发布且复制校验一致；备份outputs/backups/car_before-screen-servo_20261003_155838.zip。
+记录：screen-servo-red-tests.log、screen-servo-camera-tests.log、screen-servo-suite.log、screen-servo-build.log、wifi-async-tests.log、servo-control-tests.log；首次guard修复前构建单独保留日志。
+限制及下一步：未自动烧录、操作电脑网络或驱动真实舵机。用户重开工程Rebuild并下载，烧录后彻底断电移除DAP排线，仅电池运行；确认有无Wi-Fi画面均更新，按S2完成小幅测试、S3撤销PWM。实际PWM波形、左右方向、中位/限位、负载电压、停止响应、持续帧率/DMA完整性仍待实物验证。
+固件：autocar.axf bytes=920268 sha256=be45090f61cac7730d0b497e3ef3a2e9a04985a93ee4f71c7196a80079cac7fa
+固件：autocar.hex bytes=303368 sha256=6aa73fb817092699d01e2c6e30228158c9eac7b1ac462c00a187b59d6f80864e
+固件：autocar.bin bytes=107840 sha256=4c72960f979529fb038359c19c18a724a99ddcb55826658ab7f4aab97079d723
+收尾：已校验绝对路径与重解析点，仅清理本任务screen-servo、wifi-async-tests、servo-control-tests、servo-reference、camera-debug-tests、wifi-spi-tests、build-script-tests、algorithm-tests；保留预存tmp/build-autocar。固件BIN发布哈希复核一致，备份/日志/原两份重要报告保留。
+
+[2026-10-03 17:10:31 +08:00] 按键位置说明：核对主板手册PDF第5页布局和第27页原理图，S2=C15、S3=C14；电池在左的图示方向下，右侧窄边拨码下四键自上为C15/S2、C14/S3、C13/S4、C12/S5。已补docs/servo-debugging.md，未修改代码/固件，未操作硬件。仅清理本次tmp/key-location渲染图，源PDF保留。
+
+[2026-10-03 18:03:16 +08:00] 任务阶段交付：参考14:33版本恢复屏幕与Wi-Fi同时图传的吞吐
+授权：用户明确要求参考约14:33版连接时屏幕仍显示且约30FPS的行为，并补未连接时本地实时预览和后台寻找连接；随后明确执行。按最新指令保留联网/离线两种状态的屏幕预览，未实施屏幕与Wi-Fi互斥。约30FPS为用户历史实测描述，本轮尚未上板测量。
+历史依据：日志2026-10-03 14:32:41版及outputs/backups/car_before-screen-servo_20261003_155838.zip；其中旧BIN SHA256=48bfcdf148a78e1d88153aa2537f3d30243209f86caf8e48f0043a77a50a225a。核对其供应商4088字节连续DATA发送及INT就绪握手，未整体回退同步建链代码。
+备份：outputs/backups/car_before-wifi-throughput_20261003_174058.zip，保留本轮修改前工程、配置和固件。
+定位：前一异步版本每笔仅1024字节，外层每圈仅一笔且每笔DATA也经过毫秒保护；反复屏幕/算法处理及人工事务间隔会拖慢整帧交出。此为确认的软件瓶颈，不能仅凭代码断言实物低帧率无其他原因。
+变更：wifi_spi_async_config.h将分块改为4088字节；wifi_spi_async.c只对建链控制事务保留下一poll锚定后至少2tick保护，包括TCP成功ACK到首笔DATA。READY下DATA/接收排空采用模块INT握手，不插入固定毫秒间隔；底层每poll仍最多一笔CS、一次INT读取。
+调度：camera_debug.c/.h新增camera_debug_service时钟/控制回调，每次最多6笔、启动下一步前检查16ms预算；成功才继续，模块忙/无进展、错误、队列完成立即退出。每块间服务舵机按键并在回调后重新读时钟；时钟停止也受6笔上限保护。16ms是下一步启动预算，并非含单笔SPI/显示/回调的严格总墙钟上限。
+主循环：main.c每圈调用camera_debug_service(app_clock_ms, servo_control_poll)，没有新相机帧时仍推进网络。默认22936字节完整灰度/边线协议在持续就绪时由23笔缩为6笔；完整稳定队列和错误优先丢弃旧半帧规则保留。camera_debug_config.h新增6笔/16ms配置，网络凭据和所有目标地址/端口不变。
+保护边界：519个供应商文件哈希不变；servo_control.c/.h、servo_config.h、isr.c、board_config.h、camera_display.c六文件字节不变。工程uvprojx/uvoptx未改，346个工程文件引用存在。SPI时钟/引脚/画面尺寸/抽帧设置不变，电机仍关闭，未自动刷写或操控舵机。
+回归：先以旧实现验证新增连续DATA/4088分块测试失败（wifi-throughput-red-tests.log），修改后通过。最终python -B -m unittest discover -s car/tests -p test_*.py退出0，共8项；其中32底层异步场景、17应用队列/服务场景、6舵机配置、真实旧SPI边界和4构建脚本检查全部通过。car/scripts/test.ps1退出0，19算法检查通过。覆盖同tick连续传输、6笔整帧、忙即返回、失败即停止、冻结时钟次数上限、回绕时间预算、控制回调耗时、离线持续预览、控制ACK跨tick/长ISR保护；4089分块与1ms保护非法配置编译拒绝。日志wifi-throughput-link-tests.log、wifi-throughput-suite.log、wifi-async-tests.log、algorithm-tests.log。
+独立复查：wifi_throughput_review只读审查最终实现与测试结果，Critical=0、Important=0、Minor=0；确认首笔DATA前ACK保护、4088线上字节、上层双预算、控制回调、错误优先及保护文件。真实无线吞吐仍须测量。
+Keil：MDK5.39/Arm Compiler6.21，全量编译退出0、0错误0警告；Code=87136、RO=14036、RW=312、ZI=126212字节。使用本任务临时项目直接引用真实car源码，未更改原工程设置。详见wifi-throughput-build.log。
+交付校验：HEX所有记录校验和有效，起点0x70000000，地址范围及实际字节与108032字节BIN一致；AXF/HEX/BIN已发布outputs/firmware并逐一核对复制后SHA256。900个本地Markdown目标存在，docs/logs无热点密码明文及转义形式；私有配置与备份一致且未打印内容。报告目录保留原两份重要报告。
+文档：更新逐飞助手指南、已知问题、环境构建、项目概况及car README，说明历史对照、连接/离线预览、连续数据发送预算及待测FPS。
+未验证：未自动操作热点/助手、未下载固件、未测真实屏幕/网络FPS或PWM波形。用户重新加载工程Rebuild下载，完全断电移除DAP后电池运行，保持2.4GHz热点和助手TCP Server 192.168.137.1:8080侦听；核对联网/离线预览、持续FPS及屏幕TX/E/R。如低帧率仍在，结合这些实测数据继续定位。
+固件：autocar.axf bytes=921496 sha256=bac03bdd0387040c34803ee2a0d97c8a9779c412bad360fad7fb54613277fee0
+固件：autocar.hex bytes=303908 sha256=e50ebd9817b8c0ddc7c748fbb5f7c1b53e202576359e78bc7e237841276aa134
+固件：autocar.bin bytes=108032 sha256=a06532a833eada93449b24141a3237d5832d3d79f51fe4763ef949be3f92fc88
+收尾：核对固定绝对路径及所有重解析点后，清理本任务wifi-throughput、wifi-async-tests、camera-debug-tests、servo-control-tests、wifi-spi-tests、build-script-tests、algorithm-tests；预存tmp/build-autocar保留。最终BIN发布哈希再次核对一致，固件/备份/日志及两份重要报告保留。
+
+[2026-10-03 19:34:59 +08:00] 任务交付：屏幕/Wi-Fi回退至14:33版并冻结，舵机保持不变
+授权：用户反馈后续版本混乱，明确要求屏幕与Wi-Fi回退14:33版、舵机不变、屏幕和Wi-Fi后续不再改动；复述恢复历史同步流程、保留舵机、备份/验证/冻结文档计划后，用户回复执行。本轮不自动烧录。
+基准：2026-10-03 14:32:41交付，来源outputs/backups/car_before-screen-servo_20261003_155838.zip；旧BIN SHA256=48bfcdf148a78e1d88153aa2537f3d30243209f86caf8e48f0043a77a50a225a。用户约30FPS为旧版历史实测，本轮不宣称已复现实物帧率。
+回退前备份：outputs/backups/car_before-display-wifi-rollback_20261003_191930.zip，包含AGENTS、应用/配置/测试/工程、文档和上一套固件。
+实现：恢复历史camera_debug.c/.h、camera_debug_config.h及相应历史回归；说明性注释翻译为中文、保留版权/许可/来源声明。词法核验剔除注释/空白但保留字符串后，有效C代码与14:32:41备份完全一致，SSID/密码/IP/端口与回退前不变。
+屏幕：camera_display图像初始化、消息、灰度刷新、网络状态与旧版逻辑一致；移除异步receive阶段提示，保留当前舵机状态行。除这一行及对应只读servo状态依赖外，屏幕源有效代码与旧版完全一致；camera_display.h亦与旧版有效代码一致。板级IPS启用及方向参数与历史版相同。
+清理：移除wifi_spi_async.c/.h、wifi_spi_async_config.h、test_wifi_spi_async.c/.py共5个已备份文件，uvprojx/uvoptx各仅删除3个相关File记录。XML语义比较确认其他设置未变，343工程文件引用存在，Flash/SWD配置保留。旧异步服务/队列/吞吐配置不再存在于应用或测试。
+主循环：在旧版camera_debug_poll→采集副本→灰度显示→算法→同步camera_debug_send_frame顺序前后保留servo_control_poll；初始化保留现有舵机安全上电、PIT1毫秒时钟，不恢复旧循迹打角或SERVO_MOTOR写入。网络等待期间不能继续读按键，此为回退同步流程的明确限制，不再为改善此点擅自改写冻结模块。
+舵机保护：servo_control.c/.h、servo_config.h、test_servo_control.c/.py、isr.c、board_config.h、main.h共8文件字节哈希不变；50Hz、1520±40us、S2/C15与S3/C14、6.0V配置和按键测试逻辑均保留。电机仍关闭。519供应商文件哈希全部不变，参考和SeekFree未修改。
+验证：python -B -m unittest discover -s car/tests -p test_*.py退出0，7项通过；覆盖24个历史图传/协议/恢复场景、6种真实舵机配置、真实Wi-Fi SPI边界及4构建脚本场景。同步恢复用例覆盖1000次瞬时部分发送、后缀完整性、错误阶段、计时回绕、长阻塞返回后回退、关闭失败后硬件复位及新连接无旧半帧。car/scripts/test.ps1退出0，19算法检查通过。日志display-wifi-rollback-tests.log和display-wifi-rollback-algorithms.log。
+Keil：MDK5.39/Arm Compiler6.21，从本任务临时项目直接引用真实car源码，全量编译退出0，0错误0警告；Code=85208、RO=14004、RW=312、ZI=104216字节。fromelf导出成功，日志display-wifi-rollback-build.log。
+自查与交付：核对恢复C词法、舵机独占调用、XML差异、主循环先显示再二值化和同步图传顺序；没有恢复旧自动循迹。HEX各记录校验和有效，0x70000000起始地址及范围、记录字节与106112字节BIN一致。AXF/HEX/BIN已发布outputs/firmware并逐一确认复制后哈希一致；905个本地Markdown目标有效，docs/logs未发现实际网络密码及转义形式。报告目录仍只保留原两份重要报告。
+文档冻结：AGENTS仅增加冻结约束导航，具体约束集中在docs/seekfree-assistant-debugging.md。同步docs README/概况/环境/已知问题/舵机说明、car README及无线例程入口，明确历史非阻塞建议不是当前执行授权；未经用户新的明确授权不得优化、重构或更改屏幕/Wi-Fi及其参数和调用路径。
+限制：恢复原同步初始化、发送和重连等待，屏幕与舵机按键/步进可能延后；保留舵机源码不等于保持原异步版的按键响应上界。未自动操作热点/助手，未烧录，未测实物FPS/PWM/机械动作。本次组合固件含现有舵机与1ms时钟，不是直接刷回历史整包BIN。
+用户下一步：关闭并重新打开car/autocar.uvprojx，Rebuild成功后再下载，不能直接下载旧tmp/build-autocar产物；保持原热点及助手TCP Server8080侦听。烧录后完全断电、移除DAP排线，仅电池运行。
+固件：autocar.axf bytes=908344 sha256=5e0b35fb49fe8352b68be8a6c91b95c791ceac1f009b81eda2ceeaf422cd181c
+固件：autocar.hex bytes=298508 sha256=1f38cb648065cbc09c946092316c5da874a1cfafb0a89a74c0f91a206f8b7716
+固件：autocar.bin bytes=106112 sha256=f787fd4d831206a32c16def757dd8ccbf96634473969a2c3ef061b1c2d460bcd
+收尾：校验绝对路径及重解析点后，仅清理本任务display-wifi-rollback、camera-debug-tests、servo-control-tests、wifi-spi-tests、build-script-tests、algorithm-tests共6目录；保留预存tmp/build-autocar，提示用户Rebuild后再下载。最终BIN哈希再次确认一致，历史与回退前备份、固件、日志和两份重要报告保留。
+
+[2026-10-03 20:36:00 +08:00] 任务交付：C13/S4控制Wi-Fi开关，默认关闭
+授权：用户要求C13实现Wi-Fi开关，关闭时跳过网络查询；批准默认上电关闭、按键消抖、开启沿用14:33同步流程、关闭停止通信、保留屏幕/舵机和测试编译方案。该次授权仅为冻结范围中的开关例外，不恢复异步或吞吐改造。
+近期背景：用户报告回退后FPS曾30到几帧波动，E/R未增、客户端未消失、屏幕也慢且未按S2。只读分析确认同步发送等待可能拖慢主循环，但未做板上耗时测量、未确定诱因；用户随后反馈稳定很多。不能将这次软件开关视为已经根治旧波动。
+备份：outputs/backups/car_before-wifi-key-switch_20261003_202211.zip，含应用、配置、工程、测试、文档及上一套固件。没有更改原始参考和SeekFree。
+实现：复用camera_debug.c与现有init/poll入口；camera_debug_config.h增加BOOT_ENABLED=0、C13/S4、低电平按下、30ms消抖。上电按住不启动，必须稳定释放后新按下；长按只切换一次，时间差支持uint32回绕，不保存开关到非易失存储。
+关闭：清除frame_available、transport_write和恢复计时，用原WIFI_SPI_RST_PIN/B16的本地GPIO输出低保持模块复位；不调用可能阻塞的socket断开，不发SPI查询/初始化/重连/图像。poll仍负责C13和本地屏幕统计，摄像头/算法/舵机按键继续。此为软件控制复位，不切5V电源；复位保持从相机初始化完成后的camera_debug_init开始，不保证上电最初阶段已经被强制复位。
+开启：调用未更改的connect_transport，原wifi_spi_init释放/复位模块并重新建立TCP，新连接须新capture完整帧，累计TX/E/R保留。按键触发的阻塞连接返回后立即退出本次poll，下一圈才用新时间锚定失败回退，避免以调用前旧时间导致立刻重连。
+显示：关闭为Wi-Fi OFF; C13:ON，连接成功为Wi-Fi ON; TCP ready; C13:OFF；初始化/连接提示标记ON。图像区域、刷新函数、舵机状态行保留；main仅同步注释，调用顺序未变。
+冻结与保护：核对valid_port、valid_ipv4、valid_credentials、record_error、transfer_stage、camera_debug_transfer、connect_transport、camera_debug_capture_frame、camera_debug_send_frame九函数与任务备份逐字一致。10个受保护文件（舵机源码/头/配置/测试、ISR、板级、main头、uvprojx/uvoptx）及519供应商文件哈希不变；343工程引用存在。网络凭据及地址端口不变且未输出密码。
+测试先行：新增默认OFF行为在旧代码上编译后运行失败，断言camera_debug_status未DISABLED，记录wifi-key-switch-red-tests.log；实现后8个新场景通过（1000次离线预览零网络调用、上电长按/抖动/一次触发、待发/失败帧清除、关闭取消恢复、失败阻塞后的计时、回绕、无效边线/凭据）。历史24图传场景全部通过。
+完整验证：python -B -m unittest discover -s car/tests -p test_*.py退出0，共7项；包含上述32图传/开关场景、舵机6配置、真实SPI边界和4构建脚本场景。car/scripts/test.ps1退出0，19算法检查通过。日志wifi-key-switch-camera-tests.log、wifi-key-switch-suite.log、wifi-key-switch-algorithms.log。
+独立复查：wifi_key_switch_review只读审查，Critical=0、Important=0、Minor=0；确认按键状态、无旧帧、关闭取消网络、阻塞返回计时及冻结边界。未判定的实车电平/复位/FPS保留待测，父代理另行完成最终编译、文档和交付检查。未新增其他代码修复。
+构建：MDK5.39/Arm Compiler6.21，从本任务隔离构建目录直接引用实际car源码，全量退出0，0错误0警告。Code=85776、RO=14040、RW=312、ZI=104224字节。fromelf导出成功；HEX校验和/起点0x70000000/地址范围/数据与106688字节BIN一致。日志wifi-key-switch-build.log。
+文档：在既有图传指南新增C13用法和明确授权例外，保留AGENTS入口；同步硬件、项目概况、已知问题、构建、舵机说明及car README。907个本地Markdown目标有效，docs/logs凭据扫描通过。仅原两份重要报告保留。
+发布：AXF/HEX/BIN已更新outputs/firmware，复制后SHA256一致。未自动烧录、通电、按键或操作电脑热点/助手。
+用户步骤：重新打开car/autocar.uvprojx，Rebuild成功后下载；烧录后完全断电移除DAP，仅电池运行。默认OFF可直接看屏幕；热点与助手TCP Server8080侦听准备好后按C13开启，再按关闭。C13是四键中C15/C14下面的第三键；S2/S3舵机测试保持原行为。
+限制：开启后仍为旧同步调用，网络等待期间不能采样按键，短按可能错过；可按住直到显示OFF再释放，不能宣称立即响应。电脑可能保留旧客户端条目，重新开启后必要时选新连接。物理按键、B16复位、屏幕刷新、无线帧率及舵机实物仍待用户验证。
+固件：autocar.axf bytes=911044 sha256=dbcb00540cb10ceb614e999904d76af49c5d4e37e4c2098685f36e8174c488c5
+固件：autocar.hex bytes=300128 sha256=6ff0afbb2ead3d1c649bb32a5518cced56a67f52fb90fca8cd7976481edec905
+固件：autocar.bin bytes=106688 sha256=2732745fae1444243cf700d97fe48b92303ce9958d266a7d9dd4ba172f5e1414
+收尾：核对本任务绝对路径及重解析点后清理wifi-key-switch、camera-debug-tests、servo-control-tests、wifi-spi-tests、build-script-tests、algorithm-tests，保留预存tmp/build-autocar。最终BIN发布哈希复核一致；所有备份、固件、日志和两份重要报告保留。
+
+[2026-10-03 20:44:42 +08:00] 任务交付：修复Keil下载无法加载autocar.axf
+授权：用户截图报Flash Download failed - Could not load file，批准核对主工程/AXF/构建与清理流程、修复并编译验证；不自动烧录，不改变屏幕、Wi-Fi、舵机功能。
+根因：实际tmp/build-autocar/objects/autocar.axf不存在；20:37:07的主工程build_log.htm记录2个编译错误和Target not created。main.c第60行把get_hist_gram误写为get_hist_g-0ram，触发undeclared identifier get_hist_g及invalid suffix ram。该目录旧HEX仍为19:47产物，不能当作本轮成功结果；不是仅凭下载弹窗推测路径或驱动问题。
+备份：outputs/backups/car_before-axf-load-fix_20261003_204115.zip，包含修复前main.c、项目/脚本/相关文档、当次失败构建日志及上一套发布固件。
+修复：仅将main.c第60行get_hist_g-0ram恢复为get_hist_gram；核对整个文件与备份相比只有这一处替换。其余547个受保护源码/头/配置/供应商/测试/脚本/工程文件哈希不变。未改输出路径、Flash算法、DAP配置、冻结图传、C13开关或舵机功能。
+验证：直接在实际主工程执行car/scripts/build.ps1，退出0，MDK5.39/Arm Compiler6.21全量编译0错误0警告，Code=85776、RO=12620、RW=312、ZI=104224。日志logs/keil-build.log，原同名日志由构建脚本归档。未重复增加低价值的拼写单元测试，实际编译失败记录→修复后主工程构建通过用于验证。
+下载产物：tmp/build-autocar/objects/autocar.axf已生成，fromelf --text -a退出0，确认为ELFCLASS32、ET_EXEC、EM_ARM，入口0x70002415。HEX校验和、0x70000000地址范围及数据与105280字节BIN一致。主工程下载目录与outputs/firmware的AXF/HEX/BIN哈希逐一一致；不能把文件已验证解释为已经上板下载。
+流程检查：build.ps1本身会检查Keil退出码/错误数及产物新鲜度，导出成功后再发布，无需修改。清理仅针对本任务tmp/axf-load-fix，主工程原有tmp/build-autocar保留供用户下载。构建文档加入先查Build Output、不得用残留旧HEX判断成功、交付时检查实际下载目录的说明。
+文档：更新docs/environment-and-build.md与docs/known-issues.md；908个本地Markdown目标有效，原两份重要报告保持不变。
+状态：未自动烧录、未打开调试会话或驱动实物。用户重新打开car/autocar.uvprojx后可下载；若Keil仍显示磁盘修改前的错误行，重新载入文件，避免把旧编辑器内容保存回来。
+固件：autocar.axf bytes=897548 sha256=572e512e662573897bee16e9ab649fb54d775e5b9f1e76fb6deb145f2bf53b6c
+固件：autocar.hex bytes=296168 sha256=487f09a5305f15a40e14ad55c98eda854b9b1a47b5bbf5740d4858c2d7e1622a
+固件：autocar.bin bytes=105280 sha256=d98fd00994559daad667909687feebe530ca4939db953d8f8bb8a50009f947a5
+收尾：验证固定绝对路径与重解析点后，仅清理本次tmp/axf-load-fix；再次确认tmp/build-autocar/objects/autocar.axf存在且哈希正确，保留下载缓存和所有持久固件、备份、日志。
+
+[2026-10-03 21:23:20 +08:00] 阶段交付：S-U400手动中位校准程序，待用户提供实测中值
+授权：用户确认回正每次同向偏移，批准手动校准：S2/C15首次启用1520us、后续+2us，S5/C12−2us，S3/C14保留停止，C13 Wi-Fi不变；范围1480–1560us，上电不输出PWM。用户同时授权在找到正确中值后恢复原程序，并要求摆动幅度更大；执行开始说明拟由±40增至±60us，须在确认中值之后应用。
+备份：outputs/backups/car_before-servo-calibration_20261003_211213.zip，含校准前应用/配置/测试/文档及固件。该备份保留原S2一次往返、S3停止程序，以及C13开关和get_hist_gram拼写修复；后续恢复只处理舵机及状态栏，不整体回退其他功能。
+实现：servo_config.h增加SERVO_CALIBRATION_MODE（当前1）和绝对校准窗口/步长/C12；servo_control.c沿用安全初始化、供电门限、S3优先和新按下消抖，校准时不运行自动轨迹。S2在关闭时启用RAM候选值、已有输出时加2us，S5仅在输出时减2us，上下限钳位。增减同按消费两键，不产生遗留动作；长按不重复，停止撤销两键待处理事件。
+候选值：servo_control_status_t新增calibration_pulse_us；停止后current/target归0但候选保留。下一次稳定释放后新按S2恢复候选，不多加一步；复位回到配置初值，不写Flash。初始1520仍是参考，不能视作用户已测得中位。
+显示与集成：仅原舵机状态行增加CAL:<候选>us、ON/OFF/POWER与S2+/S5−/S3停止提示。main仅更新注释；5个图像/网络显示函数与备份逐字一致，主循环有效代码未改，摄像头、图传、C13和ISR保持。mode0原摆动实现保留用于回归，当前摆幅仍40us，没有提前执行更大摆幅。
+测试先行：新增test_servo_calibration.c先在旧代码上运行失败（缺少C12校准输入行为），实现后通过；校准4配置（默认、20000占空比尺度、欠压、过压），默认/尺度各2787检查、欠压/过压各36检查。覆盖手动保持、不自动扫舵、步长/边界、S3优先、停止后候选恢复、冲突按键、消抖/长按/回绕。原摆动6配置全部通过，原测试C文件未改。日志servo-calibration-red-tests.log、servo-calibration-tests.log。
+完整验证：unittest discover退出0，共7项；包含上述10舵机配置、32图传/C13场景、真实SPI边界和4构建脚本场景。19算法检查通过。日志servo-calibration-suite.log、servo-calibration-algorithms.log。
+独立复查：servo_calibration_review只读审查，Critical=0、Important=0、Minor=0；确认启动无PWM、停止/冲突优先、RAM候选保持、范围和2us命令步长、mode0旧逻辑与状态行边界。重复init是已声明startup-only接口，生产仅一次调用，不作为运行期重初始化承诺；未测的实车机械/PWM/电源/响应延迟均保留待验证。
+构建交付：直接执行实际car/scripts/build.ps1，MDK5.39/Arm Compiler6.21全量0错误0警告，Code=85704、RO=12584、RW=312、ZI=104232字节。Keil实际tmp/build-autocar/objects与outputs/firmware的AXF/HEX/BIN逐项哈希一致；AXF为有效32位ARM ELF，HEX校验和/0x70000000起点/内容与105152字节BIN一致。日志servo-calibration-build.log及keil-build.log。
+保护校验：542个受保护文件哈希不变，包括冻结图传/C13、全部519供应商文件、ISR/板级/工程设置/构建脚本及旧测试。私有网络配置未改，docs/logs密码扫描通过。本轮新增测试C文件归car/tests，未新增主工程文件引用。
+文档：AGENTS仅调整导航标题，详细校准操作/候选值/待恢复步骤进入docs/servo-debugging.md；同步概况、硬件、构建、已知问题、图传交叉说明与car README。已验证本地Markdown链接，原两份重要报告保留。临时测试材料结束后清理，主工程下载缓存保留。
+待用户输入：请下载手动校准版，用S2/S5找前轮正直的CAL脉宽，S3停止后记下并提供。若到1480或1560仍偏，须反馈再判断范围；当前不会自动越界。尚未刷写、通电或执行实物动作。
+后续已批准范围（待中值触发）：收到明确的实测中值后，恢复原S2左右往返/S3停止功能，写入新SERVO_REFERENCE_CENTER_US并把SERVO_TEST_EXCURSION_US提高到60us；核对新端点、测试及编译后交付。用户尚未给数值，本阶段不执行恢复或扩大幅度，不以1520代替实测。超出该恢复范围的改动仍需另行审核。
+固件：autocar.axf bytes=897164 sha256=33a33b037fd6e146bd731ff08d3abd3f82c797b62d5a984b372a1718a574cd95
+固件：autocar.hex bytes=295808 sha256=65cb5dc556d31deb24bfcd4a9a45068a397bf78ef3fe65797d36b686fec8ce8c
+固件：autocar.bin bytes=105152 sha256=2ba168c445275b43156829825c44768385e234374262342553eb58da6fdd9d3b
+校准阶段收尾：核对绝对路径和重解析点后清理本任务servo-calibration、servo-control-tests、camera-debug-tests、wifi-spi-tests、build-script-tests、algorithm-tests；保留预存tmp/build-autocar。Keil下载AXF哈希复核一致，原程序备份、当前校准固件、文档及日志均保留；等待用户报告中值后执行已批准的恢复阶段。
+
+[2026-10-03 21:44:59 +08:00] 任务交付：确认舵机中值1480us，恢复正常摆动程序
+授权：用户明确要求将中值设为1480us并回退正式版本；此前已批准确认中值后恢复原程序且扩大摆幅，故按延续授权直接执行。执行前复述中值1480、摆幅±60、端点1420/1540及验证范围，无需对同一已批准步骤重复审核。本轮不自动烧录。
+来源与备份：恢复来源outputs/backups/car_before-servo-calibration_20261003_211213.zip；当前临时校准程序及固件已另存outputs/backups/car_before-servo-center-restore_20261003_213551.zip。该恢复为局部舵机/状态栏恢复，不覆盖整个工程。
+变更：servo_control.c/.h、camera_display.c、main.c、test_servo_control.py五文件与校准前备份逐字一致。servo_config.h只将SERVO_REFERENCE_CENTER_US改1480U、SERVO_TEST_EXCURSION_US改60U并更新来源注释，其他有效代码与校准前一致。移除已备份的test_servo_calibration.c；活动源码/头/配置/测试无临时校准宏、字段、状态或C12调节逻辑。
+当前行为：上电C30低无PWM，S2/C15启动1480→1420→1540→1480us一次往返；50Hz、2us/20ms、初始保持500ms、端点各300ms不变；结束保持1480，S3/C14优先撤销PWM并GPIO低，长按不重复/忙时不排队。屏幕恢复S状态与脉宽提示，C13 Wi-Fi默认OFF开关保持，C12不再调整中值，电机输出关闭。
+校准依据：1480us为用户通过临时程序后明确指定的本车中值，非助手测得的物理舵角或PWM波形。1520us已不再作为当前中值。扩大到1420/1540us端点由已批准±60方案得到，实际机械行程和干涉仍待用户观察，不能把编译通过当作限位验收。
+测试先行：把现有舵机回归的中值、端点与占空比预期改为1480/1420/1540和740/10000，旧1520参数在1480占空比断言上失败（servo-center-restore-red-tests.log）；恢复与参数更新后6组配置全通过：默认、欠压、过压、7.4V、20000占空比尺度、7us非整除步长。默认/高压/尺度各1936检查，欠压/过压各24，非整除1075。覆盖完整往返端点和归中保持、每步限幅、消抖、停止优先、长按不重复和回绕。
+完整验证：unittest discover退出0，共7项，含6舵机配置、32图传/C13场景、真实SPI边界和4构建脚本场景；19算法检查通过。日志servo-center-restore-tests.log、servo-center-restore-suite.log、servo-center-restore-algorithms.log。
+构建：直接运行实际car/scripts/build.ps1，MDK5.39/Arm Compiler6.21全量退出0、0错误0警告，Code=85776、RO=12620、RW=312、ZI=104224字节。日志servo-center-restore-build.log及keil-build.log，实际tmp/build-autocar/objects下载产物和outputs/firmware同步更新。
+自查：541受保护文件哈希不变（含冻结图传、C13、ISR/板级、工程设置和519供应商文件）；原控制器/显示/主循环已逐字比对，不恢复旧自动循迹打角、不引入旧get_hist_g-0ram拼写错误。AXF为有效32位ARM ELF，HEX校验和/0x70000000地址范围/字节与105280字节BIN一致；三种格式下载缓存与发布目录哈希相同。
+文档：更新舵机指南、概况、硬件、README、图传交叉说明、已知问题与构建记录，明确校准结束、中值1480、摆幅±60，撤销当前等待中值/手动调节指引；历史保存在备份与日志。文档链接和凭据扫描通过，网络私有配置未改、未输出密码，原两份重要报告保留。
+状态：软件恢复已完成，未自动烧录、通电或驱动舵机。用户下载当前工程后可用S2验证扩大后的往返、S3停止；建议首轮保持Wi-Fi OFF，避免同步网络阻塞按键。S3不保证舵机卸力。
+固件：autocar.axf bytes=897548 sha256=92e5e055b946ac1b3bcb9c936aa9fe46fe6380f5ed3636df1df1129ea2d501d5
+固件：autocar.hex bytes=296168 sha256=386223a20fcd3e89f946b9350c2d229ece82ad04e6809de4afa8f28d9ffdd9a3
+固件：autocar.bin bytes=105280 sha256=4a3d0014286310299156f2831d24cdc1033a3a024265139c054593f5e9d99f8e
+恢复任务收尾：校验固定绝对路径和重解析点后，仅清理servo-center-restore、servo-control-tests、camera-debug-tests、wifi-spi-tests、build-script-tests、algorithm-tests；保留原有tmp/build-autocar供下载。正式1480us中值固件AXF哈希复核一致，校准版与校准前备份、最终固件、文档及日志保留。

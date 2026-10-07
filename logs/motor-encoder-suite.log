@@ -1,0 +1,62 @@
+spi-gray/5: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/6: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/7: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+................
+spi-gray/8: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/1: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/2: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/3: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/4: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/9: PASS: 1000 transient partial sends keep complete frames flowing
+----------------------------------------------------------------------
+spi-gray/10: PASS: failed graceful close still resets connection; cumulative success count survives
+Ran 16 tests in 12.587s
+
+OK
+spi-gray/11: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/12: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/13: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/14: PASS: failure stage identifies the boundary block without sending later blocks
+spi-binary/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-boundaries/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-decimated/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-missing-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-long-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-ip/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-port/0: PASS: invalid network configuration rejected; preview still works
+wifi-open/0: PASS: packet bytes, image snapshot, real boundaries and transport
+disabled/0: PASS: local preview works with network disabled
+wifi-switch/0: PASS: boot OFF keeps 1000 previews with zero network calls
+wifi-switch/1: PASS: boot-held key, bounce, stable release and long-press single toggle
+wifi-switch/2: PASS: OFF clears pending/failed frame and ON starts fresh complete stream
+wifi-switch/3: PASS: failed key connection arms backoff after return; OFF cancels recovery
+wifi-switch/4: PASS: key debounce works across uint32 timestamp wrap
+wifi-switch/5: PASS: OFF clears pending/failed frame and ON starts fresh complete stream
+wifi-switch/6: PASS: invalid boundary configuration cannot start network from key
+wifi-switch-invalid/0: PASS: invalid credentials remain offline until requested and never reach hardware
+motor-telemetry/0: PASS: encoder telemetry bounds, signed speed, phase, image and original status restoration
+nominal: PASS: encoder read-edge
+nominal: PASS: encoder init
+one-to-one: PASS: encoder rates
+nominal: PASS: encoder raw
+nominal: PASS: encoder reset
+nominal: PASS: encoder saturation
+nominal: PASS: encoder snapshot
+nominal: PASS: encoder rates
+nominal: PASS: 21420 motor checks
+maximum-duty: PASS: 21420 motor checks
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+negative-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks
+nominal: PASS: 1936 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1936 checks
+duty-scale: PASS: 1936 checks
+uneven-step: PASS: 1075 checks
+PASS: zero length, first timeout, partial timeout, chunk bytes and recovery

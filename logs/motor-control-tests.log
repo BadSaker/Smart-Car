@@ -1,0 +1,83 @@
+test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles)
+����������ſء�ֹͣ˳��ʱ����ռ�ձȻ�����ʵģ����Ϊʧ�ܡ� ... FAIL
+
+======================================================================
+FAIL: test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles)
+����������ſء�ֹͣ˳��ʱ����ռ�ձȻ�����ʵģ����Ϊʧ�ܡ�
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_motor_control.py", line 53, in test_hardware_control_profiles
+    self.assertTrue(source.is_file(), '���ģ����δʵ�֣���ȫ��Ϊ����Ӧ��ʧ��')
+AssertionError: False is not true : ���ģ����δʵ�֣���ȫ��Ϊ����Ӧ��ʧ��
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (failures=1)
+test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles)
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。 ... 
+  test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles) (profile='negative-duty')
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。 ... FAIL
+
+======================================================================
+nominal: PASS: 21420 motor checks
+FAIL: test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles) (profile='negative-duty')
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。
+----------------------------------------------------------------------
+maximum-duty: PASS: 21420 motor checks
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_motor_control.py", line 71, in test_hardware_control_profiles
+    self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
+AssertionError: 1 != 0 : C:\Users\Lynn\Desktop\Files\Autodrive\car\src\motor_control.c: In function 'motor_write_output':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\src\motor_control.c:44:84: error: signed and unsigned type in conditional expression [-Werror=sign-compare]
+     motor_status.duty_permille = (channel1 || channel2) ? MOTOR_TEST_DUTY_PERMILLE : 0U;
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks
+                                                                                    ^
+cc1.exe: all warnings being treated as errors
+
+
+----------------------------------------------------------------------
+Ran 1 test in 1.812s
+
+FAILED (failures=1)
+test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles)
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。 ... ok
+nominal: PASS: 21420 motor checks
+maximum-duty: PASS: 21420 motor checks
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+negative-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.633s
+
+OK
+MUTATION_EXIT=1
+FAIL line 210: presses before main initialization completes must not start motors
+
+PASS: removing main ready gate is detected by real motor behavior tests
+test_hardware_control_profiles (__main__.MotorControlTests.test_hardware_control_profiles)
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。 ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.889s
+
+OK
+nominal: PASS: 21420 motor checks
+maximum-duty: PASS: 21420 motor checks
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+negative-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks

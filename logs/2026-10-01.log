@@ -1,0 +1,57 @@
+
+[2026-10-01 17:35:37 +0800] 任务完成：逐飞助手1.2.7摄像头可视化调试整合
+授权：用户批准分析指定RT1064总钻风例程、接入car串口图传、阅读说明并提供DAP/Wi-Fi使用步骤。用户确认摄像头已安装，逐飞官方双模DAP枚举COM7，尚无Wi-Fi模块。
+来源：D:/seekfree_assistant-V1.2.7/【程序】各个单片机的使用程序/RT1064/seekfree_assistant_mt9v03x_demo/user/src/main.c；软件配套逐飞助手说明书V1.4。协议core与现有V3.11.2仅版权拼写差异，复用现有组件，519库文件哈希未变。
+新增：car/src/camera_debug.c、include/camera_debug.h、config/camera_debug_config.h、tests/test_camera_debug.c和.py；文档docs/seekfree-assistant-debugging.md。更新main/main.h、uvprojx的3项文件注册以及导航/硬件/环境/现状/已知问题。
+默认：DAP UART1 B12/B13、115200、188x120原始灰度+真实左中右三线(X_BOUNDARY，120点/线)，不是例程人工构造线。可选二值视图(仍GRAY字节)或仅边线，支持抽帧。电机/舵机/屏幕仍关闭。
+流程：复制摄像头帧后保存灰度快照，二值化/边线/转向计算后发送，TFT画线在发送后；图传启用时关闭周期printf，保留图传开始前启动诊断；不在PIT中阻塞发送，不开放远程PID或速度写入。
+Wi-Fi：匹配Wi-Fi UART模块、STATION/TCP Client连接PC TCP Server8080。COMMAND模式，避开上游SERIANET长度下溢返回值；发送返回非0时锁停后续数据块/帧，重新初始化可恢复，没有自动重连。SSID/IP缺省为空，需用户实际配置。
+验证：原生测试使用真实适配/协议/interface/FIFO，仅替代硬件I/O，MinGW中仅将弱链接宏适配为普通链接。7配置11场景通过，包括图像和真实逐行边线字节、稳定快照、抽帧恢复、失败锁停与重初始化恢复；另4构建脚本测试及19算法检查通过。
+Keil：6.21，全量验证默认DAP和Wi-Fi分支均0错误0警告。为保留既有tmp/build-autocar，使用主工程配置临时副本，将源/包含路径指向真实car绝对路径，输出到本任务目录。Wi-Fi首次3错误为临时宏字符串引号被IDE去掉，改用临时配置头后通过，未改主配置。
+程序大小：DAP Code71056 RO11464 RW300 ZI103068；Wi-Fi Code74536 RO11464 RW300 ZI103328（字节）。只发布默认DAP固件AXF/HEX/BIN，HEX与BIN89344字节数据一致。
+独立审查：无Critical/Important/确定Minor；原采集完成标志竞争、阻塞图传和无自动重连为已说明边界，未承诺零丢帧、无线高速或赛道运行验证。测试补查分频恢复和重初始化后已全部通过。
+备份：outputs/backups/car_before-camera-debug_20261001_171657.zip（原应用入口/工程/旧固件）。reports仍只保留两份重要报告，不新增机器校验JSON或map。
+固件：autocar.axf bytes=857356 sha256=9b4690702d79f609d2a7b32284caca1c1e4f617b6348585bce322b9ca2301b22
+固件：autocar.bin bytes=89344 sha256=1baedd7d66896bc7b92c7bed915df57b7db70d9428dc4d8b4121d31b0d741021
+固件：autocar.hex bytes=251348 sha256=f2eaaa21c75dba86cfec241ecf23e3b567dbc6b561c9ea121b5486d06014e894
+记录：logs/camera-debug-tests.log、camera-debug-suite.log、camera-debug-dap-build.log、camera-debug-wifi-build.log；Wi-Fi初次失败日志按时间归档。
+限制：默认灰度+三线115200约2秒/帧，COMMAND应答失败可额外等待；图传仅为静态/架空调试。没有执行烧录、串口连接或Wi-Fi/实车验证；COM7为用户确认。
+收尾：仅清理本任务camera-debug-integration、camera-debug-tests、algorithm-tests、build-script-tests临时目录；保留任务开始前已存在的tmp/build-autocar。
+
+[2026-10-01 17:45:40 +0800] 修正Flash算法路径
+授权：用户确认检查并备份修正烧录配置，本轮不执行芯片擦写或下载。
+根因：autocar.uvoptx的CMSIS_AGDI及两份备用驱动记录仍引用设备包根目录arm/MIMXRT1064_QSPI_4KB_SEC.FLM；DFP19.0.0实际路径为devices/MIMXRT1064/arm/同名文件，旧路径不存在。
+修改：三处FP0路径增加devices/MIMXRT1064；autocar.uvprojx的RegisterFile和SFDFile同步改到官方PDSC定义的设备子目录。保持Device、PackID、下载器选择、Flash地址/容量、算法RAM地址/大小及所有其他字段不变。
+验证：FLM是有效32位小端ARM ELF，fromelf6.21可解析FlashDevice、Init、UnInit、EraseSector、ProgramPage、EraseChip；FlashDevice为0x70000000/0x00400000，page0x100，PDSC工作RAM0x20000000/0x8000。五处新引用存在，SVD XML可解析，反向字节对比仅五处路径变化。
+保护验证：15个应用/配置/固件文件哈希未变；只改工程下载/设备描述引用，未重编译或替换固件。
+备份：outputs\backups\car_before-flash-config-fix_20261001_174540.zip
+操作提示：Keil重开工程读取新配置，若提示保存内存中的旧设置则不要覆盖修正；由用户重新编译下载。尚未验证实际CMSIS-DAP烧录成功。本次未产生临时文件。
+文档同步：environment-and-build.md追加Flash算法路径与下载错误处理；known-issues.md加入原因、已修正范围与实际烧录待验证状态。最终复查全部5处设备文件引用可解析且目标文件存在。
+
+[2026-10-01 18:29:03 +08:00] 任务阶段交付：摄像头无图像及COM7零接收诊断
+授权：用户批准排查无图像、接收字节始终为0；后续补充是同一任务内的硬件事实，未扩大到自动烧录或硬件控制。
+用户证据：用户已报告烧录成功，逐飞助手COM7/115200已连接；切换串口助手、复位等待后原始接收仍0；主板仅接RT1064核心板与MT9V034，用户确认接线正确；只有USB供电，没有接入电池。
+判断：红色摄像头指示灯、能烧录及COM枚举不能证明相机正常采集或UART通路可用。指定例程main.c第50行明确提示使用电源供电，下载器供电会导致模块电压不足；第64行也提醒避免供电不足。先按实际主板要求外部供电再对照测试；无电压测量/对照证据，未认定供电为唯一根因，J2板内TX通路仍待核实。
+改动：新增car/src/camera_diagnostics.c、include/camera_diagnostics.h、tests/test_camera_diagnostics.c及.py；camera_debug_config.h新增诊断模式并暂设默认1；main.c优先进入诊断且跳过车辆应用初始化，isr.c仅模式2累计CSI IRQ；主工程注册新增源/头文件，Flash路径修复保持不变。
+模式1：UART1 B12/B13 115200/8N1，直接uart_write_string绕过printf重定向，每500ms发UART_HEARTBEAT并翻转核心板B9/IO灯，不初始化摄像头/编码器/电机/舵机/应用PIT。模式2：在摄像头调用前后输出阶段、失败重试及CSI/观察帧累计值，不发送图像。模式0恢复原正常图传。
+验证：python -B -m unittest discover -s car/tests -p test_*.py，退出0；6个unittest项包含4项构建脚本行为、11个真实图传协议场景及5个诊断场景全部通过。car/scripts/test.ps1退出0，19项算法检查通过。主机替身不验证实际寄存器或板级供电。
+Keil：MDK5.39、Compiler6.21；临时项目副本指向真实car源码，全量构建serial/camera/normal三种模式均退出0、0错误0警告。保留此前已有tmp/build-autocar，未使用它构建。三模式Code/RO/RW/ZI依次为42272/9148/196/11292、53376/9728/276/56632、71056/11464/300/103068字节。
+保护校验：519个供应商库文件与任务开始哈希一致；340工程引用均存在；模式0 BIN与诊断前备份逐字节相同，sha256=1baedd7d66896bc7b92c7bed915df57b7db70d9428dc4d8b4121d31b0d741021。最终检查894个可解析的本地Markdown链接目标均存在。
+交付校验：串口模式AXF为ELF；HEX校验和、Flash起址0x70000000、数据范围与58208字节BIN一致；AXF/HEX/BIN已复制到outputs/firmware并核对哈希。本轮只发布模式1文字心跳固件，不是图像固件。
+独立审查：无Critical/Important/确定Minor；诊断镜像不保留车辆PWM/编码器/图传调用，模式1不保留摄像头初始化。frames仅为轮询观察次数，不是精确FPS；stage=6表示曾观察到完成帧，须比较计数增长判断后续采集。
+文档：同步逐飞助手指南、硬件、项目概况、环境构建、已知问题、car README；明确当前模式1、恢复图传需模式0、外部供电优先核验及仍待实测事项。
+备份：outputs/backups/car_before-camera-diagnostics_20261001_180904.zip，含更改前工程/应用入口与正常图传固件。reports保持两份原有重要报告。
+记录：logs/camera-diagnostics-tests.log、camera-diagnostics-serial-build.log、camera-diagnostics-camera-build.log、camera-diagnostics-normal-build.log及algorithm-tests.log。
+未解决：等待按主板规格外部供电、用户手动重编译下载/运行后的B9灯与串口心跳反馈；无心跳时继续定位启动/运行状态和J2/DAP RX链路，有心跳后用模式2定位初始化与采集。未执行串口连接、芯片烧录、硬件调试或实车运行，不能宣称无图像故障已经修复。
+固件：autocar.axf bytes=689852 sha256=32087c7e41382fc920a0d4e30855ff654c58446a76217fc696136a3651724504
+固件：autocar.hex bytes=163761 sha256=7412c2e3253a4a85cb6d0893ff151c5c8e128d417d6fdd937c5da52c45c2c995
+固件：autocar.bin bytes=58208 sha256=8bbbbf6189632d474ba03224a075ac0f01a120ccf47d3339487f6b0ed9c890ef
+收尾：已校验绝对路径与重解析点，仅删除本任务camera-no-image、camera-diagnostics-tests、camera-debug-tests、build-script-tests、algorithm-tests临时目录；原先已有tmp/build-autocar保留。
+
+[2026-10-01 19:03:52 +08:00] 诊断进展：核心板灯闪烁，串口无心跳
+范围：继续已批准的零接收排查，仅核对代码/手册并更新docs/seekfree-assistant-debugging.md、hardware-and-pins.md、known-issues.md及本日志。
+用户证据：核心板灯闪烁，串口未收到心跳。尚未明确本次是否已改用外部供电，板卡版本和J2状态仍未知。
+核验：当前模式1循环每次翻转B9后，经UART1 B12发送文本，再延时500ms；摄像头未初始化。若为该灯持续按节奏翻转，可推断发送调用返回、程序循环在执行，但不能证明B12实际波形或DAP RX收到信号。
+手册：普通RT1064核心板说明书V1.9，PDF第19页§9.2.1明确J2连接B12与下载接口TX，需0R或短接焊盘；第26页§13.2明确J2/J4未焊时UART与下载接口断开。RX段落有J2/J4文字误植，不能据此操作。实际板卡版本未确认，不直接指示盲目焊接。
+下一步：优先确认实物板型/J2及排线是否携带串口，断电通断检查B12至DAP接收端；需要核心板背面和DAP接线照片定位。J2未通、DAP桥/COM选择、引脚电气输出等均仍是假设，未宣布根因已确定。
+验证：只读命令退出0；诊断文档更新核对通过，固件BIN哈希与已交付模式1保持一致。本轮未改代码、不重编译、不连接COM、不烧录，不产生临时文件。

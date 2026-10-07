@@ -1,0 +1,167 @@
+test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap) ... FAIL
+
+======================================================================
+FAIL: test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 55, in test_raw_signed_counts_and_wrap
+    self.run_case("raw")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: left raw +12 must remain +12
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.662s
+
+FAILED (failures=1)
+test_edges_after_counter_read_are_not_lost (test_encoder_feedback.EncoderFeedbackTests.test_edges_after_counter_read_are_not_lost) ... FAIL
+test_initialization_pins_and_baseline (test_encoder_feedback.EncoderFeedbackTests.test_initialization_pins_and_baseline) ... FAIL
+test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap) ... FAIL
+test_reset_rebases_without_clearing_hardware (test_encoder_feedback.EncoderFeedbackTests.test_reset_rebases_without_clearing_hardware) ... FAIL
+test_saturating_totals_and_sticky_flag (test_encoder_feedback.EncoderFeedbackTests.test_saturating_totals_and_sticky_flag) ... FAIL
+test_snapshot_irq_mask_and_null_output (test_encoder_feedback.EncoderFeedbackTests.test_snapshot_irq_mask_and_null_output) ... FAIL
+test_wheel_rates_and_signed_rounding (test_encoder_feedback.EncoderFeedbackTests.test_wheel_rates_and_signed_rounding) ... FAIL
+
+======================================================================
+FAIL: test_edges_after_counter_read_are_not_lost (test_encoder_feedback.EncoderFeedbackTests.test_edges_after_counter_read_are_not_lost)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 67, in test_edges_after_counter_read_are_not_lost
+    self.run_case("read-edge")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: first sample contains edges observed at read time
+
+
+======================================================================
+FAIL: test_initialization_pins_and_baseline (test_encoder_feedback.EncoderFeedbackTests.test_initialization_pins_and_baseline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 58, in test_initialization_pins_and_baseline
+    self.run_case("init")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: initialize both direction encoders
+
+
+======================================================================
+FAIL: test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 55, in test_raw_signed_counts_and_wrap
+    self.run_case("raw")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: left raw +12 must remain +12
+
+
+======================================================================
+FAIL: test_reset_rebases_without_clearing_hardware (test_encoder_feedback.EncoderFeedbackTests.test_reset_rebases_without_clearing_hardware)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 64, in test_reset_rebases_without_clearing_hardware
+    self.run_case("reset")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: reset captures both current hardware baselines
+
+
+======================================================================
+FAIL: test_saturating_totals_and_sticky_flag (test_encoder_feedback.EncoderFeedbackTests.test_saturating_totals_and_sticky_flag)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 70, in test_saturating_totals_and_sticky_flag
+    self.run_case("saturation")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: totals remain exact immediately before int32 saturation
+
+
+======================================================================
+FAIL: test_snapshot_irq_mask_and_null_output (test_encoder_feedback.EncoderFeedbackTests.test_snapshot_irq_mask_and_null_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 73, in test_snapshot_irq_mask_and_null_output
+    self.run_case("snapshot")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: snapshot uses one short saved-mask critical section
+
+
+======================================================================
+FAIL: test_wheel_rates_and_signed_rounding (test_encoder_feedback.EncoderFeedbackTests.test_wheel_rates_and_signed_rounding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 61, in test_wheel_rates_and_signed_rounding
+    self.run_case("rates")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_encoder_feedback.py", line 51, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: one wheel turn in 10ms is signed 6000 rpm
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.242s
+
+FAILED (failures=7)
+test_edges_after_counter_read_are_not_lost (test_encoder_feedback.EncoderFeedbackTests.test_edges_after_counter_read_are_not_lost) ... ok
+test_initialization_pins_and_baseline (test_encoder_feedback.EncoderFeedbackTests.test_initialization_pins_and_baseline) ... ok
+test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap) ... ok
+test_reset_rebases_without_clearing_hardware (test_encoder_feedback.EncoderFeedbackTests.test_reset_rebases_without_clearing_hardware) ... ok
+test_saturating_totals_and_sticky_flag (test_encoder_feedback.EncoderFeedbackTests.test_saturating_totals_and_sticky_flag) ... ok
+test_snapshot_irq_mask_and_null_output (test_encoder_feedback.EncoderFeedbackTests.test_snapshot_irq_mask_and_null_output) ... ok
+test_wheel_rates_and_signed_rounding (test_encoder_feedback.EncoderFeedbackTests.test_wheel_rates_and_signed_rounding) ... ok
+PASS: encoder read-edge
+PASS: encoder init
+PASS: encoder raw
+PASS: encoder reset
+PASS: encoder saturation
+PASS: encoder snapshot
+PASS: encoder rates
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.273s
+
+OK
+test_edges_after_counter_read_are_not_lost (test_encoder_feedback.EncoderFeedbackTests.test_edges_after_counter_read_are_not_lost) ... ok
+test_initialization_pins_and_baseline (test_encoder_feedback.EncoderFeedbackTests.test_initialization_pins_and_baseline) ... ok
+test_one_to_one_gear_ratio_regression (test_encoder_feedback.EncoderFeedbackTests.test_one_to_one_gear_ratio_regression) ... ok
+test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap) ... ok
+test_reset_rebases_without_clearing_hardware (test_encoder_feedback.EncoderFeedbackTests.test_reset_rebases_without_clearing_hardware) ... ok
+test_saturating_totals_and_sticky_flag (test_encoder_feedback.EncoderFeedbackTests.test_saturating_totals_and_sticky_flag) ... ok
+test_snapshot_irq_mask_and_null_output (test_encoder_feedback.EncoderFeedbackTests.test_snapshot_irq_mask_and_null_output) ... ok
+test_wheel_rates_and_signed_rounding (test_encoder_feedback.EncoderFeedbackTests.test_wheel_rates_and_signed_rounding) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.495s
+
+OK
+nominal: PASS: encoder read-edge
+nominal: PASS: encoder init
+one-to-one: PASS: encoder rates
+nominal: PASS: encoder raw
+nominal: PASS: encoder reset
+nominal: PASS: encoder saturation
+nominal: PASS: encoder snapshot
+nominal: PASS: encoder rates
+test_edges_after_counter_read_are_not_lost (test_encoder_feedback.EncoderFeedbackTests.test_edges_after_counter_read_are_not_lost) ... ok
+test_initialization_pins_and_baseline (test_encoder_feedback.EncoderFeedbackTests.test_initialization_pins_and_baseline) ... ok
+test_one_to_one_gear_ratio_regression (test_encoder_feedback.EncoderFeedbackTests.test_one_to_one_gear_ratio_regression) ... ok
+test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap) ... ok
+test_reset_rebases_without_clearing_hardware (test_encoder_feedback.EncoderFeedbackTests.test_reset_rebases_without_clearing_hardware) ... ok
+test_saturating_totals_and_sticky_flag (test_encoder_feedback.EncoderFeedbackTests.test_saturating_totals_and_sticky_flag) ... ok
+test_snapshot_irq_mask_and_null_output (test_encoder_feedback.EncoderFeedbackTests.test_snapshot_irq_mask_and_null_output) ... ok
+test_wheel_rates_and_signed_rounding (test_encoder_feedback.EncoderFeedbackTests.test_wheel_rates_and_signed_rounding) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.476s
+
+OK
+nominal: PASS: encoder read-edge
+nominal: PASS: encoder init
+one-to-one: PASS: encoder rates
+nominal: PASS: encoder raw
+nominal: PASS: encoder reset
+nominal: PASS: encoder saturation
+nominal: PASS: encoder snapshot
+nominal: PASS: encoder rates

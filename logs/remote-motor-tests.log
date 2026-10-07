@@ -1,0 +1,11 @@
+test_remote_safety (__main__.RemoteMotorTests.test_remote_safety)
+错误的本地门控、失联处理、租约或换向顺序会触发行为断言。 ... ok
+nominal: PASS: 3608 remote motor checks
+pwm-scale: PASS: 3608 remote motor checks
+lease-during-gap: PASS: 739 remote motor checks
+invalid-period: PASS: 172 remote motor checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.001s
+
+OK

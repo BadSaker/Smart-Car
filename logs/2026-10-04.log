@@ -1,0 +1,22 @@
+
+[2026-10-04 22:38:29 +08:00] 任务交付：DRV8701E双电机、STEP/DIR编码器与C12测试
+授权：用户批准新增电机/编码器模块、C12启动和中止短时单路/双路测试、S3停止、屏幕显示与编译测试；不自动烧录或实车动作。用户指定DRV8701E模块接主板电机驱动1，左/右编码器分别接1/2；说明为1024线STEP/DIR。
+最终硬件参数：用户先回答编码器在输出轴，随后明确纠正为编码器齿轮与轮轴齿轮啮合，并确认车轮1圈=编码器4.25圈；后轮直径64mm。最终编码器:轮转数425:100，×1解码得4352计数/轮圈，周长约201.062mm；早先1024计数/轮圈假设已撤回。该比例不能再次混作电机减速比。
+资料核对：本地主板手册PDF13–14页、V3.0.1.2原理图第4页视觉核对P8电机驱动1(pin1C8,2C6,3/4GND,5C9,6C7)，ENC1/P13(GND,3V3,C0STEP,C1DIR)，ENC2/P12(GND,3V3,C2STEP,C24DIR)。官方E3_04双驱例程M1=C8/C9、M2=C6/C7、17kHz；实际左右轮映射未知，不照搬原board左/右别名。
+倍率依据：car库encoder_dir_init委托的QTMR使用kQTMR_PriSrcRiseEdgeSecDir；SDK定义为主输入上升沿计数，副输入方向。因此STEP×1；未沿用旧接口注释中仅读取时DIR决定整窗符号的陈旧说明。官方逐飞文章§5.2.2的1024PPR/齿轮比公式及DRV8701E官方仓库、TI真值表已查证，链接归入docs/motor-encoder-debugging.md。
+备份：outputs/backups/car_before-motor-encoder_20261004_221331.zip，保留任务前应用、配置、工程、测试、文档和正式舵机1480us固件。原始参考及SeekFree未修改。
+新增模块：encoder_feedback.c/.h与encoder_config.h，motor_control.c/.h与motor_test_config.h；配套各C/Python测试。编码器自由运行16位模差，不逐拍读后清零；原始符号保留，int32累计饱和及标志、int64换算、带符号四舍五入；轮rpm×10、mm/s使用最终4352与64mm。快照短临界区保留原PRIMASK，reset_totals仅初始化/PIT0，在新测试首个PWM前建立基线。
+电机行为：时钟初始化后立即建立两路零PWM，再做外设初始化。应用/摄像头就绪后才enable_test，仍须稳定释放C12再新按下。PIT0每10ms采样C12/S3并推进M1 2s→零1s→M2 2s→零1s→双路2s→自动零PWM；默认100permille=10%，17kHz，DIR参考HIGH保持，不自动反转。上限150permille，非法配置保持CONFIG_ERROR和零输出。
+停止与并发：C12运行中新按下中止，S3低电平最高优先级发电机零命令并锁存舵机停止事件。主循环app_service_controls先消费锁存再调用原servo_control_poll；ISR不调用舵机、显示或网络。主循环阻塞不停止电机阶段计时，但关中断/高优先级阻塞仍可能延迟，PWM整周期重载也有边沿延后；不宣称硬件急停或物理已停转。
+主工程：移除旧直接encoder_quad_init、未标定左右计数符号、读后清零和自动PID输出分支；main由模块初始化，PIT0先motor tick后encoder tick，并静态核对10ms周期一致。PIT1时钟和舵机中值1480±60us保持。添加6个工程引用，总349个，Flash/Debug/TargetOption与备份语义一致。
+显示：仅原顶部两行在测试及结束5秒内显示L/R编码器；每秒交替d=10ms增量、c=counts/s、n=累计和rpm/mm/s；!为累计饱和，阶段1/2/B/P/D/S对应两路/双路/间隔/完成/中止。5秒后恢复原TX/E/R与舵机行。原图像区域、网络提示与5个显示/网络函数逐字不变；camera_debug及C13实现和私有参数不变。
+测试：模块先RED后GREEN，电机9配置（默认/最小/最大/尺度/非法占空比/非法周期）通过；编码器8项覆盖原始正负/回绕、读取后边沿、累计饱和、重置、1:1对照、4352counts/s=60rpm约201mm/s及IRQ恢复；顶部显示新回归在旧代码失败后通过，验证符号极值、负0.1rpm、阶段、图像保留与原状态恢复。另删除ready门控的临时变异被测试检出，正式源码未应用该变异。
+完整验证：unittest discover退出0，16项通过，含33图传/C13/显示场景、8编码器项、9电机配置、6舵机配置、真实SPI边界和4构建脚本场景；19算法检查通过。日志motor-encoder-suite.log、motor-encoder-algorithms.log、motor-control-tests.log、encoder-feedback-tests.log、motor-telemetry-red-tests.log、motor-telemetry-tests.log。
+独立复查：motor_encoder_integration_review报告Critical=0、Important=0、Minor=0；核对ISR/main边界、门控、停止锁存、有限时序、计数/换算、显示和工程引用；复跑现有电机9配置及编码器8场景通过。实物左右映射、电气方向、速度和停转未判定，留待用户验证。
+构建发布：实际car/scripts/build.ps1全量退出0，MDK5.39/Arm Compiler6.21，0错误0警告；Code=88992、RO=12736、RW=312、ZI=104312字节。日志motor-encoder-build.log和keil-build.log。AXF有效32位ARM ELF，HEX校验和/0x70000000地址范围/内容与108608字节BIN一致；Keil下载缓存与outputs/firmware三格式哈希一致。
+保护与文档：539保护项哈希不变，包含所有519供应商文件、冻结Wi-Fi/C13和舵机实现/配置等；944个本地Markdown目标有效，docs/logs未泄露私有密码。新增docs/motor-encoder-debugging.md并由AGENTS导航，更新硬件/目录/现阶段/构建/相关操作，纠正陈旧正交/左右别名及非阻塞Wi-Fi说明；原两份重要报告保留。
+实车下一步：驱动轮架空、核对DRV使能和电源/STEP-DIR线，重开工程Rebuild后下载，先WiFiOFF按C12观察通道1/2与L/R计数对应及正负；S3可停止，电机无动作先查10%起转条件，不自动扩大占空比。模块PWM0可能制动，不能保证滑行/高阻/断电。采样真实变化每10ms须小于32768，轮速为名义换算而非已完成实测标定。
+固件：autocar.axf bytes=911420 sha256=a5e4d4f299cf57f2196fc748782434d8f98de86a2fa00bfa6ddf0575b985a021
+固件：autocar.hex bytes=305528 sha256=e6890a08ef547f7f3903aa197dd37249f8b41d870a9db2f06b69d9923496cf9b
+固件：autocar.bin bytes=108608 sha256=8a8627233bd8d1193cefd4f58ea9d079cf2102139aa790e2a99084467a6b74be
+收尾：校验固定绝对路径及重解析点后清理本任务motor-encoder-integration、motor-control-tests、encoder-feedback-tests、camera-debug-tests、servo-control-tests、wifi-spi-tests、build-script-tests、algorithm-tests共8目录；资料代理已清理motor-encoder-refs。保留预存tmp/build-autocar，下载AXF哈希再次确认。固件、备份、日志、文档和两份重要报告保留。

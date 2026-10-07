@@ -1,0 +1,16 @@
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... 
+  test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='remote-display') ... FAIL
+
+======================================================================
+FAIL: test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='remote-display')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_camera_debug.py", line 142, in test_protocol_profiles
+    self.assertEqual(result.returncode,0,f'{name}/{scenario}: '+result.stdout+result.stderr)
+AssertionError: 1 != 0 : remote-display/0: FAIL line 303: strstr(telemetry_line0, "Down") != NULL
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.518s
+
+FAILED (failures=1)

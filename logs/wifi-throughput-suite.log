@@ -1,0 +1,30 @@
+spi-gray/0: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/1: PASS: preview progresses through reset, joining, TCP wait and backoff
+spi-gray/2: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/3: PASS: failed partial frame is discarded before new TCP stream, including error after SPI write
+spi-gray/4: PASS: failed partial frame is discarded before new TCP stream, including error after SPI write
+spi-gray/5: PASS: invalid transport return fails closed without stopping preview
+spi-gray/6: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/7: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/8: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/9: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/10: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-gray/11: PASS: burst stops immediately on failed connection
+spi-binary/0: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-boundaries/0: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+spi-decimated/0: PASS: stable complete protocol frame, preview priority, bounded draining and real boundary bytes
+invalid-config/0: PASS: invalid configuration cannot block local preview
+disabled/0: PASS: preview progresses with wireless disabled
+nominal: PASS: 1526 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1526 checks
+duty-scale: PASS: 1526 checks
+uneven-step: PASS: 952 checks
+PASS: zero length, first timeout, partial timeout, chunk bytes and recovery
+Executed 32 asynchronous Wi-Fi scenarios; see exit status and log.
+........
+----------------------------------------------------------------------
+Ran 8 tests in 7.394s
+
+OK

@@ -1,0 +1,441 @@
+RED: adapter behavior intentionally absent; interface-only scaffold.
+test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready) ... FAIL
+test_disabled_mode_has_no_external_side_effects (test_remote_control.RemoteControlTests.test_disabled_mode_has_no_external_side_effects) ... ok
+test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk) ... FAIL
+test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping) ... FAIL
+test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn) ... FAIL
+test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read) ... FAIL
+test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed) ... FAIL
+test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix) ... FAIL
+test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes) ... FAIL
+test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms) ... FAIL
+test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read) ... FAIL
+test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp) ... FAIL
+test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm) ... FAIL
+test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes) ... FAIL
+test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser) ... FAIL
+test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease) ... FAIL
+test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap) ... FAIL
+
+======================================================================
+FAIL: test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 79, in test_changed_error_or_reconnect_counter_invalidates_ready
+    self.run_case("counters")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 64, in test_down_ack_before_wait_gate_and_stop_wins_chunk
+    self.run_case("stop")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 58, in test_exact_drive_and_steering_mapping
+    self.run_case("mapping")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 70, in test_fresh_drive_after_gap_clears_previous_turn
+    self.run_case("gap")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 52, in test_initial_drain_requires_actual_empty_read
+    self.run_case("initial")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: initial stream starts in draining state
+
+
+======================================================================
+FAIL: test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 91, in test_invalid_read_size_and_return_fail_closed
+    self.run_case("invalid-read")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 55, in test_local_arm_discards_old_commands_and_partial_prefix
+    self.run_case("arm")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: arm generation drops queued text and pre-arm partial prefix
+
+
+======================================================================
+FAIL: test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 85, in test_local_arm_inside_read_drops_returned_bytes
+    self.run_case("read-arm")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 76, in test_not_ready_never_reads_and_reconnect_never_rearms
+    self.run_case("link")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 94, in test_null_clock_fails_closed_without_read
+    self.run_case("null-clock")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 88, in test_read_latency_limit_and_post_read_timestamp
+    self.run_case("latency")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 97, in test_service_and_later_packets_cannot_reactivate_s3_disarm
+    self.run_case("disarm")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 82, in test_session_change_inside_read_drops_returned_bytes
+    self.run_case("read-session")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 61, in test_split_and_coalesced_real_parser
+    self.run_case("parser")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+disabled: PASS: remote control disabled
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 67, in test_steering_does_not_refresh_propulsion_lease
+    self.run_case("steering")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+======================================================================
+FAIL: test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 73, in test_steering_timeout_including_clock_wrap
+    self.run_case("wrap")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: fresh local arm must accept a neutral acknowledgement after drain
+
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.892s
+
+FAILED (failures=16)
+RED confirmed: behavioral assertions failed after both profiles compiled.
+GREEN attempt: session drain, post-read timing and output authorization adapter.
+test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready) ... ok
+test_disabled_mode_has_no_external_side_effects (test_remote_control.RemoteControlTests.test_disabled_mode_has_no_external_side_effects) ... ok
+test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk) ... ok
+test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping) ... ok
+test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn) ... FAIL
+test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read) ... ok
+test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed) ... ok
+test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix) ... ok
+test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes) ... ok
+test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms) ... ok
+test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read) ... ok
+test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp) ... FAIL
+test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm) ... ok
+test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes) ... ok
+test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser) ... ok
+test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease) ... ok
+test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap) ... FAIL
+
+======================================================================
+FAIL: test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 70, in test_fresh_drive_after_gap_clears_previous_turn
+    self.run_case("gap")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: new drive after more than 300ms starts centered even without an intervening service
+
+
+======================================================================
+FAIL: test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 88, in test_read_latency_limit_and_post_read_timestamp
+    self.run_case("latency")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: 50ms read is accepted but its activity still expires
+
+
+======================================================================
+FAIL: test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 73, in test_steering_timeout_including_clock_wrap
+    self.run_case("wrap")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: 301ms expires across uint32 clock wrap
+enabled: PASS: remote control counters
+
+disabled: PASS: remote control disabled
+
+enabled: PASS: remote control stop
+----------------------------------------------------------------------
+enabled: PASS: remote control mapping
+enabled: PASS: remote control initial
+enabled: PASS: remote control invalid-read
+enabled: PASS: remote control arm
+enabled: PASS: remote control read-arm
+enabled: PASS: remote control link
+enabled: PASS: remote control null-clock
+enabled: PASS: remote control disarm
+enabled: PASS: remote control read-session
+enabled: PASS: remote control parser
+enabled: PASS: remote control steering
+Ran 17 tests in 0.830s
+
+FAILED (failures=3)
+Updated steering timing fixtures for authorized 1500ms timeout; drive lease remains independent 300ms.
+test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready) ... ok
+test_disabled_mode_has_no_external_side_effects (test_remote_control.RemoteControlTests.test_disabled_mode_has_no_external_side_effects) ... ok
+test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk) ... ok
+test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping) ... ok
+test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn) ... ok
+test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read) ... ok
+test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed) ... ok
+test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix) ... ok
+test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes) ... ok
+test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms) ... ok
+test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read) ... ok
+test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp) ... ok
+test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm) ... ok
+test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes) ... ok
+test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser) ... ok
+test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease) ... ok
+test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.890s
+
+OK
+enabled: PASS: remote control counters
+disabled: PASS: remote control disabled
+enabled: PASS: remote control stop
+enabled: PASS: remote control mapping
+enabled: PASS: remote control gap
+enabled: PASS: remote control initial
+enabled: PASS: remote control invalid-read
+enabled: PASS: remote control arm
+enabled: PASS: remote control read-arm
+enabled: PASS: remote control link
+enabled: PASS: remote control null-clock
+enabled: PASS: remote control latency
+enabled: PASS: remote control disarm
+enabled: PASS: remote control read-session
+enabled: PASS: remote control parser
+enabled: PASS: remote control steering
+enabled: PASS: remote control wrap
+RED: add stale queued input / stale steering after main-loop stall; timing fixtures now model regular main service.
+test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready) ... ok
+test_disabled_mode_has_no_external_side_effects (test_remote_control.RemoteControlTests.test_disabled_mode_has_no_external_side_effects) ... ok
+test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk) ... ok
+test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping) ... ok
+test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn) ... ok
+test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read) ... ok
+test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed) ... ok
+test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix) ... ok
+test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes) ... ok
+test_main_service_gap_300_301ms_and_wrap (test_remote_control.RemoteControlTests.test_main_service_gap_300_301ms_and_wrap) ... FAIL
+test_main_stall_rejects_queued_drive_before_read (test_remote_control.RemoteControlTests.test_main_stall_rejects_queued_drive_before_read) ... FAIL
+test_main_stall_service_cannot_restore_old_steering (test_remote_control.RemoteControlTests.test_main_stall_service_cannot_restore_old_steering) ... FAIL
+test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms) ... ok
+test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read) ... ok
+test_post_read_clock_updates_shared_service_reference (test_remote_control.RemoteControlTests.test_post_read_clock_updates_shared_service_reference) ... ok
+test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp) ... ok
+test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm) ... ok
+test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes) ... ok
+test_silent_regular_polling_preserves_local_arm (test_remote_control.RemoteControlTests.test_silent_regular_polling_preserves_local_arm) ... ok
+test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser) ... ok
+test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease) ... ok
+test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap) ... ok
+
+======================================================================
+FAIL: test_main_service_gap_300_301ms_and_wrap (test_remote_control.RemoteControlTests.test_main_service_gap_300_301ms_and_wrap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 106, in test_main_service_gap_300_301ms_and_wrap
+    self.run_case("main-boundary")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: 301ms main service gap revokes authorization
+
+
+======================================================================
+FAIL: test_main_stall_rejects_queued_drive_before_read (test_remote_control.RemoteControlTests.test_main_stall_rejects_queued_drive_before_read)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 100, in test_main_stall_rejects_queued_drive_before_read
+    self.run_case("main-poll-gap")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: main gap rejects queued drive before reading and revokes local authorization
+
+
+======================================================================
+FAIL: test_main_stall_service_cannot_restore_old_steering (test_remote_control.RemoteControlTests.test_main_stall_service_cannot_restore_old_steering)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 103, in test_main_stall_service_cannot_restore_old_steering
+    self.run_case("main-service-gap")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_control.py", line 48, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL: service checks its gap before READY synchronization or output enable
+
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.942s
+enabled: PASS: remote control counters
+disabled: PASS: remote control disabled
+enabled: PASS: remote control stop
+enabled: PASS: remote control mapping
+enabled: PASS: remote control gap
+enabled: PASS: remote control initial
+enabled: PASS: remote control invalid-read
+enabled: PASS: remote control arm
+enabled: PASS: remote control read-arm
+enabled: PASS: remote control link
+enabled: PASS: remote control null-clock
+enabled: PASS: remote control main-post-read
+enabled: PASS: remote control latency
+enabled: PASS: remote control disarm
+enabled: PASS: remote control read-session
+enabled: PASS: remote control main-silent
+enabled: PASS: remote control parser
+enabled: PASS: remote control steering
+enabled: PASS: remote control wrap
+
+FAILED (failures=3)
+GREEN: shared main service gap guard; 300ms allowed, 301ms revoked before RX or servo authorization.
+test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready) ... ok
+test_disabled_mode_has_no_external_side_effects (test_remote_control.RemoteControlTests.test_disabled_mode_has_no_external_side_effects) ... ok
+test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk) ... ok
+test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping) ... ok
+test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn) ... ok
+test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read) ... ok
+test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed) ... ok
+test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix) ... ok
+test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes) ... ok
+test_main_service_gap_300_301ms_and_wrap (test_remote_control.RemoteControlTests.test_main_service_gap_300_301ms_and_wrap) ... ok
+test_main_stall_rejects_queued_drive_before_read (test_remote_control.RemoteControlTests.test_main_stall_rejects_queued_drive_before_read) ... ok
+test_main_stall_service_cannot_restore_old_steering (test_remote_control.RemoteControlTests.test_main_stall_service_cannot_restore_old_steering) ... ok
+test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms) ... ok
+test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read) ... ok
+test_post_read_clock_updates_shared_service_reference (test_remote_control.RemoteControlTests.test_post_read_clock_updates_shared_service_reference) ... ok
+test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp) ... ok
+test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm) ... ok
+test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes) ... ok
+test_silent_regular_polling_preserves_local_arm (test_remote_control.RemoteControlTests.test_silent_regular_polling_preserves_local_arm) ... ok
+test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser) ... ok
+test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease) ... ok
+test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.927s
+
+OK
+enabled: PASS: remote control counters
+disabled: PASS: remote control disabled
+enabled: PASS: remote control stop
+enabled: PASS: remote control mapping
+enabled: PASS: remote control gap
+enabled: PASS: remote control initial
+enabled: PASS: remote control invalid-read
+enabled: PASS: remote control arm
+enabled: PASS: remote control read-arm
+enabled: PASS: remote control main-boundary
+enabled: PASS: remote control main-poll-gap
+enabled: PASS: remote control main-service-gap
+enabled: PASS: remote control link
+enabled: PASS: remote control null-clock
+enabled: PASS: remote control main-post-read
+enabled: PASS: remote control latency
+enabled: PASS: remote control disarm
+enabled: PASS: remote control read-session
+enabled: PASS: remote control main-silent
+enabled: PASS: remote control parser
+enabled: PASS: remote control steering
+enabled: PASS: remote control wrap

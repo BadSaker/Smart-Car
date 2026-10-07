@@ -1,0 +1,109 @@
+test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles)
+�ù�һ���߽硢�쳣���缰̨�ܲ����仯���ʵ�����Լ���� ... 
+  test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles) (profile='nominal')
+�ù�һ���߽硢�쳣���缰̨�ܲ����仯���ʵ�����Լ���� ... FAIL
+
+======================================================================
+FAIL: test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles) (profile='nominal')
+�ù�һ���߽硢�쳣���缰̨�ܲ����仯���ʵ�����Լ����
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.py", line 61, in test_remote_control_profiles
+    self.assertEqual(build.returncode, 0, build.stdout + build.stderr)
+AssertionError: 1 != 0 : C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c: In function 'test_supply_and_stop_gates':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:93:5: error: implicit declaration of function 'servo_control_remote_apply' [-Werror=implicit-function-declaration]
+     servo_control_remote_apply(0U, 1000, 10U);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:104:30: error: 'SERVO_CONTROL_REMOTE' undeclared (first use in this function)
+     CHECK(status()->state == SERVO_CONTROL_REMOTE && status()->output_enabled,
+                              ^
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:20:11: note: in definition of macro 'CHECK'
+     if (!(condition)) { \
+           ^~~~~~~~~
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:104:30: note: each undeclared identifier is reported only once for each function it appears in
+     CHECK(status()->state == SERVO_CONTROL_REMOTE && status()->output_enabled,
+                              ^
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:20:11: note: in definition of macro 'CHECK'
+     if (!(condition)) { \
+           ^~~~~~~~~
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c: In function 'test_normalized_mapping_and_bounds':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:161:38: error: 'SERVO_CONTROL_REMOTE' undeclared (first use in this function)
+             CHECK(status()->state == SERVO_CONTROL_REMOTE && status()->output_enabled,
+                                      ^
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:20:11: note: in definition of macro 'CHECK'
+     if (!(condition)) { \
+           ^~~~~~~~~
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c: In function 'test_center_slew_no_backlog_and_target_replacement':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:200:69: error: 'SERVO_CONTROL_REMOTE' undeclared (first use in this function)
+     CHECK(status()->current_pulse_us == 1480U && status()->state == SERVO_CONTROL_REMOTE,
+                                                                     ^
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:20:11: note: in definition of macro 'CHECK'
+     if (!(condition)) { \
+           ^~~~~~~~~
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c: In function 'test_remote_ownership_blocks_bench_and_pending_press':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:246:30: error: 'SERVO_CONTROL_REMOTE' undeclared (first use in this function)
+     CHECK(status()->state == SERVO_CONTROL_REMOTE && pwm_starts == 1U,
+                              ^
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:20:11: note: in definition of macro 'CHECK'
+     if (!(condition)) { \
+           ^~~~~~~~~
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c: In function 'test_remote_takes_over_running_bench_at_center':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:278:30: error: 'SERVO_CONTROL_REMOTE' undeclared (first use in this function)
+     CHECK(status()->state == SERVO_CONTROL_REMOTE && status()->current_pulse_us == 1480U &&
+                              ^
+C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.c:20:11: note: in definition of macro 'CHECK'
+     if (!(condition)) { \
+           ^~~~~~~~~
+cc1.exe: all warnings being treated as errors
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.080s
+
+FAILED (failures=1)
+test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles)
+用归一化边界、异常供电及台架参数变化检查实际输出约束。 ... 
+  test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles) (profile='nominal')
+用归一化边界、异常供电及台架参数变化检查实际输出约束。 ... FAIL
+
+======================================================================
+FAIL: test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles) (profile='nominal')
+用归一化边界、异常供电及台架参数变化检查实际输出约束。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_remote_servo.py", line 65, in test_remote_control_profiles
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 105: valid supply accepts explicit remote enable
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.177s
+
+FAILED (failures=1)
+nominal: 
+test_remote_control_profiles (__main__.RemoteServoTests.test_remote_control_profiles)
+用归一化边界、异常供电及台架参数变化检查实际输出约束。 ... ok
+nominal: PASS: 1984 checks
+undervoltage: PASS: 20 checks
+overvoltage: PASS: 20 checks
+upper-voltage: PASS: 1984 checks
+duty-scale: PASS: 1984 checks
+bench-step-independent: PASS: 1984 checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.154s
+
+OK
+test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles)
+nominal: PASS: 1936 checks
+覆盖上电关闭、手动触发、停止优先、限幅步进和计时回绕。 ... ok
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1936 checks
+duty-scale: PASS: 1936 checks
+uneven-step: PASS: 1075 checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.178s
+
+OK

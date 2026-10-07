@@ -1,0 +1,16 @@
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... 
+  test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='motor-telemetry') ... FAIL
+
+======================================================================
+FAIL: test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='motor-telemetry')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_camera_debug.py", line 138, in test_protocol_profiles
+    self.assertEqual(result.returncode,0,f'{name}/{scenario}: '+result.stdout+result.stderr)
+AssertionError: 1 != 0 : motor-telemetry/0: FAIL line 284: strstr(telemetry_line0, "L! d:-32768") && strstr(telemetry_line0, "n:-2147483648")
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.435s
+
+FAILED (failures=1)

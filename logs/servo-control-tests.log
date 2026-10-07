@@ -1,0 +1,21 @@
+test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles)
+覆盖上电关闭、手动触发、停止优先、限幅步进和计时回绕。 ... ok
+nominal: PASS: 1526 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1526 checks
+duty-scale: PASS: 1526 checks
+uneven-step: PASS: 952 checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.136s
+
+OK
+
+Mutation checks: 6 rejected as expected
+stop-priority: rejected; FAIL line 168: simultaneous stop must win over debounced start
+debounce: rejected; FAIL line 146: short start press must not activate PWM
+backlog: rejected; FAIL line 227: late poll resets interval without backlog catch-up
+duty-scale: rejected; FAIL line 120: 1520 us must use the configured 20000 duty scale
+endpoint-hold: rejected; FAIL line 300: lower endpoint must hold for 300ms without extra movement
+busy-restart: rejected; FAIL line 273: press during a running trip must not restart it

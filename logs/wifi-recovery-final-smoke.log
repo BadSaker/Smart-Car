@@ -1,0 +1,21 @@
+spi-gray/5: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/6: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/7: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/8: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/1: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/2: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/3: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/4: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/9: PASS: 1000 transient partial sends keep complete frames flowing
+spi-gray/10: PASS: failed graceful close still resets connection; cumulative success count survives
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.691s
+
+spi-gray/11: PASS: failure stage identifies the boundary block without sending later blocks
+OK
+spi-gray/12: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/13: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/14: PASS: failure stage identifies the boundary block without sending later blocks

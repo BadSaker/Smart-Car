@@ -1,0 +1,7 @@
+motor-telemetry/0: PASS: encoder telemetry bounds, signed speed, phase, image and original status restoration
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.410s
+
+OK

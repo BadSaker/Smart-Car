@@ -1,0 +1,982 @@
+registration: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+configuration: 1
+FAIL: line 193: wifi_spi_async_get_status()->state == WIFI_SPI_ASYNC_CONFIG_ERROR
+
+handshake: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+open-network: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+reset-wrap: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+version-timeout: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+join-timeout: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+socket-timeout: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+send-timeout: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+chunks: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+short-padding: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+rx-budget: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+rx-invalid: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+ack-error: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+reconnect: 1
+FAIL: line 122: wifi_spi_async_init("track", password, "192.168.137.1", "8080", "0") == 0
+
+2026-10-03T16:07:12.655496+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+2026-10-03T16:08:43.597753+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+2026-10-03T16:09:11.032805+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+2026-10-03T16:26:04.848343+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+2026-10-03T16:37:57.041343+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 1
+FAIL: line 252: poll_at(tick, NULL, 0) == 0 && transaction_count == 1
+
+guard-long-isr: 1
+FAIL: line 252: poll_at(tick, NULL, 0) == 0 && transaction_count == 1
+
+guard-wrap: 1
+FAIL: line 252: poll_at(tick, NULL, 0) == 0 && transaction_count == 1
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability
+
+2026-10-03T16:40:06.464729+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 0
+PASS: guard-cross-tick
+
+guard-long-isr: 0
+PASS: guard-long-isr
+
+guard-wrap: 0
+PASS: guard-wrap
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability
+
+2026-10-03T16:40:58.331560+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 0
+PASS: guard-cross-tick
+
+guard-long-isr: 0
+PASS: guard-long-isr
+
+guard-wrap: 0
+PASS: guard-wrap
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability
+
+2026-10-03T16:43:26.868178+08:00
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 0
+PASS: guard-cross-tick
+
+guard-long-isr: 0
+PASS: guard-long-isr
+
+guard-wrap: 0
+PASS: guard-wrap
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability
+
+2026-10-03T17:40:59.756600+08:00
+continuous-data: 1
+FAIL: line 424: poll_at(tick, payload + i * 512, 512) == 512
+
+whole-frame-six-chunks: 1
+FAIL: line 437: offset == 4088
+
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 1
+FAIL: line 410: poll_after_guard(payload, 5000) == 4088
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 1
+FAIL: line 462: transactions[baseline + 1 + i].length == 36
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 1
+FAIL: line 483: poll_after_guard(payload, 512) == 512
+
+rx-timeout: 1
+FAIL: line 193: status->state == WIFI_SPI_ASYNC_BACKOFF
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 0
+PASS: guard-cross-tick
+
+guard-long-isr: 0
+PASS: guard-long-isr
+
+guard-wrap: 0
+PASS: guard-wrap
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability
+
+2026-10-03T17:43:32.605358+08:00
+continuous-data: 0
+PASS: continuous-data
+
+whole-frame-six-chunks: 0
+PASS: whole-frame-six-chunks
+
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 0
+PASS: guard-cross-tick
+
+guard-long-isr: 0
+PASS: guard-long-isr
+
+guard-wrap: 0
+PASS: guard-wrap
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability
+
+2026-10-03T17:46:33.370454+08:00
+continuous-data: 0
+PASS: continuous-data
+
+whole-frame-six-chunks: 0
+PASS: whole-frame-six-chunks
+
+registration: 0
+PASS: registration
+
+configuration: 0
+PASS: configuration
+
+handshake: 0
+PASS: handshake
+
+open-network: 0
+PASS: open-network
+
+reset-wrap: 0
+PASS: reset-wrap
+
+version-timeout: 0
+PASS: version-timeout
+
+join-timeout: 0
+PASS: join-timeout
+
+socket-timeout: 0
+PASS: socket-timeout
+
+send-timeout: 0
+PASS: send-timeout
+
+chunks: 0
+PASS: chunks
+
+short-padding: 0
+PASS: short-padding
+
+rx-budget: 0
+PASS: rx-budget
+
+rx-invalid: 0
+PASS: rx-invalid
+
+ack-error: 0
+PASS: ack-error
+
+reconnect: 0
+PASS: reconnect
+
+version-ack-timeout: 0
+PASS: version-ack-timeout
+
+version-error: 0
+PASS: version-error
+
+version-length: 0
+PASS: version-length
+
+socket-ack-error: 0
+PASS: socket-ack-error
+
+idle-reply: 0
+PASS: idle-reply
+
+rx-timeout: 0
+PASS: rx-timeout
+
+no-frame-reconnect: 0
+PASS: no-frame-reconnect
+
+send-error: 0
+PASS: send-error
+
+null-data: 0
+PASS: null-data
+
+copied-configuration: 0
+PASS: copied-configuration
+
+empty-no-timeout: 0
+PASS: empty-no-timeout
+
+guard-cross-tick: 0
+PASS: guard-cross-tick
+
+guard-long-isr: 0
+PASS: guard-long-isr
+
+guard-wrap: 0
+PASS: guard-wrap
+
+guard-timeout-stability: 0
+PASS: guard-timeout-stability

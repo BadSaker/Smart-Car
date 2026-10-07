@@ -1,0 +1,25 @@
+spi-gray/5: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/6: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/7: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/8: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/1: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/2: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/3: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/4: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/9: PASS: 1000 transient partial sends keep complete frames flowing
+spi-binary/0: PASS: packet bytes, image snapshot, real boundaries and transport
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... ok
+spi-boundaries/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-decimated/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-missing-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-long-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-ip/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-port/0: PASS: invalid network configuration rejected; preview still works
+wifi-open/0: PASS: packet bytes, image snapshot, real boundaries and transport
+disabled/0: PASS: local preview works with network disabled
+
+----------------------------------------------------------------------
+Ran 1 test in 4.858s
+
+OK

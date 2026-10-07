@@ -1,0 +1,9 @@
+test_export_failure_preserves_previous_complete_set (__main__.BuildExportTests.test_export_failure_preserves_previous_complete_set) ... ok
+test_linker_map_stays_temporary_and_preserves_reports (__main__.BuildExportTests.test_linker_map_stays_temporary_and_preserves_reports) ... ok
+test_missing_exporter_fails_without_publishing (__main__.BuildExportTests.test_missing_exporter_fails_without_publishing) ... ok
+test_success_publishes_all_three_new_files (__main__.BuildExportTests.test_success_publishes_all_three_new_files) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 2.293s
+
+OK

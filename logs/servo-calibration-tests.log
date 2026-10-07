@@ -1,0 +1,17 @@
+test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles)
+�����ϵ�رա��ֶ�������ֹͣ���ȡ��޷������ͼ�ʱ���ơ� ... ok
+nominal: PASS: 1526 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1526 checks
+duty-scale: PASS: 1526 checks
+uneven-step: PASS: 952 checks
+calibration: PASS: 2787 calibration checks
+calibration-duty-scale: PASS: 2787 calibration checks
+calibration-undervoltage: PASS: 36 calibration checks
+calibration-overvoltage: PASS: 36 calibration checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.789s
+
+OK

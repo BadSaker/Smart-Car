@@ -1,0 +1,23 @@
+
+[2026-10-07 19:53:03 +08:00] 任务交付：逐飞助手虚拟手柄文本遥控
+授权：用户批准在工程加入现有Wi-Fi SPI/TCP虚拟手柄、前后/转向、本地C12允许、S3停止、C13网络、与原测试模式互斥、时限与换向保护。用户明确确认两路原参考HIGH方向均为前进，舵机1480降到1420向右；因此1540为左目标，中值1480保留。本轮不自动烧录/发送控制/驱动车辆。
+工具条件：默认沙箱exec与node接口因helper_unknown_error/setup refresh失败；随后通过自动审核的require_escalated，仅在已批准工作区读取/备份/编辑/编译/测试，不调整系统安全设置。没有把基础设施错误当作工程代码失败。
+协议证据：D:/seekfree_assistant-V1.2.7/README.md虚拟手柄节与说明书V1.4 PDF48–50页确认8个文本键名+CRLF：W/D/S/A和Up/Right/Down/Left；W为57 0D 0A，Up为55 70 0D 0A。手册基于软件V1.2.0，包内更新日志未证明1.2.7长按行为。没有依据支持模拟轴、释放报文、周期心跳、发送时间戳或序号，未以0x55误当二进制帧头。
+工程映射：W前进、S后退；A/Left左1540、D/Right右1420；Up回中1480、Down零油门并回中。后两键映射为本项目选择。只有W/S续期300ms电机许可，转向不续期油门；单击为有限点动，不能承诺松手立即发停止或按住必连续。转向活动窗口1.5秒，以2us/20ms最大步进渐变，实际到位还受主循环周期影响。
+备份：outputs/backups/car_before-virtual-remote_20261007_185603.zip保存任务前程序、私有配置、文档、工程与固件。原始参考及SeekFree未改。
+新增：remote_command.c/.h严格有界CRLF解析，12字节缓冲、分片/粘包、异常整行丢弃及饱和诊断；remote_control.c/.h负责统一RX入口、会话/本地允许代次、排空屏障、读后时间、转向活动和故障撤权；remote_control_config.h默认REMOTE_CONTROL_ENABLED=1，0保留原台架模式。
+接收：camera_debug仅增加控制接收包装和配置引用；READY且INT就绪才调用供应商wifi_spi_read_buffer，忙返回−1不当作空。每次应用读取64字节；读耗时>50ms、非法返回长度、会话/允许代次变化丢弃本块，撤销允许并重新排空。新连接或C12重新允许后，必须读到真正0，再收到新Down，才能接受行驶。原图传发送/连接/有限重试主体与备份统一换行后完全一致，未重构为异步。
+电机：同PIT0线程推进C12/S3、遥控邮箱、300ms许可和100ms换向零PWM间隔；默认最高100permille=10%。S3/C12解除/链路丢失撤销允许，Down独立锁存优先于同PIT批次W/S；到期清目标，不自动重放旧请求。DIR参考HIGH前进、相反电平后退；追踪真实零命令间隔，正→0→反不能绕过换向保护。上电无PWM，初始化完成且有连接仍须C12新按下与Down确认。
+舵机：新增主循环遥控接口及占用互斥，首启从1480us开始，±1000输入钳位为1420–1540us，固定2us/20ms且不追赶积压。S3和供电配置门限保留；遥控占用时S2测试不可插入，默认模式主循环不运行S2台架逻辑。模式0保留原测试，舵机状态读取仍在主循环。
+显示与集成：顶部两行显示RC连接/允许/排空/Down等待、T每千占空比、RX及舵机脉宽，图像和底部网络提示不变。main初始化接收适配并在网络返回后取新时钟，消费S3锁存后服务当前控制模式。增加5个工程引用，总354，TargetOption/Flash/Debug语义与备份不变。
+复查补充：独立remote_safety_review未发现确定Critical/Important，指出文本没有发送时间戳，50ms仅约束读取调用，长主循环停顿后可能消费旧W。针对可观测的本机停顿补MAIN_LOOP_TIMEOUT=300ms：poll前/后及service共享服务时钟，>300ms撤权、清半行/转向、重新排空并要求C12+Down。新增3个行为场景先RED后GREEN；真实四模块联调加入400ms积压W/D恢复不得自动运动，最终1594断言通过。正常轮询但PC静默不当作本机停顿，仍可下一次点击点动。端到端网络延迟包年龄仍无法由原文本协议证明，已明确文档限制。
+注释修正：同步三处旧方向/模式注释；motor_test_config.h与servo_config.h只有注释变化，有效参数代码与备份相同。未保留已过期的“正向未确认”说法。
+测试：parser12项、adapter22项（含模式0、300/301ms、50/51ms、1500/1501ms、回绕）、电机遥控4配置、舵机遥控6配置及旧模式0电机9配置/舵机6配置、原编码器和图传/C13及接收/遥控显示回归、四模块联调均通过。最终unittest discover共53项退出0，另19算法检查通过。日志remote-command-tests.log、remote-control-tests.log、remote-motor-tests.log、remote-servo-tests.log、remote-integration-tests.log、remote-camera-tests.log、virtual-remote-suite.log、virtual-remote-algorithms.log。
+构建：实际主工程build.ps1最终MDK5.39/Arm Compiler6.21全量0错误0警告，Code=91864、RO=12952、RW=312、ZI=104412；另模式0隔离工程全量0错误0警告（不发布）。日志virtual-remote-build.log、virtual-remote-bench-build.log。最终AXF有效ARM ELF；HEX校验和/0x70000000范围/数据与111680字节BIN一致，实际Keil下载缓存与outputs/firmware三格式哈希一致。
+保护验证：543项保护检查通过，其中两配置仅注释更新，其余哈希不变，包含519供应商文件；原camera_debug主体和5个图像/网络显示函数保持。966本地Markdown目标有效，docs/logs未泄露网络密码，原两份重要报告保留。
+文档：新增docs/virtual-remote-control.md，AGENTS只提供导航；同步模式、方向、操作、冻结接收例外和构建记录。默认C12为遥控允许，S2测试禁用；想用原C12/S2测试须REMOTE_CONTROL_ENABLED=0重编译，避免两套输出争用。
+用户操作：架空首测，重开工程Rebuild下载；热点+助手TCP Server192.168.137.1:8080侦听，C13联网，拓展工具→开启手柄并激活窗口，C12允许后等WAIT提示再按Down，之后W/S及方向键。S3本地停止；重连或主循环停顿保护后重新C12+Down。未实测助手长按连发、实际延迟/PWM/机械响应；零命令与撤PWM不等于硬件急停或卸力。
+固件：autocar.axf bytes=928596 sha256=9336cba62a3ddf48129a57ffd5ad9572795f915243d714672c82d635455ac181
+固件：autocar.hex bytes=314168 sha256=3b0c9dbf968490bcf75240849b2b5d4848c4e0bf8d26c36b9de9ec99365ee48b
+固件：autocar.bin bytes=111680 sha256=03a47bdf9923b66c3e7d2b6ff7c92bbd24d2aefe6bce1c7cf286f44fbe31e03b
+收尾：逐一核对绝对路径/重解析点后清理本任务virtual-remote、协议预览及遥控/旧回归临时目录共14个；保留预存tmp/build-autocar。正式遥控AXF哈希复核一致，固件/备份/文档/日志和两份重要报告保留。未自动烧录、操作助手或发出实车控制命令。

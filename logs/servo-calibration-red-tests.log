@@ -1,0 +1,20 @@
+test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles)
+�����ϵ�رա��ֶ�������ֹͣ���ȡ��޷������ͼ�ʱ���ơ� ... 
+  test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles) (profile='calibration')
+�����ϵ�رա��ֶ�������ֹͣ���ȡ��޷������ͼ�ʱ���ơ� ... FAIL
+
+======================================================================
+FAIL: test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles) (profile='calibration')
+�����ϵ�رա��ֶ�������ֹͣ���ȡ��޷������ͼ�ʱ���ơ�
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_servo_control.py", line 75, in test_hardware_control_profiles
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 57: initialize C15/C12 adjust and C14 stop
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.200s
+
+FAILED (failures=1)
+calibration: FAIL line 57: initialize C15/C12 adjust and C14 stop

@@ -1,0 +1,16 @@
+test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) ... 
+  test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='wifi-switch') ... FAIL
+
+======================================================================
+FAIL: test_protocol_profiles (__main__.CameraDebugTests.test_protocol_profiles) (profile='wifi-switch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_camera_debug.py", line 137, in test_protocol_profiles
+    self.assertEqual(result.returncode,0,f'{name}/{scenario}: '+result.stdout+result.stderr)
+AssertionError: 1 != 0 : wifi-switch/0: FAIL line 168: camera_debug_status == CAMERA_DEBUG_DISABLED
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.409s
+
+FAILED (failures=1)

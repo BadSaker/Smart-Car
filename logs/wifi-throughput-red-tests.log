@@ -1,0 +1,67 @@
+test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) ... 
+  test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='continuous-data') ... FAIL
+  test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='whole-frame-six-chunks') ... FAIL
+  test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='chunks') ... FAIL
+  test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='rx-budget') ... FAIL
+  test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='idle-reply') ... FAIL
+  test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='rx-timeout') ... FAIL
+
+======================================================================
+FAIL: test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='continuous-data')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_wifi_spi_async.py", line 71, in test_state_machine_and_poll_budget
+    self.assertEqual(ran.returncode, 0, ran.stdout + ran.stderr)
+AssertionError: 1 != 0 : FAIL: line 424: poll_at(tick, payload + i * 512, 512) == 512
+
+
+======================================================================
+FAIL: test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='whole-frame-six-chunks')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_wifi_spi_async.py", line 71, in test_state_machine_and_poll_budget
+    self.assertEqual(ran.returncode, 0, ran.stdout + ran.stderr)
+AssertionError: 1 != 0 : FAIL: line 437: offset == 4088
+
+
+======================================================================
+FAIL: test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='chunks')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_wifi_spi_async.py", line 71, in test_state_machine_and_poll_budget
+    self.assertEqual(ran.returncode, 0, ran.stdout + ran.stderr)
+AssertionError: 1 != 0 : FAIL: line 410: poll_after_guard(payload, 5000) == 4088
+
+
+======================================================================
+FAIL: test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='rx-budget')
+----------------------------------------------------------------------
+Executed 32 asynchronous Wi-Fi scenarios; see exit status and log.
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_wifi_spi_async.py", line 71, in test_state_machine_and_poll_budget
+    self.assertEqual(ran.returncode, 0, ran.stdout + ran.stderr)
+AssertionError: 1 != 0 : FAIL: line 462: transactions[baseline + 1 + i].length == 36
+
+
+======================================================================
+FAIL: test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='idle-reply')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_wifi_spi_async.py", line 71, in test_state_machine_and_poll_budget
+    self.assertEqual(ran.returncode, 0, ran.stdout + ran.stderr)
+AssertionError: 1 != 0 : FAIL: line 483: poll_after_guard(payload, 512) == 512
+
+
+======================================================================
+FAIL: test_state_machine_and_poll_budget (__main__.WifiSpiAsyncTests.test_state_machine_and_poll_budget) (scenario='rx-timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_wifi_spi_async.py", line 71, in test_state_machine_and_poll_budget
+    self.assertEqual(ran.returncode, 0, ran.stdout + ran.stderr)
+AssertionError: 1 != 0 : FAIL: line 193: status->state == WIFI_SPI_ASYNC_BACKOFF
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.787s
+
+FAILED (failures=6)

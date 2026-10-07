@@ -1,0 +1,17 @@
+C:\Users\Lynn\Desktop\Files\Autodrive\car\src\img_process.c: In function 'get_threshold_otsu':
+C:\Users\Lynn\Desktop\Files\Autodrive\car\src\img_process.c:50:9: warning: unused variable 'X' [-Wunused-variable]
+     int X, Y, amount = 0;
+         ^
+FAIL: histogram clears all 256 bins before counting (line 21)
+FAIL: histogram does not accumulate previous frames (line 24)
+FAIL: unseen high-intensity bins are zero (line 25)
+FAIL: black frame returns valid indices (line 56)
+FAIL: black frame returns valid indices (line 56)
+FAIL: black frame returns valid indices (line 56)
+FAIL: narrow frame initializes output boundaries (line 62)
+FAIL: integral clamp survives output calculation (line 72)
+FAIL: stored integral is bounded (line 73)
+FAIL: integral recovers immediately when error reverses (line 75)
+FAIL: zero period does not divide or mutate PID state (line 81)
+FAIL: negative period does not mutate incremental PID state (line 83)
+Algorithm checks: 7 passed, 12 failed (19 total)

@@ -1,0 +1,13 @@
+test_hardware_control_profiles (__main__.ServoControlTests.test_hardware_control_profiles)
+�����ϵ�رա��ֶ�������ֹͣ���ȡ��޷������ͼ�ʱ���ơ� ... ok
+nominal: PASS: 1936 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1936 checks
+duty-scale: PASS: 1936 checks
+uneven-step: PASS: 1075 checks
+
+----------------------------------------------------------------------
+Ran 1 test in 1.052s
+
+OK

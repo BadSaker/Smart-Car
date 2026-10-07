@@ -1,0 +1,21 @@
+dap-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+dap-gray/3: PASS: failed send stops output; reinitialization restores it
+dap-binary/0: PASS: packet bytes, image snapshot, real boundaries and transport
+dap-boundaries/0: PASS: packet bytes, image snapshot, real boundaries and transport
+dap-decimated/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-gray/1: PASS: initialization failure stays silent
+wifi-gray/2: PASS: initialization failure stays silent
+wifi-gray/3: PASS: failed send stops output; reinitialization restores it
+wifi-missing-config/0: PASS: missing Wi-Fi configuration
+disabled/0: PASS: disabled transport
+diagnostics mode=1 scenario=0: PASS: diagnostic output, stage and heartbeat match the observed state
+diagnostics mode=2 scenario=0: PASS: diagnostic output, stage and heartbeat match the observed state
+diagnostics mode=2 scenario=1: PASS: diagnostic output, stage and heartbeat match the observed state
+diagnostics mode=2 scenario=2: PASS: diagnostic output, stage and heartbeat match the observed state
+diagnostics mode=2 scenario=3: PASS: diagnostic output, stage and heartbeat match the observed state
+......
+----------------------------------------------------------------------
+Ran 6 tests in 5.311s
+
+OK
