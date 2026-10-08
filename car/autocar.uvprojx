@@ -439,6 +439,26 @@
               <FileType>1</FileType>
               <FilePath>.\src\remote_control.c</FilePath>
             </File>
+            <File>
+              <FileName>control_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\control_pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>track_vision.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\track_vision.c</FilePath>
+            </File>
+            <File>
+              <FileName>autonomous_drive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\autonomous_drive.c</FilePath>
+            </File>
+            <File>
+              <FileName>autonomous_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\autonomous_control.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -499,6 +519,26 @@
               <FileType>5</FileType>
               <FilePath>.\include\remote_control.h</FilePath>
             </File>
+            <File>
+              <FileName>control_pid.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\include\control_pid.h</FilePath>
+            </File>
+            <File>
+              <FileName>track_vision.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\include\track_vision.h</FilePath>
+            </File>
+            <File>
+              <FileName>autonomous_drive.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\include\autonomous_drive.h</FilePath>
+            </File>
+            <File>
+              <FileName>autonomous_control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\include\autonomous_control.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -533,6 +573,16 @@
               <FileName>remote_control_config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\config\remote_control_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>vision_config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\config\vision_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>autonomous_config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\config\autonomous_config.h</FilePath>
             </File>
           </Files>
         </Group>

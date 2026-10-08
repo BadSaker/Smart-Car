@@ -1,5 +1,6 @@
 #include "servo_control.h"
 #include "servo_config.h"
+#include "autonomous_config.h"
 #include "zf_driver_gpio.h"
 #include "zf_driver_pwm.h"
 
@@ -140,7 +141,7 @@ static void servo_advance_motion(uint32_t now_ms, uint16_t step_us, uint32_t int
     }
     servo_status.current_pulse_us = current;
     pwm_set_duty(SERVO_PWM_CHANNEL, servo_pulse_to_duty(current));
-    if (current == target && servo_status.state != SERVO_CONTROL_REMOTE)
+    if (current == target && servo_status.state != SERVO_CONTROL_REMOTE && servo_status.state != SERVO_CONTROL_AUTONOMOUS)
     {
         servo_phase_started_ms = now_ms;
         if (servo_status.state == SERVO_CONTROL_TO_LOW) servo_status.state = SERVO_CONTROL_HOLD_LOW;
@@ -211,7 +212,7 @@ const servo_control_status_t *servo_control_get_status(void)
     return &servo_status;
 }
 
-void servo_control_remote_apply(uint8_t enabled, int16_t steering_permille, uint32_t now_ms)
+static void servo_control_apply(uint8_t enabled, int16_t steering_permille, uint32_t now_ms, uint8_t owner)
 {
     int32_t target_us;
 
@@ -224,7 +225,7 @@ void servo_control_remote_apply(uint8_t enabled, int16_t steering_permille, uint
     if (!enabled)
     {
         /* 未占用时不能清除台架测试；占用结束后也不重复改写硬件。 */
-        if (servo_remote_owned) servo_control_stop();
+        if (servo_remote_owned == owner) servo_control_stop();
         return;
     }
     if (!servo_supply_is_valid())
@@ -252,8 +253,8 @@ void servo_control_remote_apply(uint8_t enabled, int16_t steering_permille, uint
         pwm_init(SERVO_PWM_CHANNEL, SERVO_PWM_FREQUENCY_HZ,
                  servo_pulse_to_duty(SERVO_REFERENCE_CENTER_US));
         servo_pwm_initialized = 1U;
-        servo_remote_owned = 1U;
-        servo_status.state = SERVO_CONTROL_REMOTE;
+        servo_remote_owned = owner;
+        servo_status.state = owner == 2U ? SERVO_CONTROL_AUTONOMOUS : SERVO_CONTROL_REMOTE;
         servo_status.current_pulse_us = SERVO_REFERENCE_CENTER_US;
         servo_status.target_pulse_us = (uint16_t)target_us;
         servo_status.output_enabled = 1U;
@@ -263,5 +264,18 @@ void servo_control_remote_apply(uint8_t enabled, int16_t steering_permille, uint
 
     servo_status.target_pulse_us = (uint16_t)target_us;
     /* 遥控固定2us/20ms，不受台架试验步长变化影响；新目标不重置步进时钟。 */
-    servo_advance_motion(now_ms, 2U, 20U);
+    servo_advance_motion(now_ms, owner == 2U ? AUTO_SERVO_STEP_US : 2U,
+                         owner == 2U ? AUTO_SERVO_INTERVAL_MS : 20U);
+}
+
+/* 自动驾驶由主循环所有权门控，遥控接口无权覆盖其转向。 */
+void servo_control_remote_apply(uint8_t enabled, int16_t steering_permille, uint32_t now_ms)
+{
+    if (servo_remote_owned == 2U) return;
+    servo_control_apply(enabled, steering_permille, now_ms, 1U);
+}
+void servo_control_autonomous_apply(uint8_t enabled, int16_t steering_permille, uint32_t now_ms)
+{
+    if (enabled && servo_remote_owned == 1U) servo_control_stop();
+    servo_control_apply(enabled, steering_permille, now_ms, 2U);
 }

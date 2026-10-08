@@ -12,6 +12,13 @@ static volatile uint8_t motor_start_sample;
 static volatile uint8_t motor_start_stable;
 static volatile uint8_t motor_start_armed;
 static volatile uint16_t motor_key_stable_ms;
+/* 自动目标与输出均由同一PIT线程推进；主循环仅通过快照读取状态。 */
+static uint8_t motor_autonomous_requested;
+static uint8_t motor_autonomous_blocked;
+static uint16_t motor_autonomous_channel1;
+static uint16_t motor_autonomous_channel2;
+static uint16_t motor_remote_zero_ms;
+static int8_t motor_remote_last_direction;
 #if REMOTE_CONTROL_ENABLED
 /* 主循环是邮箱写端，PIT是唯一输出端；临界区只拷贝固定大小标量。 */
 typedef struct
@@ -32,8 +39,6 @@ static volatile uint8_t motor_remote_link_lost;
 static volatile uint8_t motor_remote_stop;
 static volatile uint8_t motor_remote_neutral_ack;
 static uint32_t motor_remote_consumed_generation;
-static uint16_t motor_remote_zero_ms;
-static int8_t motor_remote_last_direction;
 #else
 static uint16_t motor_phase_elapsed_ms;
 static uint16_t motor_result_remaining_ms;
@@ -66,6 +71,107 @@ static void motor_reset_start_key(void)
     motor_key_stable_ms = 0U;
 }
 
+static void motor_zero_output(void)
+{
+    /* 只在最后一路非零命令归零时重置，重复停止不能抹去已累计的零输出间隔。 */
+    if (motor_status.channel1_duty_permille || motor_status.channel2_duty_permille)
+        motor_remote_zero_ms = 0U;
+    pwm_set_duty(MOTOR_CHANNEL1_PWM, 0U);
+    pwm_set_duty(MOTOR_CHANNEL2_PWM, 0U);
+    motor_status.channel1_duty_permille = 0U;
+    motor_status.channel2_duty_permille = 0U;
+    motor_status.applied_permille = 0;
+    motor_status.duty_permille = 0U;
+}
+
+static void motor_update_zero_time(void)
+{
+    if (!motor_status.channel1_duty_permille && !motor_status.channel2_duty_permille &&
+        motor_remote_zero_ms < REMOTE_CONTROL_DIRECTION_GAP_MS)
+    {
+        uint32_t zero_ms = (uint32_t)motor_remote_zero_ms + 10U;
+        motor_remote_zero_ms = zero_ms < REMOTE_CONTROL_DIRECTION_GAP_MS ?
+            (uint16_t)zero_ms : (uint16_t)REMOTE_CONTROL_DIRECTION_GAP_MS;
+    }
+}
+
+static void motor_autonomous_stop(void)
+{
+    motor_zero_output();
+    motor_status.autonomous_active = 0U;
+    motor_status.remote_armed = 0U;
+    motor_status.remote_wait_neutral = 0U;
+    motor_status.requested_permille = 0;
+    motor_status.command_age_ms = 0U;
+    motor_status.telemetry_visible = 0U;
+    if (motor_status.state != MOTOR_TEST_CONFIG_ERROR)
+        motor_status.state = MOTOR_AUTONOMOUS_STOPPED;
+#if !REMOTE_CONTROL_ENABLED
+    motor_phase_elapsed_ms = 0U;
+    motor_result_remaining_ms = 0U;
+#endif
+    motor_reset_start_key();
+}
+
+static uint8_t motor_autonomous_tick(void)
+{
+    uint16_t channel1 = motor_autonomous_channel1;
+    uint16_t channel2 = motor_autonomous_channel2;
+    if (!motor_autonomous_requested)
+    {
+        if (!motor_status.autonomous_active) return 0U;
+        motor_autonomous_stop();
+        return 1U;
+    }
+    /* 按键只负责撤权，不能让持续active请求在释放按键后自动复活。 */
+    if (!motor_status.ready || motor_autonomous_blocked ||
+        gpio_get_level(MOTOR_TEST_START_KEY_PIN) == MOTOR_TEST_KEY_ACTIVE_LEVEL)
+    {
+        motor_autonomous_blocked = 1U;
+        motor_autonomous_stop();
+        return 1U;
+    }
+    if (!motor_status.autonomous_active)
+    {
+        motor_autonomous_stop();
+        motor_status.autonomous_active = 1U;
+        motor_status.elapsed_ms = 0U;
+        ++motor_status.run_id;
+    }
+    motor_status.elapsed_ms += 10U;
+    if (channel1 == 0U && channel2 == 0U)
+    {
+        motor_zero_output();
+        motor_status.state = MOTOR_AUTONOMOUS_WAITING;
+        return 1U;
+    }
+    if (motor_remote_last_direction < 0)
+    {
+        motor_zero_output();
+        if (motor_remote_zero_ms < REMOTE_CONTROL_DIRECTION_GAP_MS)
+        {
+            motor_status.state = MOTOR_AUTONOMOUS_WAITING;
+            return 1U;
+        }
+    }
+    if (motor_remote_last_direction != 1)
+    {
+        gpio_set_level(MOTOR_CHANNEL1_DIRECTION_PIN, MOTOR_CHANNEL1_REFERENCE_LEVEL);
+        gpio_set_level(MOTOR_CHANNEL2_DIRECTION_PIN, MOTOR_CHANNEL2_REFERENCE_LEVEL);
+        motor_remote_last_direction = 1;
+    }
+    if (motor_status.channel1_duty_permille != channel1)
+        pwm_set_duty(MOTOR_CHANNEL1_PWM, (uint32_t)((uint64_t)PWM_DUTY_MAX * channel1 / 1000U));
+    if (motor_status.channel2_duty_permille != channel2)
+        pwm_set_duty(MOTOR_CHANNEL2_PWM, (uint32_t)((uint64_t)PWM_DUTY_MAX * channel2 / 1000U));
+    motor_status.channel1_duty_permille = channel1;
+    motor_status.channel2_duty_permille = channel2;
+    motor_status.duty_permille = channel1 > channel2 ? channel1 : channel2;
+    motor_status.applied_permille = (int16_t)motor_status.duty_permille;
+    motor_status.state = MOTOR_AUTONOMOUS_DRIVING;
+    return 1U;
+}
+
 #if !REMOTE_CONTROL_ENABLED
 static uint8_t motor_test_is_running(void)
 {
@@ -75,8 +181,16 @@ static uint8_t motor_test_is_running(void)
 
 static void motor_write_output(uint8_t channel1, uint8_t channel2)
 {
+    if (!channel1 && !channel2)
+    {
+        motor_zero_output();
+        return;
+    }
     pwm_set_duty(MOTOR_CHANNEL1_PWM, channel1 ? motor_test_pwm_duty : 0U);
     pwm_set_duty(MOTOR_CHANNEL2_PWM, channel2 ? motor_test_pwm_duty : 0U);
+    motor_status.channel1_duty_permille = channel1 ? (uint16_t)MOTOR_TEST_DUTY_PERMILLE : 0U;
+    motor_status.channel2_duty_permille = channel2 ? (uint16_t)MOTOR_TEST_DUTY_PERMILLE : 0U;
+    motor_remote_last_direction = 1;
     motor_status.duty_permille = (channel1 || channel2) ? (uint16_t)MOTOR_TEST_DUTY_PERMILLE : 0U;
 }
 
@@ -128,8 +242,6 @@ void motor_control_init(void)
     motor_remote_link_lost = 0U;
     motor_remote_stop = 0U;
     motor_remote_neutral_ack = 0U;
-    motor_remote_zero_ms = 0U;
-    motor_remote_last_direction = 0;
 #else
     motor_status.state = motor_config_is_valid() ? MOTOR_TEST_IDLE : MOTOR_TEST_CONFIG_ERROR;
     motor_status.telemetry_visible = motor_config_is_valid() ? 0U : 1U;
@@ -148,6 +260,15 @@ void motor_control_init(void)
     motor_status.applied_permille = 0;
     motor_status.command_age_ms = 0U;
     motor_status.arm_generation = 0U;
+    motor_status.autonomous_active = 0U;
+    motor_status.channel1_duty_permille = 0U;
+    motor_status.channel2_duty_permille = 0U;
+    motor_autonomous_requested = 0U;
+    motor_autonomous_blocked = 0U;
+    motor_autonomous_channel1 = 0U;
+    motor_autonomous_channel2 = 0U;
+    motor_remote_zero_ms = 0U;
+    motor_remote_last_direction = 0;
     motor_reset_start_key();
     motor_initialized = 1U;
     __set_PRIMASK(interrupt_mask);
@@ -212,6 +333,7 @@ static void motor_begin_test(void)
 void motor_control_tick_10ms(void)
 {
     if (!motor_initialized) return;
+    motor_update_zero_time();
     if (motor_result_remaining_ms != 0U)
     {
         motor_result_remaining_ms -= 10U;
@@ -222,11 +344,18 @@ void motor_control_tick_10ms(void)
     if (gpio_get_level(MOTOR_TEST_STOP_KEY_PIN) == MOTOR_TEST_KEY_ACTIVE_LEVEL)
     {
         motor_servo_stop_pending = 1U;
+        if (motor_autonomous_requested || motor_status.autonomous_active)
+        {
+            motor_autonomous_blocked = 1U;
+            motor_autonomous_stop();
+            return;
+        }
         motor_reset_start_key();
         if (motor_status.state != MOTOR_TEST_STOPPED && motor_status.state != MOTOR_TEST_CONFIG_ERROR)
             motor_finish(MOTOR_TEST_STOPPED);
         return;
     }
+    if (motor_autonomous_tick()) return;
     if (!motor_status.ready) return;
 
     if (motor_start_key_pressed())
@@ -237,7 +366,7 @@ void motor_control_tick_10ms(void)
             return;
         }
         if (motor_status.state == MOTOR_TEST_IDLE || motor_status.state == MOTOR_TEST_COMPLETE ||
-            motor_status.state == MOTOR_TEST_STOPPED)
+            motor_status.state == MOTOR_TEST_STOPPED || motor_status.state == MOTOR_AUTONOMOUS_STOPPED)
         {
             motor_begin_test();
             return;
@@ -290,6 +419,7 @@ void motor_control_tick_10ms(void)
         case MOTOR_TEST_COMPLETE:
         case MOTOR_TEST_STOPPED:
         case MOTOR_TEST_CONFIG_ERROR:
+        case MOTOR_AUTONOMOUS_STOPPED:
             break;
         default:
             motor_write_output(0U, 0U);
@@ -324,12 +454,7 @@ static motor_remote_input_t motor_remote_take_input(void)
 
 static void motor_remote_zero_output(void)
 {
-    /* 只在实际非零输出归零的时刻重置计时，后续停止不能抹去已累计的零输出间隔。 */
-    if (motor_status.applied_permille != 0) motor_remote_zero_ms = 0U;
-    pwm_set_duty(MOTOR_CHANNEL1_PWM, 0U);
-    pwm_set_duty(MOTOR_CHANNEL2_PWM, 0U);
-    motor_status.applied_permille = 0;
-    motor_status.duty_permille = 0U;
+    motor_zero_output();
 }
 
 static void motor_remote_disarm(void)
@@ -391,6 +516,8 @@ static void motor_remote_apply_request(void)
     }
     motor_status.applied_permille = requested;
     motor_status.duty_permille = magnitude;
+    motor_status.channel1_duty_permille = magnitude;
+    motor_status.channel2_duty_permille = magnitude;
     motor_status.state = MOTOR_REMOTE_DRIVING;
 }
 
@@ -400,20 +527,22 @@ void motor_control_tick_10ms(void)
     if (!motor_initialized) return;
     input = motor_remote_take_input();
     motor_status.remote_link = input.link;
-    if (motor_status.applied_permille == 0 && motor_remote_zero_ms < REMOTE_CONTROL_DIRECTION_GAP_MS)
-    {
-        uint32_t zero_ms = (uint32_t)motor_remote_zero_ms + 10U;
-        motor_remote_zero_ms = zero_ms < REMOTE_CONTROL_DIRECTION_GAP_MS ?
-            (uint16_t)zero_ms : (uint16_t)REMOTE_CONTROL_DIRECTION_GAP_MS;
-    }
+    motor_update_zero_time();
 
     /* S3原始电平先于武装、连接恢复和邮箱；同时清掉C12待决按下。 */
     if (gpio_get_level(MOTOR_TEST_STOP_KEY_PIN) == MOTOR_TEST_KEY_ACTIVE_LEVEL)
     {
         motor_servo_stop_pending = 1U;
+        if (motor_autonomous_requested || motor_status.autonomous_active)
+        {
+            motor_autonomous_blocked = 1U;
+            motor_autonomous_stop();
+            return;
+        }
         motor_remote_disarm();
         return;
     }
+    if (motor_autonomous_tick()) return;
     if (input.link_lost || !input.link)
     {
         motor_remote_disarm();
@@ -466,6 +595,16 @@ void motor_control_tick_10ms(void)
     motor_remote_apply_request();
 }
 #endif
+
+void motor_control_autonomous_set(uint8_t active, uint16_t m1_permille, uint16_t m2_permille)
+{
+    motor_autonomous_requested = active ? 1U : 0U;
+    if (!active) motor_autonomous_blocked = 0U;
+    motor_autonomous_channel1 = m1_permille <= MOTOR_TEST_MAX_DUTY_PERMILLE ?
+        m1_permille : MOTOR_TEST_MAX_DUTY_PERMILLE;
+    motor_autonomous_channel2 = m2_permille <= MOTOR_TEST_MAX_DUTY_PERMILLE ?
+        m2_permille : MOTOR_TEST_MAX_DUTY_PERMILLE;
+}
 
 void motor_control_remote_set_link(uint8_t available)
 {

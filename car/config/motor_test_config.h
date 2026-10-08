@@ -2,7 +2,7 @@
 #define AUTOCAR_MOTOR_TEST_CONFIG_H
 
 /* 逐飞RT1064 V3.0的P8 MOTOR DRIVER1；通道编号来自双路电机例程。
- * 模块M1为C8/C9，M2为C6/C7。用户已确认两路参考HIGH均为前进；通道与左右轮对应仍待记录。 */
+ * 模块M1为C8/C9左轮，M2为C6/C7右轮；用户已确认对应关系及两路参考HIGH均为前进。 */
 #define MOTOR_CHANNEL1_PWM              PWM2_MODULE1_CHA_C8
 #define MOTOR_CHANNEL1_PWM_PIN          C8
 #define MOTOR_CHANNEL1_DIRECTION_PIN    C9

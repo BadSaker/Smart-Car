@@ -1,0 +1,34 @@
+
+[2026-10-08 17:19:39 +08:00] 任务：摄像头低速自动驾驶与PID模块
+范围：car/src/include/config/tests、autocar.uvprojx、AGENTS导航及相关docs；无自动烧录。
+变更：调研Otsu/CMU/GitHub/MathWorks并自主实现视觉、左右环岛/十字、control_pid、双轮速度PID、C15启停、近场斑马线一圈停车、超时/反向/堵转/超速保护。M1左/M2右已确认；encoder+1尚属待测。兼容C12遥控，停止时互斥清旧命令；servo保持1480和1420..1540。
+验证：完整71 unittest退出0；原19算法通过；视觉177、控制19999、联合256及服务竞态回归通过。审查修复连续斑马线打断、圈程门槛漏计、低速元素时限、servo模式竞争、十字跨层门限与远场黑区补线；均有红转绿证据。实际主工程Keil0错误0警告，mode0隔离Keil0/0。364文件引用有效；520冻结文件不变；新增18本地链接有效，已有SeekFree来源缺失657条链接记录，未移动/恢复来源。
+产物：outputs/firmware/autocar.axf/hex/bin与实际下载缓存一致；HEX校验和与BIN数据一致。备份car_before-autonomous-driving_20261008_163804.zip。
+固件：{"axf": {"size": 984280, "sha256": "916962a2a8723c409482ead7a1fccb2d231f6e9a74293a577c2ba4ea3b6324c4"}, "hex": {"size": 352328, "sha256": "515592602e1cae0b16b3438b52e119cbf9c91b7a568b9790b8aec267b0ae1499"}, "bin": {"size": 125248, "sha256": "10ff44a737e644d5740ed49256eda01e6e9f6ddad5eaab4efd6e144a96d54e79"}}
+未解决：实际编码器符号、相机视野/曝光/透视、机械最大角度、闭环增益及终点500mm必须实车标定；红砖专用识别绕行未实现；同步WiFi长等待触发停车。未提供实车完赛证据。
+
+[2026-10-08 17:23:54 +08:00] 自动驾驶收尾补充
+变更：修正curve与特殊元素的限速分类，使弯道120mm/s入口独立生效；更新car/README为当前阶段。
+验证：弯道限速新增红→绿回归，控制器20339断言；默认和mode0重新全量Keil均0错误0警告，默认Code105320/RO13172/RW300/ZI104684。364工程引用、21新增本地链接、冻结边界和下载固件一致性复核通过。
+最终固件：{"axf": {"size": 984424, "sha256": "01820fc1fb14521b40d8d378c8d67786ffed3cb7987056a4969390f910818f4c"}, "hex": {"size": 352508, "sha256": "5ffe4df1ef5c5953f5b2ca92e6409765c65acc94b29279c10aa9b7567a1ae4d3"}, "bin": {"size": 125312, "sha256": "3a008488fd49c0d58119362d3df965f625f8b9b17a3e19a4d6154a704983de37"}}
+
+[2026-10-08 17:24:34 +08:00] 收尾：最终完整71项回归退出0；本任务autodrive、camera-debug-tests、algorithm-tests临时目录经绝对路径/重解析点检查后删除。保留tmp/build-autocar下载缓存、outputs固件/备份和两份原重要报告。未自动烧录或实车运行。
+
+[2026-10-08 19:57:10 +08:00] 任务：手柄闭环调速及提高前进速度
+授权：用户执行并要求额度不足时在tmp保留进度；本轮正常完成，随后按常规清理临时目录。
+范围：remote_speed_control/config/tests新增，motor_control接入，remote_control逻辑尺度、屏幕顶部诊断、工程3引用、相关docs。
+变更：W目标350mm/s、S200mm/s，两轮独立PID，PWMcap200‰，目标1500mm/s²斜坡/PWM8‰每10ms；保留300ms行驶许可、C12+Down、S3/断链/自动互斥。反转至少100ms且两轮绝对速度<=40mm/s。方向沿用AUTO_LEFT/RIGHT_ENCODER_SIGN，M1左/M2右。故障解除允许并需本地重启。
+验证：85项完整unittest退出0，新13内核测试含17非法配置、306闭环后端检查、256自动联合及竞态通过；同PWM问题先红后绿。独立review捕获反转等待旧反馈绕过保护，已用全PIT反馈年龄修复，exact复现红→绿。默认Keil0错误0警告 Code109016/RO13200/RW300/ZI104828；REMOTE_CONTROL_ENABLED=0隔离全量0/0，未发布隔离版本。
+核对：528受保护文件未改、367引用存在、5新增本地链接有效；最终AXF/HEX/BIN与Keil下载缓存一致，HEX校验和/Flash字节对照BIN通过，重要报告仍2份。
+产物：outputs/firmware/autocar.axf/hex/bin；备份car_before-remote-speed_20261008_193758.zip；logs/remote-speed-suite.log、remote-speed-build.log、remote-speed-mode0-build.log。
+固件：{"axf": {"size": 997888, "sha256": "c9b33efca1e229a5c351defde6a1556a576f0904d6aea34bc8d861ae82c54304"}, "hex": {"size": 362948, "sha256": "0d6d135babdd7b3edfbd26073d2d69d8e1b82352b81ac12eff7830e4e3f4fb88"}, "bin": {"size": 129024, "sha256": "71ff936ecf7b9f72395746f5c845e26d9de165b42479b8603be0783844e49a7d"}}
+未验证：实车方向符号、实际轮速/负载和PID增益；目标速度不是实测值，不保证每瞬间两轮完全一致。未烧录或驱动实车。
+手柄闭环任务收尾：已清理本轮创建的tmp/remote-speed、tmp/camera-debug-tests、tmp/autodrive。保留tmp/build-autocar下载缓存；本轮已完成，未触发额度不足进度保留条件。
+
+[2026-10-08 23:11:56 +08:00] 任务：用户明确要求直接回退17:25版本
+来源：outputs/backups/car_before-remote-speed_20261008_193758.zip；该快照保留17:24完成/约17:25交付的自动驾驶版。
+变更：恢复car及配套docs，共26差异文件；删除7个后加遥控闭环源/头/配置/测试。保留用户最新AGENTS规则。手柄恢复10%开环，C15自动驾驶保留。
+回退前备份：outputs/backups/car_before-rollback-1725_20261008_230958.zip（含当前car/docs/AGENTS及firmware）。
+验证：car/docs恢复时631文件与目标快照完全一致；最终car仍逐字节一致；364工程引用均存在；71回归测试退出0；Keil0错误0警告，Code105320/RO13172/RW300/ZI104684。AXF/HEX/BIN的SHA256均与17:23:54日志记录完全一致，实际下载缓存与outputs/firmware一致。
+日志：rollback-1725-tests.log、rollback-1725-build.log。未自动烧录或实车运行。
+回退收尾：仅清理tmp/rollback-1725任务目录，保留tmp/build-autocar下载缓存及outputs全部持久产物。

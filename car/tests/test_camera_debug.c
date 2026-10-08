@@ -7,10 +7,13 @@
 #include "motor_control.h"
 #include "encoder_feedback.h"
 #include "remote_control.h"
+#include "autonomous_control.h"
 
 /* 仅提供屏幕状态行需要的只读桩；舵机行为由独立真实模块测试覆盖。 */
 static servo_control_status_t servo_status;
 const servo_control_status_t *servo_control_get_status(void) { return &servo_status; }
+static autonomous_drive_status_t auto_status;
+void autonomous_control_get_status(autonomous_drive_status_t *out) { if(out)*out=auto_status; }
 static motor_control_status_t motor_status;
 static remote_control_status_t remote_status;
 void remote_control_get_status(remote_control_status_t *out) { if (out) *out = remote_status; }
@@ -294,6 +297,17 @@ int main(int argc, char **argv)
         CHECK(camera_debug_read_control(rx, sizeof(rx)) < 0 && control_read_calls == 1);
         puts("PASS: RX only when link and module ready, correct bytes and invalid arguments"); return 0;
     }
+#endif
+#ifdef TEST_AUTONOMOUS_DISPLAY
+    auto_status.active=1;auto_status.state=AUTO_DRIVE_RUNNING;auto_status.confidence=95;
+    auto_status.distance_mm=123;auto_status.left_duty_permille=85;auto_status.right_duty_permille=87;
+    camera_display_statistics();CHECK(strstr(telemetry_line0,"AUTO:RUN")!=NULL);
+    CHECK(strstr(telemetry_line1,"85/87")!=NULL);
+    auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_CAMERA_STALE;
+    camera_display_statistics();CHECK(strstr(telemetry_line0,"CAMERA")!=NULL);
+    motor_status.remote_armed=1;motor_status.remote_link=1;
+    camera_display_statistics();CHECK(strstr(telemetry_line0,"RC:")!=NULL);
+    puts("PASS: autonomous status and remote display arbitration");return 0;
 #endif
 #ifdef TEST_REMOTE_DISPLAY
     motor_status.remote_link = 1;

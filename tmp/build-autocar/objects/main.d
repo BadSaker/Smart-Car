@@ -96,4 +96,7 @@
   include\camera_debug.h config\camera_debug_config.h \
   include\camera_display.h include\servo_control.h \
   include\motor_control.h include\encoder_feedback.h \
-  include\remote_control.h config\remote_control_config.h
+  include\remote_control.h config\remote_control_config.h \
+  include\autonomous_control.h include\autonomous_drive.h \
+  include\control_pid.h include\track_vision.h \
+  config\autonomous_config.h

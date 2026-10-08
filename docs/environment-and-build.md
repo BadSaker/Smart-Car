@@ -1,5 +1,17 @@
 # 环境、构建与调试
 
+## 当前生效：已回退17:25版本（2026-10-08）
+
+用户于本日后续明确要求回退，恢复car_before-remote-speed_20261008_193758.zip所保存的17:25交付状态：C15自动驾驶保留，手柄恢复10%开环，撤销后来的手柄闭环与提速。71项回归通过，Keil0错误0警告，三种固件哈希均与当时记录完全一致。下载前重新加载主工程，避免Keil内存中的后续工程状态覆盖已恢复文件。日志：[回退测试](../logs/rollback-1725-tests.log)、[回退构建](../logs/rollback-1725-build.log)。本次未自动烧录。
+
+
+## 当前构建阶段：自动驾驶（2026-10-08）
+
+主工程car/autocar.uvprojx新增10个引用，共364个，重新加载工程后Rebuild。当前C15自动驾驶，C12遥控允许/自动取消，S3停车；操作和调参看[自动驾驶指南](autonomous-driving.md)，旧舵机S2测试说明仅供历史追溯。
+
+71项完整unittest与19项旧算法通过。默认模式实际Keil全量0错误0警告（Code105320/RO13172/RW300/ZI104684），关闭遥控隔离构建也0/0。实际下载缓存与outputs/firmware三种固件一致。入口仍为car/scripts/build.ps1；完整回归使用python -B -m unittest discover -s car/tests -p 'test_*.py'，旧test.ps1不能代替全套测试。日志见[本轮构建](../logs/autonomous-build.log)和[完整回归](../logs/autonomous-suite.log)。
+
+
 工程入口：[car/autocar.uvprojx](../car/autocar.uvprojx)，目标名 `autocar`。本次构建对象是整理后的应用工程，不是逐一构建84个供应商例程。
 
 ## 本机已验证环境

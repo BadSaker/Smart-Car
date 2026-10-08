@@ -13,6 +13,9 @@
 #include "encoder_feedback.h"
 #include "remote_control.h"
 #include "remote_control_config.h"
+#include "autonomous_control.h"
+#include "autonomous_config.h"
+#include "track_vision.h"
 
 extern volatile uint32_t app_uptime_ms;
 

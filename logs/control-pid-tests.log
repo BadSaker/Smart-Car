@@ -1,0 +1,350 @@
+test_arithmetic_overflow_clears_state_and_reports_invalid (__main__.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid) ... FAIL
+test_derivative_filter_at_variable_sample_periods (__main__.ControlPidTests.test_derivative_filter_at_variable_sample_periods) ... FAIL
+test_feedforward_saturation_allows_unwinding (__main__.ControlPidTests.test_feedforward_saturation_allows_unwinding) ... FAIL
+test_integral_limits_are_output_units (__main__.ControlPidTests.test_integral_limits_are_output_units) ... FAIL
+test_integral_only_can_reach_output_limits (__main__.ControlPidTests.test_integral_only_can_reach_output_limits) ... FAIL
+test_integral_scales_with_elapsed_seconds (__main__.ControlPidTests.test_integral_scales_with_elapsed_seconds) ... FAIL
+test_invalid_configuration_and_null_calls_are_safe (__main__.ControlPidTests.test_invalid_configuration_and_null_calls_are_safe) ... FAIL
+test_measurement_derivative_avoids_setpoint_kick (__main__.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick) ... FAIL
+test_nonfinite_inputs_clear_state_and_next_sample_recovers (__main__.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers) ... FAIL
+test_proportional_feedforward_and_output_limits (__main__.ControlPidTests.test_proportional_feedforward_and_output_limits) ... FAIL
+test_reset_clears_integral_and_derivative_history (__main__.ControlPidTests.test_reset_clears_integral_and_derivative_history) ... FAIL
+test_saturation_freezes_windup_and_reversal_recovers (__main__.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers) ... FAIL
+test_signed_gain_uses_integral_direction (__main__.ControlPidTests.test_signed_gain_uses_integral_direction) ... FAIL
+
+======================================================================
+FAIL: test_arithmetic_overflow_clears_state_and_reports_invalid (__main__.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 77, in test_arithmetic_overflow_clears_state_and_reports_invalid
+    self.run_case("overflow")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 252: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_derivative_filter_at_variable_sample_periods (__main__.ControlPidTests.test_derivative_filter_at_variable_sample_periods)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 65, in test_derivative_filter_at_variable_sample_periods
+    self.run_case("derivative-filter")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 152: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_feedforward_saturation_allows_unwinding (__main__.ControlPidTests.test_feedforward_saturation_allows_unwinding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 53, in test_feedforward_saturation_allows_unwinding
+    self.run_case("feedforward-unwind")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 91: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_integral_limits_are_output_units (__main__.ControlPidTests.test_integral_limits_are_output_units)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 47, in test_integral_limits_are_output_units
+    self.run_case("integral-limit")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 58: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_integral_only_can_reach_output_limits (__main__.ControlPidTests.test_integral_only_can_reach_output_limits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 59, in test_integral_only_can_reach_output_limits
+    self.run_case("integral-only")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 123: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_integral_scales_with_elapsed_seconds (__main__.ControlPidTests.test_integral_scales_with_elapsed_seconds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 44, in test_integral_scales_with_elapsed_seconds
+    self.run_case("integral-time")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 41: control_pid_init(&fast, &config)
+
+
+======================================================================
+FAIL: test_invalid_configuration_and_null_calls_are_safe (__main__.ControlPidTests.test_invalid_configuration_and_null_calls_are_safe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 74, in test_invalid_configuration_and_null_calls_are_safe
+    self.run_case("invalid-config")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 216: control_pid_init(&pid, &good)
+
+
+======================================================================
+FAIL: test_measurement_derivative_avoids_setpoint_kick (__main__.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 62, in test_measurement_derivative_avoids_setpoint_kick
+    self.run_case("derivative-measurement")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 137: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_nonfinite_inputs_clear_state_and_next_sample_recovers (__main__.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 71, in test_nonfinite_inputs_clear_state_and_next_sample_recovers
+    self.run_case("invalid-input")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 196: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_proportional_feedforward_and_output_limits (__main__.ControlPidTests.test_proportional_feedforward_and_output_limits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 41, in test_proportional_feedforward_and_output_limits
+    self.run_case("proportional")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 25: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_reset_clears_integral_and_derivative_history (__main__.ControlPidTests.test_reset_clears_integral_and_derivative_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 68, in test_reset_clears_integral_and_derivative_history
+    self.run_case("reset")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 167: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_saturation_freezes_windup_and_reversal_recovers (__main__.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 50, in test_saturation_freezes_windup_and_reversal_recovers
+    self.run_case("antiwindup")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 73: control_pid_init(&pid, &config)
+
+
+======================================================================
+FAIL: test_signed_gain_uses_integral_direction (__main__.ControlPidTests.test_signed_gain_uses_integral_direction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 56, in test_signed_gain_uses_integral_direction
+    self.run_case("signed-gain")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 107: control_pid_init(&pid, &config)
+
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.462s
+
+FAILED (failures=13)
+test_arithmetic_overflow_clears_state_and_reports_invalid (__main__.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid) ... FAIL
+test_derivative_filter_at_variable_sample_periods (__main__.ControlPidTests.test_derivative_filter_at_variable_sample_periods) ... FAIL
+test_feedforward_saturation_allows_unwinding (__main__.ControlPidTests.test_feedforward_saturation_allows_unwinding) ... FAIL
+test_integral_limits_are_output_units (__main__.ControlPidTests.test_integral_limits_are_output_units) ... FAIL
+test_integral_only_can_reach_output_limits (__main__.ControlPidTests.test_integral_only_can_reach_output_limits) ... FAIL
+test_integral_scales_with_elapsed_seconds (__main__.ControlPidTests.test_integral_scales_with_elapsed_seconds) ... FAIL
+test_invalid_configuration_and_null_calls_are_safe (__main__.ControlPidTests.test_invalid_configuration_and_null_calls_are_safe) ... ok
+test_measurement_derivative_avoids_setpoint_kick (__main__.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick) ... FAIL
+test_nonfinite_inputs_clear_state_and_next_sample_recovers (__main__.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers) ... FAIL
+test_proportional_feedforward_and_output_limits (__main__.ControlPidTests.test_proportional_feedforward_and_output_limits) ... FAIL
+test_reset_clears_integral_and_derivative_history (__main__.ControlPidTests.test_reset_clears_integral_and_derivative_history) ... FAIL
+test_saturation_freezes_windup_and_reversal_recovers (__main__.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers) ... FAIL
+test_signed_gain_uses_integral_direction (__main__.ControlPidTests.test_signed_gain_uses_integral_direction) ... FAIL
+
+======================================================================
+FAIL: test_arithmetic_overflow_clears_state_and_reports_invalid (__main__.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 77, in test_arithmetic_overflow_clears_state_and_reports_invalid
+    self.run_case("overflow")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 257: !pid.valid
+
+
+======================================================================
+FAIL: test_derivative_filter_at_variable_sample_periods (__main__.ControlPidTests.test_derivative_filter_at_variable_sample_periods)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 65, in test_derivative_filter_at_variable_sample_periods
+    self.run_case("derivative-filter")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 155: isfinite(actual) && fabsf(actual - (-4.0f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_feedforward_saturation_allows_unwinding (__main__.ControlPidTests.test_feedforward_saturation_allows_unwinding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 53, in test_feedforward_saturation_allows_unwinding
+    self.run_case("feedforward-unwind")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 93: isfinite(actual) && fabsf(actual - (2.0f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_integral_limits_are_output_units (__main__.ControlPidTests.test_integral_limits_are_output_units)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 47, in test_integral_limits_are_output_units
+    self.run_case("integral-limit")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 60: isfinite(actual) && fabsf(actual - (0.5f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_integral_only_can_reach_output_limits (__main__.ControlPidTests.test_integral_only_can_reach_output_limits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 59, in test_integral_only_can_reach_output_limits
+    self.run_case("integral-only")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 125: isfinite(actual) && fabsf(actual - (7.0f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_integral_scales_with_elapsed_seconds (__main__.ControlPidTests.test_integral_scales_with_elapsed_seconds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 44, in test_integral_scales_with_elapsed_seconds
+    self.run_case("integral-time")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 46: isfinite(actual) && fabsf(actual - (0.2f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_measurement_derivative_avoids_setpoint_kick (__main__.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 62, in test_measurement_derivative_avoids_setpoint_kick
+    self.run_case("derivative-measurement")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 141: isfinite(actual) && fabsf(actual - (-4.0f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_nonfinite_inputs_clear_state_and_next_sample_recovers (__main__.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 71, in test_nonfinite_inputs_clear_state_and_next_sample_recovers
+    self.run_case("invalid-input")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 200: pid.integral > 0.0f
+
+
+======================================================================
+FAIL: test_proportional_feedforward_and_output_limits (__main__.ControlPidTests.test_proportional_feedforward_and_output_limits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 41, in test_proportional_feedforward_and_output_limits
+    self.run_case("proportional")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 27: isfinite(actual) && fabsf(actual - (4.5f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_reset_clears_integral_and_derivative_history (__main__.ControlPidTests.test_reset_clears_integral_and_derivative_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 68, in test_reset_clears_integral_and_derivative_history
+    self.run_case("reset")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 171: pid.integral > 0.0f && pid.derivative < 0.0f
+
+
+======================================================================
+FAIL: test_saturation_freezes_windup_and_reversal_recovers (__main__.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 50, in test_saturation_freezes_windup_and_reversal_recovers
+    self.run_case("antiwindup")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 76: isfinite(actual) && fabsf(actual - (7.0f)) < 0.0001f
+
+
+======================================================================
+FAIL: test_signed_gain_uses_integral_direction (__main__.ControlPidTests.test_signed_gain_uses_integral_direction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 56, in test_signed_gain_uses_integral_direction
+    self.run_case("signed-gain")
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_control_pid.py", line 38, in run_case
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : FAIL line 109: isfinite(actual) && fabsf(actual - (7.0f)) < 0.0001f
+
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.401s
+
+FAILED (failures=12)
+test_arithmetic_overflow_clears_state_and_reports_invalid (__main__.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid) ... ok
+test_derivative_filter_at_variable_sample_periods (__main__.ControlPidTests.test_derivative_filter_at_variable_sample_periods) ... ok
+test_feedforward_saturation_allows_unwinding (__main__.ControlPidTests.test_feedforward_saturation_allows_unwinding) ... ok
+test_integral_limits_are_output_units (__main__.ControlPidTests.test_integral_limits_are_output_units) ... ok
+test_integral_only_can_reach_output_limits (__main__.ControlPidTests.test_integral_only_can_reach_output_limits) ... ok
+test_integral_scales_with_elapsed_seconds (__main__.ControlPidTests.test_integral_scales_with_elapsed_seconds) ... ok
+test_invalid_configuration_and_null_calls_are_safe (__main__.ControlPidTests.test_invalid_configuration_and_null_calls_are_safe) ... ok
+test_measurement_derivative_avoids_setpoint_kick (__main__.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick) ... ok
+test_nonfinite_inputs_clear_state_and_next_sample_recovers (__main__.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers) ... ok
+test_proportional_feedforward_and_output_limits (__main__.ControlPidTests.test_proportional_feedforward_and_output_limits) ... ok
+test_reset_clears_integral_and_derivative_history (__main__.ControlPidTests.test_reset_clears_integral_and_derivative_history) ... ok
+test_saturation_freezes_windup_and_reversal_recovers (__main__.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers) ... ok
+test_signed_gain_uses_integral_direction (__main__.ControlPidTests.test_signed_gain_uses_integral_direction) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.404s
+
+OK
+ARMCLANG 6.21 Cortex-M7 C99: PASS
+Algorithm checks: 19 passed, 0 failed (19 total)
+test_arithmetic_overflow_clears_state_and_reports_invalid (__main__.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid) ... ok
+test_derivative_filter_at_variable_sample_periods (__main__.ControlPidTests.test_derivative_filter_at_variable_sample_periods) ... ok
+test_feedforward_saturation_allows_unwinding (__main__.ControlPidTests.test_feedforward_saturation_allows_unwinding) ... ok
+test_integral_limits_are_output_units (__main__.ControlPidTests.test_integral_limits_are_output_units) ... ok
+test_integral_only_can_reach_output_limits (__main__.ControlPidTests.test_integral_only_can_reach_output_limits) ... ok
+test_integral_scales_with_elapsed_seconds (__main__.ControlPidTests.test_integral_scales_with_elapsed_seconds) ... ok
+test_invalid_configuration_and_null_calls_are_safe (__main__.ControlPidTests.test_invalid_configuration_and_null_calls_are_safe) ... ok
+test_measurement_derivative_avoids_setpoint_kick (__main__.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick) ... ok
+test_nonfinite_inputs_clear_state_and_next_sample_recovers (__main__.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers) ... ok
+test_proportional_feedforward_and_output_limits (__main__.ControlPidTests.test_proportional_feedforward_and_output_limits) ... ok
+test_reset_clears_integral_and_derivative_history (__main__.ControlPidTests.test_reset_clears_integral_and_derivative_history) ... ok
+test_saturation_freezes_windup_and_reversal_recovers (__main__.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers) ... ok
+test_signed_gain_uses_integral_direction (__main__.ControlPidTests.test_signed_gain_uses_integral_direction) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.538s
+
+OK
+Final verification: 13 PID tests PASS; UTF-8 files valid; tmp/autodrive-pid cleaned.

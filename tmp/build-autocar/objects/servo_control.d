@@ -1,7 +1,8 @@
 ../tmp/build-autocar/objects/servo_control.o: src\servo_control.c \
   include\servo_control.h D:\Keil_v5\ARM\ARMCLANG\include\stdint.h \
-  config\servo_config.h library\zf_driver\zf_driver_gpio.h \
-  library\sdk\deceive\MIMXRT1064.h library\sdk\CMSIS\Include\core_cm7.h \
+  config\servo_config.h config\autonomous_config.h \
+  library\zf_driver\zf_driver_gpio.h library\sdk\deceive\MIMXRT1064.h \
+  library\sdk\CMSIS\Include\core_cm7.h \
   C:\Users\Lynn\Desktop\Files\Autodrive\car\library\sdk\CMSIS\Include\cmsis_version.h \
   C:\Users\Lynn\Desktop\Files\Autodrive\car\library\sdk\CMSIS\Include\cmsis_compiler.h \
   C:\Users\Lynn\Desktop\Files\Autodrive\car\library\sdk\CMSIS\Include\cmsis_armclang.h \

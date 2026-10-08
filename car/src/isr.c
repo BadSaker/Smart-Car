@@ -58,9 +58,10 @@ void PIT_IRQHandler(void)
     if(pit_flag_get(PIT_CH0))
     {
         pit_flag_clear(PIT_CH0);
-        /* 有限电机时序不依赖主循环；随后采样两路自由运行计数器。 */
-        motor_control_tick_10ms();
+        /* 先采样本拍反馈，再执行闭环与保护，最后由唯一后端写PWM。 */
         encoder_feedback_tick_10ms();
+        autonomous_control_tick_10ms(app_uptime_ms);
+        motor_control_tick_10ms();
     }
     
     if(pit_flag_get(PIT_CH1))

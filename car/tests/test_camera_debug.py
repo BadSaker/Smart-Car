@@ -102,6 +102,7 @@ PROFILES['wifi-switch-invalid'] = ['CAMERA_DEBUG_WIFI_SSID=""',
 PROFILES['motor-telemetry'] = WIFI + ['TEST_MOTOR_TELEMETRY=1', 'REMOTE_CONTROL_ENABLED=0']
 PROFILES['control-rx'] = WIFI + ['TEST_WIFI_CONTROL_RX=1', 'CAMERA_DEBUG_WIFI_BOOT_ENABLED=1']
 PROFILES['remote-display'] = WIFI + ['TEST_REMOTE_DISPLAY=1']
+PROFILES['autonomous-display'] = WIFI + ['TEST_AUTONOMOUS_DISPLAY=1']
 
 
 class CameraDebugTests(unittest.TestCase):

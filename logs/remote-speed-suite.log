@@ -1,0 +1,214 @@
+test_hardware_boundary_integration (test_autonomous_control.AutonomousControlTests.test_hardware_boundary_integration) ... ok
+test_controller (test_autonomous_drive.AutonomousDriveTests.test_controller) ... ok
+test_autonomous_ownership (test_autonomous_motor.AutonomousMotorTests.test_autonomous_ownership)
+断链误停、旧遥控复活、停车未锁存或换向无间隔都必须使断言失败。 ... ok
+test_owner_and_rate (test_autonomous_servo.AutonomousServoTests.test_owner_and_rate) ... ok
+test_export_failure_preserves_previous_complete_set (test_build_script.BuildExportTests.test_export_failure_preserves_previous_complete_set) ... ok
+test_linker_map_stays_temporary_and_preserves_reports (test_build_script.BuildExportTests.test_linker_map_stays_temporary_and_preserves_reports) ... ok
+test_missing_exporter_fails_without_publishing (test_build_script.BuildExportTests.test_missing_exporter_fails_without_publishing) ... ok
+test_success_publishes_all_three_new_files (test_build_script.BuildExportTests.test_success_publishes_all_three_new_files) ... ok
+test_protocol_profiles (test_camera_debug.CameraDebugTests.test_protocol_profiles) ... ok
+test_arithmetic_overflow_clears_state_and_reports_invalid (test_control_pid.ControlPidTests.test_arithmetic_overflow_clears_state_and_reports_invalid) ... ok
+test_derivative_filter_at_variable_sample_periods (test_control_pid.ControlPidTests.test_derivative_filter_at_variable_sample_periods) ... ok
+test_feedforward_saturation_allows_unwinding (test_control_pid.ControlPidTests.test_feedforward_saturation_allows_unwinding) ... ok
+test_integral_limits_are_output_units (test_control_pid.ControlPidTests.test_integral_limits_are_output_units) ... ok
+test_integral_only_can_reach_output_limits (test_control_pid.ControlPidTests.test_integral_only_can_reach_output_limits) ... ok
+test_integral_scales_with_elapsed_seconds (test_control_pid.ControlPidTests.test_integral_scales_with_elapsed_seconds) ... ok
+test_invalid_configuration_and_null_calls_are_safe (test_control_pid.ControlPidTests.test_invalid_configuration_and_null_calls_are_safe) ... ok
+test_measurement_derivative_avoids_setpoint_kick (test_control_pid.ControlPidTests.test_measurement_derivative_avoids_setpoint_kick) ... ok
+test_nonfinite_inputs_clear_state_and_next_sample_recovers (test_control_pid.ControlPidTests.test_nonfinite_inputs_clear_state_and_next_sample_recovers) ... ok
+test_proportional_feedforward_and_output_limits (test_control_pid.ControlPidTests.test_proportional_feedforward_and_output_limits) ... ok
+test_reset_clears_integral_and_derivative_history (test_control_pid.ControlPidTests.test_reset_clears_integral_and_derivative_history) ... ok
+test_saturation_freezes_windup_and_reversal_recovers (test_control_pid.ControlPidTests.test_saturation_freezes_windup_and_reversal_recovers) ... ok
+test_signed_gain_uses_integral_direction (test_control_pid.ControlPidTests.test_signed_gain_uses_integral_direction) ... ok
+test_edges_after_counter_read_are_not_lost (test_encoder_feedback.EncoderFeedbackTests.test_edges_after_counter_read_are_not_lost) ... ok
+test_initialization_pins_and_baseline (test_encoder_feedback.EncoderFeedbackTests.test_initialization_pins_and_baseline) ... ok
+test_one_to_one_gear_ratio_regression (test_encoder_feedback.EncoderFeedbackTests.test_one_to_one_gear_ratio_regression) ... ok
+test_raw_signed_counts_and_wrap (test_encoder_feedback.EncoderFeedbackTests.test_raw_signed_counts_and_wrap) ... ok
+test_reset_rebases_without_clearing_hardware (test_encoder_feedback.EncoderFeedbackTests.test_reset_rebases_without_clearing_hardware) ... ok
+test_saturating_totals_and_sticky_flag (test_encoder_feedback.EncoderFeedbackTests.test_saturating_totals_and_sticky_flag) ... ok
+test_snapshot_irq_mask_and_null_output (test_encoder_feedback.EncoderFeedbackTests.test_snapshot_irq_mask_and_null_output) ... ok
+test_wheel_rates_and_signed_rounding (test_encoder_feedback.EncoderFeedbackTests.test_wheel_rates_and_signed_rounding) ... ok
+test_hardware_control_profiles (test_motor_control.MotorControlTests.test_hardware_control_profiles)
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。 ... ok
+test_all_eight_exact_keys_and_order (test_remote_command.RemoteCommandTests.test_all_eight_exact_keys_and_order) ... ok
+test_counters_saturate_without_losing_events (test_remote_command.RemoteCommandTests.test_counters_saturate_without_losing_events) ... ok
+test_every_stream_split_and_bytewise_delivery (test_remote_command.RemoteCommandTests.test_every_stream_split_and_bytewise_delivery) ... ok
+test_independent_parsers_and_null_context (test_remote_command.RemoteCommandTests.test_independent_parsers_and_null_context) ... ok
+test_malformed_crlf_poison_until_delimiter (test_remote_command.RemoteCommandTests.test_malformed_crlf_poison_until_delimiter) ... ok
+test_no_action_before_complete_crlf (test_remote_command.RemoteCommandTests.test_no_action_before_complete_crlf) ... ok
+test_non_ascii_and_binary_prefix_never_become_commands (test_remote_command.RemoteCommandTests.test_non_ascii_and_binary_prefix_never_become_commands) ... ok
+test_null_arguments_and_zero_length_keep_partial_line (test_remote_command.RemoteCommandTests.test_null_arguments_and_zero_length_keep_partial_line) ... ok
+test_null_handler_consumes_without_replaying (test_remote_command.RemoteCommandTests.test_null_handler_consumes_without_replaying) ... ok
+test_overlong_line_is_bounded_and_recovers (test_remote_command.RemoteCommandTests.test_overlong_line_is_bounded_and_recovers) ... ok
+test_reset_discards_partial_and_rejected_line (test_remote_command.RemoteCommandTests.test_reset_discards_partial_and_rejected_line) ... ok
+test_unknown_case_whitespace_and_empty_lines (test_remote_command.RemoteCommandTests.test_unknown_case_whitespace_and_empty_lines) ... ok
+test_changed_error_or_reconnect_counter_invalidates_ready (test_remote_control.RemoteControlTests.test_changed_error_or_reconnect_counter_invalidates_ready) ... ok
+test_disabled_mode_has_no_external_side_effects (test_remote_control.RemoteControlTests.test_disabled_mode_has_no_external_side_effects) ... ok
+test_down_ack_before_wait_gate_and_stop_wins_chunk (test_remote_control.RemoteControlTests.test_down_ack_before_wait_gate_and_stop_wins_chunk) ... ok
+test_exact_drive_and_steering_mapping (test_remote_control.RemoteControlTests.test_exact_drive_and_steering_mapping) ... ok
+test_fresh_drive_after_gap_clears_previous_turn (test_remote_control.RemoteControlTests.test_fresh_drive_after_gap_clears_previous_turn) ... ok
+test_initial_drain_requires_actual_empty_read (test_remote_control.RemoteControlTests.test_initial_drain_requires_actual_empty_read) ... ok
+test_invalid_read_size_and_return_fail_closed (test_remote_control.RemoteControlTests.test_invalid_read_size_and_return_fail_closed) ... ok
+test_local_arm_discards_old_commands_and_partial_prefix (test_remote_control.RemoteControlTests.test_local_arm_discards_old_commands_and_partial_prefix) ... ok
+test_local_arm_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_local_arm_inside_read_drops_returned_bytes) ... ok
+test_main_service_gap_300_301ms_and_wrap (test_remote_control.RemoteControlTests.test_main_service_gap_300_301ms_and_wrap) ... ok
+test_main_stall_rejects_queued_drive_before_read (test_remote_control.RemoteControlTests.test_main_stall_rejects_queued_drive_before_read) ... ok
+test_main_stall_service_cannot_restore_old_steering (test_remote_control.RemoteControlTests.test_main_stall_service_cannot_restore_old_steering) ... ok
+test_not_ready_never_reads_and_reconnect_never_rearms (test_remote_control.RemoteControlTests.test_not_ready_never_reads_and_reconnect_never_rearms) ... ok
+test_null_clock_fails_closed_without_read (test_remote_control.RemoteControlTests.test_null_clock_fails_closed_without_read) ... ok
+test_post_read_clock_updates_shared_service_reference (test_remote_control.RemoteControlTests.test_post_read_clock_updates_shared_service_reference) ... ok
+test_read_latency_limit_and_post_read_timestamp (test_remote_control.RemoteControlTests.test_read_latency_limit_and_post_read_timestamp) ... ok
+test_service_and_later_packets_cannot_reactivate_s3_disarm (test_remote_control.RemoteControlTests.test_service_and_later_packets_cannot_reactivate_s3_disarm) ... ok
+test_session_change_inside_read_drops_returned_bytes (test_remote_control.RemoteControlTests.test_session_change_inside_read_drops_returned_bytes) ... ok
+test_silent_regular_polling_preserves_local_arm (test_remote_control.RemoteControlTests.test_silent_regular_polling_preserves_local_arm) ... ok
+test_split_and_coalesced_real_parser (test_remote_control.RemoteControlTests.test_split_and_coalesced_real_parser) ... ok
+test_steering_does_not_refresh_propulsion_lease (test_remote_control.RemoteControlTests.test_steering_does_not_refresh_propulsion_lease) ... ok
+test_steering_timeout_including_clock_wrap (test_remote_control.RemoteControlTests.test_steering_timeout_including_clock_wrap) ... ok
+test_real_remote_pipeline (test_remote_integration.RemoteIntegrationTests.test_real_remote_pipeline)
+错误的模块交接、油门续期、重连门控或S3锁存会导致实际输出断言失败。 ... ok
+test_remote_safety (test_remote_motor.RemoteMotorTests.test_remote_safety)
+错误的本地门控、失联处理、租约或换向顺序会触发行为断言。 ... ok
+test_remote_control_profiles (test_remote_servo.RemoteServoTests.test_remote_control_profiles)
+用归一化边界、异常供电及台架参数变化检查实际输出约束。 ... ok
+test_filter_seeds_from_first_sample_and_only_updates_on_fresh_data (test_remote_speed_control.RemoteSpeedControlTests.test_filter_seeds_from_first_sample_and_only_updates_on_fresh_data) ... ok
+test_input_pwm_and_integral_limits_hold_over_long_run (test_remote_speed_control.RemoteSpeedControlTests.test_input_pwm_and_integral_limits_hold_over_long_run) ... ok
+test_invalid_compile_time_configurations_return_safe_zero (test_remote_speed_control.RemoteSpeedControlTests.test_invalid_compile_time_configurations_return_safe_zero) ... ok
+test_invalid_runtime_state_returns_safe_zero (test_remote_speed_control.RemoteSpeedControlTests.test_invalid_runtime_state_returns_safe_zero) ... ok
+test_raw_overspeed_stops_before_filtering (test_remote_speed_control.RemoteSpeedControlTests.test_raw_overspeed_stops_before_filtering) ... ok
+test_reverse_uses_command_relative_speed (test_remote_speed_control.RemoteSpeedControlTests.test_reverse_uses_command_relative_speed) ... ok
+test_single_wheel_stall_stops_within_remote_lease (test_remote_speed_control.RemoteSpeedControlTests.test_single_wheel_stall_stops_within_remote_lease) ... ok
+test_stale_feedback_latches_until_explicit_reset_and_allows_sequence_wrap (test_remote_speed_control.RemoteSpeedControlTests.test_stale_feedback_latches_until_explicit_reset_and_allows_sequence_wrap) ... ok
+test_stop_reset_and_direction_change_clear_history (test_remote_speed_control.RemoteSpeedControlTests.test_stop_reset_and_direction_change_clear_history) ... ok
+test_target_and_pwm_rise_are_limited (test_remote_speed_control.RemoteSpeedControlTests.test_target_and_pwm_rise_are_limited) ... ok
+test_unsigned_threshold_constants_preserve_signed_wheel_checks (test_remote_speed_control.RemoteSpeedControlTests.test_unsigned_threshold_constants_preserve_signed_wheel_checks) ... ok
+test_wheels_close_their_own_feedback_loops (test_remote_speed_control.RemoteSpeedControlTests.test_wheels_close_their_own_feedback_loops) ... ok
+test_wrong_direction_requires_continuous_eighty_milliseconds (test_remote_speed_control.RemoteSpeedControlTests.test_wrong_direction_requires_continuous_eighty_milliseconds) ... ok
+test_default_closed_loop (test_remote_speed_motor.RemoteSpeedMotorTests.test_default_closed_loop) ... ok
+test_hardware_control_profiles (test_servo_control.ServoControlTests.test_hardware_control_profiles)
+覆盖上电关闭、手动触发、停止优先、限幅步进和计时回绕。 ... ok
+test_gray_sequences (test_track_vision.TrackVisionTests.test_gray_sequences) ... ok
+test_transport_boundaries (test_wifi_spi.WifiSpiTests.test_transport_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 85 tests in 37.345s
+
+OK
+256 autonomous integration checks passed
+stop: active=0 service_return=0 servo_enabled=0 pulse=0 positive_writes_after_stop=1
+start: active=1 service_return=1 servo_enabled=0 generation=1
+20339 autonomous controller checks passed
+remote: PASS: 4250 autonomous motor checks
+bench: PASS: 3862 autonomous motor checks
+scaled: PASS: 4250 autonomous motor checks
+invalid-remote: PASS: 253 autonomous motor checks
+invalid-bench: PASS: 253 autonomous motor checks
+53 autonomous servo checks passed
+spi-gray/5: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/6: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/7: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/8: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/1: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/2: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/3: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/4: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/9: PASS: 1000 transient partial sends keep complete frames flowing
+spi-gray/10: PASS: failed graceful close still resets connection; cumulative success count survives
+spi-gray/11: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/12: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/13: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/14: PASS: failure stage identifies the boundary block without sending later blocks
+spi-binary/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-boundaries/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-decimated/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-missing-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-long-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-ip/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-port/0: PASS: invalid network configuration rejected; preview still works
+wifi-open/0: PASS: packet bytes, image snapshot, real boundaries and transport
+disabled/0: PASS: local preview works with network disabled
+wifi-switch/0: PASS: boot OFF keeps 1000 previews with zero network calls
+wifi-switch/1: PASS: boot-held key, bounce, stable release and long-press single toggle
+wifi-switch/2: PASS: OFF clears pending/failed frame and ON starts fresh complete stream
+wifi-switch/3: PASS: failed key connection arms backoff after return; OFF cancels recovery
+wifi-switch/4: PASS: key debounce works across uint32 timestamp wrap
+wifi-switch/5: PASS: OFF clears pending/failed frame and ON starts fresh complete stream
+wifi-switch/6: PASS: invalid boundary configuration cannot start network from key
+wifi-switch-invalid/0: PASS: invalid credentials remain offline until requested and never reach hardware
+motor-telemetry/0: PASS: encoder telemetry bounds, signed speed, phase, image and original status restoration
+control-rx/0: PASS: RX only when link and module ready, correct bytes and invalid arguments
+remote-display/0: PASS: remote arm/neutral/drive and steering display
+autonomous-display/0: PASS: autonomous status and remote display arbitration
+nominal: PASS: encoder read-edge
+nominal: PASS: encoder init
+one-to-one: PASS: encoder rates
+nominal: PASS: encoder raw
+nominal: PASS: encoder reset
+nominal: PASS: encoder saturation
+nominal: PASS: encoder snapshot
+nominal: PASS: encoder rates
+nominal: PASS: 21420 motor checks
+maximum-duty: PASS: 21420 motor checks
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+negative-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks
+PASS: remote command mapping
+PASS: remote command saturation
+PASS: remote command chunks
+PASS: remote command contexts
+PASS: remote command malformed
+PASS: remote command incomplete
+PASS: remote command binary
+PASS: remote command null
+PASS: remote command null-handler
+PASS: remote command long
+PASS: remote command reset
+PASS: remote command unknown
+enabled: PASS: remote control counters
+disabled: PASS: remote control disabled
+enabled: PASS: remote control stop
+enabled: PASS: remote control mapping
+enabled: PASS: remote control gap
+enabled: PASS: remote control initial
+enabled: PASS: remote control invalid-read
+enabled: PASS: remote control arm
+enabled: PASS: remote control read-arm
+enabled: PASS: remote control main-boundary
+enabled: PASS: remote control main-poll-gap
+enabled: PASS: remote control main-service-gap
+enabled: PASS: remote control link
+enabled: PASS: remote control null-clock
+enabled: PASS: remote control main-post-read
+enabled: PASS: remote control latency
+enabled: PASS: remote control disarm
+enabled: PASS: remote control read-session
+enabled: PASS: remote control main-silent
+enabled: PASS: remote control parser
+enabled: PASS: remote control steering
+enabled: PASS: remote control wrap
+PASS: 1594 integration checks
+nominal: PASS: 3608 remote motor checks
+pwm-scale: PASS: 3608 remote motor checks
+lease-during-gap: PASS: 739 remote motor checks
+invalid-period: PASS: 172 remote motor checks
+nominal: PASS: 1984 checks
+undervoltage: PASS: 20 checks
+overvoltage: PASS: 20 checks
+upper-voltage: PASS: 1984 checks
+duty-scale: PASS: 1984 checks
+bench-step-independent: PASS: 1984 checks
+306 closed-loop remote motor checks passed
+nominal: PASS: 1936 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1936 checks
+duty-scale: PASS: 1936 checks
+uneven-step: PASS: 1075 checks
+Track vision: 177 passed, 0 failed (177 total)
+
+PASS: zero length, first timeout, partial timeout, chunk bytes and recovery

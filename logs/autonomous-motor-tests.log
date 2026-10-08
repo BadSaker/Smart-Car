@@ -1,0 +1,32 @@
+test_autonomous_ownership (test_autonomous_motor.AutonomousMotorTests.test_autonomous_ownership)
+断链误停、旧遥控复活、停车未锁存或换向无间隔都必须使断言失败。 ... remote: PASS: 4250 autonomous motor checks
+bench: PASS: 3862 autonomous motor checks
+scaled: PASS: 4250 autonomous motor checks
+invalid-remote: PASS: 253 autonomous motor checks
+invalid-bench: PASS: 253 autonomous motor checks
+ok
+test_remote_safety (test_remote_motor.RemoteMotorTests.test_remote_safety)
+错误的本地门控、失联处理、租约或换向顺序会触发行为断言。 ... nominal: PASS: 3608 remote motor checks
+pwm-scale: PASS: 3608 remote motor checks
+lease-during-gap: PASS: 739 remote motor checks
+invalid-period: PASS: 172 remote motor checks
+ok
+test_hardware_control_profiles (test_motor_control.MotorControlTests.test_hardware_control_profiles)
+错误的启动门控、停止顺序、时长或占空比会令真实模块行为失败。 ... nominal: PASS: 21420 motor checks
+maximum-duty: PASS: 21420 motor checks
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+negative-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks
+ok
+test_real_remote_pipeline (test_remote_integration.RemoteIntegrationTests.test_real_remote_pipeline)
+错误的模块交接、油门续期、重连门控或S3锁存会导致实际输出断言失败。 ... PASS: 1594 integration checks
+ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 5.178s
+
+OK

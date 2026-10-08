@@ -15,7 +15,8 @@ typedef enum
     SERVO_CONTROL_RETURN_CENTER,
     SERVO_CONTROL_COMPLETE,
     SERVO_CONTROL_STOPPED,
-    SERVO_CONTROL_REMOTE
+    SERVO_CONTROL_REMOTE,
+    SERVO_CONTROL_AUTONOMOUS
 } servo_control_state_t;
 
 typedef enum
@@ -65,4 +66,8 @@ void servo_control_stop(void);
  * COMPLETE保持参考中位，STOPPED不输出PWM。指针在模块生命周期内有效。 */
 const servo_control_status_t *servo_control_get_status(void);
 
+/* 自动驾驶主循环专用：正值向左，沿用机械窗口与中位；步长由AUTO_SERVO参数控制。
+ * 首次输出中位，迟到不追赶；占用时遥控不能覆盖，禁用只释放自动驾驶所有权。
+ * S3及电源配置保护优先，仍须由上层保持新鲜视觉与电机停止门控。 */
+void servo_control_autonomous_apply(uint8_t enabled, int16_t steering_permille, uint32_t now_ms);
 #endif /* AUTOCAR_SERVO_CONTROL_H */

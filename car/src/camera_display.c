@@ -6,6 +6,7 @@
 #include "encoder_feedback.h"
 #include "remote_control.h"
 #include "remote_control_config.h"
+#include "autonomous_control.h"
 
 #if APP_ENABLE_IPS200
 static int previous_network_status = -1;
@@ -15,6 +16,45 @@ static void display_line(uint16 y, const char *text)
     /* 每字8像素，39个字符可放入320像素横屏。 */
     snprintf(line, sizeof(line), "%-39.39s", text);
     ips200_show_string(0, y, line);
+}
+
+static uint8_t display_autonomous_status(void)
+{
+    autonomous_drive_status_t automatic;
+    motor_control_status_t motor;
+    char text[40];
+    const char *state;
+    autonomous_control_get_status(&automatic);motor_control_get_status(&motor);
+    if(!automatic.active && (automatic.state==AUTO_DRIVE_IDLE || motor.remote_armed || motor.telemetry_visible))return 0;
+    switch(automatic.state){
+        case AUTO_DRIVE_STARTING:state="CENTER";break;
+        case AUTO_DRIVE_RUNNING:state="RUN";break;
+        case AUTO_DRIVE_FINISHING:state="FINISH";break;
+        case AUTO_DRIVE_FINISHED:state="DONE";break;
+        case AUTO_DRIVE_STOPPED:state="STOP";break;
+        case AUTO_DRIVE_FAULT:
+            switch(automatic.fault){
+                case AUTO_FAULT_CAMERA_STALE:state="CAMERA";break;
+                case AUTO_FAULT_PATH_LOST:state="LOST";break;
+                case AUTO_FAULT_ENCODER_STALE:state="ENCODER";break;
+                case AUTO_FAULT_ENCODER_DIRECTION:state="ENC SIGN";break;
+                case AUTO_FAULT_OVERSPEED:state="OVERSPEED";break;
+                case AUTO_FAULT_STALL:state="STALL";break;
+                case AUTO_FAULT_SERVO_STALE:state="SERVO GAP";break;
+                case AUTO_FAULT_ELEMENT:state="ELEMENT";break;
+                case AUTO_FAULT_RUN_TIMEOUT:state="TIMEOUT";break;
+                case AUTO_FAULT_FINISH_TIMEOUT:state="FIN TIME";break;
+                case AUTO_FAULT_NOT_READY:state="NOT READY";break;
+                default:state="CONFIG";break;
+            }break;
+        default:state="IDLE";break;
+    }
+    snprintf(text,sizeof text,"AUTO:%s Q%u Z%u %lumm",state,automatic.confidence,
+             automatic.start_marker_seen,(unsigned long)automatic.distance_mm);
+    display_line(0,text);
+    snprintf(text,sizeof text,"L%ld R%ld P:%u/%u S3:STOP",(long)automatic.left_speed_mm_s,
+             (long)automatic.right_speed_mm_s,automatic.left_duty_permille,automatic.right_duty_permille);
+    display_line(16,text);return 1;
 }
 
 #if REMOTE_CONTROL_ENABLED
@@ -27,7 +67,7 @@ static uint8_t display_remote_status(void)
     motor_control_get_status(&motor);
     if (motor.state == MOTOR_TEST_CONFIG_ERROR) return 0;
     remote_control_get_status(&remote);
-    if (!motor.remote_link) display_line(0, "RC:WAIT WiFi C13:ON");
+    if (!motor.remote_link) display_line(0, "C15:AUTO C13:WiFi C12:RC");
     else if (!motor.remote_armed) display_line(0, "RC:OFF C12:ARM S3:STOP");
     else if (remote.draining) display_line(0, "RC:DRAIN old input; wait");
     else if (motor.remote_wait_neutral) display_line(0, "RC:WAIT Down=STOP to enable");
@@ -183,6 +223,7 @@ void camera_display_statistics(void)
 {
 #if APP_ENABLE_IPS200
     char text[40];
+    if (display_autonomous_status()) return;
 #if REMOTE_CONTROL_ENABLED
     if (display_remote_status()) return;
 #endif
@@ -209,7 +250,7 @@ void camera_display_statistics(void)
             case SERVO_CONTROL_STOPPED: state = "STOP"; break;
             default: state = "IDLE"; break;
         }
-        snprintf(text, sizeof(text), "S:%s %u us S2:run S3:stop", state,
+        snprintf(text, sizeof(text), "S:%s %u us C15:auto S3:stop", state,
                  (unsigned)servo->current_pulse_us);
         display_line(16, text);
     }
