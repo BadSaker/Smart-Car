@@ -6,8 +6,8 @@
 #define VISION_TOP_ROW                 30
 #define VISION_BOTTOM_ROW              116
 #define VISION_CENTER_COL              93
-#define VISION_WIDTH_TOP_PX            36
-#define VISION_WIDTH_BOTTOM_PX         122
+#define VISION_WIDTH_TOP_PX            44
+#define VISION_WIDTH_BOTTOM_PX         167
 #define VISION_NEAR_FIRST_ROW          86
 #define VISION_NEAR_LAST_ROW           108
 #define VISION_FAR_FIRST_ROW           45
