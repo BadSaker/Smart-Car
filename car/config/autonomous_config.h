@@ -10,7 +10,7 @@
 /* 用户确认M1左/M2右；编码器正号尚未实测，前进为负时将对应值改为-1。 */
 #define AUTO_MOTOR1_IS_LEFT 1
 #define AUTO_LEFT_ENCODER_SIGN 1
-#define AUTO_RIGHT_ENCODER_SIGN 1
+#define AUTO_RIGHT_ENCODER_SIGN -1
 #define AUTO_CRUISE_SPEED_MM_S 180.0f
 #define AUTO_CURVE_SPEED_MM_S 120.0f
 #define AUTO_ELEMENT_SPEED_MM_S 100.0f
@@ -18,7 +18,7 @@
 #define AUTO_ACCEL_MM_S2 200.0f
 /* 转弯时外轮目标稍快、内轮稍慢；0关闭，0.15为待标定的最大15%差速比例。 */
 #define AUTO_TURN_DIFFERENTIAL_RATIO 0.15f
-#define AUTO_MAX_DUTY_PERMILLE 100U
+#define AUTO_MAX_DUTY_PERMILLE 200U
 #define AUTO_DUTY_STEP_PER_TICK 3U
 #define AUTO_SPEED_KP 0.18f
 #define AUTO_SPEED_KI 0.15f
@@ -67,8 +67,8 @@
 #if AUTO_TICK_MS != 10U
 #error "自动驾驶控制周期必须为10ms"
 #endif
-#if AUTO_MAX_DUTY_PERMILLE == 0U || AUTO_MAX_DUTY_PERMILLE > 150U
-#error "自动驾驶PWM上限必须在1..150千分比内"
+#if AUTO_MAX_DUTY_PERMILLE == 0U || AUTO_MAX_DUTY_PERMILLE > 300U
+#error "自动驾驶PWM上限必须在1..300千分比内"
 #endif
 #if (AUTO_LEFT_ENCODER_SIGN != 1 && AUTO_LEFT_ENCODER_SIGN != -1) || (AUTO_RIGHT_ENCODER_SIGN != 1 && AUTO_RIGHT_ENCODER_SIGN != -1)
 #error "编码器方向只能为正1或负1"

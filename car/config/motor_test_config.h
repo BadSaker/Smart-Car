@@ -13,11 +13,11 @@
 #define MOTOR_CHANNEL2_REFERENCE_LEVEL  GPIO_HIGH
 #define MOTOR_TEST_PWM_FREQUENCY_HZ     (17000U)
 
-/* 占空比单位为千分比：100为10%，硬上限150为15%；无自动反转。 */
+/* 占空比单位为千分比：100为10%，硬上限300为30%；无自动反转。 */
 #ifndef MOTOR_TEST_DUTY_PERMILLE
 #define MOTOR_TEST_DUTY_PERMILLE         (100U)
 #endif
-#define MOTOR_TEST_MAX_DUTY_PERMILLE     (150U)
+#define MOTOR_TEST_MAX_DUTY_PERMILLE     (300U)
 #ifndef MOTOR_CONTROL_TICK_MS
 #define MOTOR_CONTROL_TICK_MS           (10U)
 #endif

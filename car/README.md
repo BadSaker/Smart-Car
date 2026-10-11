@@ -20,6 +20,6 @@ python -B -m unittest discover -s car/tests -p 'test_*.py'
 
 旧test.ps1仅验证早期19项图像/PID算法。完整测试和编译通过不等于实车完赛；首次按指南架空核对方向，再C13 OFF低速试车。烧录后断电移除DAP排线，用已确认的电池供电。
 
-src为应用、include为接口、config为调参/接线、library为保留来源许可的驱动。自动驾驶采用新的control_pid/track_vision模块；M1左/M2右已确认，编码器+1符号仍待实测。红砖专用避障未实现，透视宽度、环岛/终点参数仍须实车验证。
+src为应用、include为接口、config为调参/接线、library为保留来源许可的驱动。自动驾驶采用新的control_pid/track_vision模块；M1左/M2右已确认，编码器符号当前为左+1、右-1。红砖专用避障未实现，透视宽度、环岛/终点参数仍须实车验证。
 
 camera_debug_config.h含本机热点密码，不贴入日志或公开报告。屏幕/Wi-Fi保持14:33冻结同步驱动；长阻塞会触发控制保护停车，不在本轮改写网络底层。

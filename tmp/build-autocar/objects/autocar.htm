@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\tmp\build-autocar\objects\autocar.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\tmp\build-autocar\objects\autocar.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6210000: Last Updated: Thu Oct  8 23:12:28 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6210000: Last Updated: Sun Oct 11 10:25:32 2026
 <BR><P>
 <H3>Maximum Stack Usage =       2064 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2576,7 +2576,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_service_controls
 </UL>
 
-<P><STRONG><a name="[1d2]"></a>autonomous_control_tick_10ms</STRONG> (Thumb, 488 bytes, Stack size 216 bytes, autonomous_control.o(.text.autonomous_control_tick_10ms))
+<P><STRONG><a name="[1d2]"></a>autonomous_control_tick_10ms</STRONG> (Thumb, 490 bytes, Stack size 216 bytes, autonomous_control.o(.text.autonomous_control_tick_10ms))
 <BR><BR>[Stack]<UL><LI>Max Depth = 848<LI>Call Chain = autonomous_control_tick_10ms &rArr; gpio_get_level &rArr; GPIO_ReadPadStatus &rArr; GPIO_PinReadPadStatus &rArr; __aeabi_assert &rArr; DbgConsole_Printf &rArr; DbgConsole_Vprintf &rArr; DbgConsole_PrintfFormattedData &rArr; DbgConsole_ConvertFloatRadixNumToString &rArr; __hardfp_pow &rArr; sqrt
 </UL>
 <BR>[Calls]<UL><LI><a href="#[20d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autonomous_drive_tick
@@ -3405,7 +3405,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
-<P><STRONG><a name="[20e]"></a>motor_control_autonomous_set</STRONG> (Thumb, 132 bytes, Stack size 16 bytes, motor_control.o(.text.motor_control_autonomous_set))
+<P><STRONG><a name="[20e]"></a>motor_control_autonomous_set</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, motor_control.o(.text.motor_control_autonomous_set))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motor_control_autonomous_set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autonomous_control_tick_10ms

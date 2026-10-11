@@ -1,0 +1,13 @@
+[2026-10-09 21:32:05 +08:00] 任务：接入 CLAUDE.md 作为项目指令入口
+范围：Autodrive 根目录新增 CLAUDE.md；不修改 AGENTS.md、docs/ 或其他来源材料。
+变更：新增文件 `CLAUDE.md`，内容为一行注释加 `@AGENTS.md` 导入，使 AGENTS.md 中的协作规则在 AGENTS.md 自动加载会随工作目录/应用版本/开关变化时仍能稳定生效；规则内容仍只在 AGENTS.md 维护，CLAUDE.md 不复制任何规则文本。依据：AGENTS.md 是 Claude Code 的 agents-md 功能在“无 CLAUDE.md 时回退”的模式下才会读取（每会话读取一次），加此入口后优先级不再依赖该回退条件。
+验证：文件已创建，`cat` 确认内容为注释 + `@AGENTS.md`（245 字节）；AGENTS.md 仍存在未改。未在本会话运行应用层加载测试（无法自行新开会话）。
+产物：C:\Users\Lynn\Desktop\Files\Autodrive\CLAUDE.md
+未解决：Claude Desktop 端对 `@AGENTS.md` 导入的实际加载尚未实测；建议用户在 Autodrive 目录新开一个会话，用标记法（在 AGENTS.md 临时加一句可见标记，看是否自动生效）确认后再移除标记。若桌面端对无 CLAUDE.md 项目本就自动读 AGENTS.md，本文件亦无副作用、不会重复读取。
+
+[2026-10-09 21:51:16 +08:00] 任务：按当前工程版本同步文档（不改代码/注释、不动 git）
+范围：docs/autonomous-driving.md、docs/hardware-and-pins.md、docs/project-overview.md、docs/motor-encoder-debugging.md、docs/virtual-remote-control.md、car/README.md；未修改任何源码或配置文件。
+变更：以磁盘当前 car/ 为准，同步用户自行修改后的配置值——AUTO_RIGHT_ENCODER_SIGN=-1（左轮仍+1）、AUTO_MAX_DUTY_PERMILLE=200、MOTOR_TEST_MAX_DUTY_PERMILLE=300、REMOTE_CONTROL_MAX_DUTY_PERMILLE=200。据此更新文档：自动驾驶 PWM 上限 100‰→200‰；编码器符号"默认+1/待实测"→左+1、右-1；电机测试占空比上限 1–150‰→1–300‰；遥控双路占空比 10%→20%（屏显 T 最高 200/1000）。依据换算：camera_display.c 的 T:%d/1000 取 motor.applied_permille。
+验证：grep 复查旧值（见日志后附命令）应全部消除；未改代码与配置；未编译、未烧录、未驱动实车。
+产物：修改 6 个 markdown 文档；无新增文件。回退依据：根目录 git（由用户控制）。
+未解决：实车方向/相机几何/终点距离等验证边界不变；根 git 仓库与 AGENTS.md"不创建根目录 Git 仓库"的冲突，按用户决定本次不处理，git 全权由用户控制。
