@@ -1,8 +1,9 @@
-"""Compile only simulation-owned copies, and expose the original C algorithms."""
-import ctypes as C, hashlib, json, os, re, subprocess
+"""读取主工程算法，参数覆盖与DLL仅写入独立缓存。"""
+import ctypes as C, hashlib, json, os, re, subprocess, shutil
 from pathlib import Path
 from parameters import ROOT
-from toolchain import find_compiler
+from toolchain import find_compiler,candidates
+from source_layout import source_root,source_files
 MACROS={'cruise':'AUTO_CRUISE_SPEED_MM_S','curve_speed':'AUTO_CURVE_SPEED_MM_S',
  'element_speed':'AUTO_ELEMENT_SPEED_MM_S','max_duty':'AUTO_MAX_DUTY_PERMILLE',
  'outer_speed':'AUTO_CURVE_OUTER_SPEED_MM_S','kp':'AUTO_STEERING_KP','ki':'AUTO_STEERING_KI',
@@ -18,38 +19,66 @@ COMPILE_OPTIONS=['-std=c99','-shared','-O2','-Wall','-Wextra','-Werror','-static
 class Native:
     def __init__(self,p):
         signature={k:p[k] for k in MACROS}
-        inputs=[ROOT/'native_bridge.c',*sorted((ROOT/'vendor/src').glob('*.c')),
-                *sorted((ROOT/'vendor/include').glob('*.h')),*sorted((ROOT/'vendor/config').glob('*.h'))]
+        source=source_root()
+        inputs=[ROOT/'native_bridge.c',*source_files()]
         h=hashlib.sha256(json.dumps(signature,sort_keys=True).encode())
-        for f in inputs:h.update(f.read_bytes())
+        h.update(json.dumps(COMPILE_OPTIONS).encode())
+        h.update(b'relative-build-v1')
+        for f in inputs:
+            h.update(f.name.encode());h.update(b'\0');h.update(f.read_bytes())
         # The portable toolchain manifest identifies the verified distribution.
         # It remains readable without launching GCC when a matching DLL exists.
         identity=ROOT/'toolchain/deployment.json'
         if identity.is_file():
             h.update(identity.read_bytes())
-            h.update(json.dumps(COMPILE_OPTIONS).encode())
-        self.version=h.hexdigest()[:16];build=ROOT/'build'/self.version;build.mkdir(parents=True,exist_ok=True)
+        request=h.hexdigest()
+        request_hash=h.copy()
+        candidate=next((p for p in candidates() if p.is_file()),None)
+        explicit=os.environ.get('SIMULATION_CC')
+        if explicit and not Path(os.path.expandvars(explicit.strip('"'))).is_file():raise RuntimeError('SIMULATION_CC指定的文件不存在')
+        compiler_hash=hashlib.sha256(candidate.read_bytes()).hexdigest() if candidate else None
+        index=ROOT/'build/index'/f'{request}.json'
+        if compiler_hash:
+            h.update(compiler_hash.encode());self.version=h.hexdigest()[:16]
+        elif index.is_file():self.version=json.loads(index.read_text(encoding='utf-8'))['version']
+        else:raise RuntimeError('无匹配缓存；需要Windows x64 GCC')
+        build=ROOT/'build'/self.version;build.mkdir(parents=True,exist_ok=True)
         dll=build/'algorithms.dll'
         compiler=None
         if not dll.exists():
             compiler=find_compiler()
+            actual_hash=hashlib.sha256(compiler.read_bytes()).hexdigest()
+            if actual_hash!=compiler_hash:
+                h=request_hash.copy();h.update(actual_hash.encode())
+                self.version=h.hexdigest()[:16];build=ROOT/'build'/self.version
+                build.mkdir(parents=True,exist_ok=True);dll=build/'algorithms.dll'
             for name in ('autonomous_config.h','vision_config.h'):
-                text=(ROOT/'vendor/config'/name).read_text(encoding='utf-8')
+                text=(source/'config'/name).read_text(encoding='utf-8')
                 for key,macro in MACROS.items():
+                    if (key.startswith('width_') or key=='outer_enabled') != (name=='vision_config.h'):continue
                     value=f'{int(p[key])}U' if key in INTS else f'{float(p[key]):.8f}f'
-                    text=re.sub(r'(^#define\s+'+macro+r'\s+)[^\r\n]+',lambda m:m[1]+value,text,flags=re.M)
+                    text,count=re.subn(r'(^#define\s+'+macro+r'\s+)[^\r\n]+',lambda m:m[1]+value,text,flags=re.M)
+                    if count!=1:raise RuntimeError(f'配置宏必须唯一：{macro}，实际匹配{count}')
                 (build/name).write_text(text,encoding='utf-8')
-            cmd=[str(compiler),*COMPILE_OPTIONS,
-                 '-I'+str(build),'-I'+str(ROOT/'vendor/include'),str(ROOT/'native_bridge.c')]
-            cmd += [str(ROOT/'vendor/src'/n) for n in ('track_vision.c','autonomous_drive.c','control_pid.c')]
-            cmd += ['-lm','-o',str(dll)]
-            r=subprocess.run(cmd,capture_output=True,text=True,encoding='utf-8',errors='replace',creationflags=0x08000000)
+            # GCC/ld命令只传ASCII相对文件名，支持含中文的项目工作目录。
+            shutil.copy2(ROOT/'native_bridge.c',build/'native_bridge.c')
+            for file in source_files():
+                target=build/'source'/file.relative_to(source)
+                target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(file,target)
+            cmd=[str(compiler),*COMPILE_OPTIONS,'-I.','-Isource/include','native_bridge.c']
+            cmd += ['source/src/'+n for n in ('track_vision.c','autonomous_drive.c','control_pid.c')]
+            cmd += ['-lm','-o','algorithms.pending.dll']
+            r=subprocess.run(cmd,cwd=build,capture_output=True,text=True,encoding='utf-8',errors='replace',creationflags=0x08000000)
             (build/'compile.log').write_text(r.stdout+r.stderr,encoding='utf-8')
             (build/'parameters.json').write_text(json.dumps(signature,indent=2),encoding='utf-8')
-            compiler_info={'path':str(compiler),'options':COMPILE_OPTIONS}
-            if identity.is_file():compiler_info['distribution']=json.loads(identity.read_text(encoding='utf-8'))
+            compiler_info={'path':str(compiler),'sha256':hashlib.sha256(compiler.read_bytes()).hexdigest(),'options':COMPILE_OPTIONS}
+            if identity.is_file() and compiler.resolve()==(ROOT/'toolchain/mingw64/bin/gcc.exe').resolve():compiler_info['distribution']=json.loads(identity.read_text(encoding='utf-8'))
             (build/'compiler.json').write_text(json.dumps(compiler_info,indent=2),encoding='utf-8')
             if r.returncode:raise RuntimeError('C算法编译失败：'+r.stderr)
+            (build/'algorithms.pending.dll').replace(dll)
+            (build/'source.json').write_text(json.dumps({str(f.relative_to(source)):hashlib.sha256(f.read_bytes()).hexdigest() for f in source_files()},indent=2),encoding='utf-8')
+        index.parent.mkdir(parents=True,exist_ok=True)
+        index.write_text(json.dumps({'version':self.version}),encoding='utf-8')
         # Loading a cached DLL does not require a compiler installation.
         self.dll_dirs=[]
         if hasattr(os,'add_dll_directory'):

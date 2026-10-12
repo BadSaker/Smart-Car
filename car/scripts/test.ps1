@@ -5,14 +5,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $workspaceRoot = Split-Path -Parent $projectRoot
-if (-not $Compiler) {
-    $gccCommand = Get-Command gcc -ErrorAction SilentlyContinue
-    if ($gccCommand) { $Compiler = $gccCommand.Source }
-    elseif (Test-Path -LiteralPath 'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe') {
-        $Compiler = 'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe'
-    }
-    else { throw 'Set -Compiler to a native Windows GCC executable.' }
-}
+. (Join-Path $PSScriptRoot 'find-tool.ps1')
+$Compiler = Find-AutocarTool 'Gcc' $Compiler
 if ([IO.Path]::GetFileName($LogName) -ne $LogName) { throw 'LogName must be a filename.' }
 $buildPath = Join-Path $workspaceRoot 'tmp\algorithm-tests'
 $logPath = Join-Path $workspaceRoot ('logs\' + $LogName)

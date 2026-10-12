@@ -10,7 +10,7 @@
 
 原目录：`E1_01_button_switch_buzzer_demo`。用途：验证主板人机输入和蜂鸣器。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_01_button_switch_buzzer_demo/iar/rt1064.eww)。
 
 **接线与配置：** SWITCH C27/C26、LED B9、BEEP B11；KEY_LIST C15/C14/C13/C12。
 
@@ -23,7 +23,7 @@
 #define BEEP (B11)
 ```
 
-接线/API依据：[zf_device_key.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_device/zf_device_key.h) · [zf_device_key.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_device/zf_device_key.c) · [zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_gpio.h)。
+接线/API依据：[zf_device_key.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_device/zf_device_key.h) · [zf_device_key.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_device/zf_device_key.c) · [zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_gpio.h)。
 
 **初始化、主循环与中断：** 上电两次短鸣闪灯；key_init(5)，每5ms key_scanner；短/长按均响约200ms；任一拨码低时LED按计数闪烁。
 
@@ -43,7 +43,7 @@
 
 原目录：`E1_02_hall_stopline_detection_demo`。用途：用数字霍尔与GPT测量两次触发间隔。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_02_hall_stopline_detection_demo/iar/rt1064.eww)。
 
 **接线与配置：** 霍尔信号D4；LED B9；GPT_TIM_1。
 
@@ -54,7 +54,7 @@
 #define LED1 (B9)
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_timer.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_timer.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_timer.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_timer.h)。
 
 **初始化、主循环与中断：** D4下拉输入；低电平首次开始GPT1毫秒计时，高电平停止读取并清零，LED低有效点亮，串口打印非零间隔。
 
@@ -74,7 +74,7 @@
 
 原目录：`E1_03_opm4a_demo`。用途：读取四路电感前端ADC输出。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/E1_03_opm4a_demo/iar/rt1064.eww)。
 
 **接线与配置：** L1~4到B14/B15/B21/B23。
 
@@ -88,7 +88,7 @@
 #define ADC_CHANNEL4 (ADC1_CH12_B23)
 ```
 
-接线/API依据：[zf_driver_adc.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_adc.h)。
+接线/API依据：[zf_driver_adc.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E1_motherboard/libraries/zf_driver/zf_driver_adc.h)。
 
 **初始化、主循环与中断：** 四路均12位，每秒打印L1~L4原始值。
 

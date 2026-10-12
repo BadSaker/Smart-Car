@@ -10,7 +10,7 @@
 
 原目录：`E3_01_hip4082_single_motor_contro_demo`。用途：验证双PWM桥的正反转输入。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_01_hip4082_single_motor_contro_demo/iar/rt1064.eww)。
 
 **接线与配置：** MOTOR_PWM1=PWM2_MODULE3_CHA_D2，PWM2=CHB_D3。
 
@@ -22,7 +22,7 @@
 #define PWM_CH2 (PWM2_MODULE3_CHB_D3)
 ```
 
-接线/API依据：[zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
+接线/API依据：[zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
 
 **初始化、主循环与中断：** D2/D3两PWM，17kHz；每50ms占空比百分数逐步在-50~50扫动，正负决定哪路PWM有效、另一路为0。
 
@@ -42,7 +42,7 @@
 
 原目录：`E3_02_hip4082_double_motor_contro_demo`。用途：演示四组双PWM驱动共同扫动。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_02_hip4082_double_motor_contro_demo/iar/rt1064.eww)。
 
 **接线与配置：** 四组具体PWM和引脚见本例main宏表；与DRV8701 DIR/PWM不可互换。
 
@@ -60,7 +60,7 @@
 #define MOTOR4_PWM2 (PWM2_MODULE2_CHA_C10)
 ```
 
-接线/API依据：[zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
+接线/API依据：[zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
 
 **初始化、主循环与中断：** 四电机各两PWM均17kHz，主循环同一duty在±50%扫动，同桥另一PWM置0。
 
@@ -80,7 +80,7 @@
 
 原目录：`E3_03_drv8701e_single_motor_contro_demo`。用途：验证DIR/PWM式直流电机。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_03_drv8701e_single_motor_contro_demo/iar/rt1064.eww)。
 
 **接线与配置：** DIR D2，PWM2_MODULE3_CHB_D3。
 
@@ -92,7 +92,7 @@
 #define PWM (PWM2_MODULE3_CHB_D3)
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
 
 **初始化、主循环与中断：** D2方向、D3 PWM，17kHz；每50ms在±50%扫动，符号映射GPIO高/低和绝对占空比。
 
@@ -112,7 +112,7 @@
 
 原目录：`E3_04_drv8701e_double_motor_contro_demo`。用途：验证主板四组DIR/PWM接口，现车电机接线主要参考。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/iar/rt1064.eww)。
 
 **接线与配置：** 1 DIR C9/PWM C8；2 DIR C7/PWM C6；3 DIR D2/PWM D3；4 DIR C10/PWM C11。
 
@@ -130,7 +130,7 @@
 #define MOTOR4_PWM (PWM2_MODULE2_CHB_C11)
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
 
 **初始化、主循环与中断：** 四路17kHzPWM和方向GPIO初始化；共用duty每50ms在±50%扫动，方向同步。
 
@@ -150,7 +150,7 @@
 
 原目录：`E3_05_bldc_contro_demo_360c_spin27`。用途：演示指定无刷控制器的DIR/PWM和方向式反馈。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_05_bldc_contro_demo_360c_spin27/iar/rt1064.eww)。
 
 **接线与配置：** 1 PWM C9/DIR C8/反馈C0 C1；2 PWM C7/DIR C6/反馈C2 C24。
 
@@ -171,7 +171,7 @@
 #define PIT_CH (PIT_CH0 )
 ```
 
-接线/API依据：[zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h) · [zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_gpio.h)。
+接线/API依据：[zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h) · [zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_gpio.h)。
 
 **初始化、主循环与中断：** 两路PWM1kHz；encoder_dir_init；PIT0每100ms在±30%扫动并读清编码器，主循环每300ms打印。
 
@@ -191,7 +191,7 @@
 
 原目录：`E3_06_servo_control_demo`。用途：演示三路50Hz舵机在75°~105°往返。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_06_servo_control_demo/iar/rt1064.eww)。
 
 **接线与配置：** C30=PWM4_MODULE2_CHA；D0/D1=PWM1_MODULE3 A/B；50Hz，允许宏50~300Hz。
 
@@ -207,7 +207,7 @@
 #define SERVO_MOTOR_DUTY(x) ((float)PWM_DUTY_MAX/(1000.0/(float)SERVO_MOTOR_FREQ)*(0.5+(float)(x)/90.0))
 ```
 
-接线/API依据：[zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
+接线/API依据：[zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/libraries/zf_driver/zf_driver_pwm.h)。
 
 **初始化、主循环与中断：** SERVO_MOTOR_DUTY 将角度换脉宽，三路同角度，每50ms加减1°；默认90°起始。
 

@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """使用真实遥控适配层和文本解析器，替换网络读取、时钟及执行器边界。"""
 from pathlib import Path
 import os
@@ -7,10 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/remote-control-tests"
-COMPILER = os.environ.get(
-    "AUTOCAR_HOST_CC",
-    r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe",
-)
+COMPILER = find_compiler()
 
 
 class RemoteControlTests(unittest.TestCase):

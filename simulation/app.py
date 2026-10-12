@@ -260,7 +260,7 @@ class App:
             v=tk.BooleanVar(value=False);self.vars[key]=v
             widget=ttk.Checkbutton(injections,text=label,variable=v,command=self.inject);self.injection_widgets.append(widget)
             widget.pack(side='left',padx=7,pady=5)
-        self.message=tk.StringVar(value='已就绪：297 mm实测高度，俯角/有效视场为条件拟合。点击启动开始仿真。')
+        self.message=tk.StringVar(value=getattr(self,'preset_warning','已就绪：297 mm实测高度，俯角/有效视场为条件拟合。点击启动开始仿真。'))
         ttk.Label(root,textvariable=self.message,foreground='#91a9c2').pack(fill='x',padx=22,pady=8)
         self.view_tabs.bind('<<NotebookTabChanged>>',self.request_refresh)
         self.transitions_disabled=disable_window_transitions(root)
@@ -330,15 +330,19 @@ class App:
             try:self.vars['disturbance_level'].set('4')
             finally:self._syncing=False
     def update_presets(self):
-        registry=ROOT/'parameter_locations.json'
+        registry=ROOT/'parameter_locations.local.json'
         if registry.exists():
             try:
                 for name,path in json.loads(registry.read_text(encoding='utf-8')).items():
-                    if Path(path).is_file():self.extra_presets[name]=Path(path)
+                    candidate=Path(path)
+                    if not candidate.is_absolute():candidate=ROOT/candidate
+                    if candidate.is_file():self.extra_presets[name+' [外部]']=candidate
+                    else:self.preset_warning='外部参数路径失效：'+name
             except (ValueError,OSError):pass
         self.preset_paths={path.stem:path for path in sorted((ROOT/'configs').glob('*.json'))}
         self.preset_paths.update(self.extra_presets)
         self.parameter_selector.configure(values=['默认参数',*self.preset_paths])
+        if hasattr(self,'message') and hasattr(self,'preset_warning'):self.message.set(self.preset_warning)
     def select_params(self,event=None):
         name=self.parameter_name.get();self.running=False
         try:
@@ -429,13 +433,19 @@ class App:
         try:
             p=self.collect();name=self.parameter_name.get()
             chosen=filedialog.asksaveasfilename(parent=self.root,title='保存参数',initialdir=str(ROOT/'configs'),
-                initialfile=('我的参数' if name=='默认参数' else name)+'.json',defaultextension='.json',filetypes=[('JSON参数','*.json')])
+                initialfile=('我的参数' if name=='默认参数' else name.removesuffix(' [外部]'))+'.json',defaultextension='.json',filetypes=[('JSON参数','*.json')])
             if not chosen:return
             path=Path(chosen)
-            if path.resolve().is_relative_to((ROOT.parent/'Autodrive').resolve()):raise ValueError('Autodrive 为只读目录，请选择其他保存位置。')
-            save(path,p);self.extra_presets[path.stem]=path
-            (ROOT/'parameter_locations.json').write_text(json.dumps({name:str(path) for name,path in self.extra_presets.items()},ensure_ascii=False,indent=2),encoding='utf-8')
-            self.update_presets();self.parameter_name.set(path.stem);self.message.set('已保存：'+str(path))
+            protected=[ROOT.parent/'car',ROOT.parent/'参考',ROOT.parent.parent/'SeekFree']
+            if any(path.resolve().is_relative_to(directory.resolve()) for directory in protected):raise ValueError('不能覆盖主工程或原始资料，请选择仿真配置位置。')
+            save(path,p)
+            if not path.resolve().is_relative_to((ROOT/'configs').resolve()):self.extra_presets[path.stem+' [外部]']=path
+            def portable_path(value):
+                value=value.resolve()
+                return str(value.relative_to(ROOT)) if value.is_relative_to(ROOT) else str(value)
+            external={name.removesuffix(' [外部]'):portable_path(value) for name,value in self.extra_presets.items() if not value.resolve().is_relative_to((ROOT/'configs').resolve())}
+            (ROOT/'parameter_locations.local.json').write_text(json.dumps(external,ensure_ascii=False,indent=2),encoding='utf-8')
+            self.update_presets();self.parameter_name.set(path.stem if path.resolve().is_relative_to((ROOT/'configs').resolve()) else path.stem+' [外部]');self.message.set('已保存：'+str(path))
         except Exception as e:messagebox.showerror('保存失败',str(e))
     def export(self):
         folder=self.sim.export('replay' if self.sim.replay else self.sim.p['controller'])

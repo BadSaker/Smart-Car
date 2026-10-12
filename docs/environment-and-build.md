@@ -1,5 +1,9 @@
 # 环境、构建与调试
 
+## 多设备入口
+
+工具查找、热点本地头文件和编辑器变量见[本地环境](local-environment.md)。当前构建脚本支持显式路径、环境变量、本地配置和有限自动发现。以下各历史环境表属于当时机器记录，不作为当前电脑安装路径的确认。
+
 ## 当前：控制优化构建（2026-10-12）
 
 元素识别与提速修改已全量构建：Keil5.39 / Armclang6.21，0错误0警告，Code115120/RO13200/RW300/ZI104872字节。在本任务临时副本执行现有build.ps1，src/include/config/library与主工程逐文件一致，AXF/HEX/BIN已交付outputs/firmware，未烧录。95项工程行为回归与25项仿真回归通过，历史15项PWM测试预期不符已修正。
@@ -72,7 +76,7 @@ car/
 
 ## 构建命令
 
-在 PowerShell 中以工作区根目录 `C:\Users\Lynn\Desktop\Files\Autodrive` 为当前目录运行：
+在 PowerShell 中以工作区根目录 `<项目根目录>` 为当前目录运行：
 
 ```powershell
 .\car\scripts\build.ps1

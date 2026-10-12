@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """编译真实自动驾驶状态机，输入仅替代相机摘要、按键和编码器采样。"""
 from pathlib import Path
 import subprocess
@@ -5,7 +6,7 @@ import unittest
 import os
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/autodrive/controller-tests"
-COMPILER = os.environ.get("AUTOCAR_HOST_CC", r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe")
+COMPILER = find_compiler()
 class AutonomousDriveTests(unittest.TestCase):
     def test_controller(self):
         source = ROOT / "car/src/autonomous_drive.c"

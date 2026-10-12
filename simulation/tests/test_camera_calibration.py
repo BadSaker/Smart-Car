@@ -2,6 +2,7 @@
 import math
 import sys
 import tempfile
+import os
 import unittest
 from pathlib import Path
 
@@ -92,7 +93,7 @@ class CameraCalibrationTests(unittest.TestCase):
         self.assertGreater(len(np.unique(image)), 10)
 
     def test_seekfree_screenshot_keeps_overlay_mask(self):
-        scratch = ROOT.parent/'tmp/camera-realignment/test-inputs'
+        scratch = Path(os.environ.get('AUTOCAR_TEST_ROOT',ROOT.parent/'tmp'))/'camera-realignment/test-inputs'
         scratch.mkdir(parents=True, exist_ok=True)
         # 4倍整数缩放的188x120图，边界线位于第0/187列。
         raw = np.full((120, 188, 3), 140, np.uint8)

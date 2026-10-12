@@ -6,7 +6,7 @@
 
 文本检索优先 `rg`，列文件优先 `rg --files`；如不可用再采用 PowerShell 原生工具。路径使用 `-LiteralPath` 避免通配符误匹配；避免把未校验的文本拼接成命令。不以 `JSON.stringify` 代替 shell 转义。
 
-以下命令示例均以 `C:\Users\Lynn\Desktop\Files\Autodrive` 为工作目录。真实构建使用 [environment-and-build.md](../environment-and-build.md) 中已核实的工具路径、参数与输出位置，不根据示例猜测编译器。
+以下命令示例均以 `<项目根目录>` 为工作目录。真实构建使用 [environment-and-build.md](../environment-and-build.md) 中已核实的工具路径、参数与输出位置，不根据示例猜测编译器。
 
 ```powershell
 rg --files car docs
@@ -34,7 +34,7 @@ if ($taskExit -ne 0) { throw "文件检索失败，退出码：$taskExit" }
 
 ```powershell
 $ErrorActionPreference = 'Stop'
-$taskWorkspace = [IO.Path]::GetFullPath('C:\Users\Lynn\Desktop\Files\Autodrive')
+$taskWorkspace = [IO.Path]::GetFullPath('<项目根目录>')
 $taskTempRoot = [IO.Path]::GetFullPath((Join-Path $taskWorkspace 'tmp'))
 $taskCleanup = [IO.Path]::GetFullPath((Join-Path $taskTempRoot 'project-docs'))
 $taskAllowed = [IO.Path]::GetFullPath((Join-Path $taskWorkspace 'tmp/project-docs'))

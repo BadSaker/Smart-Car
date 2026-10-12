@@ -1,6 +1,6 @@
 # 当前控制档位与复现
 
-2026-10-12已完成源工程视觉状态机修正和仿真分档验收。`vendor/`与`../../car/`的算法及配置一致；仿真只覆盖硬件边界，未给C算法输入地图真值。
+2026-10-12已完成源工程视觉状态机修正和仿真分档验收。算法统一读取`../../car/`，验收输出独立源码快照；仿真只覆盖硬件边界，未给C算法输入地图真值。
 
 | 配置 | 直道/弯道/可靠外侧/元素，mm/s | PWM‰ |
 |---|---|---:|
@@ -13,7 +13,7 @@
 无界面复现，在Autodrive根目录执行：
 
 ```powershell
-& 'D:\anaconda3\python.exe' -B simulation/tools/validate_control.py `
+python -B simulation/tools/validate_control.py `
   --config simulation/configs/中速验证_300.json `
   --output tmp/control-check/default --directions AB BA
 ```

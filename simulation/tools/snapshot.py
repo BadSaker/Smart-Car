@@ -1,41 +1,24 @@
-"""Read-only provenance capture; all output stays beneath simulation."""
+"""导出明确的算法输入；资料提取与源码快照分开。"""
 from pathlib import Path
-import hashlib, json, shutil, zipfile, xml.etree.ElementTree as ET
+import argparse, hashlib, json, shutil, sys
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT.parent / 'Autodrive'
+sys.path.insert(0,str(ROOT))
+from source_layout import source_root,source_files
 def inventory():
-    return {str(p.relative_to(SOURCE)).replace('\\', '/'): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted(SOURCE.rglob('*')) if p.is_file()}
+    source=source_root()
+    return {str(p.relative_to(source)).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_files()}
 def main():
-    for name in ('vendor/src', 'vendor/include', 'vendor/config', 'assets', 'reports', 'runs', 'build', 'configs', 'docs'):
-        (ROOT/name).mkdir(parents=True, exist_ok=True)
-    manifest = ROOT/'reports/source_manifest.json'
-    if manifest.exists():
-        old = json.loads(manifest.read_text(encoding='utf-8'))
-        new = inventory()
-        changes = [k for k in set(old)|set(new) if old.get(k)!=new.get(k)]
-        result={'source_unchanged': not changes, 'file_count':len(new), 'changed': changes}
-        (ROOT/'reports/source_integrity.json').write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding='utf-8')
-        print(json.dumps(result, ensure_ascii=False))
-        return not changes
-    manifest.write_text(json.dumps(inventory(), indent=2, ensure_ascii=False), encoding='utf-8')
-    for category, names in {'src':['track_vision.c','autonomous_drive.c','control_pid.c'],
-                            'include':['track_vision.h','autonomous_drive.h','control_pid.h'],
-                            'config':['autonomous_config.h','vision_config.h','servo_config.h','encoder_config.h']}.items():
-        for name in names: shutil.copyfile(SOURCE/'car'/category/name, ROOT/'vendor'/category/name)
-    shutil.copyfile(SOURCE/'car/src/autonomous_control.c', ROOT/'vendor/autonomous_control_reference.c')
-    license_file=ROOT.parent/'SeekFree/RT1064_Library/LICENSE'
-    if license_file.exists(): shutil.copyfile(license_file,ROOT/'vendor/UPSTREAM_LICENSE')
-    doc=ROOT.parent/'downloads/中期检查要求.docx'
-    with zipfile.ZipFile(doc) as z:
-        ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
-        tree=ET.fromstring(z.read('word/document.xml'))
-        text=[''.join(p.itertext()) for p in tree.findall('.//w:p',ns)]
-        (ROOT/'assets/中期检查要求.txt').write_text('\n'.join(text),encoding='utf-8')
-        for name in ('image1.png','image2.png'):
-            (ROOT/'assets'/name).write_bytes(z.read('word/media/'+name))
-    (ROOT/'reports/input_manifest.json').write_text(json.dumps({'document':str(doc),'sha256':hashlib.sha256(doc.read_bytes()).hexdigest()},indent=2,ensure_ascii=False),encoding='utf-8')
-    print('Captured source hashes and immutable algorithm copies.')
+    parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,required=True)
+    args=parser.parse_args();output=args.output.resolve();source=source_root()
+    if output==source or source in output.parents:parser.error('输出不能位于car源码目录')
+    output.mkdir(parents=True,exist_ok=True)
+    for file in source_files():
+        target=output/'source'/file.relative_to(source);target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(file,target)
+    shutil.copy2(ROOT/'native_bridge.c',output/'native_bridge.c')
+    shutil.copy2(ROOT/'vendor/UPSTREAM_LICENSE',output/'UPSTREAM_LICENSE')
+    hashes=inventory();hashes['native_bridge.c']=hashlib.sha256((ROOT/'native_bridge.c').read_bytes()).hexdigest()
+    (output/'manifest.json').write_text(json.dumps(hashes,indent=2),encoding='utf-8')
+    print(f'Exported {len(hashes)} algorithm inputs.')
     return True
 if __name__=='__main__':
     import sys

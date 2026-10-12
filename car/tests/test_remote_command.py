@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """编译真实文本解析器，验证严格分帧与异常输入恢复，不依赖实车或网络。"""
 from pathlib import Path
 import os
@@ -7,10 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/remote-command-tests"
-COMPILER = os.environ.get(
-    "AUTOCAR_HOST_CC",
-    r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe",
-)
+COMPILER = find_compiler()
 
 
 class RemoteCommandTests(unittest.TestCase):

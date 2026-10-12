@@ -21,7 +21,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_01_wireless_uart_demo`。用途：验证逐飞无线串口模块收发与流控。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_01_wireless_uart_demo/iar/rt1064.eww)。
 
 **接线与配置：** UART8：模块TX→MCU RX D17，模块RX←MCU TX D16；RTS D26，115200。
 
@@ -31,7 +31,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define LED1 (B9 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_wireless_uart.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wireless_uart.h) · [zf_device_wireless_uart.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wireless_uart.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_wireless_uart.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wireless_uart.h) · [zf_device_wireless_uart.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wireless_uart.c)。
 
 **初始化、主循环与中断：** wireless_uart_init；失败B9每100ms闪；成功发欢迎串，主循环每50ms最多读32字节、回发并报告长度。
 
@@ -51,7 +51,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_02_bluetooth_ch9141_demo`。用途：验证CH9141蓝牙串口链路。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_02_bluetooth_ch9141_demo/iar/rt1064.eww)。
 
 **接线与配置：** UART8 D16 TX/D17 RX、RTS D26，115200。
 
@@ -61,7 +61,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define LED1 (B9 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_bluetooth_ch9141.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_bluetooth_ch9141.h) · [zf_device_bluetooth_ch9141.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_bluetooth_ch9141.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_bluetooth_ch9141.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_bluetooth_ch9141.h) · [zf_device_bluetooth_ch9141.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_bluetooth_ch9141.c)。
 
 **初始化、主循环与中断：** bluetooth_ch9141_init失败闪灯，成功等1秒发欢迎串；每50ms读最多32字节、回发及长度。
 
@@ -81,7 +81,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_03_wifi_uart_udp_demo`。用途：验证对应网络连接方式与应用数据。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_03_wifi_uart_udp_demo/iar/rt1064.eww)。
 
 **接线与配置：** main中的SSID/密码需替换；UART类MCU TX D16/RX D17、RTS D26/RST D27；SPI类SCK D12、MOSI D14、MISO D15、CS D13、INT B17/RST B16。
 
@@ -92,7 +92,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define WIFI_PASSWORD_TEST "12345678 "
 ```
 
-接线/API依据：[zf_device_wifi_uart.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.h) · [zf_device_wifi_uart.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.c)。
+接线/API依据：[zf_device_wifi_uart.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.h) · [zf_device_wifi_uart.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.c)。
 
 **初始化、主循环与中断：** STA连AP；AUTO_CONNECT非2时调用connect_udp_client；发送测试串；每100ms读+IPD缓冲并回发。
 
@@ -112,7 +112,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_04_wifi_uart_tcp_client_demo`。用途：验证对应网络连接方式与应用数据。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_04_wifi_uart_tcp_client_demo/iar/rt1064.eww)。
 
 **接线与配置：** main中的SSID/密码需替换；UART类MCU TX D16/RX D17、RTS D26/RST D27；SPI类SCK D12、MOSI D14、MISO D15、CS D13、INT B17/RST B16。
 
@@ -123,7 +123,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define WIFI_PASSWORD_TEST "12345678"
 ```
 
-接线/API依据：[zf_device_wifi_uart.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.h) · [zf_device_wifi_uart.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.c)。
+接线/API依据：[zf_device_wifi_uart.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.h) · [zf_device_wifi_uart.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.c)。
 
 **初始化、主循环与中断：** STA连AP；AUTO_CONNECT非1时循环connect_tcp_servers；发测试串，每100ms读+IPD并回发。
 
@@ -143,7 +143,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_05_wifi_uart_tcp_server_demo`。用途：验证对应网络连接方式与应用数据。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_05_wifi_uart_tcp_server_demo/iar/rt1064.eww)。
 
 **接线与配置：** main中的SSID/密码需替换；UART类MCU TX D16/RX D17、RTS D26/RST D27；SPI类SCK D12、MOSI D14、MISO D15、CS D13、INT B17/RST B16。
 
@@ -154,7 +154,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define WIFI_PASSWORD_TEST "12345678"
 ```
 
-接线/API依据：[zf_device_wifi_uart.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.h) · [zf_device_wifi_uart.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.c)。
+接线/API依据：[zf_device_wifi_uart.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.h) · [zf_device_wifi_uart.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_uart.c)。
 
 **初始化、主循环与中断：** STA连AP；AUTO_CONNECT非3时entry_tcp_servers；每100ms找+IPD的link_id并向对应客户端回发、查询连接IP。
 
@@ -174,7 +174,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_06_wifi_spi_udp_demo`。用途：验证对应网络连接方式与应用数据。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_06_wifi_spi_udp_demo/iar/rt1064.eww)。
 
 **接线与配置：** main中的SSID/密码需替换；UART类MCU TX D16/RX D17、RTS D26/RST D27；SPI类SCK D12、MOSI D14、MISO D15、CS D13、INT B17/RST B16。
 
@@ -185,7 +185,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define WIFI_PASSWORD_TEST "12345678"
 ```
 
-接线/API依据：[zf_device_wifi_spi.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c)。
+接线/API依据：[zf_device_wifi_spi.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c)。
 
 **初始化、主循环与中断：** wifi_spi_init；AUTO_CONNECT=0时socket_connect UDP；发送后udp_send_now立即提交；每100ms读回并回发。
 
@@ -205,7 +205,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_07_wifi_spi_tcp_client_demo`。用途：验证对应网络连接方式与应用数据。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_07_wifi_spi_tcp_client_demo/iar/rt1064.eww)。
 
 **接线与配置：** main中的SSID/密码需替换；UART类MCU TX D16/RX D17、RTS D26/RST D27；SPI类SCK D12、MOSI D14、MISO D15、CS D13、INT B17/RST B16。
 
@@ -216,7 +216,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define WIFI_PASSWORD_TEST "12345678"
 ```
 
-接线/API依据：[zf_device_wifi_spi.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c)。
+接线/API依据：[zf_device_wifi_spi.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c)。
 
 **初始化、主循环与中断：** wifi_spi_init；AUTO_CONNECT=0时socket_connect TCP；每100ms读取256字节缓冲并回发。
 
@@ -236,7 +236,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_08_wifi_spi_oscilloscope_demo`。用途：验证对应网络连接方式与应用数据。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_08_wifi_spi_oscilloscope_demo/iar/rt1064.eww)。
 
 **接线与配置：** main中的SSID/密码需替换；UART类MCU TX D16/RX D17、RTS D26/RST D27；SPI类SCK D12、MOSI D14、MISO D15、CS D13、INT B17/RST B16。
 
@@ -247,7 +247,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define WIFI_PASSWORD_TEST "12345678"
 ```
 
-接线/API依据：[zf_device_wifi_spi.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c)。
+接线/API依据：[zf_device_wifi_spi.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c)。
 
 **初始化、主循环与中断：** TCP连接后assistant_interface WIFI_SPI；每20ms四通道各增0.1/0.5/1/2，channel_num=4并oscilloscope_send，解析调参数据。
 
@@ -267,7 +267,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_09_wifi_spi_mt9v03x_demo`。用途：把188×120灰度图像发到逐飞助手。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/iar/rt1064.eww)。
 
 **接线与配置：** Wi-Fi SPI1 D12/D14/D15/CS D13、INT B17/RST B16；相机CSI接线见摄像头通用表。
 
@@ -280,7 +280,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define BOUNDARY_NUM (MT9V03X_H * 3 / 2)
 ```
 
-接线/API依据：[zf_device_wifi_spi.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c) · [zf_device_mt9v03x.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_mt9v03x.h) · [zf_device_mt9v03x.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_mt9v03x.c)。
+接线/API依据：[zf_device_wifi_spi.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c) · [zf_device_mt9v03x.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_mt9v03x.h) · [zf_device_mt9v03x.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_mt9v03x.c)。
 
 **初始化、主循环与中断：** 先建立Wi-Fi TCP，初始化相机和assistant WIFI_SPI；INCLUDE_BOUNDARY_TYPE默认0仅图像；每新帧清finish_flag、复制到image_copy、camera_send。
 
@@ -300,7 +300,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_10_wifi_spi_ov7725_demo`。用途：把160×120、每行W/8字节的压缩二值图像发到逐飞助手。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_10_wifi_spi_ov7725_demo/iar/rt1064.eww)。
 
 **接线与配置：** Wi-Fi SPI1 D12/D14/D15/CS D13、INT B17/RST B16；相机CSI接线见摄像头通用表。
 
@@ -313,7 +313,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define BOUNDARY_NUM (OV7725_H * 3 / 2)
 ```
 
-接线/API依据：[zf_device_wifi_spi.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c) · [zf_device_ov7725.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_ov7725.h) · [zf_device_ov7725.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_ov7725.c)。
+接线/API依据：[zf_device_wifi_spi.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c) · [zf_device_ov7725.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_ov7725.h) · [zf_device_ov7725.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_ov7725.c)。
 
 **初始化、主循环与中断：** 先建立Wi-Fi TCP，初始化相机和assistant WIFI_SPI；INCLUDE_BOUNDARY_TYPE默认0仅图像；每新帧清finish_flag、复制到image_copy、camera_send。
 
@@ -333,7 +333,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 
 原目录：`E6_11_wifi_spi_scc8660_demo`。用途：把160×120 RGB565图像发到逐飞助手。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_11_wifi_spi_scc8660_demo/iar/rt1064.eww)。
 
 **接线与配置：** Wi-Fi SPI1 D12/D14/D15/CS D13、INT B17/RST B16；相机CSI接线见摄像头通用表。
 
@@ -346,7 +346,7 @@ SPI Wi-Fi默认SPI1 50MHz：SCK D12、MOSI D14、MISO D15、CS D13、INT B17、R
 #define BOUNDARY_NUM (SCC8660_H * 3 / 2)
 ```
 
-接线/API依据：[zf_device_wifi_spi.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c) · [zf_device_scc8660.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_scc8660.h) · [zf_device_scc8660.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_scc8660.c)。
+接线/API依据：[zf_device_wifi_spi.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.h) · [zf_device_wifi_spi.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_wifi_spi.c) · [zf_device_scc8660.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_scc8660.h) · [zf_device_scc8660.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/libraries/zf_device/zf_device_scc8660.c)。
 
 **初始化、主循环与中断：** 先建立Wi-Fi TCP，初始化相机和assistant WIFI_SPI；INCLUDE_BOUNDARY_TYPE默认0仅图像；每新帧清finish_flag、复制到image_copy、camera_send。
 

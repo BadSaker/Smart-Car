@@ -1,9 +1,10 @@
+from host_toolchain import find_compiler
 """真实自动驾驶适配、状态机、PID、电机和舵机的联合测试，替换硬件边界。"""
 from pathlib import Path
 import subprocess,unittest,os
 ROOT=Path(__file__).resolve().parents[2]
 SCRATCH=ROOT/"tmp/autodrive/integration-tests"
-COMPILER=os.environ.get("AUTOCAR_HOST_CC",r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe")
+COMPILER=find_compiler()
 PLATFORM="""#ifndef AUTO_PLATFORM_H
 #define AUTO_PLATFORM_H
 #include <stdint.h>

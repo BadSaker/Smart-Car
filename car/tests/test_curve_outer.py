@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """实际扫线的外侧优先、伪内侧、失帧和禁用开关回归。"""
 from pathlib import Path
 import os
@@ -5,7 +6,7 @@ import subprocess
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
-COMPILER = os.environ.get("AUTOCAR_HOST_CC", r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe")
+COMPILER = find_compiler()
 
 SCRATCH = ROOT / "tmp/curve-outer-tests"
 

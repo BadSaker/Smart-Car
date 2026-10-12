@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tools\check_current_ui.py", line 39, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "E:\AA\car\Autodrive\simulation\tools\check_current_ui.py", line 31, in main
+    app.pause();assert app.sim.distance>.01, (app.sim.now, app.sim.data.tolist(), app.sim.distance)
+                       ^^^^^^^^^^^^^^^^^^^^
+AssertionError: (1000, [2.0, 0.0, 1.0, 100.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.0, 70.0, 70.0, 64.0, 3.0, 45.0, 200.0, 0.0, 0.0, 0.0, 12.0], 0.0038156757741982846)

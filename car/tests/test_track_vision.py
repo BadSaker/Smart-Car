@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """以真实灰度图像序列验证视觉模块，不替换扫线或状态机内部函数。"""
 from pathlib import Path
 import os
@@ -6,7 +7,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/autodrive-vision"
-COMPILER = os.environ.get("AUTOCAR_HOST_CC", r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe")
+COMPILER = find_compiler()
 
 
 class TrackVisionTests(unittest.TestCase):

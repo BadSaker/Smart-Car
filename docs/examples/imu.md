@@ -12,7 +12,7 @@
 
 原目录：`E4_01_icm20602_demo`。用途：验证六轴加速度/角速度传感器连通性。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_01_icm20602_demo/iar/rt1064.eww)。
 
 **接线与配置：** 默认SPI4 10MHz：SCK C23、MOSI C22、MISO C21、CS C20；软件IIC分支默认关闭。
 
@@ -23,7 +23,7 @@
 #define PIT_CH (PIT_CH0 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_icm20602.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_icm20602.h) · [zf_device_icm20602.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_icm20602.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_icm20602.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_icm20602.h) · [zf_device_icm20602.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_icm20602.c)。
 
 **初始化、主循环与中断：** icm20602_init 失败反复打印并翻转B9；成功后PIT0每5ms调用get_acc/get_gyro，主循环每秒打印原始整数。
 
@@ -43,7 +43,7 @@
 
 原目录：`E4_02_imu660ra_demo`。用途：验证六轴加速度/角速度传感器连通性。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_02_imu660ra_demo/iar/rt1064.eww)。
 
 **接线与配置：** 默认SPI4 10MHz：SCK C23、MOSI C22、MISO C21、CS C20；软件IIC分支默认关闭。
 
@@ -54,7 +54,7 @@
 #define PIT_CH (PIT_CH0 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu660ra.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660ra.h) · [zf_device_imu660ra.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660ra.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu660ra.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660ra.h) · [zf_device_imu660ra.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660ra.c)。
 
 **初始化、主循环与中断：** imu660ra_init 失败反复打印并翻转B9；成功后PIT0每5ms调用get_acc/get_gyro，主循环每秒打印原始整数。
 
@@ -74,7 +74,7 @@
 
 原目录：`E4_03_imu660rb_demo`。用途：验证六轴加速度/角速度传感器连通性。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_03_imu660rb_demo/iar/rt1064.eww)。
 
 **接线与配置：** 默认SPI4 10MHz：SCK C23、MOSI C22、MISO C21、CS C20；软件IIC分支默认关闭。
 
@@ -85,7 +85,7 @@
 #define PIT_CH (PIT_CH0 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu660rb.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rb.h) · [zf_device_imu660rb.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rb.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu660rb.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rb.h) · [zf_device_imu660rb.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rb.c)。
 
 **初始化、主循环与中断：** imu660rb_init 失败反复打印并翻转B9；成功后PIT0每5ms调用get_acc/get_gyro，主循环每秒打印原始整数。
 
@@ -105,7 +105,7 @@
 
 原目录：`E4_04_imu660rc_demo`。用途：验证新版RC的数据及roll/pitch/yaw输出。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_04_imu660rc_demo/iar/rt1064.eww)。
 
 **接线与配置：** SPI4 C23/C22/C21/CS C20，INT2 D1。
 
@@ -115,7 +115,7 @@
 #define LED1 (B9 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu660rc.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rc.h) · [zf_device_imu660rc.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rc.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu660rc.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rc.h) · [zf_device_imu660rc.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu660rc.c)。
 
 **初始化、主循环与中断：** imu660rc_init(IMU660RC_QUARTERNION_120HZ)，默认SPI4；初始化配置D1上升沿EXTI；GPIO3_Combined_0_15_IRQHandler 调 imu660rc_callback→get_quarternion；主循环每秒打印acc/gyro和欧拉角。
 
@@ -135,7 +135,7 @@
 
 原目录：`E4_05_imu963ra_demo`。用途：验证九轴加速度/角速度/磁场传感器连通性。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/E4_05_imu963ra_demo/iar/rt1064.eww)。
 
 **接线与配置：** 默认SPI4 10MHz：SCK C23、MOSI C22、MISO C21、CS C20；软件IIC分支默认关闭。
 
@@ -146,7 +146,7 @@
 #define PIT_CH (PIT_CH0 )
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu963ra.h](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu963ra.h) · [zf_device_imu963ra.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu963ra.c)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_driver/zf_driver_gpio.h) · [zf_device_imu963ra.h](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu963ra.h) · [zf_device_imu963ra.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E4_imu/libraries/zf_device/zf_device_imu963ra.c)。
 
 **初始化、主循环与中断：** imu963ra_init 失败反复打印并翻转B9；成功后PIT0每5ms调用get_acc/get_gyro/get_mag，主循环每秒打印原始整数。
 

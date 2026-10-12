@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """以原生C99编译真实PID模块，覆盖采样单位、限幅、微分及安全复位。"""
 from pathlib import Path
 import os
@@ -7,10 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/autodrive-pid"
-COMPILER = os.environ.get(
-    "AUTOCAR_HOST_CC",
-    r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe",
-)
+COMPILER = find_compiler()
 
 
 class ControlPidTests(unittest.TestCase):

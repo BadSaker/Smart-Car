@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """编译真实适配与协议进行主机验证，只替换硬件接口。"""
 from pathlib import Path
 import argparse
@@ -8,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / 'tmp/camera-debug-tests'
-COMPILER = os.environ.get('AUTOCAR_HOST_CC', r'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe')
+COMPILER = find_compiler()
 TYPES = '''#pragma once
 #include <stdint.h>
 #include <stddef.h>

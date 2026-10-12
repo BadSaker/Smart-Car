@@ -13,6 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 import parameters
 from toolchain import find_compiler
+from source_layout import source_root,SOURCE_NAMES,source_files
 
 
 def main():
@@ -36,13 +37,16 @@ def main():
     # 编译副本及DLL缓存留在本次输出目录，避免改写发布源码或既有缓存。
     os.environ['SIMULATION_CC']=str(find_compiler())
     shutil.copy2(ROOT/'native_bridge.c',workspace/'native_bridge.c')
-    for category in ('src','include','config'):
-        shutil.copytree(ROOT/'vendor'/category,workspace/'vendor'/category,dirs_exist_ok=True)
+    original=source_root()
+    for category,names in SOURCE_NAMES.items():
+        destination=workspace/'source'/category;destination.mkdir(parents=True,exist_ok=True)
+        for name in names:shutil.copy2(original/category/name,destination/name)
     manifest=ROOT/'toolchain/deployment.json'
     if manifest.is_file():
         (workspace/'toolchain').mkdir(exist_ok=True);shutil.copy2(manifest,workspace/'toolchain/deployment.json')
-    hashes={str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in [ROOT/'native_bridge.c',*sorted((ROOT/'vendor').glob('*/*.[ch]'))]}
+    hashes={str(path.relative_to(original)):hashlib.sha256(path.read_bytes()).hexdigest() for path in source_files()}
+    hashes['native_bridge.c']=hashlib.sha256((ROOT/'native_bridge.c').read_bytes()).hexdigest()
+    os.environ['SIMULATION_SOURCE_ROOT']=str(workspace/'source')
     parameters.ROOT=workspace
     from engine import Simulation
     from PIL import Image,ImageDraw

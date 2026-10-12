@@ -29,17 +29,18 @@
 #define CAMERA_DEBUG_FRAME_DIVIDER   1U
 #endif
 
-/* 本机网络凭据：不要把密码复制到日志或共享报告。
- * 供应商命令缓冲为64字节，SSID与密码合计不得超过59字节。
- * 空密码表示开放网络；复位前先开启电脑端侦听。 */
+/* 本机凭据由configure-wifi.ps1生成；测试可显式覆盖全部网络宏。 */
+#if CAMERA_DEBUG_ENABLED && !defined(CAMERA_DEBUG_WIFI_SSID)
+#include "camera_debug_local.h"
+#endif
 #ifndef CAMERA_DEBUG_WIFI_SSID
-#define CAMERA_DEBUG_WIFI_SSID "DESKTOP-AMQIB6T 7163"
+#define CAMERA_DEBUG_WIFI_SSID ""
 #endif
 #ifndef CAMERA_DEBUG_WIFI_PASSWORD
-#define CAMERA_DEBUG_WIFI_PASSWORD "R1529k\\3"
+#define CAMERA_DEBUG_WIFI_PASSWORD ""
 #endif
 #ifndef CAMERA_DEBUG_WIFI_SERVER_IP
-#define CAMERA_DEBUG_WIFI_SERVER_IP "192.168.137.1"
+#define CAMERA_DEBUG_WIFI_SERVER_IP ""
 #endif
 #ifndef CAMERA_DEBUG_WIFI_SERVER_PORT
 #define CAMERA_DEBUG_WIFI_SERVER_PORT "8080"

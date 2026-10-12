@@ -1,5 +1,7 @@
 # 文档导航
 
+多设备配置：[本地环境](local-environment.md)；仿真功能、共享算法和当前验收：[simulation](../simulation/README.md)。原始SeekFree位于仓库外的同级资料目录，例程链接只在完整工作区中可用。
+
 当前进展：2026-10-12已修正元素状态机并完成中低速分档仿真，默认300/200/140mm/s，PWM300‰，95项工程行为回归通过、Keil0错误0警告。中央环道身份与实车高速能力仍有限制，见[自动驾驶指南](autonomous-driving.md)及[最终验收](../outputs/reports/control-tuning-final-2026-10-12.md)。
 
 
@@ -30,7 +32,7 @@
 | PowerShell 执行与清理 | [commands.md](standards/commands.md) | 检索、构建、验证、清理 |
 | 审核与交付 | [workflow.md](standards/workflow.md) | 开始新任务、变更范围、交付 |
 | 原始竞赛与硬件资料 | [参考](../参考/) | 核对规则、宣讲、原理图 |
-| 原始逐飞开源库与例程 | [SeekFree](../SeekFree/) | 对照库实现、说明书、例程 |
+| 原始逐飞开源库与例程 | [SeekFree](../../SeekFree/) | 对照库实现、说明书、例程 |
 | 最终产物 | [outputs](../outputs/) | 查找固件、报告、备份 |
 
 ## 信息维护

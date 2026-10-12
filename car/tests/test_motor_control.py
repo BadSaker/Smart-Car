@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """编译真实电机模块，桩仅覆盖硬件IO、编码器复位与CMSIS屏蔽接口。"""
 from pathlib import Path
 import argparse
@@ -7,7 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / 'tmp/motor-control-tests'
-COMPILER = os.environ.get('AUTOCAR_HOST_CC', r'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe')
+COMPILER = find_compiler()
 PLATFORM = '''#ifndef MOTOR_TEST_PLATFORM_H
 #define MOTOR_TEST_PLATFORM_H
 #include <stdint.h>

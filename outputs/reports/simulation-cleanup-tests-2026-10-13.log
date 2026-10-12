@@ -1,0 +1,337 @@
+test_distorted_width_agrees_with_projected_road_edges (test_camera_calibration.CameraCalibrationTests.test_distorted_width_agrees_with_projected_road_edges) ... ok
+test_fit_preserves_measured_height_and_input (test_camera_calibration.CameraCalibrationTests.test_fit_preserves_measured_height_and_input) ... ok
+test_fixed_height_fit_recovers_known_camera (test_camera_calibration.CameraCalibrationTests.test_fixed_height_fit_recovers_known_camera) ... ok
+test_folded_distortion_branch_is_not_a_road_boundary (test_camera_calibration.CameraCalibrationTests.test_folded_distortion_branch_is_not_a_road_boundary) ... ok
+test_incompatible_widths_do_not_change_height_to_hide_error (test_camera_calibration.CameraCalibrationTests.test_incompatible_widths_do_not_change_height_to_hide_error) ... ok
+test_pixel_ground_roundtrip_with_distortion_and_pose (test_camera_calibration.CameraCalibrationTests.test_pixel_ground_roundtrip_with_distortion_and_pose) ... ok
+test_seekfree_screenshot_keeps_overlay_mask (test_camera_calibration.CameraCalibrationTests.test_seekfree_screenshot_keeps_overlay_mask) ... ERROR
+test_subpixel_sampling_produces_partial_edge_coverage (test_camera_calibration.CameraCalibrationTests.test_subpixel_sampling_produces_partial_edge_coverage) ... ok
+test_zero_black_edge_is_a_valid_renderable_scene (test_camera_calibration.CameraCalibrationTests.test_zero_black_edge_is_a_valid_renderable_scene) ... ok
+test_all_active_presets_load (test_config_presets.ConfigPresetTests.test_all_active_presets_load) ... ok
+test_archive_is_not_in_builtin_selector (test_config_presets.ConfigPresetTests.test_archive_is_not_in_builtin_selector) ... ok
+test_camera_comparison_defaults_load (test_config_presets.ConfigPresetTests.test_camera_comparison_defaults_load) ... ok
+test_historical_presets_remain_loadable (test_config_presets.ConfigPresetTests.test_historical_presets_remain_loadable) ... ok
+test_configured_pwm_ceiling_limits_actual_c_outputs (test_control_parameters.ControlParameterTests.test_configured_pwm_ceiling_limits_actual_c_outputs) ... ok
+test_element_speed_changes_the_c_target (test_control_parameters.ControlParameterTests.test_element_speed_changes_the_c_target) ... ok
+test_invalid_limits_are_rejected (test_control_parameters.ControlParameterTests.test_invalid_limits_are_rejected) ... ok
+test_external_same_name_does_not_replace_builtin (test_parameter_registry.RegistryTests.test_external_same_name_does_not_replace_builtin) ... ERROR
+test_save_cannot_write_into_car_source (test_parameter_registry.RegistryTests.test_save_cannot_write_into_car_source) ... ERROR
+test_save_external_keeps_source_label_and_relative_registry (test_parameter_registry.RegistryTests.test_save_external_keeps_source_label_and_relative_registry) ... ERROR
+test_stale_registry_is_safe_before_message_widget_exists (test_parameter_registry.RegistryTests.test_stale_registry_is_safe_before_message_widget_exists) ... ERROR
+test_ab_markers_do_not_enter_camera_image (test_simulation.ModelTests.test_ab_markers_do_not_enter_camera_image) ... ok
+test_bad_parameters_rejected (test_simulation.ModelTests.test_bad_parameters_rejected) ... ok
+test_black_image_and_start_gate (test_simulation.ModelTests.test_black_image_and_start_gate) ... ok
+test_constant_turn_exact_circle (test_simulation.ModelTests.test_constant_turn_exact_circle) ... ok
+test_encoder_scale (test_simulation.ModelTests.test_encoder_scale) ... ok
+test_fit_constraints_and_nominal_conflict (test_simulation.ModelTests.test_fit_constraints_and_nominal_conflict) ... ok
+test_full_finish_uses_progress_not_nominal_distance (test_simulation.ModelTests.test_full_finish_uses_progress_not_nominal_distance) ... ok
+test_full_track_closes_and_keeps_midterm_markers (test_simulation.ModelTests.test_full_track_closes_and_keeps_midterm_markers) ... ok
+test_native_feedback_loss (test_simulation.ModelTests.test_native_feedback_loss) ... ok
+test_native_steering_corrects_offset (test_simulation.ModelTests.test_native_steering_corrects_offset) ... ok
+test_native_visual_start_and_camera_loss (test_simulation.ModelTests.test_native_visual_start_and_camera_loss) ... ok
+test_projected_straight_image_width (test_simulation.ModelTests.test_projected_straight_image_width) ... ok
+test_route_geometry_and_reverse (test_simulation.ModelTests.test_route_geometry_and_reverse) ... ok
+test_cached_dll_loads_without_compiler_and_records_inputs (test_source_layout.SourceLayoutTests.test_cached_dll_loads_without_compiler_and_records_inputs) ... ok
+test_main_project_is_the_only_default_source (test_source_layout.SourceLayoutTests.test_main_project_is_the_only_default_source) ... ok
+test_parameter_change_changes_dll_identity (test_source_layout.SourceLayoutTests.test_parameter_change_changes_dll_identity) ... ok
+
+======================================================================
+ERROR: test_seekfree_screenshot_keeps_overlay_mask (test_camera_calibration.CameraCalibrationTests.test_seekfree_screenshot_keeps_overlay_mask)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tests\test_camera_calibration.py", line 109, in test_seekfree_screenshot_keeps_overlay_mask
+    screen.save(path)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\Image.py", line 2706, in save
+    fp = builtins.open(filename, "w+b")
+PermissionError: [Errno 13] Permission denied: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\camera-realignment\\test-inputs\\tmpdt8zhj3s\\screenshot.png'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen os>", line 368, in walk
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\camera-realignment\\test-inputs\\tmpdt8zhj3s'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tests\test_camera_calibration.py", line 107, in test_seekfree_screenshot_keeps_overlay_mask
+    with tempfile.TemporaryDirectory(dir=scratch) as directory:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 946, in __exit__
+    self.cleanup()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 950, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 930, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 613, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 371, in walk
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 611, in onerror
+    onexc(os.scandir, err.filename, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 902, in onexc
+    _resetperms(path)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 286, in _resetperms
+    _dont_follow_symlinks(_os.chmod, path, 0o700)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 275, in _dont_follow_symlinks
+    func(path, *args, follow_symlinks=False)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\camera-realignment\\test-inputs\\tmpdt8zhj3s'
+
+======================================================================
+ERROR: test_external_same_name_does_not_replace_builtin (test_parameter_registry.RegistryTests.test_external_same_name_does_not_replace_builtin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmppdne4etd\\simulation\\configs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tests\test_parameter_registry.py", line 15, in setUp
+    self.root=Path(self.temp.name)/'simulation';(self.root/'configs').mkdir(parents=True)
+                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmppdne4etd\\simulation'
+
+======================================================================
+ERROR: test_save_cannot_write_into_car_source (test_parameter_registry.RegistryTests.test_save_cannot_write_into_car_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmpu4lmwvv4\\simulation\\configs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tests\test_parameter_registry.py", line 15, in setUp
+    self.root=Path(self.temp.name)/'simulation';(self.root/'configs').mkdir(parents=True)
+                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmpu4lmwvv4\\simulation'
+
+======================================================================
+ERROR: test_save_external_keeps_source_label_and_relative_registry (test_parameter_registry.RegistryTests.test_save_external_keeps_source_label_and_relative_registry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6fx_pps5\\simulation\\configs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tests\test_parameter_registry.py", line 15, in setUp
+    self.root=Path(self.temp.name)/'simulation';(self.root/'configs').mkdir(parents=True)
+                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6fx_pps5\\simulation'
+
+======================================================================
+ERROR: test_stale_registry_is_safe_before_message_widget_exists (test_parameter_registry.RegistryTests.test_stale_registry_is_safe_before_message_widget_exists)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6rmdaybr\\simulation\\configs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\simulation\tests\test_parameter_registry.py", line 15, in setUp
+    self.root=Path(self.temp.name)/'simulation';(self.root/'configs').mkdir(parents=True)
+                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 726, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 722, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6rmdaybr\\simulation'
+
+----------------------------------------------------------------------
+Ran 36 tests in 6.557s
+
+FAILED (errors=5)
+Traceback (most recent call last):
+  File "<frozen os>", line 368, in walk
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6rmdaybr'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 666, in _exitfunc
+    f()
+    ~^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 935, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 930, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 613, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 371, in walk
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 611, in onerror
+    onexc(os.scandir, err.filename, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 902, in onexc
+    _resetperms(path)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 286, in _resetperms
+    _dont_follow_symlinks(_os.chmod, path, 0o700)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 275, in _dont_follow_symlinks
+    func(path, *args, follow_symlinks=False)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6rmdaybr'
+Traceback (most recent call last):
+  File "<frozen os>", line 368, in walk
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6fx_pps5'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 666, in _exitfunc
+    f()
+    ~^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 935, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 930, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 613, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 371, in walk
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 611, in onerror
+    onexc(os.scandir, err.filename, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 902, in onexc
+    _resetperms(path)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 286, in _resetperms
+    _dont_follow_symlinks(_os.chmod, path, 0o700)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 275, in _dont_follow_symlinks
+    func(path, *args, follow_symlinks=False)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmp6fx_pps5'
+Traceback (most recent call last):
+  File "<frozen os>", line 368, in walk
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmpu4lmwvv4'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 666, in _exitfunc
+    f()
+    ~^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 935, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 930, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 613, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 371, in walk
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 611, in onerror
+    onexc(os.scandir, err.filename, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 902, in onexc
+    _resetperms(path)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 286, in _resetperms
+    _dont_follow_symlinks(_os.chmod, path, 0o700)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 275, in _dont_follow_symlinks
+    func(path, *args, follow_symlinks=False)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmpu4lmwvv4'
+Traceback (most recent call last):
+  File "<frozen os>", line 368, in walk
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmppdne4etd'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 666, in _exitfunc
+    f()
+    ~^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\weakref.py", line 590, in __call__
+    return info.func(*info.args, **(info.kwargs or {}))
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 935, in _cleanup
+    cls._rmtree(name, ignore_errors=ignore_errors)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 930, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 613, in _rmtree_unsafe
+    for dirpath, dirnames, filenames in results:
+                                        ^^^^^^^
+  File "<frozen os>", line 371, in walk
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 611, in onerror
+    onexc(os.scandir, err.filename, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 902, in onexc
+    _resetperms(path)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 286, in _resetperms
+    _dont_follow_symlinks(_os.chmod, path, 0o700)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\tempfile.py", line 275, in _dont_follow_symlinks
+    func(path, *args, follow_symlinks=False)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] 拒绝访问。: 'E:\\AA\\car\\Autodrive\\tmp\\simulation-cleanup\\registry-tests\\tmppdne4etd'

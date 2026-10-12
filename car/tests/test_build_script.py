@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """使用行为确定的工具替身检验真实 PowerShell 构建与导出流程的边界。
 
 工具替身用于替代外部 Keil/fromelf 进程，构建脚本逻辑保持原样。
@@ -11,8 +12,8 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRATCH = ROOT / 'tmp' / 'build-script-tests'
-COMPILER = os.environ.get('AUTOCAR_HOST_CC', r'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe')
+SCRATCH = Path(os.environ.get('AUTOCAR_TEST_ROOT', ROOT / 'tmp')) / 'build-script-tests'
+COMPILER = find_compiler()
 SHELL = shutil.which('pwsh') or shutil.which('powershell')
 FAKE_TOOL = r'''
 #include <stdio.h>

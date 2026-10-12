@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """在主机端替代电气 I/O，运行真实的供应商 SPI 传输代码。"""
 from pathlib import Path
 import os
@@ -7,7 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / 'tmp/wifi-spi-tests'
-COMPILER = os.environ.get('AUTOCAR_HOST_CC', r'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe')
+COMPILER = find_compiler()
 TYPES = '''#pragma once
 #include <stdint.h>
 #include <stddef.h>

@@ -117,11 +117,15 @@ def compare(images, output, before, after):
     return report
 
 
-if __name__=='__main__':
+def argument_parser():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--images',type=Path,default=ROOT.parent/'tmp/figs')
+    parser.add_argument('--images',type=Path,default=ROOT/'assets/measurements')
     parser.add_argument('--output',type=Path,required=True)
-    parser.add_argument('--before',type=Path,default=ROOT/'configs/历史_297mm_53度.json')
+    parser.add_argument('--before',type=Path,default=ROOT/'configs/archive/历史_297mm_53度.json')
     parser.add_argument('--after',type=Path,default=ROOT/'configs/我的参数.json')
-    args=parser.parse_args()
+    return parser
+
+
+if __name__=='__main__':
+    args=argument_parser().parse_args()
     compare(args.images,args.output,load(args.before),load(args.after))

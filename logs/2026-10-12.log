@@ -46,3 +46,13 @@
 收尾：待核对并归档本轮迭代包，仅清理tmp/control-tuning；tmp/figs八张实拍图及其他既有目录保留。
 [2026-10-12 21:47:47 +08:00] 归档核实：control-tuning-iterations_20261012.zip，2023文件，25659157字节，CRC全量检查通过，SHA256=14d1f63363dc8e7c89564c1113270c2194dac18f722df8a1007305753e639ffb；发布固件与构建副本逐字节核对，simulator vendor与car对应文件一致。
 [2026-10-12 21:50:23 +08:00] 收尾：所有可访问的tmp/control-tuning任务材料已清理；保留host/tmp/build-script-tests，因CodexSandboxOffline所有的沙盒ACL拒绝访问且Everyone显式Deny DeleteSubdirectoriesAndFiles，未改变权限或绕过访问控制。完整证据已归档，发布物不受影响。tmp/figs仍为8张原图。
+
+[2026-10-12 23:55:38 +08:00] 任务：已批准的多设备配置、仿真源码统一、文档整合与Git精简
+范围：car配置入口/工具/测试发现、simulation桥接构建与参数登记、文档、Git索引和软件验证；未烧录、未通电、未操作车辆。
+变更：热点CheckOnly/Auto/Manual及本地头；Windows PowerShell WinRT读取与活动Wi-Fi Direct IPv4；内容校验、脱敏、原子替换；工具路径环境变量/本地配置/有限发现；仿真读取car唯一源码，编译缓存采用ASCII相对路径，支持中文/空格迁移；11份重复算法副本取消、授权保留；旧文档/工具归档，AGENTS补充；八张实拍图持久复制并核对哈希。
+验证：99工程主机测试、32仿真测试、Wi-Fi边界/转义/替换检查、真实Tk预设/保高标定/保存读取/大小窗口/3D截图通过。新旧3600周期每周期506项逐值一致。中速双向175.09/176.59s、零轮出界、无故障。干净源码中文+空格副本首次DLL编译及启动器检查通过；556保护文件逐字节一致；文档本地链接0失效、PowerShell0语法错误、git diff --check通过。
+构建：真实Keil全量0错误0警告，Code115128/RO13208/RW300/ZI104872。本机热点配置生成后发布AXF/HEX/BIN；最终BIN SHA256=2120b40e2af592de7d915b4be489ce5c0d81e0cdff19a2d8e6b305b0de029560，HEX=b12a7fcba9c26980f3a69c36aea2adddeee24a67ce56074f6ddb1d3d5b837d98，AXF=0f9d3a03b81bc59ed448369f40e524911be16517be942ab373ec12e873f260e9。未下载到板卡。
+Git：16522个工具链/缓存/临时/本地运行记录取消跟踪并已暂存，逐个确认本机文件保留；无提交、无历史重写。新源码和文档仍需正常git add审阅。
+产物：outputs/reports/portability-2026-10-12.md及资源目录；修改前备份outputs/backups/before-portability_20261012_232252；过程基线与复现脚本portability-evidence_20261012.zip，14条目完整性通过，SHA256=7F1D921A6B0EB30E06B4B4EDDD4BB80E8D587B053FC90CEB678FED4AA7D041E8。
+边界：受限执行器曾拒绝临时测试写入、截图与File.Replace；普通宿主环境复跑通过，未改变权限。Windows配置读取/IPv4识别只验本机，其他设备可能需手动入口；实车TCP/图像、光学/执行器模型和3.6m/s仍未验收。
+收尾：归档后验证绝对任务路径及重解析点，tmp/collaboration-portability清理完成，无拒绝项；既有tmp/figs及其他任务材料保留。

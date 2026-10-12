@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """编译真实编码器模块，以编码器寄存器和CMSIS边界桩验证采样行为。"""
 from pathlib import Path
 import os
@@ -7,10 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/encoder-feedback-tests"
-COMPILER = os.environ.get(
-    "AUTOCAR_HOST_CC",
-    r"D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe",
-)
+COMPILER = find_compiler()
 CMSIS = """#ifndef ENCODER_TEST_CMSIS_H
 #define ENCODER_TEST_CMSIS_H
 #include <stdint.h>

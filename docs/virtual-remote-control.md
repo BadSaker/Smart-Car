@@ -7,7 +7,7 @@
 
 ## 协议依据与功能边界
 
-本地 [逐飞助手README](<D:/seekfree_assistant-V1.2.7/README.md>)“虚拟手柄”节，以及 [说明书V1.4](<D:/seekfree_assistant-V1.2.7/【文档】说明书/逐飞助手说明书 V1.4.pdf>) PDF48–50页，明确每次点击发送键名加CRLF。例如`W`发送十六进制`57 0D 0A`，`Up`发送`55 70 0D 0A`。
+本地 [逐飞助手README](<../../downloads/SeekFreeAssistant/V1.2.7/official-release/README.md>)“虚拟手柄”节，以及 [说明书V1.4](<../../downloads/SeekFreeAssistant/V1.2.7/official-release/【文档】说明书/逐飞助手说明书 V1.4.pdf>) PDF48–50页，明确每次点击发送键名加CRLF。例如`W`发送十六进制`57 0D 0A`，`Up`发送`55 70 0D 0A`。
 
 虚拟手柄默认只有8个按键，没有已证实的模拟轴、释放帧、发送时间戳、序号或周期心跳。说明书基于软件V1.2.0，随本机V1.2.7包提供；包内更新日志不能证明长按发送方式已经改变。因此**不承诺按住就持续发送，也不承诺松手立即发停车包**。下列车辆动作映射和超时为本工程选择，非官方协议定义。
 

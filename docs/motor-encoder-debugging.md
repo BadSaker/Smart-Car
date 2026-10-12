@@ -91,7 +91,7 @@ S3在下一个正常10ms采样发出两路零PWM命令，库的整周期重载�
 
 ## 来源与验证
 
-- 本地 [逐飞DRV8701E双驱例程](../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/main.c)与 [方向编码器例程](../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/main.c)。
+- 本地 [逐飞DRV8701E双驱例程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/main.c)与 [方向编码器例程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/main.c)。
 - [逐飞官方技术说明](https://seekfree.cn/collaborations?articleName=%E7%91%9E%E8%90%A8%E8%AF%AD%E9%9F%B3%E5%B0%8F%E8%BD%A6%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB)§5.2.2介绍脉冲/方向、1024PPR及齿轮比换算。
 - [逐飞官方DRV8701E仓库](https://gitee.com/seekfree/DRV8701E_Brush_Driver_Project)给出模块6–26V供电、PH/EN接口和使能开关；[TI数据手册](https://www.ti.com/lit/ds/symlink/drv8701.pdf)第14页给出芯片EN/nSLEEP真值表。未将理论峰值电流作为实际连续额定值。
 - 电机9种配置、编码器8项、屏幕遥测以及原图传/C13/舵机回归通过；另19算法检查通过。主工程Keil全量0错误0警告，记录见 [完整回归](../logs/motor-encoder-suite.log)、[构建](../logs/motor-encoder-build.log)、[电机测试](../logs/motor-control-tests.log)、[编码器测试](../logs/encoder-feedback-tests.log)和 [显示测试](../logs/motor-telemetry-tests.log)。实物波形、左右映射、方向和轮速尚未测量。

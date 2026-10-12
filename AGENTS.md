@@ -22,6 +22,9 @@
 
 ## 导航
 
+- 仿真功能、共享源码与软件验收：[simulation/README.md](simulation/README.md)
+- 多设备热点、本地工具配置：[docs/local-environment.md](docs/local-environment.md)
+
 - 临时工作区：[tmp/](tmp/)；持久交付物：[outputs/](outputs/)；修改与构建日志：[logs/](logs/)。
 - 总览、阅读顺序：[docs/README.md](docs/README.md)
 - 当前定位、目录与阶段：[docs/project-overview.md](docs/project-overview.md)
@@ -40,3 +43,14 @@
 - 文件、接口与单位命名：[docs/standards/naming.md](docs/standards/naming.md)
 - 命令与清理：[docs/standards/commands.md](docs/standards/commands.md)
 - 审核、执行和交付：[docs/standards/workflow.md](docs/standards/workflow.md)
+
+## 仿真与多设备协作
+
+- `simulation/`用于合成188×120图像、C算法闭环、参数实验、原始帧回放、实测截图对照和停车证据采集。入口与当前检查见其README。
+- 算法唯一维护位置为`car/src`、`car/include`及`car/config`；仿真生成参数覆盖头和DLL，不回写主工程。正式验收导出来源快照及SHA-256。
+- 活动参数只读取`simulation/configs/*.json`；历史参数放入`configs/archive/`，不进入主选择列表。移动配置须同步检查脚本默认路径及文档引用，不改变历史JSON内容。
+- 不重新维护`simulation/vendor`算法副本；其来源说明和许可证保留。默认基线、分档验证、参考控制器与用户参数的职责见仿真参数文档，不因当前内容相同而删除用户入口。
+- 地图真值仅用于渲染、理想参考控制和评分；理想参考通过不计为视觉算法通过。仿真、Keil构建、烧录和实车结果分别记录。
+- 热点凭据、本机工具路径、外部参数登记及缓存不提交Git。`configure-wifi.ps1 -CheckOnly`只读；生成配置不会启停热点或操作硬件。
+- 当前检查入口为`simulation/tests`、`simulation/tools/check_current_ui.py`和`validate_control.py`；历史工具有独立版本依赖。
+- 本次已授权多设备配置入口整理；屏幕与Wi-Fi同步连接/发送/重试逻辑仍遵守冻结约束，其他图传改造须另行审核。

@@ -10,7 +10,7 @@
 
 原目录：`E2_01_encoder_quadrature_demo`。用途：读取主板四个编码器接口的100ms增量。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_01_encoder_quadrature_demo/iar/rt1064.eww)。
 
 **接线与配置：** 通道1 C0/C1；2 C2/C24；3 C3/C4；4 C5/C25。
 
@@ -50,7 +50,7 @@
 
 原目录：`E2_02_encoder_dir_demo`。用途：读取主板四个编码器接口的100ms增量。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/iar/rt1064.eww)。
 
 **接线与配置：** 通道1 C0/C1；2 C2/C24；3 C3/C4；4 C5/C25。
 

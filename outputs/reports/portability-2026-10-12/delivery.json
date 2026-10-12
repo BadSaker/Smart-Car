@@ -1,0 +1,11 @@
+{
+  "protected_files": 556,
+  "clean_source_files": 1122,
+  "clean_fresh_compile": true,
+  "clean_launcher": true,
+  "firmware_sha256": {
+    "autocar.axf": "0f9d3a03b81bc59ed448369f40e524911be16517be942ab373ec12e873f260e9",
+    "autocar.bin": "2120b40e2af592de7d915b4be489ce5c0d81e0cdff19a2d8e6b305b0de029560",
+    "autocar.hex": "b12a7fcba9c26980f3a69c36aea2adddeee24a67ce56074f6ddb1d3d5b837d98"
+  }
+}

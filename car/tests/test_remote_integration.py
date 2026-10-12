@@ -1,3 +1,4 @@
+from host_toolchain import find_compiler
 """原生联调真实遥控解析、适配、电机与舵机模块，硬件边界由桩替代。"""
 from pathlib import Path
 import os
@@ -6,7 +7,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / 'tmp/remote-integration-tests'
-COMPILER = os.environ.get('AUTOCAR_HOST_CC', r'D:\Xilinx\Vivado\2022.2\tps\mingw\6.2.0\win64.o\nt\bin\gcc.exe')
+COMPILER = find_compiler()
 PLATFORM = '''#ifndef REMOTE_INTEGRATION_PLATFORM_H
 #define REMOTE_INTEGRATION_PLATFORM_H
 #include <stdint.h>

@@ -10,11 +10,11 @@
 
 原目录：`E01_gpio_demo`。用途：理解推挽输出、上拉输入及读写电平。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E01_gpio_demo/iar/rt1064.eww)。
 
 **接线与配置：** B9 输出；C4、D1 上拉输入。
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
 
 **初始化、主循环与中断：** B9 依次置高、置低、翻转，每步等待100ms；读取 C4 到 gpio_status。D1 已初始化但主循环未读取。
 
@@ -34,7 +34,7 @@
 
 原目录：`E02_uart_demo`。用途：验证 UART1 接收中断到64字节 FIFO 的传递。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E02_uart_demo/iar/rt1064.eww)。
 
 **接线与配置：** UART1 MCU TX=B12、RX=B13；接USB串口 RX/TX，共地。
 
@@ -48,7 +48,7 @@
 #define UART_PRIORITY (LPUART1_IRQn)
 ```
 
-接线/API依据：[zf_driver_uart.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_uart.h)。
+接线/API依据：[zf_driver_uart.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_uart.h)。
 
 **初始化、主循环与中断：** fifo_init 后 uart_init、uart_rx_interrupt；LPUART1 中调用 uart_rx_interrupt_handler，uart_query_byte 读一字节并入 FIFO；主循环每10ms取出并回显。
 
@@ -68,7 +68,7 @@
 
 原目录：`E03_adc_demo`。用途：比较四路ADC不同分辨率和10次均值结果。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E03_adc_demo/iar/rt1064.eww)。
 
 **接线与配置：** B14/B15/B21/B23 分别 ADC1_CH3/4/10/12。
 
@@ -82,7 +82,7 @@
 #define ADC_CHANNEL4 (ADC1_CH12_B23)
 ```
 
-接线/API依据：[zf_driver_adc.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_adc.h)。
+接线/API依据：[zf_driver_adc.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_adc.h)。
 
 **初始化、主循环与中断：** 通道1/2为12位，3为10位，4为8位；每秒交替打印原始与10次均值。
 
@@ -102,7 +102,7 @@
 
 原目录：`E04_pwm_demo`。用途：验证17kHz PWM 输出与占空比标度。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E04_pwm_demo/iar/rt1064.eww)。
 
 **接线与配置：** D0/D1=PWM1_MODULE3 A/B；D2/D3=PWM2_MODULE3 A/B。
 
@@ -116,7 +116,7 @@
 #define PWM_CH4 (PWM2_MODULE3_CHB_D3)
 ```
 
-接线/API依据：[zf_driver_pwm.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_pwm.h)。
+接线/API依据：[zf_driver_pwm.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_pwm.h)。
 
 **初始化、主循环与中断：** 四路初始化0；逐通道将 duty 从0扫到 PWM_DUTY_MAX/2 再降至0，每步100us。
 
@@ -136,7 +136,7 @@
 
 原目录：`E05_pit_demo`。用途：用中断置标志、主循环消费标志演示周期任务。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E05_pit_demo/iar/rt1064.eww)。
 
 **接线与配置：** LED B9；无外接传感器。
 
@@ -148,7 +148,7 @@
 #define LED1 (B9)
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
 
 **初始化、主循环与中断：** PIT_CH0 周期1000ms、priority0；ISR 清标志后 pit_handler 设置 pit_state；主循环翻转 B9 并清状态。
 
@@ -168,7 +168,7 @@
 
 原目录：`E06_exti_demo`。用途：比较上升、下降和双边沿触发。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E06_exti_demo/iar/rt1064.eww)。
 
 **接线与配置：** C15/C14/C13/C12 为 KEY1~4，B9 LED。
 
@@ -183,7 +183,7 @@
 #define KEY_EXTI (GPIO2_Combined_16_31_IRQn)
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_exti.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_exti.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h) · [zf_driver_exti.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_exti.h)。
 
 **初始化、主循环与中断：** C15上升、C14下降、C13/C12双边沿；共享 GPIO2_Combined_16_31_IRQn；回调判断和清各引脚标志，主循环按键序号闪1~4次。
 
@@ -203,7 +203,7 @@
 
 原目录：`E07_encoder_demo`。用途：同时验证两种编码器协议。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E07_encoder_demo/iar/rt1064.eww)。
 
 **接线与配置：** 正交 C0/C1；脉冲/方向 C3/C25。
 
@@ -238,7 +238,7 @@
 
 原目录：`E08_flash_demo`。用途：学习Flash页读写与不同类型联合体解释。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E08_flash_demo/iar/rt1064.eww)。
 
 **接线与配置：** 内部Flash；FLASH_SECTION_INDEX=127、FLASH_PAGE_INDEX=FLASH_PAGE_3。
 
@@ -249,7 +249,7 @@
 #define FLASH_PAGE_INDEX (FLASH_PAGE_3)
 ```
 
-接线/API依据：[zf_driver_flash.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_flash.h)。
+接线/API依据：[zf_driver_flash.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_flash.h)。
 
 **初始化、主循环与中断：** flash_init；检查 sector127/page3，已有内容即擦除；读旧内容，填各类型样值、写页、清RAM缓存后再读回。
 
@@ -269,11 +269,11 @@
 
 原目录：`E09_timer_demo`。用途：测量时钟计数、微秒和毫秒三种模式。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E09_timer_demo/iar/rt1064.eww)。
 
 **接线与配置：** 无外设；GPT_TIM_1。
 
-接线/API依据：[zf_driver_timer.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_timer.h)。
+接线/API依据：[zf_driver_timer.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_timer.h)。
 
 **初始化、主循环与中断：** GPT_TIM_1 依次以 IPG/2、us、ms模式计时540us、65ms、1000ms；每轮 start/stop/get/clear。
 
@@ -293,7 +293,7 @@
 
 原目录：`E10_printf_debug_log_demo`。用途：演示日志条件、断言开关和串口环缓冲。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E10_printf_debug_log_demo/iar/rt1064.eww)。
 
 **接线与配置：** debug UART1 B12/B13、115200。
 
@@ -315,7 +315,7 @@
 
 原目录：`E11_interrupt_priority_set_demo`。用途：演示修改 NVIC 的 PIT 优先级。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E11_interrupt_priority_set_demo/iar/rt1064.eww)。
 
 **接线与配置：** LED B9；C31宏没有实际外部中断初始化。
 
@@ -329,7 +329,7 @@
 #define KEY_EXTI (GPIO2_Combined_16_31_IRQn)
 ```
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
 
 **初始化、主循环与中断：** PIT_CH0每200ms，interrupt_set_priority(PIT_IRQn,1)；pit_exti_handler 翻转 B9；主循环空转。
 
@@ -349,7 +349,7 @@
 
 原目录：`E12_fatfs_demo`。用途：演示挂载、目录创建、512字节写读比较。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E12_fatfs_demo/iar/rt1064.eww)。
 
 **接线与配置：** 核心板SD卡槽；SDIO与SDK sdmmc配置和DTCM对齐缓冲。
 
@@ -359,7 +359,7 @@
 #define BUFFER_SIZE (512U)
 ```
 
-接线/API依据：[zf_driver_sdio.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_sdio.h)。
+接线/API依据：[zf_driver_sdio.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_sdio.h)。
 
 **初始化、主循环与中断：** sdio_init 与 f_mount；FF_USE_MKFS开启时先 f_mkfs；创建 /dir_1/dir_2 与 /dir_1/f_1.dat，写512字节、seek回0、读回memcmp；串口 q退出后 close。
 
@@ -379,7 +379,7 @@
 
 原目录：`E13_cache_demo`。用途：演示 DCache 的启用、禁用及清理失效接口。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E13_cache_demo/iar/rt1064.eww)。
 
 **接线与配置：** test[50] RAM数组，无外接硬件。
 
@@ -401,11 +401,11 @@
 
 原目录：`E14_code_running_in_itcm_demo`。用途：用函数段属性将执行代码置于ITCM。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E14_code_running_in_itcm_demo/iar/rt1064.eww)。
 
 **接线与配置：** B9 LED；ITCM链接段。
 
-接线/API依据：[zf_driver_gpio.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
+接线/API依据：[zf_driver_gpio.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_gpio.h)。
 
 **初始化、主循环与中断：** test(long) 以 AT_ITCM_SECTION_INIT 标注；主循环翻转 B9并执行 test(9999999)。
 
@@ -425,7 +425,7 @@
 
 原目录：`E15_specify_variable_position_demo`。用途：比较默认、DTCM、OCRAM、SDRAM及noncache变量布局。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E15_specify_variable_position_demo/iar/rt1064.eww)。
 
 **接线与配置：** 无外接模块；需要当前板的SDRAM及链接脚本匹配。
 
@@ -447,7 +447,7 @@
 
 原目录：`E16_burn_fuse_demo`。用途：理解启动配置区访问；本次禁止自动运行。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E16_burn_fuse_demo/iar/rt1064.eww)。
 
 **接线与配置：** 内部OCOTP；EXAMPLE_OCOTP_FUSE_MAP_ADDRESS=0x06、WRITE_VALUE=0x18。
 
@@ -469,7 +469,7 @@
 
 **限制：** 这是不可逆eFuse编程，不能自动运行。虽然API名含Shadow，但SDK实现写入OCOTP解锁键和DATA并重载熔丝影子寄存器，并非仅改易失RAM；禁止在未知板执行。
 
-SDK依据：[fsl_ocotp.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/sdk/drives/fsl_ocotp.c) · [fsl_ocotp.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/sdk/drives/fsl_ocotp.h)。
+SDK依据：[fsl_ocotp.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/sdk/drives/fsl_ocotp.c) · [fsl_ocotp.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/sdk/drives/fsl_ocotp.h)。
 
 **迁入项目：** 不迁入车辆日常固件；如需生产配置，应单独按芯片手册和已批准流程处理。
 
@@ -479,11 +479,11 @@ SDK依据：[fsl_ocotp.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/l
 
 原目录：`E17_usb_cdc_demo`。用途：验证USB虚拟串口输出。
 
-源码与工程：[main.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/user/src/main.c) · [isr.c](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/user/src/isr.c) · [Keil工程](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/iar/rt1064.eww)。
+源码与工程：[main.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/user/src/main.c) · [isr.c](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/user/src/isr.c) · [Keil工程](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/mdk/rt1064.uvprojx) · [IAR工作区](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/E17_usb_cdc_demo/iar/rt1064.eww)。
 
 **接线与配置：** USB数据连接，默认 debug UART仅辅助。
 
-接线/API依据：[zf_driver_usb_cdc.h](../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_usb_cdc.h)。
+接线/API依据：[zf_driver_usb_cdc.h](../../../SeekFree/RT1064_Library/Example/Coreboard_Demo/libraries/zf_driver/zf_driver_usb_cdc.h)。
 
 **初始化、主循环与中断：** usb_cdc_init 后每500ms usb_cdc_write_string 发送固定测试字符串。
 
