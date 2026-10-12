@@ -1,0 +1,7 @@
+{
+  "six_row_fixed_fov": "average and minimax verified",
+  "switch_validation_and_old_configs": "passed",
+  "perturbation": "same seed identical frames/C outputs, different seed differs, disabled baseline unchanged",
+  "export": "E:\\AA\\car\\simulation\\runs\\20261012-001130-parameter-workflow-check-506800",
+  "tk": "selector, numeric fields, preset/custom, six-row preview/apply, single-column small window, post-stop resume passed"
+}

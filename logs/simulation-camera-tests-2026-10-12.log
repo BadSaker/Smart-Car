@@ -1,0 +1,27 @@
+test_distorted_width_agrees_with_projected_road_edges (test_camera_calibration.CameraCalibrationTests.test_distorted_width_agrees_with_projected_road_edges) ... ok
+test_fit_preserves_measured_height_and_input (test_camera_calibration.CameraCalibrationTests.test_fit_preserves_measured_height_and_input) ... ok
+test_fixed_height_fit_recovers_known_camera (test_camera_calibration.CameraCalibrationTests.test_fixed_height_fit_recovers_known_camera) ... ok
+test_folded_distortion_branch_is_not_a_road_boundary (test_camera_calibration.CameraCalibrationTests.test_folded_distortion_branch_is_not_a_road_boundary) ... ok
+test_incompatible_widths_do_not_change_height_to_hide_error (test_camera_calibration.CameraCalibrationTests.test_incompatible_widths_do_not_change_height_to_hide_error) ... ok
+test_pixel_ground_roundtrip_with_distortion_and_pose (test_camera_calibration.CameraCalibrationTests.test_pixel_ground_roundtrip_with_distortion_and_pose) ... ok
+test_seekfree_screenshot_keeps_overlay_mask (test_camera_calibration.CameraCalibrationTests.test_seekfree_screenshot_keeps_overlay_mask) ... ok
+test_subpixel_sampling_produces_partial_edge_coverage (test_camera_calibration.CameraCalibrationTests.test_subpixel_sampling_produces_partial_edge_coverage) ... ok
+test_zero_black_edge_is_a_valid_renderable_scene (test_camera_calibration.CameraCalibrationTests.test_zero_black_edge_is_a_valid_renderable_scene) ... ok
+test_ab_markers_do_not_enter_camera_image (test_simulation.ModelTests.test_ab_markers_do_not_enter_camera_image) ... ok
+test_bad_parameters_rejected (test_simulation.ModelTests.test_bad_parameters_rejected) ... ok
+test_black_image_and_start_gate (test_simulation.ModelTests.test_black_image_and_start_gate) ... ok
+test_constant_turn_exact_circle (test_simulation.ModelTests.test_constant_turn_exact_circle) ... ok
+test_encoder_scale (test_simulation.ModelTests.test_encoder_scale) ... ok
+test_fit_constraints_and_nominal_conflict (test_simulation.ModelTests.test_fit_constraints_and_nominal_conflict) ... ok
+test_full_finish_uses_progress_not_nominal_distance (test_simulation.ModelTests.test_full_finish_uses_progress_not_nominal_distance) ... ok
+test_full_track_closes_and_keeps_midterm_markers (test_simulation.ModelTests.test_full_track_closes_and_keeps_midterm_markers) ... ok
+test_native_feedback_loss (test_simulation.ModelTests.test_native_feedback_loss) ... ok
+test_native_steering_corrects_offset (test_simulation.ModelTests.test_native_steering_corrects_offset) ... ok
+test_native_visual_start_and_camera_loss (test_simulation.ModelTests.test_native_visual_start_and_camera_loss) ... ok
+test_projected_straight_image_width (test_simulation.ModelTests.test_projected_straight_image_width) ... ok
+test_route_geometry_and_reverse (test_simulation.ModelTests.test_route_geometry_and_reverse) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 2.905s
+
+OK

@@ -24,6 +24,8 @@ static uint8_t display_autonomous_status(void)
     motor_control_status_t motor;
     char text[40];
     const char *state;
+    const char *reason;
+    const servo_control_status_t *servo=servo_control_get_status();
     autonomous_control_get_status(&automatic);motor_control_get_status(&motor);
     if(!automatic.active && (automatic.state==AUTO_DRIVE_IDLE || motor.remote_armed || motor.telemetry_visible))return 0;
     switch(automatic.state){
@@ -49,11 +51,24 @@ static uint8_t display_autonomous_status(void)
             }break;
         default:state="IDLE";break;
     }
-    snprintf(text,sizeof text,"AUTO:%s Q%u Z%u %lumm",state,automatic.confidence,
-             automatic.start_marker_seen,(unsigned long)automatic.distance_mm);
+    switch(automatic.path_reason) {
+        case AUTO_PATH_INVALID:reason="PATH";break;
+        case AUTO_PATH_NEAR:reason="NEAR";break;
+        case AUTO_PATH_Q_LOW:reason="QLOW";break;
+        case AUTO_PATH_OUTER_NEAR:reason="OUTN";break;
+        case AUTO_PATH_OUTER_FAR:reason="OUTF";break;
+        case AUTO_PATH_OUTER_CONTINUITY:reason="OUTC";break;
+        default:reason="OK";break;
+    }
+    snprintf(text,sizeof text,"AUTO:%s Q%u/%u V%u E%u O%u%c",state,automatic.confidence,
+             automatic.minimum_confidence,automatic.vision_valid,automatic.element,
+             automatic.curve_outer_side,automatic.curve_outer_supported?'+':'-');
     display_line(0,text);
-    snprintf(text,sizeof text,"L%ld R%ld P:%u/%u S3:STOP",(long)automatic.left_speed_mm_s,
-             (long)automatic.right_speed_mm_s,automatic.left_duty_permille,automatic.right_duty_permille);
+    /* S在路径被拒绝时显示首次撤输出前命令；T/C为当前舵机目标/输出脉宽。 */
+    snprintf(text,sizeof text,"N%uF%u %s S%d T%u C%u",automatic.curve_outer_near_rows,
+             automatic.curve_outer_far_rows,reason,
+             automatic.path_reason==AUTO_PATH_ACCEPTED?automatic.steering_permille:automatic.diagnostic_steering_permille,
+             servo->target_pulse_us,servo->current_pulse_us);
     display_line(16,text);return 1;
 }
 

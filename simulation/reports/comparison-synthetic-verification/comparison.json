@@ -1,0 +1,73 @@
+{
+  "source_image": "E:\\AA\\car\\simulation\\reports\\comparison-synthetic-188x120.png",
+  "points": [
+    {
+      "id": 1,
+      "x_mm": 235.06823563770828,
+      "y_mm": 203.94765824742998,
+      "u_px": 58.0,
+      "v_px": 84.0,
+      "predicted_px": [
+        54.99999999999999,
+        80.0
+      ],
+      "error_px": [
+        -3.000000000000007,
+        -4.0
+      ],
+      "in_front": true,
+      "in_image": true
+    },
+    {
+      "id": 2,
+      "x_mm": 164.47554531606548,
+      "y_mm": -74.1615515472044,
+      "u_px": 110.0,
+      "v_px": 95.0,
+      "predicted_px": [
+        110.0,
+        95.0
+      ],
+      "error_px": [
+        0.0,
+        0.0
+      ],
+      "in_front": true,
+      "in_image": true
+    },
+    {
+      "id": 3,
+      "x_mm": 116.1431654567666,
+      "y_mm": -209.45388916861717,
+      "u_px": 150.0,
+      "v_px": 110.0,
+      "predicted_px": [
+        150.0,
+        110.0
+      ],
+      "error_px": [
+        0.0,
+        0.0
+      ],
+      "in_front": true,
+      "in_image": true
+    }
+  ],
+  "rmse_px": 2.8867513459481313,
+  "straight_widths": [
+    {
+      "row": 30,
+      "reference_px": 44.0,
+      "predicted_px": 21.649530025756835,
+      "error_px": -22.350469974243165
+    },
+    {
+      "row": 116,
+      "reference_px": 167.0,
+      "predicted_px": 144.64953002575686,
+      "error_px": -22.35046997424314
+    }
+  ],
+  "coordinate_system": "rear axle origin; x forward/y left, ground in mm",
+  "width_note": "ideal centered straight road, reference widths entered manually; not fitted"
+}

@@ -1,0 +1,24 @@
+{
+  "历史_297mm_53度": {
+    "camera_ms_median": 0.577000000703265,
+    "camera_ms_p95": 0.7274299994605825
+  },
+  "我的参数": {
+    "camera_ms_median": 4.554250001092441,
+    "camera_ms_p95": 5.255235001095571
+  },
+  "A→B": {
+    "time_s": 10.0,
+    "distance_m": 1.1542933713210661,
+    "state": "运行",
+    "fault": "无"
+  },
+  "B→A": {
+    "time_s": 10.0,
+    "distance_m": 1.5305076249640257,
+    "state": "运行",
+    "fault": "无"
+  },
+  "protected_changed": [],
+  "python_version": "3.14.6 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:05) [MSC v.1942 64 bit (AMD64)]"
+}

@@ -1,5 +1,5 @@
 /* 用确定性时间和传感器输入验证真实控制状态机，不复制实现算法。 */
-#include <assert.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "autonomous_drive.h"
@@ -8,7 +8,7 @@
 static autonomous_drive_t car;
 static autonomous_drive_input_t in;
 static unsigned checks, simulated_ticks;
-#define CHECK(c) do { ++checks; if (!(c)) { printf("line %d\n",__LINE__); fflush(stdout); assert(c); } } while(0)
+#define CHECK(c) do { ++checks; if (!(c)) { printf("line %d\n",__LINE__); fflush(stdout); exit(1); } } while(0)
 static void tick(unsigned n, int camera, int feedback, int servo)
 {
     while(n--) {
@@ -39,8 +39,59 @@ static void fault(autonomous_fault_t why)
     CHECK(car.status.state==AUTO_DRIVE_FAULT); CHECK(car.status.fault==why);
     CHECK(car.status.left_duty_permille==0 && car.status.right_duty_permille==0);
 }
+static void test_outer_quality(void)
+{
+    unsigned index;
+    const uint8_t quality[]={39,40,44,45};
+    for(index=0;index<sizeof quality;++index) {
+        reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;
+        in.curve_outer_side=TRACK_SIDE_LEFT;in.curve_outer_supported=1;
+        in.curve_outer_near_rows=17;in.curve_outer_far_rows=13;
+        in.near_error_px=20;in.far_error_px=40;in.confidence=quality[index];
+        tick(60,1,1,1);
+        CHECK(car.status.minimum_confidence==AUTO_CURVE_OUTER_MIN_CONFIDENCE);
+        if(quality[index]<AUTO_CURVE_OUTER_MIN_CONFIDENCE) {
+            fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.path_reason==AUTO_PATH_Q_LOW);
+            in.confidence=95;tick(10,1,1,1);
+            CHECK(car.status.confidence==quality[index]);CHECK(!car.status.active);
+        } else {
+            CHECK(car.status.state==AUTO_DRIVE_RUNNING && car.bad_frames==0);
+            CHECK(car.status.target_speed_mm_s==AUTO_CURVE_OUTER_SPEED_MM_S);
+            CHECK(car.status.steering_permille<0 && car.status.path_reason==AUTO_PATH_ACCEPTED);
+        }
+    }
+    /* 不可靠外侧、未知方向或非普通弯道，不能借Q40放行。 */
+    for(index=0;index<3;++index) {
+        reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;
+        in.curve_outer_side=TRACK_SIDE_RIGHT;in.curve_outer_supported=1;in.confidence=44;
+        if(index==0){in.curve_outer_supported=0;in.curve_outer_reject_reason=AUTO_PATH_OUTER_NEAR;}
+        if(index==1)in.curve_outer_side=TRACK_SIDE_NONE;
+        if(index==2)in.element=TRACK_ELEMENT_ROUNDABOUT_APPROACH;
+        tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
+        CHECK(car.status.minimum_confidence==AUTO_MIN_CONFIDENCE);
+    }
+    reset();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
+    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=44;in.start_pressed=1;
+    tick(8,1,1,1);fault(AUTO_FAULT_NOT_READY);CHECK(car.status.minimum_confidence==45);
+    reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
+    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=40;in.near_error_px=20;in.far_error_px=40;
+    tick(6,1,1,1);CHECK(car.status.steering_permille<0);
+    in.curve_outer_supported=0;in.curve_outer_reject_reason=AUTO_PATH_OUTER_FAR;
+    tick(1,1,1,1);CHECK(car.status.left_duty_permille==0 && car.status.steering_permille==0);
+    CHECK(car.status.diagnostic_steering_permille<0 && car.status.path_reason==AUTO_PATH_OUTER_FAR);
+    tick(7,1,1,1);fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.diagnostic_steering_permille<0);
+    reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
+    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=95;in.vision_valid=0;
+    tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.path_reason==AUTO_PATH_NEAR);
+    reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
+    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=40;
+    tick(20,0,1,1);fault(AUTO_FAULT_CAMERA_STALE);
+    reset();start();in.confidence=45;tick(8,1,1,1);CHECK(car.status.active);
+    in.confidence=44;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
+}
 int main(void)
 {
+    test_outer_quality();
     CHECK(VISION_RING_PHASE_TIMEOUT_MS > (uint32_t)(1000.0f*VISION_RING_INSIDE_MIN_MM/AUTO_ELEMENT_SPEED_MM_S));
     reset(); CHECK(!car.status.active);in.start_pressed=1;in.stop_pressed=1;tick(8,1,1,1);
     CHECK(!car.status.active);in.stop_pressed=0;tick(20,1,1,1);CHECK(!car.status.active);

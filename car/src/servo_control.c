@@ -24,9 +24,9 @@ static uint32_t servo_pulse_to_duty(uint16_t pulse_us)
 {
     uint64_t duty;
 
-    /* 只允许参考测试窗口；使用库的占空比尺度，不套用全行程角度公式。 */
-    if (pulse_us < SERVO_TEST_MIN_PULSE_US) pulse_us = SERVO_TEST_MIN_PULSE_US;
-    if (pulse_us > SERVO_TEST_MAX_PULSE_US) pulse_us = SERVO_TEST_MAX_PULSE_US;
+    /* 只允许配置的总输出窗口；各模式在目标映射处限制自己的摆幅。 */
+    if (pulse_us < SERVO_OUTPUT_MIN_PULSE_US) pulse_us = SERVO_OUTPUT_MIN_PULSE_US;
+    if (pulse_us > SERVO_OUTPUT_MAX_PULSE_US) pulse_us = SERVO_OUTPUT_MAX_PULSE_US;
     duty = ((uint64_t)pulse_us * SERVO_PWM_FREQUENCY_HZ * PWM_DUTY_MAX + 500000U) / 1000000U;
     if (duty > PWM_DUTY_MAX) duty = PWM_DUTY_MAX;
     return (uint32_t)duty;
@@ -240,9 +240,9 @@ static void servo_control_apply(uint8_t enabled, int16_t steering_permille, uint
     if (steering_permille > 1000) steering_permille = 1000;
     /* 用户已确认：大脉宽向左，小脉宽向右；用有符号乘法避免负输入溢出。 */
     target_us = (int32_t)SERVO_REFERENCE_CENTER_US +
-                (int32_t)SERVO_TEST_EXCURSION_US * steering_permille / 1000;
-    if (target_us < (int32_t)SERVO_TEST_MIN_PULSE_US) target_us = SERVO_TEST_MIN_PULSE_US;
-    if (target_us > (int32_t)SERVO_TEST_MAX_PULSE_US) target_us = SERVO_TEST_MAX_PULSE_US;
+                (int32_t)(owner == 2U ? SERVO_AUTONOMOUS_EXCURSION_US : SERVO_TEST_EXCURSION_US) * steering_permille / 1000;
+    if (target_us < (int32_t)SERVO_OUTPUT_MIN_PULSE_US) target_us = SERVO_OUTPUT_MIN_PULSE_US;
+    if (target_us > (int32_t)SERVO_OUTPUT_MAX_PULSE_US) target_us = SERVO_OUTPUT_MAX_PULSE_US;
 
     if (!servo_remote_owned)
     {

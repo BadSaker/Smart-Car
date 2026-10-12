@@ -1,0 +1,18 @@
+{
+  "mode": "native",
+  "completed": false,
+  "time_s": 1.7,
+  "distance_m": 0.07635225577032122,
+  "route_length_m": 30.021128796792553,
+  "max_error_m": 4.8040211035338615e-19,
+  "max_outside_wheels": 0,
+  "state": "故障",
+  "fault": "摄像头超时",
+  "shadow_c_state": "故障",
+  "shadow_c_fault": "摄像头超时",
+  "algorithm_build": "7290d64ad1dcc97b",
+  "closure_connector_m": 0.22157287525380576,
+  "predicted_width_row30": 44.00000122905519,
+  "predicted_width_row116": 167.0000015596049,
+  "model_status": "条件相机拟合；电机响应、前轮角度、轮胎尺寸未实车标定"
+}

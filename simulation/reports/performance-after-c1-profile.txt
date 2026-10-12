@@ -1,0 +1,26 @@
+         11956 function calls in 0.053 seconds
+
+   Ordered by: cumulative time
+   List reduced from 130 to 18 due to restriction <18>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    0.003    0.001    0.053    0.011 E:\AA\car\simulation\render.py:50(scene_image)
+        5    0.003    0.001    0.028    0.006 E:\AA\car\simulation\car_model.py:143(draw_3d)
+       85    0.009    0.000    0.009    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+       20    0.000    0.000    0.008    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\ImageDraw.py:530(text)
+       20    0.000    0.000    0.008    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\ImageDraw.py:583(draw_text)
+       15    0.000    0.000    0.008    0.001 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\fromnumeric.py:2959(ptp)
+       15    0.000    0.000    0.008    0.001 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\_methods.py:231(_ptp)
+        5    0.004    0.001    0.008    0.002 E:\AA\car\simulation\car_model.py:130(mesh)
+       20    0.000    0.000    0.007    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\ImageFont.py:562(getmask2)
+       20    0.007    0.000    0.007    0.000 {method 'render' of 'Font' objects}
+       50    0.005    0.000    0.007    0.000 E:\AA\car\simulation\render.py:61(project)
+     1140    0.001    0.000    0.004    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\ImageDraw.py:339(polygon)
+       35    0.000    0.000    0.003    0.000 E:\AA\car\simulation\render.py:65(line3)
+        5    0.000    0.000    0.003    0.001 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\Image.py:1356(copy)
+        5    0.003    0.001    0.003    0.001 {method 'copy' of 'ImagingCore' objects}
+        5    0.000    0.000    0.003    0.001 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\Image.py:3193(new)
+        5    0.001    0.000    0.003    0.001 E:\AA\car\simulation\car_model.py:26(world)
+       25    0.003    0.000    0.003    0.000 {built-in method PIL._imaging.fill}
+
+

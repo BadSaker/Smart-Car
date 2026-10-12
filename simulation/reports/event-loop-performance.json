@@ -1,0 +1,42 @@
+{
+  "paused": {
+    "heartbeat_p95_ms": 11.7950000003475,
+    "heartbeat_max_ms": 12.068999999428343,
+    "samples": 65,
+    "simulated_seconds_advanced": 0.0,
+    "image_updates": {}
+  },
+  "2d_1x": {
+    "heartbeat_p95_ms": 19.62669999920763,
+    "heartbeat_max_ms": 22.13439999923139,
+    "samples": 65,
+    "simulated_seconds_advanced": 1.99,
+    "image_updates": {
+      "map": 32,
+      "camera": 32,
+      "chart": 31
+    }
+  },
+  "3d_1x": {
+    "heartbeat_p95_ms": 36.802699999498145,
+    "heartbeat_max_ms": 47.05019999983051,
+    "samples": 59,
+    "simulated_seconds_advanced": 2.0,
+    "image_updates": {
+      "scene": 29,
+      "camera": 29,
+      "chart": 29
+    }
+  },
+  "3d_8x": {
+    "heartbeat_p95_ms": 19.948599999224825,
+    "heartbeat_max_ms": 27.914799999052775,
+    "samples": 70,
+    "simulated_seconds_advanced": 7.81,
+    "image_updates": {
+      "scene": 35,
+      "camera": 35,
+      "chart": 35
+    }
+  }
+}

@@ -1,0 +1,532 @@
+{
+  "method": "每张截图在同一赛道中独立估计车姿，固定相机模型；30至115行，排除彩线/文字；不是已知车姿的独立标定验证。",
+  "parameters": {
+    "before": {
+      "scenario": "full",
+      "direction": "A→B",
+      "controller": "native",
+      "show_ab": true,
+      "length": 0.28,
+      "wheelbase": 0.19,
+      "track": 0.153,
+      "body_width": 0.14,
+      "tire_width": 0.027,
+      "front_overhang": 0.04,
+      "rear_overhang": 0.015,
+      "plate_height": 0.026,
+      "plate_thickness": 0.004,
+      "wheel_diameter": 0.064,
+      "camera_offset": 0.08,
+      "height": 0.297,
+      "pitch": 53.0,
+      "camera_lateral": 0.0,
+      "camera_yaw": 0.0,
+      "camera_roll": 0.0,
+      "hfov": 120.0,
+      "fy_ratio": 1.0,
+      "cx": 93.0,
+      "cy": 59.5,
+      "k1": 0.0,
+      "fps": 50.0,
+      "road_width": 0.5,
+      "edge_width": 0.025,
+      "radius": 0.5,
+      "steer_max_deg": 28.0,
+      "servo_center": 1480.0,
+      "servo_range": 130.0,
+      "servo_step": 6.0,
+      "servo_interval": 0.02,
+      "servo_tau": 0.08,
+      "motor_gain": 1.25,
+      "motor_deadzone": 15.0,
+      "motor_tau": 0.18,
+      "coast_tau": 0.25,
+      "cruise": 180.0,
+      "curve_speed": 120.0,
+      "outer_speed": 80.0,
+      "kp": 28.0,
+      "ki": 0.0,
+      "kd": 0.5,
+      "speed_kp": 0.5,
+      "speed_ki": 0.15,
+      "min_q": 45,
+      "outer_q": 40,
+      "outer_enabled": 1,
+      "width_top": 44,
+      "width_bottom": 167,
+      "offset": 0.0,
+      "heading_error": 0.0,
+      "gray_road": 220,
+      "gray_edge": 20,
+      "gray_background": 45,
+      "noise": 4.0,
+      "seed": 42,
+      "drop_camera": false,
+      "drop_feedback": false,
+      "blackout": false,
+      "camera_mode": "manual",
+      "fitted_pitch": 46.84,
+      "fitted_hfov": 120.0,
+      "nominal_lens_angle_deg": 120.0,
+      "nominal_lens_angle_definition": "unknown",
+      "camera_mount_gap": 0.035,
+      "reference_widths": [
+        44.0,
+        59.0,
+        97.0,
+        120.0,
+        156.0,
+        167.0
+      ],
+      "camera_samples": 1,
+      "camera_sampling": "nearest",
+      "disturbance_level": 3.0,
+      "seed_auto": 0,
+      "start_jitter": 0.02,
+      "heading_jitter": 4.0,
+      "brightness_jitter": 15.0
+    },
+    "after": {
+      "scenario": "full",
+      "direction": "A→B",
+      "controller": "native",
+      "show_ab": true,
+      "length": 0.28,
+      "wheelbase": 0.19,
+      "track": 0.153,
+      "body_width": 0.14,
+      "tire_width": 0.027,
+      "front_overhang": 0.04,
+      "rear_overhang": 0.015,
+      "plate_height": 0.026,
+      "plate_thickness": 0.004,
+      "wheel_diameter": 0.064,
+      "camera_offset": 0.08,
+      "height": 0.297,
+      "pitch": 31.468962853276164,
+      "camera_lateral": 0.0,
+      "camera_yaw": 0.0,
+      "camera_roll": 0.0,
+      "hfov": 89.66951494024845,
+      "fy_ratio": 1.0,
+      "cx": 93.0,
+      "cy": 59.5,
+      "k1": 0.0,
+      "fps": 50.0,
+      "road_width": 0.5,
+      "edge_width": 0.0,
+      "radius": 0.5,
+      "steer_max_deg": 28.0,
+      "servo_center": 1480.0,
+      "servo_range": 130.0,
+      "servo_step": 6.0,
+      "servo_interval": 0.02,
+      "servo_tau": 0.08,
+      "motor_gain": 1.25,
+      "motor_deadzone": 15.0,
+      "motor_tau": 0.18,
+      "coast_tau": 0.25,
+      "cruise": 180.0,
+      "curve_speed": 120.0,
+      "outer_speed": 80.0,
+      "kp": 28.0,
+      "ki": 0.0,
+      "kd": 0.5,
+      "speed_kp": 0.5,
+      "speed_ki": 0.15,
+      "min_q": 45,
+      "outer_q": 40,
+      "outer_enabled": 1,
+      "width_top": 44,
+      "width_bottom": 167,
+      "offset": 0.0,
+      "heading_error": 0.0,
+      "gray_road": 255,
+      "gray_edge": 20,
+      "gray_background": 153,
+      "noise": 0.0,
+      "seed": 42,
+      "drop_camera": false,
+      "drop_feedback": false,
+      "blackout": false,
+      "camera_mode": "fixed_height_fit",
+      "fitted_pitch": 31.468962853276164,
+      "fitted_hfov": 89.66951494024845,
+      "nominal_lens_angle_deg": 120.0,
+      "nominal_lens_angle_definition": "unknown",
+      "camera_mount_gap": 0.035,
+      "reference_widths": [
+        44.0,
+        59.0,
+        97.0,
+        120.0,
+        156.0,
+        167.0
+      ],
+      "camera_samples": 2,
+      "camera_sampling": "bilinear",
+      "disturbance_level": 0,
+      "seed_auto": 0,
+      "start_jitter": 0.02,
+      "heading_jitter": 4.0,
+      "brightness_jitter": 15.0,
+      "calibration_note": "297mm高度、前轴后110mm、道路内宽500mm为用户实测；角度为六行条件拟合。120度原称畸变角，定义未确认。黑边0和背景153为渲染选择。"
+    }
+  },
+  "rows": [
+    {
+      "row": 30,
+      "reference": 44.0,
+      "before": 43.07936856527484,
+      "after": 40.730769230769226
+    },
+    {
+      "row": 45,
+      "reference": 59.0,
+      "before": 58.27671763477101,
+      "after": 62.26923076923077
+    },
+    {
+      "row": 70,
+      "reference": 97.0,
+      "before": 83.60563275059798,
+      "after": 98.16666666666667
+    },
+    {
+      "row": 86,
+      "reference": 120.0,
+      "before": 99.81613842472723,
+      "after": 121.14102564102565
+    },
+    {
+      "row": 108,
+      "reference": 156.0,
+      "before": 122.10558372665494,
+      "after": 152.73076923076925
+    },
+    {
+      "row": 116,
+      "reference": 167.0,
+      "before": 130.21083656371957,
+      "after": 164.2179487179487
+    }
+  ],
+  "frames": [
+    {
+      "file": "00BC904D794C0742CC6CF8B920B63916.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          1800,
+          1080
+        ],
+        "roi": [
+          183.93048128342247,
+          312,
+          962.0695187165776,
+          807
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            6.012,
+            2.355999999999999,
+            20.415352248333654
+          ],
+          "coarse_iou": 0.7806563039723662,
+          "full_resolution_iou": 0.7651965265082267,
+          "valid_pixels": 14014
+        },
+        "after": {
+          "estimated_pose": [
+            0.5331201568119988,
+            3.050045759524277,
+            4.428468224139082
+          ],
+          "coarse_iou": 0.8829365079365079,
+          "full_resolution_iou": 0.8804289544235925,
+          "valid_pixels": 14014
+        }
+      }
+    },
+    {
+      "file": "25863096A89006C0E559EB2C1B1AE410.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          1800,
+          1080
+        ],
+        "roi": [
+          183.93048128342247,
+          312,
+          962.0695187165776,
+          807
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            3.4180571034106975,
+            3.4743157572190886,
+            22.849511362970873
+          ],
+          "coarse_iou": 0.8613376835236541,
+          "full_resolution_iou": 0.8651919866444073,
+          "valid_pixels": 15910
+        },
+        "after": {
+          "estimated_pose": [
+            1.5299999999999996,
+            1.96531746031746,
+            4.692388980384689
+          ],
+          "coarse_iou": 0.9729272419627749,
+          "full_resolution_iou": 0.9544349296965853,
+          "valid_pixels": 15910
+        }
+      }
+    },
+    {
+      "file": "623DF029D3F48FA61EEF15DD7C597692.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          2400,
+          1440
+        ],
+        "roi": [
+          161.44117647058823,
+          249,
+          1687.5588235294117,
+          1223
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            5.517606440354147,
+            1.4631981216037877,
+            18.12377337903892
+          ],
+          "coarse_iou": 0.8796610169491526,
+          "full_resolution_iou": 0.8524626699353688,
+          "valid_pixels": 15156
+        },
+        "after": {
+          "estimated_pose": [
+            0.4915424176708441,
+            3.0918138112097675,
+            4.497102174174222
+          ],
+          "coarse_iou": 0.8924731182795699,
+          "full_resolution_iou": 0.8955657862854374,
+          "valid_pixels": 15156
+        }
+      }
+    },
+    {
+      "file": "9D2A897228698AD9EA11860CC2FF56A9.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          1800,
+          1080
+        ],
+        "roi": [
+          183.93048128342247,
+          312,
+          962.0695187165776,
+          807
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            3.3696937968852905,
+            3.3048252360640333,
+            22.044511362970873
+          ],
+          "coarse_iou": 0.8729641693811075,
+          "full_resolution_iou": 0.8592173017507724,
+          "valid_pixels": 15910
+        },
+        "after": {
+          "estimated_pose": [
+            5.186031746031745,
+            3.499999999999998,
+            22.266148575128557
+          ],
+          "coarse_iou": 0.905144694533762,
+          "full_resolution_iou": 0.8971411130328619,
+          "valid_pixels": 15910
+        }
+      }
+    },
+    {
+      "file": "A5B8B93ABB95516B7CB38F1C7AB0EBC4.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          1800,
+          1080
+        ],
+        "roi": [
+          183.93048128342247,
+          312,
+          962.0695187165776,
+          807
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            0.8266313759857644,
+            2.626178904727861,
+            5.371664523928246
+          ],
+          "coarse_iou": 0.8672566371681416,
+          "full_resolution_iou": 0.8686377245508982,
+          "valid_pixels": 15910
+        },
+        "after": {
+          "estimated_pose": [
+            5.1910317460317446,
+            3.489999999999998,
+            22.06614857512855
+          ],
+          "coarse_iou": 0.8687022900763359,
+          "full_resolution_iou": 0.8628016536871455,
+          "valid_pixels": 15910
+        }
+      }
+    },
+    {
+      "file": "C0AB539F70F0D5BB8EF0C939B9C665DB.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          2400,
+          1440
+        ],
+        "roi": [
+          161.44117647058823,
+          249,
+          1687.5588235294117,
+          1223
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            1.3047235766199332,
+            1.0296446890169642,
+            4.6713964888292985
+          ],
+          "coarse_iou": 0.9580246913580247,
+          "full_resolution_iou": 0.9458253664754621,
+          "valid_pixels": 15458
+        },
+        "after": {
+          "estimated_pose": [
+            4.564399475568338,
+            3.3272912336972396,
+            22.969422848722157
+          ],
+          "coarse_iou": 0.975609756097561,
+          "full_resolution_iou": 0.978060413354531,
+          "valid_pixels": 15458
+        }
+      }
+    },
+    {
+      "file": "F3CA71F9990D3EFCF274BEEA3630D283.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          2400,
+          1440
+        ],
+        "roi": [
+          161.44117647058823,
+          249,
+          1687.5588235294117,
+          1223
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            4.7015079772944235,
+            0.78631738520236,
+            11.90123835701521
+          ],
+          "coarse_iou": 0.8756567425569177,
+          "full_resolution_iou": 0.8765250790781745,
+          "valid_pixels": 15910
+        },
+        "after": {
+          "estimated_pose": [
+            3.2230571034106976,
+            3.4243157572190888,
+            22.18951136297087
+          ],
+          "coarse_iou": 0.9032815198618307,
+          "full_resolution_iou": 0.90578182221729,
+          "valid_pixels": 15910
+        }
+      }
+    },
+    {
+      "file": "F8840E38AF515132DE3808DF716BF9CC.png",
+      "source": {
+        "kind": "screenshot",
+        "source_size": [
+          1800,
+          1080
+        ],
+        "roi": [
+          183.93048128342247,
+          312,
+          962.0695187165776,
+          807
+        ],
+        "note": "截图近似采样，彩线/文字处无原始像素；不能作为无损灰度回放或已标定车姿。"
+      },
+      "profiles": {
+        "before": {
+          "estimated_pose": [
+            4.0615515026309055,
+            3.3251670149308987,
+            22.06344949342983
+          ],
+          "coarse_iou": 0.850381679389313,
+          "full_resolution_iou": 0.8428982725527832,
+          "valid_pixels": 15909
+        },
+        "after": {
+          "estimated_pose": [
+            2.893546811985878,
+            3.220126303458949,
+            21.7811043180042
+          ],
+          "coarse_iou": 0.878419452887538,
+          "full_resolution_iou": 0.8826178612495209,
+          "valid_pixels": 15909
+        }
+      }
+    }
+  ],
+  "mean_full_resolution_iou": {
+    "before": 0.8594943659370116,
+    "after": 0.9071040667433705
+  }
+}

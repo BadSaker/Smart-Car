@@ -1,0 +1,18 @@
+test_ab_markers_do_not_enter_camera_image (__main__.ModelTests.test_ab_markers_do_not_enter_camera_image) ... ok
+test_bad_parameters_rejected (__main__.ModelTests.test_bad_parameters_rejected) ... ok
+test_black_image_and_start_gate (__main__.ModelTests.test_black_image_and_start_gate) ... ok
+test_constant_turn_exact_circle (__main__.ModelTests.test_constant_turn_exact_circle) ... ok
+test_encoder_scale (__main__.ModelTests.test_encoder_scale) ... ok
+test_fit_constraints_and_nominal_conflict (__main__.ModelTests.test_fit_constraints_and_nominal_conflict) ... ok
+test_full_finish_uses_progress_not_nominal_distance (__main__.ModelTests.test_full_finish_uses_progress_not_nominal_distance) ... ok
+test_full_track_closes_and_keeps_midterm_markers (__main__.ModelTests.test_full_track_closes_and_keeps_midterm_markers) ... ok
+test_native_feedback_loss (__main__.ModelTests.test_native_feedback_loss) ... ok
+test_native_steering_corrects_offset (__main__.ModelTests.test_native_steering_corrects_offset) ... ok
+test_native_visual_start_and_camera_loss (__main__.ModelTests.test_native_visual_start_and_camera_loss) ... ok
+test_projected_straight_image_width (__main__.ModelTests.test_projected_straight_image_width) ... ok
+test_route_geometry_and_reverse (__main__.ModelTests.test_route_geometry_and_reverse) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.813s
+
+OK

@@ -1,0 +1,34 @@
+{
+  "perturbation": {
+    "seed": 42,
+    "enabled": true,
+    "start_offset_m": 0.005870053747845756,
+    "start_heading_deg": -1.01616537063438
+  },
+  "mode": "native",
+  "completed": false,
+  "time_s": 2.0,
+  "distance_m": 0.1289505985210752,
+  "route_length_m": 30.021128796792553,
+  "max_error_m": 0.009239609072776189,
+  "max_outside_wheels": 0,
+  "state": "运行",
+  "fault": "无",
+  "shadow_c_state": "运行",
+  "shadow_c_fault": "无",
+  "algorithm_build": "b09bee4813ed377a",
+  "stop_evidence": null,
+  "stop_capture_complete": false,
+  "closure_connector_m": 0.22157287525380576,
+  "predicted_width_row30": 40.74014882240951,
+  "predicted_width_row116": 164.22308329269407,
+  "vehicle_geometry": {
+    "model": "C1 03-361-1",
+    "overall_length_m": 0.28,
+    "plate_length_m": 0.245,
+    "wheelbase_m": 0.19,
+    "outer_width_straight_m": 0.18,
+    "camera_from_rear_axle_m": 0.08
+  },
+  "model_status": "C1产品图外形近似、实测轴线定位；相机条件拟合、执行机构未标定"
+}

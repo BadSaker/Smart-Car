@@ -26,6 +26,22 @@ void __set_PRIMASK(uint32_t);
 #endif
 """
 class AutonomousControlTests(unittest.TestCase):
+    def test_real_gray_outer_quality(self):
+        stub=SCRATCH/"include";stub.mkdir(parents=True,exist_ok=True)
+        (stub/"platform.h").write_text(PLATFORM,encoding="ascii")
+        for name in ("zf_driver_gpio.h","zf_driver_pwm.h","zf_driver_encoder.h","fsl_common.h"):
+            (stub/name).write_text('#include "platform.h"\n',encoding="ascii")
+        exe=SCRATCH/"outer-gray.exe"
+        cmd=[COMPILER,"-std=c99","-Wall","-Wextra","-Werror","-O2",
+             "-I"+str(stub),"-I"+str(ROOT/"car/include"),"-I"+str(ROOT/"car/config"),
+             str(ROOT/"car/tests/test_outer_control.c")]
+        cmd += [str(ROOT/"car/src"/(name+".c")) for name in
+                ("autonomous_control","autonomous_drive","control_pid","motor_control","servo_control","track_vision")]
+        cmd += ["-lm","-o",str(exe)]
+        build=subprocess.run(cmd,capture_output=True,text=True,errors="replace")
+        self.assertEqual(build.returncode,0,build.stdout+build.stderr)
+        run=subprocess.run([str(exe)],capture_output=True,text=True,errors="replace")
+        self.assertEqual(run.returncode,0,run.stdout+run.stderr);print(run.stdout.strip())
     def test_hardware_boundary_integration(self):
         source=ROOT/"car/src/autonomous_control.c"
         self.assertTrue(source.exists(),"自动驾驶硬件适配尚未实现")
@@ -36,6 +52,8 @@ class AutonomousControlTests(unittest.TestCase):
         exe=SCRATCH/"integrated.exe"
         names=("autonomous_control","autonomous_drive","control_pid","motor_control","servo_control","track_vision")
         cmd=[COMPILER,"-std=c99","-Wall","-Wextra","-Werror","-O2","-I"+str(stub),"-I"+str(ROOT/"car/include"),"-I"+str(ROOT/"car/config"),str(ROOT/"car/tests/test_autonomous_control.c")]
+        # 联合测试中的独立灰度夹具沿用36/122px，不改变发布固件的实测参数。
+        cmd[1:1]=["-DVISION_WIDTH_TOP_PX=36","-DVISION_WIDTH_BOTTOM_PX=122"]
         cmd += [str(ROOT/"car/src"/(name+".c")) for name in names]+["-lm","-o",str(exe)]
         r=subprocess.run(cmd,capture_output=True,text=True,encoding="utf8",errors="replace");self.assertEqual(r.returncode,0,r.stdout+r.stderr)
         r=subprocess.run([str(exe)],capture_output=True,text=True,encoding="utf8",errors="replace");self.assertEqual(r.returncode,0,r.stdout+r.stderr);print(r.stdout.strip())

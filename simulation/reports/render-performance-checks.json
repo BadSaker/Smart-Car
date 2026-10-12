@@ -1,0 +1,9 @@
+{
+  "2d_changed_pixels": 0,
+  "3d_changed_pixels": 0,
+  "rotating_3d_median_ms": 7.909350000318227,
+  "rotating_3d_p95_ms": 8.833400000185065,
+  "follow_3d_median_ms": 7.181299999501789,
+  "follow_3d_p95_ms": 8.94609999977547,
+  "bounded_background_cache": true
+}

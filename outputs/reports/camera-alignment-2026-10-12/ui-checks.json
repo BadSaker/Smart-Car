@@ -1,0 +1,10 @@
+{
+  "sampling_roundtrip_combinations": 6,
+  "fixed_height_preview_apply": true,
+  "save_reload": true,
+  "screenshot_imports": 8,
+  "native_running_after_4s": true,
+  "stop_cuts_drive": true,
+  "calibration_rows": 6,
+  "ui_errors": []
+}

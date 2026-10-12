@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "platform.h"
@@ -6,10 +6,11 @@
 #include "motor_control.h"
 #include "servo_control.h"
 #include "encoder_feedback.h"
+#include "autonomous_config.h"
 static uint8_t keys[32];static uint32_t duties[3],mask,now,frame_sequence;
 static encoder_feedback_snapshot_t feedback;
 static unsigned checks;
-#define CHECK(c) do {++checks;if(!(c)){printf("line %d\n",__LINE__);fflush(stdout);assert(c);}}while(0)
+#define CHECK(c) do {++checks;if(!(c)){printf("line %d\n",__LINE__);fflush(stdout);exit(1);}}while(0)
 void gpio_init(gpio_pin_enum p,gpio_dir_enum d,uint8_t v,uint32_t m){(void)p;(void)d;(void)v;(void)m;}
 uint8_t gpio_get_level(gpio_pin_enum p){return keys[p];}
 void gpio_set_level(gpio_pin_enum p,uint8_t v){(void)p;(void)v;}
@@ -27,12 +28,13 @@ static void step(unsigned n,int camera,int service)
         memset(&vision,0,sizeof vision);vision.valid=1;vision.confidence=95;
         vision.near_error_px=15;vision.far_error_px=20;
         now+=10;++feedback.sample_sequence;
-        feedback.left.speed_mm_s=100;feedback.right.speed_mm_s=120;
-        feedback.left.delta_counts=22;feedback.right.delta_counts=26;
+        feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*100;feedback.right.speed_mm_s=AUTO_RIGHT_ENCODER_SIGN*120;
+        feedback.left.delta_counts=AUTO_LEFT_ENCODER_SIGN*22;feedback.right.delta_counts=AUTO_RIGHT_ENCODER_SIGN*26;
         if(camera)autonomous_control_publish_vision(&vision,++frame_sequence,now);
         autonomous_control_tick_10ms(now);motor_control_tick_10ms();
         if(service)autonomous_control_service(now);
-        CHECK(duties[PWM2_MODULE0_CHA_C6]<=1000 && duties[PWM2_MODULE1_CHA_C8]<=1000);
+        CHECK(duties[PWM2_MODULE0_CHA_C6]<=AUTO_MAX_DUTY_PERMILLE*PWM_DUTY_MAX/1000U &&
+              duties[PWM2_MODULE1_CHA_C8]<=AUTO_MAX_DUTY_PERMILLE*PWM_DUTY_MAX/1000U);
     }
 }
 int main(void)
@@ -45,6 +47,22 @@ int main(void)
     step(85,1,1);autonomous_control_get_status(&s);CHECK(s.state==AUTO_DRIVE_RUNNING);
     CHECK(duties[PWM2_MODULE1_CHA_C8]>0 && duties[PWM2_MODULE0_CHA_C6]>0);
     CHECK(servo_control_get_status()->current_pulse_us<1480);
+    /* 摘要经真实mailbox传递，可靠普通外侧Q40允许运行且使用80mm/s。 */
+    {
+        unsigned n;track_vision_result_t v;
+        memset(&v,0,sizeof v);v.valid=1;v.confidence=40;v.element=TRACK_ELEMENT_CURVE;
+        v.near_path_supported=1;v.curve_outer_side=TRACK_SIDE_LEFT;v.curve_outer_supported=1;
+        v.curve_outer_near_rows=17;v.curve_outer_far_rows=13;v.near_error_px=20;v.far_error_px=40;
+        for(n=0;n<6;++n) {
+            now+=10;++feedback.sample_sequence;
+            autonomous_control_publish_vision(&v,++frame_sequence,now);
+            autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
+        }
+        autonomous_control_get_status(&s);
+        CHECK(s.active && s.minimum_confidence==AUTO_CURVE_OUTER_MIN_CONFIDENCE);
+        CHECK(s.curve_outer_near_rows==17 && s.curve_outer_far_rows==13 && s.curve_outer_supported);
+        CHECK(s.target_speed_mm_s==AUTO_CURVE_OUTER_SPEED_MM_S && s.steering_permille<0);
+    }
     motor_control_remote_set_link(0);step(3,1,1);CHECK(autonomous_control_is_active());
     step(20,0,0);autonomous_control_get_status(&s);CHECK(!s.active);
     CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);

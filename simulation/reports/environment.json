@@ -1,0 +1,9 @@
+{
+  "python": "C:\\Users\\Sumi\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "python_version": "3.13.0",
+  "architecture": "64bit",
+  "numpy": "2.5.0",
+  "pillow": "12.3.0",
+  "tk": 8.6,
+  "compiler": "E:\\Xilinx\\Vivado\\2022.2\\tps\\mingw\\6.2.0\\win64.o\\nt\\bin\\gcc.exe"
+}

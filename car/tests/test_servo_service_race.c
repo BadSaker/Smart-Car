@@ -6,6 +6,7 @@
 #include "motor_control.h"
 #include "servo_control.h"
 #include "encoder_feedback.h"
+#include "autonomous_config.h"
 static uint8_t keys[32];static uint32_t duties[3],mask,now,frame_sequence;
 static encoder_feedback_snapshot_t feedback;
 static unsigned checks,review_event,review_stopped,review_positive_after_stop;
@@ -28,8 +29,8 @@ static void step(unsigned n,int camera,int service)
         memset(&vision,0,sizeof vision);vision.valid=1;vision.confidence=95;
         vision.near_error_px=15;vision.far_error_px=20;
         now+=10;++feedback.sample_sequence;
-        feedback.left.speed_mm_s=100;feedback.right.speed_mm_s=120;
-        feedback.left.delta_counts=22;feedback.right.delta_counts=26;
+        feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*100;feedback.right.speed_mm_s=AUTO_RIGHT_ENCODER_SIGN*120;
+        feedback.left.delta_counts=AUTO_LEFT_ENCODER_SIGN*22;feedback.right.delta_counts=AUTO_RIGHT_ENCODER_SIGN*26;
         if(camera)autonomous_control_publish_vision(&vision,++frame_sequence,now);
         autonomous_control_tick_10ms(now);motor_control_tick_10ms();
         if(service)autonomous_control_service(now);

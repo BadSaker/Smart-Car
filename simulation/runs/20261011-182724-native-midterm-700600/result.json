@@ -1,0 +1,15 @@
+{
+  "mode": "native",
+  "completed": false,
+  "time_s": 46.13,
+  "distance_m": 4.74007887921543,
+  "route_length_m": 11.733185307179586,
+  "max_error_m": 0.05126918987357915,
+  "max_outside_wheels": 0,
+  "state": "故障",
+  "fault": "元素故障",
+  "algorithm_build": "b09bee4813ed377a",
+  "predicted_width_row30": 44.0,
+  "predicted_width_row116": 167.0,
+  "model_status": "条件相机拟合；电机响应、前轮角度、轮胎尺寸未实车标定"
+}

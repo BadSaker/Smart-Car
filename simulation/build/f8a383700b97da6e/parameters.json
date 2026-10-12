@@ -1,0 +1,15 @@
+{
+  "cruise": 180.0,
+  "curve_speed": 120.0,
+  "outer_speed": 80.0,
+  "kp": 30.0,
+  "ki": 0.0,
+  "kd": 0.5,
+  "speed_kp": 0.5,
+  "speed_ki": 0.15,
+  "min_q": 45.0,
+  "outer_q": 40.0,
+  "width_top": 44.0,
+  "width_bottom": 167.0,
+  "outer_enabled": 1.0
+}

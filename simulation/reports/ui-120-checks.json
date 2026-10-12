@@ -1,0 +1,77 @@
+{
+  "defaults_and_custom_fov": "passed",
+  "physical_unit_roundtrip": "passed",
+  "selected_and_pressed_tab_bounds": {
+    "parameters": [
+      [
+        0,
+        47,
+        0,
+        32
+      ],
+      [
+        48,
+        95,
+        0,
+        32
+      ],
+      [
+        96,
+        143,
+        0,
+        32
+      ],
+      [
+        144,
+        191,
+        0,
+        32
+      ],
+      [
+        192,
+        239,
+        0,
+        32
+      ]
+    ],
+    "views": [
+      [
+        0,
+        67,
+        0,
+        32
+      ],
+      [
+        68,
+        135,
+        0,
+        32
+      ],
+      [
+        136,
+        207,
+        0,
+        32
+      ],
+      [
+        208,
+        279,
+        0,
+        32
+      ],
+      [
+        280,
+        346,
+        0,
+        32
+      ]
+    ]
+  },
+  "diagnostic_window": "passed",
+  "main_metrics_rendered": "passed",
+  "effective_hfov": 120.0,
+  "effective_pitch": 39.43681418720861,
+  "status_after_1_2s": "运行",
+  "supplied_profiles": "all 120 degrees",
+  "explicit_fit_and_restore": "passed"
+}

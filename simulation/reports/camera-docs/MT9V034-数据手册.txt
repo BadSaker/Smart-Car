@@ -1,0 +1,2738 @@
+=== PAGE 1 ===
+MT9V034
+
+1/3‐Inch Wide‐VGA CMOS
+Digital Image Sensor
+
+General Description
+  The MT9V034 is a 1/3-inch wide-VGA format CMOS active-pixel
+digital image sensor with global shutter and high dynamic range                                                                  www.onsemi.com
+(HDR) operation. The sensor has specifically been designed to support
+the demanding interior and exterior surveillance imaging needs, which
+makes this part ideal for a wide variety of imaging applications in
+real-world environments.
+  This wide-VGA CMOS image sensor features ON Semiconductor’s
+breakthrough low-noise CMOS imaging technology that achieves
+CCD image quality (based on signal-to-noise ratio and low-light
+sensitivity) while maintaining the inherent size, cost, and integration
+advantages of CMOS.
+  The active imaging pixel array is 752 H x 480 V. It incorporates               CLCC48 11.43 x 11.43
+sophisticated camera functions on-chip-such as binning 2 x 2 and                 CASE 848AN
+4 x 4, to improve sensitivity when operating in smaller resolutions-as
+well as windowing, column and row mirroring. It is programmable
+through a simple two-wire serial interface.                            ORDERING INFORMATION
+  The MT9V034 can be operated  in  its  default mode or be      See detailed ordering and shipping information on page 2 of
+programmed  for frame  size, exposure, gain  setting, and  other         this data sheet.
+parameters. The default mode outputs a wide-VGA-size image at 60
+frames per second (fps).
+                                                       • ADC: On-chip, 10-bit Column-parallel An on-chip analog-to-digital converter (ADC) provides 10 bits per
+                                                                      (Option to Operate in 12-bit to 10-bitpixel. A 12-bit resolution companded for 10 bits for small signals can
+be alternatively enabled, allowing more accurate digitization for       Companding Mode)
+darker areas in the image.                                    • Automatic Controls: Auto Exposure Control
+  In addition to a traditional, parallel logic output the MT9V034 also       (AEC) and Auto Gain Control (AGC);
+features a serial low-voltage differential signaling (LVDS) output. The         Variable Regional and Variable Weight
+sensor can be operated in a stereo-camera, and the sensor, designated      AEC/AGC
+as a stereo-master, is able to merge the data from itself and the     • Support for Four Unique Serial Control
+stereo-slave sensor into one serial LVDS stream.                             Register IDs to Control Multiple Imagers on
+  The sensor is designed to operate in a wide temperature range         the Same Bus
+(–30°C to +70°C).                                                       • Data Output Formats:
+Features                                                  • Single Sensor Mode:
+• Array format: Wide-VGA, Active 752 H x 480 V (360,960 Pixels)            10-bit Parallel/stand-alone
+• Global Shutter Photodiode Pixels; Simultaneous Integration and               8-bit or 10-bit Serial LVDS
+  Readout                                                 • Stereo Sensor Mode:
+• RGB Bayer or Monochrome: NIR Enhanced Performance for Use            Interspersed 8-bit Serial LVDS
+  with Non-visible NIR Illumination                            • High Dynamic Range (HDR) Mode
+• Readout Modes: Progressive or Interlaced
+• Shutter Efficiency: >99%                                          Applications
+                                                       • Security• Simple Two-wire Serial Interface
+                                                       • High Dynamic Range Imaging• Real-Time Exposure Context Switching − Dual Register Set
+                                                       • Unattended Surveillance• Register Lock Capability
+                                                       • Stereo Vision• Window Size: User Programmable to any Smaller Format (QVGA,
+  CIF, QCIF). Data Rate can be Maintained Independent of Window     • Video as Input
+  Size                                                  • Machine Vision
+• Binning: 2 x 2 and 4 x 4 of the Full Resolution                   • Automation
+
+
+
+ © Semiconductor Components Industries, LLC, 2008                      1                                         Publication Order Number:
+ January, 2017 − Rev. 7                                                                            MT9V034/D
+
+=== PAGE 2 ===
+                              MT9V034
+
+
+ Table 1. KEY PERFORMANCE PARAMETERS
+
+             Parameter                          Value
+
+ Optical Format                           1/3-inch
+
+ Active Imager Size                     4.51 mm (H) x 2.88 mm (V)
+                                       5.35 mm diagonal
+
+ Active Pixels                       752 H x 480 V
+
+ Pixel Size                               6.0 x 6.0 μm
+
+ Color Filter Array                   Monochrome or color RGB Bayer
+
+ Shutter Type                           Global Shutter
+
+ Maximum Data Rate                 27 Mp/s
+ Master Clock                       27 MHz
+
+ Full Resolution                      752 x 480
+
+ Frame Rate                        60 fps (at full resolution)
+
+ ADC Resolution                            10-bit column-parallel
+
+ Responsivity                            4.8 V/lux-sec (550 nm)
+
+ Dynamic Range                    >55 dB linear;
+                                  >100 dB in HDR mode
+
+ Supply Voltage                          3.3 V ± 0.3 V (all supplies)
+
+ Power Consumption                 <160 mW at maximum data rate
+                                 (LVDS disabled); 120 μW standby
+                                   power at 3.3 V
+
+ Operating Temperature               –30°C to + 70°C ambient
+
+ Packaging                              48-pin CLCC
+
+
+ORDERING INFORMATION
+
+ Table 2. AVAILABLE PART NUMBERS
+
+            Part Number                   Product Description              Orderable Product Attribute Description
+
+      MT9V034C12STC−DP             VGA 1/3” GS CIS           Dry Pack with Protective Film
+
+      MT9V034C12STC−DR             VGA 1/3” GS CIS           Dry Pack without Protective Film
+
+      MT9V034C12STM−DP             VGA 1/3” GS CIS           Dry Pack with Protective Film
+
+      MT9V034C12STM−DR             VGA 1/3” GS CIS           Dry Pack without Protective Film
+
+      MT9V034C12STM−DR1            VGA 1/3” GS CIS           Dry Pack Single Tray without Protective Film
+
+      MT9V034C12STM−TP             VGA 1/3” GS CIS           Tape & Reel with Protective Film
+
+      MT9V034C12STM−TR             VGA 1/3” GS CIS           Tape & Reel without Protective Film
+
+   MT9V034D00STMC13CC1−200          VGA 1/3” GS CIS            Die Sales, 200 mm Thickness
+
+   MT9V034W00STMC13CC1−750          VGA 1/3” GS CIS           Wafer Sales, 750 mm Thickness
+
+
+
+
+
+                                      www.onsemi.com
+                                                       2
+
+=== PAGE 3 ===
+                        MT9V034
+
+
+
+
+                                                                                           Serial
+                                                        Control Register             Register
+                                                                                       I/O
+                                Active−Pixel
+                           Sensor (APS)
+                                   Array
+                        752H x 480V
+                                                  Timing and Control
+
+
+
+                         Analog Processing
+
+
+                                                                                             Parallel
+                        ADCs                  Digital Processing                                                                            Video
+                                                                          Data Out
+
+                                                                          Serial Video
+                                         Slave Video LVDS In   LVDS Out
+                                                   (for stereo applications only)
+
+                                 Figure 1. Block Diagram
+
+
+
+
+
+                 N
+
+
+                                                                                   GND                   OUT0   OUT1   OUT2                                                                  VDDLVDS           SER_DATAOUT_P           SER_DATAOUT_N           SHFT_CLKOUT_P          SHFT_CLKOUT_  VDD D      SYSCLK     PIXCLK D D D
+
+
+                            6     5    4    3     2     1   48    47   46    45   44    43
+      LVDSGND    7                                                              42    DOUT3
+
+BYPASS_CLKIN_N    8                                                              41   DOUT4
+
+BYPASS_CLKIN_P    9                                                              40   VAAPIX
+
+  SER_DATAIN_N    10                                                              39    VAA
+
+  SER_DATAIN_P    11                                                              38   AGND
+
+      LVDSGND    12                                                              37                                                       NC
+        DGND    13                                                              36   NC
+
+         VDD    14                                                              35    VAA
+
+        D OUT5    15                                                              34    AGND
+
+        D OUT 6    16                                                              33   STANDBY
+
+          DOUT 7    17                                                              32   RESET_BAR
+
+        D OUT8    18                                                              31   S_CTRL_ADR1
+                           19   20    21   22   23   24    25    26   27   28   29   30
+
+         9                                         SDATA    SCLK         OE   RSVD                                      DOUT                                                                                                                 LINE_VALID         FRAME_VALID       STLN_OUT       EXPOSURE                                           STFRM_OUT      LED_OUT                                                  S_CTRL_ADR0
+
+
+                      Figure 2. 48−Pin CLCC Package Pinout Diagram
+
+
+
+                              www.onsemi.com
+                                             3
+
+=== PAGE 4 ===
+                              MT9V034
+
+BALL DESCRIPTIONS
+
+ Table 3. BALL DESCRIPTIONS
+
+  52-Ball IBA Numbers         Symbol             Type                          Description                   Note
+
+          29              RSVD                 Input       Connect to DGND.                                 1
+
+          10            SER_DATAIN_N            Input         Serial data in for stereoscopy (differential negative).
+                                                                         Tie to 1KΩ pull-up (to 3.3 V) in non-stereoscopy
+                                                           mode.
+
+          11             SER_DATAIN_P            Input         Serial data in for stereoscopy (differential positive).
+                                                                         Tie to DGND in non-stereoscopy mode.
+
+          8            BYPASS_CLKIN_N           Input         Input bypass shift-CLK (differential negative). Tie to
+                                                  1KΩ pull-up (to 3.3 V) in non-stereoscopy mode.
+
+          9            BYPASS_CLKIN_P           Input         Input bypass shift-CLK (differential positive). Tie to
+                                                      DGND in non-stereoscopy mode.
+
+          23            EXPOSURE              Input        Rising edge starts exposure in snapshot and slave
+                                                            modes.
+
+          25               SCLK                 Input        Two-wire serial interface clock. Connect to VDD with
+                                                                       1.5 K resistor even when no other two-wire serial
+                                                                              interface peripheral is attached.
+
+          28               OE                   Input      DOUT enable pad, active HIGH.                      2
+
+          30            S_CTRL_ADR0            Input        Two-wire serial interface slave address select
+                                                                    (see Table 6).
+
+          31            S_CTRL_ADR1            Input        Two-wire serial interface slave address select
+                                                                    (see Table 6).
+
+          32             RESET_BAR              Input       Asynchronous reset. All registers assume defaults.
+
+          33              STANDBY               Input       Shut down sensor operation for power saving.
+
+          47              SYSCLK                Input       Master clock (26.6 MHz; 13 MHz – 27 MHz).
+
+          24                   SDATA                  I/O        Two-wire serial interface data. Connect to VDD with
+                                                                       1.5 K resistor even when no other two-wire serial
+                                                                              interface peripheral is attached.
+          22             STLN_OUT               I/O        Output in master mode−start line sync to drive slave
+                                                                        chip in-phase; input in slave mode.
+          26            STFRM_OUT              I/O        Output in master mode−start frame sync to drive a
+                                                                       slave chip in-phase; input in slave mode.
+
+          20               LINE_VALID            Output       Asserted when DOUT data is valid.
+
+          21             FRAME_VALID          Output       Asserted when DOUT data is valid.
+
+          15                 DOUT5              Output        Parallel pixel data output 5.
+
+          16                 DOUT6              Output        Parallel pixel data output 6.
+
+          17                 DOUT7              Output        Parallel pixel data output 7.
+
+          18                 DOUT8              Output        Parallel pixel data output 8.
+
+          19                 DOUT9              Output        Parallel pixel data output 9.
+
+          27              LED_OUT             Output     LED strobe output.
+
+          41                 DOUT4              Output        Parallel pixel data output 4.
+
+          42                 DOUT3              Output        Parallel pixel data output 3.
+
+          43                 DOUT2              Output        Parallel pixel data output 2.
+
+          44                 DOUT1              Output        Parallel pixel data output 1.
+
+          45                 DOUT0              Output        Parallel pixel data output 0.
+
+          46                PIXCLK              Output        Pixel clock out. DOUT is valid on rising edge of this
+                                                                             clock.
+
+          2           SHFT_CLKOUT_N         Output       Output shift CLK (differential negative).
+
+
+                                      www.onsemi.com
+                                                       4
+
+=== PAGE 5 ===
+                              MT9V034
+
+
+ Table 3. BALL DESCRIPTIONS (continued)
+
+  52-Ball IBA Numbers         Symbol             Type                          Description                   Note
+
+          3           SHFT_CLKOUT_P         Output       Output shift CLK (differential positive).
+
+          4           SER_DATAOUT_N         Output        Serial data out (differential negative).
+
+          5           SER_DATAOUT_P         Output        Serial data out (differential positive).
+
+            1, 14                 VDD               Supply         Digital power 3.3 V.
+
+          35, 39                  VAA               Supply       Analog power 3.3 V.
+
+          40                VAAPIX             Supply        Pixel power 3.3 V.
+
+          6               VDDLVDS             Supply       Dedicated power for LVDS pads.
+
+            7, 12            LVDSGND           Ground      Dedicated GND for LVDS pads.
+
+          13, 48               DGND             Ground        Digital GND.
+
+          34, 38                AGND             Ground      Analog GND.
+
+          36, 37              NC            NC       No connect.                                      3
+1. Pin 29, (RSVD) must be tied to GND.
+2. Output enable (OE) tri-states signals DOUT0–DOUT9, LINE_VALID, FRAME_VALID, and PIXCLK.
+3. No connect. These pins must be left floating for proper operation.
+
+                                                 VDD          VAA   VAAPIX
+
+                                                      1.5KΩ        10KΩ       VDDLVDS  VDD          VAA   VAAPIX
+               Master Clock              SYSCLK                            DOUT(9:0)
+                               OE                           LINE_VALID
+                                                                                              To Controller
+                                  RESET_BAR               FRAME_VALID
+          STANDBY from             EXPOSURE                     PIXCLK
+                  Controller or              STANDBY
+                    Digital GND              S_CTRL_ADR0               LED_OUT        To LED output                                                        ERROR
+                                   S_CTRL_ADR1
+              Two−Wire               SCLK
+              Serial Interface                   SDATA
+
+
+
+
+
+                                RSVD
+                                             DGND LVDSGND     AGND
+                              0.1 μ F
+
+
+
+              Note:   LVDS signals are to be left floating.
+
+                      Figure 3. Typical Configuration (Connection) − Parallel Output Mode
+
+
+
+
+
+                                      www.onsemi.com
+                                                       5
+
+=== PAGE 6 ===
+                              MT9V034
+
+PIXEL DATA FORMAT
+
+Pixel Array Structure
+  The MT9V034 pixel array is configured as 809 columns     753 columns by 481 rows of optically active pixels. While
+by 499 rows, shown in Figure 4. The dark pixels are      the sensor’s format is 752 x 480, one additional active
+optically black and are used internally to monitor black     column and active row are included for use when horizontal
+level. Of the left 52 columns, 36 are dark pixels used for row      or vertical mirrored readout is enabled, to allow readout to
+noise correction. Of the top 14 rows of pixels, two of the dark       start on the same pixel. This one pixel adjustment is always
+rows are used for black level correction. Also, three black     performed, for monochrome or color versions. The active
+rows from the top black rows can be read out by setting the      area is surrounded with optically transparent dummy pixels
+show dark rows bit in the Read Mode register; setting show      to improve image uniformity within the active area. Neither
+dark columns will display the 36 dark columns. There are    dummy pixels nor barrier pixels can be read out.
+
+
+
+
+
+                                                                                                                          (0, 0)
+                                                                                                                           active pixel
+                                2 barrier + 8 (2 + 4 addressed + 2) dark + 2 barrier + 2 light dummy
+
+                                         2                                 4.92 x 3.05mm
+                                     Pixel Array                                                                                         light dummy pixel
+                             809 x 499 (753 x 481 active)
+                                   6.0 μm pixel
+
+
+                                                                                                                 dark pixel
+
+                            3 barrier + 38 (1 + 36 addressed + 1) dark    2 barrier + 2 light dummy
+                           + 9 barrier + 2 light dummy
+
+                                                    2 barrier + 2 light dummy                                   barrier pixel
+
+
+
+
+
+                                      Figure 4. Pixel Array Description
+
+
+                                                 Column Readout Direction
+
+
+
+                                                                                              Active Pixel (0,0)
+                                                                                         Array Pixel (4,14)
+                                                   Row     G B G B G  B G B
+
+                                    R G R G R G R G
+                                                                                                                        Readout     G B G B G  B G B
+
+                                    R G R G R G R G
+                                                                                                                                                          Direction     G B G B G  B G B
+
+                                    R G R G R G R G
+
+
+                         Figure 5. Pixel Color Pattern Detail RGB Bayer (Top Right Corner)
+
+
+
+
+                                      www.onsemi.com
+                                                       6
+
+=== PAGE 7 ===
+                              MT9V034
+
+COLOR (RGB BAYER) DEVICE LIMITATIONS
+  The color version of the MT9V034 does not support or     on all dark pixels’ offset values, the color bit should be
+offers   reduced   performance   for   the   following      cleared.
+functionalities.
+                                                          Defective Pixel Correction
+Pixel Binning                                             For defective pixel correction to calculate replacement
+  Pixel binning is done on immediate neighbor pixels only,      pixel values correctly, for color sensors the color bit must be
+no facility is provided to skip pixels according to a Bayer      set (R0x0F[1] = 1). However, the color bit also applies
+pattern. Therefore, the result of binning combines pixels of     unequal offset to the color planes, and the results might not
+different  colors.  See  “Pixel  Binning”  for  additional     be acceptable for some applications.
+information.
+                                                      Other Limiting Factors
+Interlaced Readout                                        Black level correction and row-wise noise correction are
+  Interlaced readout yields one field consisting only of red      applied uniformly  to each  color. The row-wise noise
+and green pixels and another consisting only of blue and      correction algorithm does not work well in color sensors.
+green pixels. This is due to the Bayer pattern of the CFA.      Automatic exposure and gain control calculations are made
+                                                         based on all three colors, not just the green channel. High
+Automatic Black Level Calibration                                                     dynamic range does operate in color; however,
+  When the color bit is set (R0x0F[1]=1), the sensor uses                                    ON Semiconductor strongly recommends limiting use to
+black level correction values from one green plane, which                                                                    linear operation where good color fidelity is required.
+are applied to all colors. To use the calibration value based
+
+
+
+
+
+                                      www.onsemi.com
+                                                       7
+
+=== PAGE 8 ===
+                              MT9V034
+
+OUTPUT DATA FORMAT
+  The MT9V034 image data can be read out in a progressive     programmable through R0x05 and R0x06, respectively
+scan or interlaced scan mode. Valid image data is surrounded    (R0xCD and R0xCE for context B). LV is HIGH during the
+by horizontal and vertical blanking, as shown in Figure 6.     shaded region of the figure. See “Output Data Timing” for
+The  amount  of  horizontal  and  vertical  blanking  is      the description of FV timing.
+
+         P0,0 P0,1 P0,2.....................................P0,n−1P0,n     00 00 00 .................. 00 00 00
+         P1,0 P1,1 P1,2.....................................P1,n−1P1,n     00 00 00 .................. 00 00 00
+
+
+
+                  VALID IMAGE                     HORIZONTAL
+                                                BLANKING
+
+
+
+       Pm−1,0 Pm−1,1 .....................................Pm−1,n−1Pm−1,n  00 00 00 .................. 00 00 00
+         Pm,0 Pm,1  .....................................Pm,n−1 Pm,n     00 00 00 .................. 00 00 00
+
+       00 00 00 ..................................... 00 00 00      00 00 00 .................. 00 00 00
+       00 00 00 ..................................... 00 00 00      00 00 00 .................. 00 00 00
+
+                                             VERTICAL/HORIZONTAL            VERTICAL BLANKING
+                                                BLANKING
+
+       00 00 00 ..................................... 00 00 00      00 00 00 .................. 00 00 00
+       00 00 00 ..................................... 00 00 00      00 00 00 .................. 00 00 00
+
+
+                                 Figure 6. Spatial Illustration of Image Readout
+
+
+
+
+
+                                      www.onsemi.com
+                                                       8
+
+=== PAGE 9 ===
+                              MT9V034
+
+OUTPUT DATA TIMING
+  The data output of the MT9V034 is synchronized with the
+PIXCLK output. When LINE_VALID (LV) is HIGH, one
+10-bit pixel datum is output every PIXCLK period.
+
+                                                                                                   ...
+      LINE_VALID
+                                                                                                   ...
+         PIXCLK
+                            Blanking                                     Valid Image Data               ...                            Blanking
+
+        DOUT(9:0)                     P0        P1        P2        P3        P4     ...       Pn−1      Pn                                                   (9:0)         (9:0)         (9:0)         (9:0)        (9:0)                  (9:0)       (9:0)
+
+                                    Figure 7. Timing Example of Pixel Data
+
+  The PIXCLK is a nominally inverted version of the master     complete master clock periods and then LOW for two
+clock (SYSCLK). This allows PIXCLK to be used as a clock     complete master clock periods. It is continuously enabled,
+to latch the data. However, when column bin 2 is enabled, the     even during the blanking period. Setting R0x72 bit[4] = 1
+PIXCLK is HIGH for one complete master clock master      causes the MT9V034 to invert the polarity of the PIXCLK.
+period and then LOW for one complete master clock period;      The parameters P1, A, Q, and P2 in Figure 8 are defined
+when column bin 4 is enabled, the PIXCLK is HIGH for two      in Table 4.
+
+                                                                                                                    ...
+
+             FRAME_VALID
+
+                                                                                                                    ...
+                 LINE_VALID
+
+                                                                                                                    ...
+             Number of master clocks    P1  A    Q           A    Q     A    P2
+
+                         Figure 8. Row Timing and FRAME_VALID/LINE_VALID Signals
+
+
+ Table 4. FRAME TIME
+
+                                                                                                            Default Timing at
+     Parameters             Name                               Equation                           26.66 MHz
+
+       A                   Active data time         Context A: R0x04                                752 pixel clocks
+                                                     Context B: R0xCC                              = 752 master
+                                                                                         = 28.2 μs
+
+        P1             Frame start blanking       Context A: R0x05 - 23                             71 pixel clocks
+                                                     Context B: R0xCD - 23                           = 71 master
+                                                                                         = 2.66 μs
+
+        P2             Frame end blanking       23 (fixed)                                       23 pixel clocks
+                                                                                         = 23 master
+                                                                                         = 0.86 μs
+
+      Q                  Horizontal blanking        Context A: R0x05                                94 pixel clocks
+                                                     Context B: R0xCD                              = 94 master
+                                                                                         = 3.52 μs
+
+      A+Q              Row time            Context A: R0x04 + R0x05                         846 pixel clocks
+                                                     Context B: R0xCC + R0xCD                       = 846 master
+                                                                                         = 31.72 μs
+
+       V                     Vertical blanking         Context A: (R0x06) x (A + Q) + 4                      38,074 pixel clocks
+                                                     Context B: (R0xCE) x (A + Q) + 4                   = 38,074 master
+                                                                                         = 1.43 ms
+
+
+
+
+                                      www.onsemi.com
+                                                       9
+
+=== PAGE 10 ===
+                              MT9V034
+
+
+ Table 4. FRAME TIME (continued)
+
+                                                                                                            Default Timing at
+     Parameters             Name                                Equation                           26.66 MHz
+
+   Nrows x (A + Q)         Frame valid time         Context A: (R0x03) × (A + Q)                         406,080 pixel clocks
+                                                     Context B: (R0xCB) x (A + Q)                      = 406,080 master
+                                                                                         = 15.23 ms
+
+        F                     Total frame time       V + (Nrows x (A + Q))                               444,154 pixel clocks
+                                                                                         = 444,154 master
+                                                                                         = 16.66 ms
+
+  Sensor timing is shown above in terms of pixel clock and     Table 5. In this example it is assumed that the Coarse Shutter
+master clock cycles (refer to Figure 7). The recommended     Width Control is programmed with 523 rows, and the Fine
+master clock frequency is 26.66 MHz. The vertical blanking      Shutter Width Total is zero.
+and  the  total frame  time  equations assume  that  the       For Simultaneous mode, if the exposure time registers
+integration time (Coarse Shutter Width plus Fine Shutter     (Coarse Shutter Width Total plus Fine Shutter Width Total)
+Width) is less than the number of active rows plus the     exceed the total readout time, then the vertical blanking time
+blanking rows minus the overhead rows:                             is  internally extended automatically  to  adjust  for  the
+                                                                 additional integration time required. This extended value is
+      Window Height    Vertical Blanking   2       (eq.1)          not written back to the vertical blanking registers. The
+                                                                   Vertical Blank register can be used to adjust frame-to-frame
+   If this is not the case, the number of integration rows must      readout time. This register does not affect the exposure time
+be used instead to determine the frame time, as shown in      but it may extend the readout time.
+
+ Table 5. FRAME TIME−LONG INTEGRATION TIME
+
+                                                                     Equation                        Default Timing
+   Parameter              Name                      (Number of Master Clock Cycles)               at 26.66 MHz
+       V’          Vertical blanking (long integration time)    Context A:                                 38,074 pixel
+                                            (R0x0B + 2 − R0x03) y (A + Q) + R0xD5 + 4    clocks
+                                                 Context B:                             = 38,074 master
+                                           (R0xD2 + 2 − R0xCB) x (A + Q) + R0xD8 + 4   = 1.43 ms
+      F’         Total frame time (long integration time)    Context A: (R0x0B + 2) y (A + Q) + R0xD5 +4  444,154 pixel
+                                                 Context B: (R0xD2 + 2) x (A + Q) + R0xD8 +4   clocks
+                                                                               = 444,154 master
+                                                                               = 16.66 ms
+
+1. The MT9V034 uses column parallel analog-digital converters; thus short row timing is not possible. The minimum total row time is 704
+   columns (horizontal width + horizontal blanking). The minimum horizontal blanking is 61 for normal mode, 71 for column bin 2 mode, and
+   91 for column bin 4 mode. When the window width is set below 643, horizontal blanking must be increased. In binning mode, the minimum
+   row time is R0x04+R0x05 = 704.
+
+
+
+
+
+                                      www.onsemi.com
+                                                      10
+
+=== PAGE 11 ===
+                              MT9V034
+
+SERIAL BUS DESCRIPTION
+  Registers are written to and read from the MT9V034      clock pulse. A no-acknowledge bit is used to terminate a
+through the two-wire serial interface bus. The MT9V034 is      read sequence.
+a serial interface slave with four possible IDs (0x90, 0x98,
+0xB0 and 0xB8) determined by the S_CTRL_ADR0 and     Stop Bit
+S_CTRL_ADR1 input pins. Data is transferred into the      The stop bit is defined as a LOW-to-HIGH transition of
+MT9V034 and out through the serial data (SDATA) line. The      the data line while the clock line is HIGH.
+SDATA line is pulled up to VDD off-chip by a 1.5KΩ resistor.
+                                                 SequenceEither the slave or master device can pull the SDATA line
+                                     A typical READ or WRITE sequence begins by thedown-the serial interface protocol determines which device
+                                                          master sending a start bit. After the start bit, the master sendsis allowed to pull the SDATA line down at any given time. The
+                                                               the slave device’s 8-bit address. The last bit of the addressregisters are 16-bit wide, and can be accessed through 16- or
+                                                           determines if the request is a read or a write, where a “0”8-bit two-wire serial interface sequences.
+                                                                  indicates a WRITE and a “1” indicates a READ. The slave
+Protocol                                                   device  acknowledges   its  address  by  sending  an
+  The two-wire serial interface defines several different     acknowledge bit back to the master.
+transmission codes, as shown in the following sequence:             If the request was a WRITE, the master then transfers the
+     1. a start bit                                                   8-bit register address to which a WRITE should take place.
+     2. the slave device 8-bit address                     The slave sends an acknowledge bit to indicate that the
+                                                                     register address has been received. The master then transfers     3. a(n) (no) acknowledge bit
+                                                               the data 8  bits  at a time, with the slave sending an     4. an 8-bit message
+                                                      acknowledge bit after each 8 bits. The MT9V034 uses 16-bit
+     5. a stop bit                                                              data for  its internal registers, thus requiring two 8-bit
+                                                                   transfers to write to one register. After 16 bits are transferred,Start Bit
+                                                               the register address is automatically incremented, so that the  The start bit is defined as a HIGH-to-LOW transition of
+                                                            next 16 bits are written to the next register address. Thethe data line while the clock line is HIGH.
+                                                          master stops writing by sending a start or stop bit.
+Slave Address                            A typical READ sequence is executed as follows. First the
+  The 8-bit address of a two-wire serial interface device     master sends the write mode slave address and 8-bit register
+                                                                address, just as in the write request. The master then sendsconsists of 7 bits of address and 1 bit of direction. A “0” in
+                                                          a start bit and the read mode slave address. The master thenthe LSB of the address indicates write mode, and a “1”
+indicates read mode. As indicated above, the MT9V034      clocks out the register data 8 bits at a time. The master sends
+                                                       an acknowledge bit after each 8-bit transfer. The registerallows four possible slave addresses determined by the two
+                                                            address is automatically incremented after every 16 bits isinput pins, S_CTRL_ADR0 and S_CTRL_ADR1.
+                                                                    transferred. The data transfer is stopped when the master
+Acknowledge Bit                                          sends a no-acknowledge bit. The MT9V034 allows for 8-bit
+  The master generates the acknowledge clock pulse. The      data transfers through the two-wire serial interface by
+transmitter (which is the master when writing, or the slave      writing (or reading) the most significant 8 bits to the register
+when reading) releases the data  line, and the receiver     and then writing (or reading) the least significant 8 bits to
+indicates an acknowledge bit by pulling the data line LOW     Byte-Wise Address register (0x0F0).
+during the acknowledge clock pulse.
+                                              Bus Idle State
+No-Acknowledge Bit                                   The bus is idle when both the data and clock lines are
+  The no-acknowledge bit is generated when the data line is    HIGH. Control of the bus is initiated with a start bit, and the
+not pulled down by the receiver during the acknowledge     bus is released with a stop bit. Only the master can generate
+                                                               the start and stop bits.
+
+ Table 6. SLAVE ADDRESS MODES
+
+    {S_CTRL_ADR1, S_CTRL_ADR0}                  Slave Address                         Write/Read Mode
+                 00                                   0x90                                        Write
+                                                       0x91                               Read
+                 01                                   0x98                                        Write
+                                                       0x99                               Read
+                 10                                 0xB0                                       Write
+                                                    0xB1                              Read
+                   11                                 0xB8                                       Write
+                                                    0xB9                              Read
+
+
+
+
+                                      www.onsemi.com
+                                                         11
+
+=== PAGE 12 ===
+                               MT9V034
+
+ Data Bit Transfer                                              the serial clock-it can only change when the two-wire serial
+  One data bit is transferred during each clock pulse. The      interface clock is LOW. Data is transferred 8 bits at a time,
+ two-wire serial interface clock pulse is provided by the     followed by an acknowledge bit.
+ master. The data must be stable during the HIGH period of
+
+ TWO-WIRE SERIAL INTERFACE SAMPLE READ AND WRITE SEQUENCES
+
+ 16-Bit Write Sequence
+  A typical write sequence for writing 16 bits to a register      All 16 bits must be written before the register is updated.
+ is shown in Figure 9. A start bit given by the master,      After 16  bits  are  transferred,  the  register  address  is
+ followed by the write address, starts the sequence. The      automatically incremented, so that the next 16 bits are
+ image sensor then gives an acknowledge bit and expects the      written to the next register. The master stops writing by
+ register address to come first, followed by the 16-bit data.     sending a start or stop bit.
+ After each 8-bit the image sensor gives an acknowledge bit.
+
+
+ SCLK
+
+ SDATA
+
+               0xBA ADDR              Reg0x09               0000 0010                1000 0100                                                                                      STOP
+      START              ACK                 ACK                 ACK                 ACK
+
+                  Figure 9. Timing Diagram Showing a WRITE to Reg0x09 with the Value 0x0284
+
+ 16-Bit Read Sequence                                      clocks out the register data 8 bits at a time. The master sends
+  A typical read sequence is shown in Figure 10. First the     an acknowledge bit after each 8-bit transfer. The register
+ master has to write the register address, as in a write      address  is  auto-incremented  after  every  16  bits  is
+ sequence. Then a start bit and the read address specifies that      transferred. The data transfer is stopped when the master
+ a read is about to happen from the register. The master then     sends a no-acknowledge bit.
+
+
+  SCLK
+
+   SDATA
+
+             0xBA ADDR          Reg0x09            0xB9 ADDR          0000 0010          1000 0100
+                                                                                       STOP
+       START          ACK            ACK              ACK            ACK            NACK
+
+                Figure 10. Timing Diagram Showing a READ from Reg0x09, Returned Value 0x0284
+
+ 8-Bit Write Sequence                                     (R0xF0). The register is not updated until all 16 bits have
+   To be able to write 1 byte at a time to the register a special     been written. It is not possible to just update half of a register.
+ register address is added. The 8-bit write is done by first      In Figure 11, a typical sequence for 8-bit writing is shown.
+ writing the upper 8 bits to the desired register and then     The second byte is written to the Bytewise register (R0xF0).
+ writing the lower 8 bits to the Bytewise Address register
+
+
+
+SCLK
+
+DATA
+
+
+        0xB8 ADDR        R0x09          0000 0010        0xB8 ADDR        R0xF0         1000 0100
+
+                                                                                       STOP
+                                                  START
+ START         ACK         ACK          ACK             ACK          ACK         ACK
+
+               Figure 11. Timing Diagram Showing a Bytewise Write to R0x09 with the Value 0x0284
+
+
+
+
+                                       www.onsemi.com
+                                                       12
+
+=== PAGE 13 ===
+                              MT9V034
+
+8-Bit Read Sequence                                    Bytewise Address register (R0xF0) the lower 8 bits are
+  To read one byte at a time the same special register address     accessed (Figure 12). The master sets the no-acknowledge
+is used for the lower byte. The upper 8 bits are read from the       bits shown.
+desired register. By following this with a read from the
+
+
+
+ SCLK
+
+ SDATA
+
+              0xB8 ADDR               R0x09                   0xB9 ADDR              0000 0010
+
+                                                 START
+       START           ACK                ACK                  ACK               NACK
+
+
+ SCLK
+
+SDATA
+
+              0xB8 ADDR               R0xF0                  0xB9 ADDR              1000 0100
+                                                                                      STOP                                                 START
+       START           ACK                ACK                  ACK               NACK
+
+            Figure 12. Timing Diagram Showing a Bytewise Read from R0x09; Returned Value 0x0284
+
+Register Lock                                         Lock Only Read Mode Registers (R0x0D and R0x0E)
+  Included in the MT9V034 is a register lock (R0xFE)          If a unique pattern (0xDEAF) to R0xFE is programmed,
+feature  that can be used as a solution to reduce the     any subsequent two-wire serial interface writes to R0x0D or
+probability of an inadvertent noise-triggered two-wire serial    R0x0E are NOT committed. Alternatively, if the user writes
+interface write to the sensor. All registers, or only the Read     a 0xBEEF to register lock register, registers R0x0D and
+Mode registers– R0x0D and R0x0E, can be locked. It is    R0x0E are unlocked and any subsequent two-wire serial
+important to prevent an inadvertent two-wire serial interface      interface writes to these registers are committed.
+write to the Read Mode registers in automotive applications
+since this register controls the image orientation and any
+unintended flip to an image can cause serious results.
+  At power-up, the register lock defaults to a value of
+0xBEEF, which implies that all registers are unlocked and
+any two-wire serial interface writes to the register gets
+committed.
+
+Lock All Registers
+   If a unique pattern (0xDEAD) to R0xFE is programmed,
+any subsequent two-wire serial interface writes to registers
+(except R0xFE) are NOT committed. Alternatively, if the
+user writes a 0xBEEF to the register lock register,  all
+registers are unlocked and any subsequent two-wire serial
+interface writes to the register are committed.
+
+
+
+
+
+                                      www.onsemi.com
+                                                      13
+
+=== PAGE 14 ===
+                              MT9V034
+
+Real-Time Context Switching                                 the new values apply to the immediate next exposure and
+  In the MT9V034, the user may switch between two full      readout time (frame n+1), except for shutter width and
+register sets (listed in Table 7) by writing to a context switch    V1-V4 control, which will take effect for next exposure but
+change bit in register 0x07. This context switch will change      will show up in the n+2 image.
+all registers (no shadowing) at the frame start time and have
+
+ Table 7. REAL-TIME CONTEXT−SWITCHABLE REGISTERS
+
+              Register Name                Register Number (Hex) For Context A      Register Number (Hex) for Context B
+
+ Column Start                                           0x01                               0xC9
+
+ Row Start                                             0x02                              0xCA
+
+ Window Height                                         0x03                              0xCB
+
+ Window Width                                          0x04                             0xCC
+
+ Horizontal Blanking                                      0x05                             0xCD
+
+  Vertical Blanking                                        0x06                              0xCE
+
+ Coarse Shutter Width 1                                  0x08                               0xCF
+
+ Coarse Shutter Width 2                                  0x09                               0xD0
+
+ Coarse Shutter Width Control                            0x0A                               0xD1
+
+ Coarse Shutter Width Total                              0x0B                               0xD2
+
+ Fine Shutter Width 1                                  0xD3                               0xD6
+
+ Fine Shutter Width 2                                  0xD4                               0xD7
+
+ Fine Shutter Width Total                               0xD5                               0xD8
+
+ Read Mode                                       0x0D [5:0]                            0x0E [5:0]
+
+ High Dynamic Range enable                            0x0F [0]                              0x0F [8]
+
+ ADC Resolution Control                              0x1C [1:0]                           0x1C [9:8]
+
+ V1 Control – V4 Control                               0x31 – 0x34                            0x39 – 0x3C
+
+ Analog Gain Control                                     0x35                                  0x36
+
+ Row Noise Correction Control 1                          0x70 [1:0]                              0x70 [9:8]
+
+  Tiled Digital Gain                                0x80 [3:0] – 0x98 [3:0]                   0x80 [11:8] – 0x98 [11:8]
+
+ AEC/AGC Enable                                  0xAF [1:0]                           0xAF [9:8]
+
+
+Recommended Register Settings
+  Table 8 describes new suggested register settings, and
+descriptions of performance improvements and conditions:
+
+ Table 8. RECOMMENDED REGISTER SETTINGS AND PERFORMANCE IMPACT (RESERVED REGISTERS)
+
+    Register     Current Default   New Setting                           Performance Impact
+
+    R0x20         0x01C1        0x03C7    Recommended by design to improve performance in HDR mode and when frame
+                                                          rate is low. We also recommended using R0x13 = 0x2D2E with this setting for
+                                                           better column FPN.
+                                         NOTE: When coarse integration time set to 0 and fine integration time less than
+                                                   456, R0x20 should be set to 0x01C7
+
+    R0x24          0x0010         0x001B      Corrects pixel negative dark offset when global reset in R0x20[9] is enabled.
+
+    R0x2B         0x0004         0x0003      Improves column FPN.
+
+    R0x2F         0x0004         0x0003      Improves FPN at near-saturation.
+
+
+
+
+
+                                      www.onsemi.com
+                                                      14
+
+=== PAGE 15 ===
+                              MT9V034
+
+FEATURE DESCRIPTION
+
+Operational Modes
+  The MT9V034 works in master, snapshot, or slave mode.     Simultaneous Master Mode
+In master mode the sensor generates the readout timing. In        In simultaneous master mode, the exposure period occurs
+snapshot mode  it accepts an  external  trigger  to  start     during readout. The frame synchronization waveforms are
+integration, then generates the readout timing. In slave mode     shown in Figure 13 and Figure 14. The exposure and
+the sensor accepts both external integration and readout      readout happen in parallel rather than sequential, making
+controls. The integration time is programmed through the       this the fastest mode of operation.
+two-wire serial interface during master or snapshot modes,
+or controlled through an externally generated control signal
+during slave mode.
+
+Master Mode
+  There are two possible operation methods for master
+mode: simultaneous and sequential. One of these operation
+modes must be  selected through  the two-wire  serial
+interface.
+
+
+                                      EXPOSURE TIME
+
+   LED_OUT
+
+                                         t                    LED2FV−SIM                                     tLED2FV−SIM
+
+
+FRAME_VALID
+
+                                                     tVBLANK
+
+
+  LINE_VALID
+
+                               FRAME TIME
+
+
+                     Figure 13. Simultaneous Master Mode Synchronization Waveforms #1
+
+
+
+                            EXPOSURE TIME
+
+   LED_OUT
+
+                     tLED2FV−SIM                                 tLEDOFF
+
+FRAME_VALID
+
+
+                                                tVBLANK
+  LINE_VALID
+
+                           FRAME TIME
+
+
+                     Figure 14. Simultaneous Master Mode Synchronization Waveforms #2
+
+  When exposure time is greater than the sum of vertical       is increased automatically to accommodate the exposure
+blank and window height, the number of vertical blank rows      time.
+
+
+
+
+                                      www.onsemi.com
+                                                      15
+
+=== PAGE 16 ===
+                              MT9V034
+
+Sequential Master Mode                                        sequential master mode are shown in Figure 15. The frame
+  In sequential master mode the exposure period is followed      rate changes as the integration time changes.
+by readout. The frame synchronization waveforms for
+
+                  EXPOSURE
+                      TIME
+
+   LED_OUT
+
+                                    tLED2FV−SEQ                        tFV2LED−SEQ
+
+FRAME_VALID
+
+                                                                   tVBLANK
+  LINE_VALID
+
+                                         FRAME TIME
+
+                        Figure 15. Sequential Master Mode Synchronization Waveforms
+
+Snapshot Mode                                            through the two-wire serial interface. After the frame’s
+  In snapshot mode the sensor accepts an input trigger      integration  period   is  complete  the  readout  process
+signal  which  initiates  exposure,  and  is  immediately     commences and the syncs and data are output. Sensor in
+followed by readout. Figure 16 shows the interface signals     snapshot mode can capture a single image or a sequence of
+used in snapshot mode. In snapshot mode, the start of the     images. The frame rate may only be controlled by changing
+integration period is determined by the externally applied      the period of the user supplied EXPOSURE pulse train. The
+EXPOSURE pulse that is input to the MT9V034. The     frame synchronization waveforms for snapshot mode are
+integration time is preprogrammed at R0x0B or R0xD2     shown in Figure 17.
+
+
+                                          EXPOSURE
+                                              SYSCLK
+                                                   PIXCLK
+                                                    LINE_VALID
+                      CONTROLLER                       MT9V034
+                                              FRAME_VALID
+                                                                 DOUT(9:0)
+
+
+
+
+                                 Figure 16. Snapshot Mode Interface Signals
+
+
+                                            TE2E
+   EXPOSURE       TEW
+                  EXPOSURE
+                        TIME
+    LED_OUT        TE2LED
+                                       TLED2FV
+                                                                    TFV2E
+ FRAME_VALID
+
+                                                               TVBLANK   LINE_VALID
+
+                                        FRAME TIME
+
+                         Figure 17. Snapshot Mode Frame Synchronization Waveforms
+
+
+
+                                      www.onsemi.com
+                                                      16
+
+=== PAGE 17 ===
+                              MT9V034
+
+Slave Mode                                                provide enough time between successive STLN_OUT
+  In slave mode, the exposure and readout are controlled      pulses to allow the complete readout of one row.
+using the EXPOSURE, STFRM_OUT, and STLN_OUT           It is also important to provide additional STLN_OUT
+pins. When the slave mode is enabled, STFRM_OUT and      pulses to allow the sensors to read the vertical blanking rows.
+STLN_OUT become input pins.                                          It is recommended that the user program the vertical blank
+  The  start and end of  integration  are  controlled by      register (R0x06) with a value of 4, and achieve additional
+EXPOSURE and STFRM_OUT pulses, respectively. While      vertical  blanking  between  frames  by  delaying  the
+a STFRM_OUT pulse is used to stop integration, it is also      application of the STFRM_OUT pulse.
+used to enable the readout process.                         The elapsed time between the rising edge of STLN_OUT
+  After  integration   is  stopped,  the  user  provides     and the first valid pixel data is calculated for context A by
+STLN_OUT pulses to trigger row readout. A full row of data      [horizontal blanking register (R0x05) + 4] clock cycles. For
+is read out with each STLN_OUT pulse. The user must      context B, the time is (R0xCD + 4) clock cycles.
+
+
+      EXPOSURE            tEW
+
+                                   tE2SF                                       tSF2SF
+     STFRM_OUT                                                                                          tSFW
+
+
+      STLN_OUT
+
+                                                tSF2FV                                                                  tFV2SF
+
+    FRAME_VALID
+
+
+
+      LINE_VALID
+                              tE2LED              tSF2LED                               EXPOSURE                                                                                      TIME
+       LED_OUT
+
+
+  Note:     1. Not drawn to scale.
+             2. Frame readout shortened for clarity.
+             3. Simultaneous progressive scan readout mode shown.
+
+                         Figure 18. Exposure and Readout Timing (Simultaneous Mode)
+
+
+
+          EXPOSURE          tEW
+
+                                  tE2SF                           tSF2SF
+         STFRM_OUT                                                                  tSFW
+
+
+           STLN_OUT
+
+                                                                                  tFV2E                                          tSF2FV
+         FRAME_VALID
+
+
+            LINE_VALID
+                                                                 EXPOSURE
+                               tE2LED        tSF2LED                             TIME
+            LED_OUT
+
+   Note:     1. Not drawn to scale.
+              2. Frame readout shortened for clarity.
+              3. STLN_OUT pulses are optional during exposure time.
+              4. Sequential progressive scan readout mode shown.
+
+                          Figure 19. Exposure and Readout Timing (Sequential Mode)
+
+                                      www.onsemi.com
+                                                      17
+
+=== PAGE 18 ===
+                              MT9V034
+
+
+Signal Path                                             “Black Level Calibration” for the programmable offset
+  The MT9V034 signal path consists of a programmable      operation description.
+gain, a programmable analog offset, and a 10-bit ADC. See
+
+
+                                                         Gain Selection
+                                                      (R0x35 or R0x36 or
+                                                                          result of AGC)               VREF
+                                                                                 (R0x2C)
+
+
+                              Pixel Output                                                 ADC Data
+                                                                          10 (12) bit ADC                           (reset minus signal)                                                                                  (9:0)
+
+
+
+                   Offset Correction                                     C1
+                 Voltage (R0x48 or
+                      result of BLC)
+                                          C2
+
+
+                                           Figure 20. Signal Path
+
+On-Chip Biases                                        Blanking Control
+                                                              Horizontal Blank and Vertical Blank registers R0x05 and
+ADC Voltage Reference                                                R0x06 (B: 0xCD and R0xCE), respectively, control the
+  The ADC voltage reference  is programmed through                                                           blanking time in a row (horizontal blanking) and between
+R0x2C, bits 2:0. The ADC reference ranges from 1.0 V to                                                         frames (vertical blanking).
+2.1 V. The default value is 1.4 V. The increment size of the
+                                               • Horizontal blanking is specified in terms of pixel
+voltage reference is 0.1 V from 1.0 V to 1.6 V (R0x2C[2:0]
+                                                                   clocks.values 0 to 6). At R0x2C[2:0] = 7, the reference voltage
+                                               • Vertical blanking is specified in terms of numbers ofjumps to 2.1 V.
+                                                             rows.   It is very important to preserve the correct values of the
+other bits in R0x2C. The default register setting is 0x0004.                                                    The actual imager timing can be calculated using Table 4
+This corresponds to 1.4 V − at this setting 1 mV input to the                                                      and Table 5 which describe “Row Timing and FV/LV
+ADC equals approximately 1 LSB.                                                              signals”.The minimum number of vertical blank rows is 4.
+V_Step Voltage Reference                                                             Pixel Integration Control
+  This voltage  is used  for pixel high dynamic range
+operations, programmable from R0x31 through R0x34 for      Total Integration
+Context A, or R0x39 through R0x3B for context B.               Total integration time is the result of coarse shutter width
+                                                      and fine shutter width registers, and depends also on whether
+Chip Version                                                     manual or automatic exposure is selected.
+  Chip version register R0x00 is read-only.                                                    The actual total integration time, tINT is defined as:
+Window Control                                                                                                 t INT     t INTCoarse     t INTFint                  (eq. 2)
+  Registers Column Start A/B, Row Start A/B, Window                                               = (number of rows of integration x row time) + (number
+Height A/B (row size), and Window Width (column size)                                                              of pixels of integration x pixel time)
+A/B control the size and starting coordinates of the window.                                                           where:
+  The values programmed in the window height and width
+registers are the exact window height and width out of the    Number of Rows of Integration
+sensor. The window start value should never be set below     (Auto Exposure Control: Enabled)
+four.                                          When automatic exposure control (AEC) is enabled, the
+  To read out the dark rows set bit 6 of R0x0D. In addition,     number of rows of integration may vary from frame to
+bit 7 of R0x0D can be used to display the dark columns in      frame, with the limits controlled by R0xAC (minimum
+the image. Note that there are Show Dark settings only for      coarse shutter width) and R0xAD (maximum coarse shutter
+Context A.                                                    width).
+
+
+
+
+
+                                      www.onsemi.com
+                                                      18
+
+=== PAGE 19 ===
+                              MT9V034
+
+Number of Rows of Integration                                     this means the frame time must be a multiple of 1/120 of a
+(Auto Exposure Control: Disabled)                           second. Under 50 Hz flicker, the frame time must be a
+   If AEC is disabled, the number of rows of integration      multiple of 1/100 of a second.
+equals the value in R0x0B
+                                                    Changes to Integration Timeor
+                                                       With automatic exposure control disabled (R0xAF[0] for   If context B is enabled, the number of rows of integration
+                                                             context A, or R0xAF[8] for context B) and if the totalequals the value in R0xD2.
+                                                                  integration time (R0x0B or R0xD2) is changed through the
+Number of Pixels of Integration                             two-wire serial interface while FV is asserted for frame n,
+  The number of fine shutter width pixels is independent of      the first frame output using the new integration time is frame
+AEC mode (enabled or disabled):                              (n + 2). Similarly, when automatic exposure control is
+                                                              enabled, any change to the integration time for frame n first• Context A: the number of pixels of integration equals
+                                                           appears in frame (n + 2) output.  the value in R0xD5.
+                                                    The sequence is as follows:
+• Context B: the number of pixels of integration equals                                                                          1. During frame n, the new integration time is held in
+  the value in R0xD8.                                                                       the R0x0B or R0D2 live register.
+                                                                          2. Prior to the start of frame (n + 1) readout, the newRow Timing
+                                                                         integration time is transferred to the exposure        Context A : Row time   (R0x04   R0x05)
+                                                                       control module. Integration for each row of frame
+       master clock periods                             (eq. 3)
+                                                                     (n + 1) has been completed using the old
+        Context B : Row time   (R0xCC   R0xCD)                          integration time. The earliest time that a row can
+       master clock periods                             (eq. 4)                  start integrating using the new integration time is
+                                                               immediately after that row has been read for frame
+  Typically, the value of the Coarse Shutter Width Total             (n + 1). The actual time that rows start integrating
+registers is limited to the number of rows per frame (which            using the new integration time is dependent on the
+includes vertical blanking rows), such that the frame rate is          new value of the integration time.
+not affected by the integration time. If the Coarse Shutter            3. When frame (n + 2) is read out, it is integrated
+Width Total is increased beyond the total number of rows per            using the new integration time. If the integration
+frame, the user must add additional blanking rows using the            time is changed (R0x0B or R0xD2 written) on
+Vertical Blanking registers as needed. See descriptions of             successive frames, each value written is applied to
+the Vertical Blanking registers, R0x06 and R0xCE in Table            a single frame; the latency between writing a value
+1 and Table 2 of the MT9V034 register reference.                   and it affecting the frame readout remains at two
+ A second constraint is that tINT must be adjusted to avoid             frames.
+banding in the image from light flicker. Under 60 Hz flicker,
+
+
+
+
+
+                                      www.onsemi.com
+                                                      19
+
+=== PAGE 20 ===
+             MT9V034
+
+
+
+
+
+                                                “B”
+                                                Exp
+                                                                                                                Readout
+
+
+                                     “B”
+                                     Exp
+                                                “B”
+                               idle                  Exp
+                                                                                                                Readout
+
+
+                                     “B”
+                                     Exp                                                                                                                                                                      available
+        n+2                                   “B”                           output
+                                                Exp                                                                                            imageat             frame
+                                                       new                                                                                                                Readout
+“B”)
+(Exp                                  “B”
+                                     Exp                                           valuevalue                                            “A”              new        n+1
+                                                Exp                          “B”)
+             frameexposure                                                                                                                                                                                               frame−startactivatesexposure(Exp                                                                                                                Readout
+new
+write
+                                     “A”                                        writes    “B”)
+   n                         Exp        “A”                      (Exp                                                Exp                                    exposure             frame
+                                                          newvalue                                                                                                                Readout                                    AEC−sample
+
+
+
+                                     “A”
+                                     Exp                               idle                                                                                                                                                                                                           frame−start
+
+                                                                                            point
+                                                                                          (Output)                (Output)                                AEC−sample                                                      Two−wireInterface(Input)    LED_OUT                                              serial                                                  FRAME_VALID
+
+Figure 21. Latency of Exposure Register in Master Mode
+
+
+
+              www.onsemi.com
+                         20
+
+=== PAGE 21 ===
+                              MT9V034
+
+Exposure Indicator                                                      is clear, LED_OUT is HIGH during exposure. By using
+  The exposure indicator is controlled by:                 R0x1B, bit 1, the polarity of the LED_OUT pin can be
+• R0x1B LED_OUT Control                                    inverted.
+
+  The MT9V034 provides an output pin, LED_OUT, to     High Dynamic Range
+indicate when the exposure takes place. When R0x1B bit 0       High dynamic range is controlled by:
+
+ Table 9. HIGH DYNAMIC RANGE
+
+                                                      Context A                              Context B
+
+ High Dynamic Enable                                    R0x0F[0]                                R0x0F[8]
+
+ Shutter Width 1                                      R0x08                            R0xCF
+
+ Shutter Width 2                                      R0x09                             R0xD0
+
+ Shutter Width Control                                R0x0A                             R0xD1
+
+ V_Step Voltages                                  R0x31−R0x34                        R0x39−R0x3C
+
+  In the MT9V034, high dynamic range (by setting R0x0F,      set up at V1 for integration time t1, then to V2 for time t2,
+bit 0 or 8 to 1) is achieved by controlling the saturation level      then V3 for time t3, and finally it is parked at V4, which also
+of the pixel (HDR or high dynamic range gate) during the      serves as an antiblooming voltage for the photodetector.
+exposure period. The sequence of the control voltages at the     This sequence of voltages leads to a piecewise linear pixel
+HDR gate is shown in Figure 22. After the pixels are reset,      response,  illustrated (approximately)  in Figure 22 and
+the step voltage, V_Step, which is applied to HDR gate, is     Figure 23.
+
+                                                   Exposure
+
+
+                                     VAA (3.3V)
+
+
+                                                 V1~1.4V            V2~1.2V        V3~1.0V
+
+               HDR                        t1                                          V4~0.8V
+                    Voltage                                                    t2                                                                                          t3
+
+                            Figure 22. Sequence of Control Voltages at the HDR Gate
+
+
+
+                                                                     dV3
+                                                     dV2
+
+                                                                      Output
+                                        dV1
+
+                                                                           Light Intensity
+
+
+                                                   1/t1               1/t2                     1/t3
+                      Figure 23. Sequence of Voltages in a Piecewise Linear Pixel Response
+
+
+
+
+
+                                      www.onsemi.com
+                                                      21
+
+=== PAGE 22 ===
+                              MT9V034
+
+  The parameters of the step voltage V_Step which take       For context A these become:
+values V1, V2, and V3 directly affect the position of the knee                          t 1   R0x08  R0xD3                       (eq. 11)
+points in Figure 23.
+  Light intensities work approximately as a reciprocal of the                          t 2   R0x09   ROx08   R0xD4   R0xD3      (eq. 12)
+partial exposure time. Typically, t1 is the longest exposure,                          t 3   R0x0B   R0xD4    t 1    t 2                (eq. 13)
+t2 shorter, and so on. Thus the range of light intensities is
+shortest for the first slope, providing the highest sensitivity.       For context B these are:
+  The register settings for V_Step and partial exposures are:                          t 1   R0xCF   R0xD6                         (eq. 14)
+• V1 = R0x31, bits 5:0 (Context B: R0x39, bits 5:0)
+                                                                                                                                                   t 2   R0xD0  ROxCF   R0xD7   R0xD6     (eq. 15)
+• V2 = R0x32, bits 5:0 (Context B: R0x3A, bits 5:0)
+                                                                                                                                                   t 3   R0xD2   R0xD8     t1     t 2                (eq. 16)• V3 = R0x33, bits 5:0 (Context B: R0x3B, bits 5:0)
+• V4 = R0x34, bits 5:0 (Context B: R0x3C, bits 5:0)                                                                In  all  cases above,  the  coarse component  of  total
+• tINT = t1 + t2 + t3                                             integration time may be based on the result of AEC or values
+                                                                  in Reg0x0B and Reg0xD2, depending on the settings.
+  There are two ways to specify the knee points timing, the                                                               Similar to Fine Shutter Width Total registers, the user
+first by manual setting and the second by automatic knee                                                      must not set the Fine Shutter Width 1 or Fine Shutter Width
+point adjustment. Knee point auto adjust is controlled for                                                    2 register to exceed the row time (Horizontal Blanking +
+context A by R0x0A[8] (where default is ON), and for                                              Window Width). The absolute maximum value for the Fine
+context B by R0xD1[8] (where default is OFF).                                                               Shutter Width registers is 1774 master clocks.
+  When the knee point auto adjust enabler is enabled (set
+HIGH),  the MT9V034  calculates  the  knee  points    ADC Companding Mode
+automatically using the following equations:               By default, ADC resolution of the sensor  is 10-bit.
+              t 1     t INT      t 2     t 3                            (eq. 5)            Additionally, a companding scheme of 12-bit into 10-bit is
+                                                          enabled by the ADC Companding Mode register. This mode
+              t 2     tINT x (1 2)R0x0A[3:0] or R0xD1[3:0]           (eq. 6)                                                           allows  higher ADC  resolution,  which  means  less
+              t 2     t INT x (1 2)R0x0A[7:4] or R0xD1[7:4]           (eq. 7)            quantization noise at low-light, and lower resolution at high
+                                                                          light, where good ADC quantization  is not so  critical
+  As a default for auto exposure, t2 is 1/16 of tINT, t3 is 1/64     because of the high level of the photon’s shot noise.
+of tINT.
+  When the auto adjust enabler is disabled (set LOW), t1, t2,
+and t3 may be programmed through the two-wire serial
+interface:
+   t 1   Coarse SW1 (row   times)   Fine SW1 (pixel   times) (eq. 8)
+
+   t 2   Coarse SW2   Coarse SW1   Fine SW2   Fine SW1  (eq. 9)
+
+  t3   Total Integration    t 1    t 2
+      Coarse Total Shutter Width   Fine Shutter Width Total    t 1    t 2
+                                                           (eq. 10)
+
+
+                          10-bit
+                   Codes
+
+                      1,024
+
+
+                     768                                  8 to 1 Companding (2,048− 4095  768− 1023)
+
+
+                                                  4 to 1 Companding (512 − 2047   384 − 767)                     512
+
+                                           2 to 1 Companding (256− 511  256− 383)
+                     256
+                                                                                                          12-bit
+                                No companding (0 −255  0 −255)                                                                            Codes
+
+                           256 512  1,024          2,048                     4,096
+
+                                  Figure 24. 12- to 10-Bit Companding Chart
+
+
+
+                                      www.onsemi.com
+                                                      22
+
+=== PAGE 23 ===
+                              MT9V034
+
+Gain Settings                                                     effect the next frame. The frame boundary is slightly after
+                                                                the falling edge of Frame_Valid. In Figure 25 this is shown
+Changes to Gain Settings                                                    by the dashed vertical line labeled Frame Start.
+  When the analog gain (R0x35 for context A or R0x36 for                                                       Both analog and digital gain change regardless of whether
+context B) or the digital gain settings (R0x80–R0x98) are                                                                the integration time is also changed simultaneously. Digital
+changed, the gain is updated on the next frame start. The gain                                                            gain will change as soon as the register is written.
+setting must be written before the frame boundary to take
+
+
+
+
+
+                                                                                                    “B”
+                                                                                                                                     Gain
+                                                                                                                                                                                                                                        Readout
+
+
+
+                                                                                                    “B”
+                                                                                                                                     Gain                                                                                            idle
+                                                                                                                                                                                                                                        Readout
+                                                                                                                                                                                                                                                                                                          available
+                                                    n+2                                    “B”                         output                                                                                                                                     Gain                imageat
+                                                                                       frame
+                                                             “B”)                                                                                                      Readout         new
+                                                                            (Gain                                                                       gain”B”)
+                                                                            value                                                     new(Gain
+                                                    n+1                                    “B”                                                             gain                                                                                                                                                                        AGC−sample                                                                                                                                     Gain                          value                                                                                                                                                                                                                                                                                                                   activates                                              new      frame
+                                                                            write                                                                                                      Readout                                                                                                                                                                                                      writes                                                                                                                                                                          value                                                                                                                                            ”B”)
+                                                                                                                                        gain                 n                                    “A”                         (Gain
+                                                                                                      new                                                                                                                                     Gain                                 frame−start                                                                                       frame
+                                                                                                                                                                                                                                        Readout
+                                                                                                                                                                                                                                                                                                                                                                           frame−start
+                                                                                                    “A”
+                                                                                            idle                                          point                                                                                                                                     Gain
+                                                                                                                                                                                                                                        Readout                                                                                                                                                                                                                                                                                                                                    AGC−sample
+                                                                                                                                                                              Two−wireInterface(Input)      LED_OUT(Output)              (Output)                                                                                                                                         serial                                                  FRAME_VALID
+
+                             Figure 25. Latency of Gain Register(s) in Master Mode
+
+
+                                      www.onsemi.com
+                                                      23
+
+=== PAGE 24 ===
+                              MT9V034
+
+Analog Gain                                                    In the MT9V034, the gain logic divides the image into 25
+  Analog gain is controlled by:                                          tiles, as shown in Figure 25. The size and gain of each tile
+• R0x35 Global Gain context A                            can be adjusted using the above digital gain control registers.
+• R0x36 Global Gain context B                              Separate tile gains can be assigned for context A and context
+                                                        B.
+  The formula for gain setting is:                                Registers 0x99–0x9E and 0x9F–0xA4  represent  the
+   Gain    Bits[6 : 0]   0.0625                     (eq. 17)           coordinates X0/5–X5/5 and Y0/5–Y5/5  in  Figure 25,
+                                                                   respectively.
+  The analog gain range supported in the MT9V034 is        Digital gains of  registers 0x80–0x98 apply  to  their
+1X–4X with a step size of 6.25 percent. To control gain     corresponding tiles. The MT9V034 supports a digital gain
+manually with this register, the sensor must NOT be in AGC      of 0.25–3.75X.
+mode. When adjusting the luminosity of an image, it is      When binning is enabled, the tile offsets maintain their
+recommended to alter exposure  first and yield to gain      absolute values; that is, tile coordinates do not scale with row
+increases only when the exposure value has reached a      or column bin setting. Digital gain is applied as soon as
+maximum limit.                                                    register is written.
+• Analog gain = bits (6:0) x 0.0625 for values 16–31        NOTE:  There is one exception, for the condition when
+• Analog gain = bits (6:0)/2 x 0.125 for values 32–64               Column Bin 4 is enabled (R0x0D[3:2] or
+                                                               R0x0E[3:2] = 2). For this case, the value for
+  For values 16–31: each LSB increases analog gain 0.0625                Digital Tile Coordinate
+v/v. A value of 16 = 1X gain. Range: 1X to 1.9375X.                    X–direction must be doubled.
+  For values 32–64: each 2 LSB increases analog gain 0.125
+                                                    The formula for digital gain setting is:v/v (that is, double the gain increase for 2 LSB). Range: 2X
+to 4X. Odd values do not result in gain increases; the gain           Digital Gain    Bits[3 : 0]   0.25                 (eq. 18)
+increases by 0.125 for values 32, 34, 36, and so on.
+
+Digital Gain
+  Digital gain is controlled by:
+• R0x99−R0xA4 Tile Coordinates
+• R0x80−R0x98 Tiled Digital Gain and Weight
+
+
+                            X0/5   X1/5    X2/5     X3/5    X4/5         X5/5
+                         Y0/5
+
+                                x0_y0   x1_y0                     x4_y0
+
+                         Y1/5
+
+                                x0_y1   x1_y1                     x4_y1
+                         Y2/5
+
+                                x0_y2   x1_y2                     x4_y2
+                         Y3/5
+                                x0_y3   x1_y3                     x4_y3
+
+                         Y4/5
+
+                                x0_y4   x1_y4                     x4_y4
+
+
+
+
+                         Y5/5
+
+                                           Figure 26. Tiled Sample
+
+
+
+
+
+                                      www.onsemi.com
+                                                      24
+
+=== PAGE 25 ===
+                              MT9V034
+
+Black Level Calibration                             • Black Level Calibration Value: R0x48
+  Black level calibration is controlled by:                                               • Black Level Calibration Value Step Size: R0x4C
+• Frame Dark Average: R0x42
+• Dark Average Thresholds: R0x46                        The MT9V034 has automatic black level calibration
+                                                               on-chip, and if enabled, its result may be used in the offset• Black Level Calibration Control: R0x47
+                                                                correction shown in Figure 27.
+
+
+                                                         Gain Selection
+                                                      (R0x35 or R0x36 or
+                                                                          result of AGC)            VREF
+                                                                                 (R0x2C)
+
+
+                              Pixel Output                                                 ADC Data
+                                                                          10 (12) bit ADC                           (reset minus signal)                                                                                  (9:0)
+
+
+
+                   Offset Correction                                     C1
+                 Voltage (R0x48 or
+                      result of BLC)
+                                          C2
+
+
+                                 Figure 27. Black Level Calibration Flow Chart
+
+  The automatic black  level  calibration measures  the      To avoid oscillation of the black level from below to
+average value of pixels from 2 dark rows (1 dark row if row     above, the region the thresholds should be programmed so
+bin 4 is enabled) of the chip. (The pixels are averaged as if      the difference is at least two times the offset DAC step size.
+they were light-sensitive and passed through the appropriate        In  normal  operation,  the  black  level  calibration
+gain.)                                                            value/offset correction value is calculated at the beginning
+  This row average is then digitally low-pass filtered over      of each frame and can be read through the two-wire serial
+many frames (R0x47, bits 7:5) to remove temporal noise and      interface from R0x48. This register is an 8-bit signed two’s
+random instabilities associated with this measurement.        complement value.
+  Then, the new filtered average is compared to a minimum       However, if R0x47, bit 0 is set to “1,” the calibration value
+acceptable level, low threshold, and a maximum acceptable      in R0x48 is used rather than the automatic black level
+level, high threshold.                                            calculation result. This feature can be used in conjunction
+   If the average is lower than the minimum acceptable level,     with the “show dark rows” feature (R0x0D[6]) if using an
+the offset correction voltage is increased by a programmable      external black level calibration circuit.
+offset LSB in R0x4C. (Default step size is 2 LSB Offset =      The offset correction voltage is generated according to the
+1 ADC LSB at analog gain = 1X.)                            following formulas:
+   If it is above the maximum level, the offset correction
+voltage is decreased by 2 LSB (default).
+
+     Offset Correction Voltage   (8    bit signed two s complement calibration value, –127 to 127)   0.25 mV     (eq. 19)
+
+ ADC input voltage    (Pixel Output Voltage)   Analog Gain   Offset Correction Voltage   (Analog Gain   1)  (eq. 20)
+
+Defective Pixel Correction                                    Defective Pixel Correction is enabled by R0x07[9]. By
+  Defective pixel correction is intended to compensate for      default, correction is enabled, and pixels mapped in internal
+defective pixels by replacing their value with a value based   ROM are replaced with corrected values. This might be
+on the surrounding pixels, making the defect less noticeable     unacceptable to some applications, in which case pixel
+to the human eye. The locations of defective pixels are      correction should be disabled (R0x07[9] = 0).
+stored in a ROM on chip during the manufacturing process;
+the maximum number of defects stored is 32. There is no     Row-wise Noise Correction
+provision for later augmenting the table of programmed       Row-wise noise correction is controlled by the following
+defects. In the defect correction block, bad pixels will be       registers:
+substituted by either the average of its neighboring pixels, or    • R0x70 Row Noise Control
+its nearest-neighbor pixel, depending on pixel location.       • R0x72 Row Noise Constant
+
+
+
+                                      www.onsemi.com
+                                                      25
+
+=== PAGE 26 ===
+                              MT9V034
+
+                                                             values from dark columns; it is meant to prevent clipping
+  Row-wise noise cancellation is performed by calculating                                                     from negative noise fluctuations.
+a row average from a set of optically black pixels at the start
+                                                                           Pixel value  ADC value – dark column average   R0x71[9 : 0]of each row and then applying each average to all the active
+                                                                                                                                      (eq. 21)
+pixels of the row. Read Dark Columns register bit and Row
+Noise Correction Enable register bit must both be set to       Note that this algorithm does not work in color sensor.
+enable row-wise noise cancellation to be performed. The                                                     Automatic Gain Control and Automatic Exposure
+behavior when Read Dark Columns register bit = 0 and Row                                                        Control
+Noise Correction Enable register bit = 1 is undefined.                                                    The integrated AEC/AGC unit is responsible for ensuring
+  The algorithm works as follows:                                                                      that optimal auto settings of exposure and (analog) gain are
+  Logical columns 755-790 in the pixel array provide 36                                                    computed and updated every frame.
+optically black pixel values. Of the 36 values, two smallest                                        AEC and AGC can be individually enabled or disabled by
+value and two largest values are discarded. The remaining                                                  R0xAF. When AEC is disabled (R0xAF[0] = 0), the sensor
+32 values are averaged by summing them and discarding the                                                            uses the manual exposure value in coarse and fine shutter
+5 LSB of the result. The 10-bit result is subtracted from each                                                         width registers. When AGC is disabled (R0xAF[1] = 0), the
+pixel value on the row in turn. In addition, a positive constant                                                             sensor uses the manual gain value in R0x35 or R0x36. See
+will be added (Reg0x71, bits 7:0). This constant should be                                                              “Pixel Integration Control” and the MT9V034 Developer
+set to the dark level targeted by the black level algorithm plus                                                          Guide, for more information.
+the noise expected on the measurements of the averaged
+
+                                         EXP. LPF EXP. SKIP Coarse Shutter   AEC ENABLE
+                                             (R0xA8)    (R0xA6)     Width Total    (R0xAF[0 or 8])
+
+
+                                                                             To exposure    MAX. EXPOSURE (R0xBD)                                                                             0   timing control                                         AEC                                                      AEC
+       MIN EXPOSURE (R0xAC)                     UNIT                                                     OUTPUT                                                                             1
+                                                                         R0xBB
+                                                         BIN
+
+                                           HISTOGRAM
+               DESIRED BIN                                                                                                                                                                                                       luminance)     GENERATOR
+                (desired luminance)                        (R0xA5)                                         CURRENT      (R0xBC)                                                                                                                                                               (current          UNIT
+                                                 AGC OUTPUT                                                                             To analog                                                                             1
+                                                                                               gain control
+                              MIN GAIN        AGC
+                             16                   UNIT                      0
+                MAX. GAIN
+                                                                         R0xBA                     (R0xAB)
+
+                                    GAIN LPF  GAIN SKIP  MANUAL GAIN AGC ENABLE
+                                          (R0xAB)    (R0xA9)      A or B     (R0xAF[1 or 9])
+
+                          Figure 28. Controllable and Observable AEC/AGC Registers
+
+  The exposure is measured in row-time by reading R0xBB.
+                                             When AGC is enabled (R0xAF), the maximum auto gainThe exposure range is 1 to 2047. The gain is measured in
+                                                            value is limited by R0xAB; minimum auto gain is fixed togain-units by reading R0xBA. The gain range is 16 to 63
+                                                    16 gain-units.(unity gain = 16 gain-units; multiply by 1/16 to get the true
+                                                    The exposure control measures current scene luminositygain).
+                                                      and desired output luminosity by accumulating a histogram  When AEC  is enabled (R0xAF), the maximum auto
+                                                              of pixel values while reading out a frame. All pixels are used,exposure value  is limited by R0xBD; minimum auto
+                                                        whether in color or mono mode. The desired exposure andexposure is limited by AEC Minimum Exposure, R0xAC.
+                                                            gain are then calculated from this for subsequent frame.
+NOTE: AEC does not support sub-row timing;                                             When binning is enabled, tuning of the AEC may be
+          calculated exposure values are rounded down to                                                                 required. The histogram pixel count register, R0xB0, may be
+          the nearest row-time. For smoother response,                                                              adjusted to reflect reduced pixel count. Desired bin register,
+        manual control is recommended for short                                                 R0xA5, may be adjusted as required.
+         exposure times.
+
+
+
+                                      www.onsemi.com
+                                                      26
+
+=== PAGE 27 ===
+                              MT9V034
+
+Pixel Clock Speed                                     The sensor goes into monitor mode when R0xD9[0] is set
+  The pixel clock speed  is same as the master clock      to HIGH.  In  this mode,  the  sensor  first  captures a
+(SYSCLK)  at 26.66 MHz by default. However, when     programmable number of frames (R0xC0), then goes into a
+column binning 2 or 4 (R0x0D or R0x0E, bit 2 or 3) is      sleep period for five minutes. The cycle of sleeping for five
+enabled, the pixel clock speed  is reduced by half and     minutes and waking up to capture a number of frames
+one-fourth of the master clock speed respectively. See “Read      continues until R0xD9[0] is cleared to return to normal
+Mode Options” and “Column Binning”  for additional      operation.
+information.                                                    In some applications when monitor mode is enabled, the
+                                                         purpose of capturing frames is to calibrate the gain and
+Hard Reset of Logic                                                         exposure of the scene using automatic gain and exposure
+  The RC circuit for the MT9V034 uses a 10 kΩ resistor and                                                                control feature. This feature typically takes less than 10
+a 0.1 µF capacitor. The rise time for the RC circuit is 1µs                                                         frames to settle. In case a larger number of frames is needed,
+maximum.                                                               the value of R0xC0 may be increased to capture more
+                                                             frames.Soft Reset of Logic
+                                                         During the sleep period, none of the analog circuitry and  Soft reset of logic is controlled by:
+                                                          a very small fraction of digital logic (including a five-minute• R0x0C Reset
+                                                               timer) is powered. The master clock (SYSCLK) is therefore
+  Bit 0 is used to reset the digital logic of the sensor while     always required.
+preserving   the   existing  two-wire   serial   interface
+                                               Read Mode Optionsconfiguration. Furthermore, by asserting the soft reset, the
+                                                            (Also see “Output Data Format” and “Output Datasensor aborts the current frame it is processing and starts a
+                                                           Timing”).new frame. Bit 1 is a shadowed reset control register bit to
+explicitly reset the automatic gain and exposure control     Column Flip
+feature.                                         By setting bit 5 of R0x0D or R0x0E the readout order of
+  These two bits are self-resetting bits and also return to “0”      the columns is reversed, as shown in Figure 29.
+during two-wire serial interface reads.
+                                            Row Flip
+STANDBY Control                                 By setting bit 4 of R0x0D or R0x0E the readout order of
+  The sensor goes into standby mode by setting STANDBY      the rows is reversed, as shown in Figure 30.
+to HIGH. Once the sensor detects that STANDBY  is
+asserted, it completes the current frame before disabling the
+digital logic, internal clocks, and analog power enable
+signal. To release the sensor out from the standby mode,
+reset STANDBY back to LOW. The LVDS must be powered
+to ensure that the device is in standby mode. See ”Appendix
+A – Power-On Reset and Standby Timing” for more
+information on standby.
+
+Monitor Mode Control
+  Monitor mode is controlled by:
+• R0xD9 Monitor Mode Enable
+• R0xC0 Monitor Mode Image Capture Control
+
+
+
+                  LINE_VALID
+
+                 Normal readout                                                P4,1    P4,2    P4,3    P4,4    P4,5    P4,6
+                                                            (9:0)     (9:0)     (9:0)     (9:0)     (9:0)     (9:0)
+                       DOUT(9:0)
+
+
+
+                Reverse readout
+                                                P4,n   P4,n−1  P4,n−2  P4,n−3  P4,n−4  P4,n−5
+                                                            (9:0)      (9:0)     (9:0)     (9:0)     (9:0)     (9:0)
+                       DOUT(9:0)
+
+                    Figure 29. Readout of Six Pixels in Normal and Column Flip Output Mode
+
+
+
+
+                                      www.onsemi.com
+                                                      27
+
+=== PAGE 28 ===
+                              MT9V034
+
+
+              FRAME_VALID
+
+                Normal readout                                  Row4    Row5    Row6    Row7    Row8    Row9
+                                                    (9:0)       (9:0)       (9:0)       (9:0)      7(9:0)      (9:0)
+                       DOUT(9:0)
+
+
+
+                Reverse readout
+                                 Row9    Row8    Row7    Row6    Row5    Row4
+                                                    (9:0)       (9:0)       (9:0)       (9:0)      7(9:0)      (9:0)
+                        DOUT(9:0)
+                     Figure 30. Readout of Six Rows in Normal and Row Flip Output Mode
+
+Pixel Binning                                                      rate by 2x and 4x respectively. Column binning does not
+  In  addition  to windowing mode  in which  smaller      increase the frame rate.
+resolutions (CIF, QCIF) are obtained by selecting a smaller
+                                            Row Binningwindow from the sensor array, the MT9V034 also provides
+                                              By setting bit 0 or 1 of R0x0D or R0x0E, only half orthe ability to down-sample the entire image captured by the
+                                                             one-fourth of the row set is read out, as shown in Figure 30.pixel array using pixel binning.
+                                                  The number of rows read out is half or one-fourth of the  There are two resolution options: binning 2 and binning
+                                                            value set in R0x03. The row binning result depends on the4, which reduce resolution by two or by four, respectively.
+                                                                difference in pixel values: for pixel signal differences lessRow and column binning are separately selected. Image
+                                                            than 200 LSB’s, the result is the average of the pixel values.mirroring options will work in conjunction with binning.
+                                                          For pixel differences of 200 LSB’s or more, the result is  For column binning, either two or four columns are
+                                                               the value of the darker pixel value.combined by averaging to create the resulting column. For
+row binning, the binning result value depends on the                                                 Column Binning
+difference in pixel values: for pixel signal differences of less                                                          For column binning, either two or four columns are
+than 200 LSBs, the result is the average of the pixel values.                                                    combined by averaging to create the result. In setting bit 2
+For pixel differences of greater than 200 LSBs, the result is                                                              or 3 of R0x0D or R0x0E, the pixel data rate is slowed down
+the value of the darker pixel value.                                                    by a factor of either two or four, respectively. This is due to
+  Binning  operation  increases SNR  but  decreases                                                               the overhead time in the digital pixel data processing chain.
+resolution. Enabling row bin2 and row bin4 improves frame                                              As a result, the pixel clock speed is also reduced accordingly.
+
+
+
+                LINE_VALID
+              Normal readout                                     Row4   Row5   Row6   Row7   Row8   Row9  Row10  Row11
+                                                       (9:0)     (9:0)     (9:0)     (9:0)     (9:0)     (9:0)     (9:0)     (9:0)
+                      DOUT(9:0)
+
+
+
+                LINE_VALID
+          Row Bin 2 readout                                     Row4   Row6   Row8  Row10
+                                                       (9:0)     (9:0)     (9:0)     (9:0)
+                      DOUT(9:0)
+
+
+
+                LINE_VALID
+          Row Bin 4 readout                                     Row4   Row8
+                                                       (9:0)     (9:0)
+                      DOUT(9:0)
+                      Figure 31. Readout of 8 Pixels in Normal and Row Bin Output Mode
+
+
+
+
+
+                                      www.onsemi.com
+                                                      28
+
+=== PAGE 29 ===
+                              MT9V034
+
+
+
+                   LINE_VALID
+                 Normal readout                                      D1    D2    D3    D4    D5    D6    D7    D8
+                          DOUT(9:0)               (9:0)    (9:0)    (9:0)    (9:0)    (9:0)    (9:0)    (9:0)    (9:0)
+
+
+                      PIXCLK
+
+
+
+                   LINE_VALID
+            Column Bin 2 readout                                     D1        D3        D5        D7
+                                                        (9:0)           (9:0)           (9:0)           (9:0)                          DOUT(9:0)
+
+
+                      PIXCLK
+
+
+
+                   LINE_VALID
+            Column Bin 4 readout                                               D1                      D5
+                                                                       (9:0)                                (9:0)                          DOUT(9:0)
+
+
+                      PIXCLK
+
+                     Figure 32. Readout of 8 Pixels in Normal and Column Bin Output Mode
+
+Interlaced Readout                                            Consequently, the number of rows read out is half what is
+  The MT9V034 has two interlaced readout options. By      set in the window height register. The row start register
+setting R0x07[2:0] = 1, all the even-numbered rows are read     determines which field gets read out; if the row start register
+out  first, followed by a number of programmable field       is even, then the even field is read out; if row start address
+blanking rows (set by R0xBF[7:0]), then the odd-numbered       is odd, then the odd field is read out.
+rows, and finally the vertical blanking rows. By setting
+R0x07[2:0] = 2 only one field row is read out.
+
+
+                                     P4,1 P4,2 P4,3.....................................P4,n−1P4,n   00 00 00 .................. 00 00 00
+                                     P6,0 P6,1 P6,2.....................................P6,n−1P6,n  00 00 00 .................. 00 00 00
+
+                                VALID IMAGE − Even Field             HORIZONTAL
+                                                               BLANKING
+                              Pm−2,0Pm−2,2.....................................Pm−2,n−2Pm−2,n
+                                Pm,2 Pm,2 .....................................Pm,n−1 Pm,n
+
+                         00 00 00 ..................................... 00 00 00
+                                                                  FIELD BLANKING                         00 00 00 ..................................... 00 00 00
+                                    P5,1 P5,2 P5,3.....................................P5,n−1P5,n   00 00 00 .................. 00 00 00
+                                    P7,0 P7,1 P7,2.....................................P7,n−1P7,n   00 00 00 .................. 00 00 00
+
+                                 VALID IMAGE − Odd Field         00 00 00 .................. 00 00 00
+                                                                00 00 00 .................. 00 00 00
+                              Pm−3,1Pm−3,2.....................................Pm−3,n−1Pm−3,n
+                                Pm,1 Pm,1 .....................................Pm,n−1 Pm,n
+
+                                             VERTICAL BLANKING
+                         00 00 00 ............................................................................................. 00 00 00
+                         00 00 00 ............................................................................................. 00 00 00
+
+                           Figure 33. Spatial Illustration of Interlaced Image Readout
+
+  When interlaced mode is enabled, the total number of      register (R0xBF) and Vertical Blanking register (R0x06 or
+blanking rows are determined by both Field Blanking     R0xCE). The followings are their equations.
+
+
+                                      www.onsemi.com
+                                                      29
+
+=== PAGE 30 ===
+                              MT9V034
+
+
+
+                                                        Field Blanking   R0xBF[7 : 0]                                            (eq. 22)
+
+                    Vertical Blanking   R0x06[8 : 0] – R0xBF[7 : 0] (contextA) or R0xCE[8 : 0] – R0xBF[7 : 0] (contextB)        (eq. 23)
+  with
+
+minimum vertical blanking requirement   4 (absolute minimum operate; see Vertical Blanking Registers description for VBlank minimums
+                                                for valid image output)
+                                                                                                                                    (eq. 24)
+
+  Similar to progressive scan, FV is logic LOW during the
+valid image row only. Binning should not be used in
+conjunction with interlaced mode.
+
+LINE_VALID                                          rows and two vertical blanking rows are shown in Figure 34.
+  By setting bit 2 and 3 of R0x72, the LV signal can get three      In the last format, the LV signal is the XOR between the
+different output formats. The formats for reading out four     continuous LV signal and the FV signal.
+
+                                  Default
+                    FRAME_VALID
+
+                        LINE_VALID
+
+                           Continuously
+                    FRAME_VALID
+
+                        LINE_VALID
+                       XOR
+                    FRAME_VALID
+
+                        LINE_VALID
+
+                                   Figure 34. Different LINE_VALID Formats
+
+LVDS Serial (Stand-Alone/Stereo) Output                      data. Irrespective of the mode (stereoscopy/stand-alone),
+  The LVDS interface allows for the streaming of sensor    LV and FV are always embedded in the pixel data.
+data serially to a standard off-the-shelf deserializer up to        In stereoscopic mode, the two sensors run in lock-step,
+eight meters away from the sensor. The pixels (and controls)     implying all state machines are in the same state at any given
+are packeted-12-bit packets for stand-alone mode and 18-bit      time. This is ensured by the sensor-pair getting their sys-clks
+packets for stereoscopy mode. All serial signalling (CLK     and sys-resets in the same instance. Configuration writes
+and data) is LVDS. The LVDS serial output could either be     through the two-wire serial interface are done in such a way
+data from a single sensor (stand-alone) or stream-merged      that both sensors can get their configuration updates at once.
+data from two sensors (self and its stereoscopic slave pair).     The inter-sensor serial link is designed in such a way that
+The appendices describe in detail the topologies for both     once the slave PLL locks and the data-dly, shft-clk-dly and
+stand-alone and stereoscopic modes.                            stream-latency-sel are configured, the master sensor streams
+  There are two standard deserializers that can be used. One      valid stereo content irrespective of any variation voltage
+for a stand-alone sensor stream and the other from a      and/or temperature as long as it is within specification. The
+stereoscopic  stream.  The  deserializer  attached  to  a      configuration  values  of   data-dly,   shft-clk-dly  and
+stand-alone sensor is able to reproduce the standard parallel      stream-latency-sel  are  either  predetermined  from  the
+output  (8-bit pixel  data, LV, FV, and PIXCLK). The      board-layout or can be empirically determined by reading
+deserializer attached to a stereoscopic sensor is able to     back the stereo-error flag. This flag is asserted when the two
+reproduce 8-bit pixel data from each sensor (with embedded      sensor streams are not in sync when merged. The combo_reg
+LV and FV) and pixel-clk. An additional (simple) piece of       is used for out-of-sync diagnosis.
+logic is required to extract LV and FV from the 8-bit pixel
+
+
+
+
+
+                                      www.onsemi.com
+                                                      30
+
+=== PAGE 31 ===
+                              MT9V034
+
+
+      Internal
+    PIXCLK
+      Internal
+      Parallel         P41  P42  P43 P44  P45  P46                   P51  P52 P53  P54  P55  P56
+       Data
+      Internal
+  Line_Valid
+      Internal
+Frame_Valid
+    External                       1023  0  1023  1   P41  P42  P43  P44 P45 P46  2             1    P51 P52  P53  P54 P55 P56  2  3       Serial
+   Data Out
+
+                                Figure 35. Serial Output Format for a 6x2 Frame
+
+1. External pixel values of 0, 1, 2, 3, are reserved (they only convey control information). Any raw pixel of value 0, 1, 2 and 3 will be substituted
+    with 4.
+2. The external pixel sequence 1023, 0, 1023 is a reserved sequence (conveys control information for legacy support of MT9V021 applications).
+   Any raw pixel sequence of 1023, 0, 1023 will be substituted with an output serial stream of 1023, 4, 1023.
+
+LVDS Output Format                                           consists of a start bit, 8-bit pixel data (with sync codes), the
+  In stand-alone mode, the packet size is 12 bits (2 frame bits      line valid bit, the frame valid bit and the stop bit. For 10-bit
+and 10 payload bits); 10-bit pixels or 8-bit pixels can be      pixel mode (R0xB6[0] = 1), the packet consists of a start bit,
+selected. In 8-bit pixel mode (R0xB6[0] = 0), the packet      10-bit pixel data, and the stop bit.
+
+ Table 10. LVDS PACKET FORMAT IN STAND-ALONE MODE (Stereoscopy Mode Bit De-Asserted)
+
+                                               use_10-bit_pixels Bit De-Asserted           use_10-bit_pixels Bit Asserted
+                12-Bit Packet                                  (8-Bit Mode)                                 (10-Bit Mode)
+
+                        Bit[0]                                  1’b1 (Start bit)                              1’b1 (Start bit)
+
+                        Bit[1]                                     PixelData[2]                                  PixelData[0]
+
+                       Bit2]                                     PixelData[3]                                  PixelData[1]
+
+                        Bit[3]                                     PixelData[4]                                  PixelData[2]
+
+                       Bit4]                                     PixelData[5]                                  PixelData[3]
+
+                        Bit[5]                                     PixelData[6]                                  PixelData[4]
+
+                        Bit[6]                                     PixelData[7]                                  PixelData[5]
+
+                        Bit[7]                                     PixelData[8]                                  PixelData[6]
+
+                        Bit[8]                                     PixelData[9]                                  PixelData[7]
+
+                        Bit[9]                                     Line_Valid                                   PixelData[8]
+
+                      Bit[10]                                Frame_Valid                                 PixelData[9]
+
+                       Bit[11]                                  1’b0 (Stop bit)                              1’b0 (Stop bit)
+
+  In stereoscopic mode, the packet size is 18 bits (2 frame      the master pixel byte (with sync codes), the slave byte (with
+bits and 16 payload bits). The packet consists of a start bit,     sync codes), and the stop bit.)
+
+
+
+
+
+                                       www.onsemi.com
+                                                      31
+
+=== PAGE 32 ===
+                              MT9V034
+
+
+
+ Table 11. LVDS PACKET FORMAT IN STEREOSCOPY MODE (Stereoscopy Mode Bit Asserted)
+
+                            18-bit Packet                                                 Function
+
+                                     Bit[0]                                                        1’b1 (Start bit)
+
+                                     Bit[1]                                                 MasterSensorPixelData[2]
+
+                                     Bit[2]                                                 MasterSensorPixelData[3]
+
+                                     Bit[3]                                                 MasterSensorPixelData[4]
+
+                                     Bit[4]                                                 MasterSensorPixelData[5]
+
+                                     Bit[5]                                                 MasterSensorPixelData[6]
+
+                                     Bit[6]                                                 MasterSensorPixelData[7]
+
+                                     Bit[7]                                                 MasterSensorPixelData[8]
+
+                                     Bit[8]                                                 MasterSensorPixelData[9]
+
+                                     Bit[9]                                                  SlaveSensorPixelData[2]
+
+                                  Bit[10]                                                  SlaveSensorPixelData[3]
+
+                                    Bit[11]                                                  SlaveSensorPixelData[4]
+
+                                  Bit[12]                                                  SlaveSensorPixelData[5]
+
+                                  Bit[13]                                                  SlaveSensorPixelData[6]
+
+                                  Bit[14]                                                  SlaveSensorPixelData[7]
+
+                                  Bit[15]                                                  SlaveSensorPixelData[8]
+
+                                  Bit[16]                                                  SlaveSensorPixelData[9]
+
+                                  Bit[17]                                                        1’b0 (Stop bit)
+
+  Control signals LV and FV can be reconstructed from their     embedded within the pixel data in the form of reserved
+respective preceding and succeeding flags that are always     words.
+
+ Table 12. RESERVED WORDS IN THE PIXEL DATA STREAM
+
+                    Pixel Data Reserved Word                                              Flag
+
+                           0                                             Precedes frame valid assertion
+
+                           1                                              Precedes line valid assertion
+
+                           2                                           Succeeds line valid de-assertion
+
+                           3                                          Succeeds frame valid de-assertion
+
+  When LVDS mode is enabled along with column binning    LVDS Enable and Disable
+(bin 2 or bin 4, R0x0D[3:2], the packet size remains the same      The Table 13 and Table 14 further explain the state of the
+but the serial pixel data stream repeats itself depending on    LVDS output pins depending on LVDS control settings.
+whether 2X or 4X binning is set:                     When the LVDS block is not used, it may be left powered
+• For bin 2, LVDS outputs double the expected data         down to reduce power consumption.
+  (post-binning pixel 0,0 is output twice in sequence,
+  followed by pixel 0,1 twice, …).                           Table 13. SER_DATAOUT_* STATE
+• For bin 4, LVDS outputs 4 times the expected data                R0xB1[1]          R0xB3[4]
+   (pixel 0,0 is output 4 times in sequence followed by           LVDS power    LVDS data power
+   pixel 0,1 times 4, …).                                    down           down       SER_DATAOUT_*
+  The receiving hardware will need to undersample the              0                 0                  Active
+output stream, getting data either every 2 clocks (bin 2) or              0                 1                  Active
+every 4 (bin 4) clocks.                                                                  1                 0               Z
+   If the sensor provides a pixel whose value is 0,1, 2, or 3
+(that is, the same as a reserved word) then the outgoing serial              1                 1               Z
+pixel value is switched to 4.
+
+
+
+
+                                      www.onsemi.com
+                                                      32
+
+=== PAGE 33 ===
+                              MT9V034
+
+
+
+ Table 14. SHFT_CLK_* STATE
+
+               R0xB1[1]                              R0xB2[4]
+         LVDS power down               LVDS shift-clk power down                SHFT_CLKOUT_*
+
+                  0                                    0                                          Active
+
+                  0                                    1                                 Z
+
+                  1                                    0                                 Z
+
+                  1                                    1                                 Z
+1. ERROR pin: When the sensor is not in stereo mode, the ERROR pin is at LOW.
+
+LVDS Data Bus Timing
+  The  LVDS  bus  timing  waveforms  and  timing
+specifications are shown in Table 15 and Figure 36.
+
+                              Data Rise/Fall Time
+                             (10% − 90%)
+                                                                 Data Setup Time Data Hold Time
+
+
+
+
+
+              LVDS Data Output
+
+            (SER_DATAOUT_N/P)
+
+
+
+             LVDS Clock Output
+              (Shft_CLKOUT_N/P)
+
+
+
+
+
+                                                                 Clock Jitter
+                             Clock Rise/Fall Time
+                             (10% − 90%)
+
+                                           Figure 36. LVDS Timing
+
+
+ Table 15. LVDS AC TIMING SPECIFICATIONS
+ (VPWR = 3.3 V ±0.3 V; TJ = – 30°C to +70°C; output load = 100 Ω; frequency 27 MHz)
+
+       Parameter            Minimum                 Typical             Maximum                   Unit
+
+ LVDS clock rise time               –                       0.22                     0.30                    ns
+
+ LVDS clock fall time                –                       0.22                     0.30                    ns
+
+ LVDS data rise time                –                       0.28                     0.30                    ns
+
+ LVDS data fall time                –                       0.28                     0.30                    ns
+
+ LVDS data setup time                0.3                      0.67                    –                      ns
+
+ LVDS data hold time                 0.1                      1.34                    –                      ns
+
+ LVDS clock jitter                  –                                           92                     ps
+
+
+
+
+
+                                      www.onsemi.com
+                                                      33
+
+=== PAGE 34 ===
+                              MT9V034
+
+ELECTRICAL SPECIFICATIONS
+
+ Table 16. DC ELECTRICAL CHARACTERISTICS OVER TEMPERATURE
+          (VPWR = 3.3 V ±0.3 V; TJ = – 30°C to +70°C; Output Load = 10 pF; Frequency 13 MHz to 27 MHz; LVDS off)
+
+   Symbol               Definition                Condition           Min.           Typ.         Max.           Unit
+
+      VIH              Input HIGH voltage                        VPWR − 1.4        –                     V
+
+       VIL              Input LOW voltage                                            –              1.3         V
+
+         IIN             Input leakage current      No pull-up resistor;       −5           –            5          A
+                                                VIN = VPWR or VGND
+
+    VOH           Output HIGH voltage           IOH = –4.0 mA      VPWR − 0.3        –            –          V
+
+     VOL           Output LOW voltage             IOL = 4.0 mA          –            –              0.3         V
+
+      IOH            Output HIGH current        VOH = VDD − 0.7         −11           –            –        mA
+
+       IOL            Output LOW current           VOL = 0.7            –            –            11        mA
+
+    IPWRA         Analog supply current          Default settings         –            12           20        mA
+
+        IPIX              Pixel supply current           Default settings         –              1.1           3        mA
+
+    IPWRD             Digital supply current          Default settings,         –            42           60        mA
+                                           CLOAD = 10 pF
+
+      ILVDS         LVDS supply current        Default settings with       –            13           16        mA
+                                        LVDS on
+
+    IPWRA      Analog standby supply current    STDBY = VDD          –              0.2           3          A
+   Standby
+
+    IPWRD        Digital standby supply current    STDBY = VDD,          –              0.1           10          A
+   Standby              with clock off           CLKIN = 0 MHz
+   Clock Off
+
+    IPWRD        Digital standby supply current     STDBY= VDD,          –            1            2        mA
+   Standby              with clock on          CLKIN = 27 MHz
+   Clock On
+
+
+ Table 17. DC ELECTRICAL CHARACTERISTICS (VPWR = 3.3 V ±0.3 V; TA = Ambient = 25°C)
+   Symbol                  Definition                  Condition          Min.         Typ.        Max.         Unit
+
+ LVDS Driver DC Specifications
+
+ |VOD|         Output differential voltage                                  250          –          400       mV
+                                                RLOAD = 100 |DVOD|      Change in VOD between                                    –           –          50       mV
+              complementary output states
+
+ VOS          Output offset voltage                                              1.0           1.2           1.4        V
+
+ DVOS          Pixel array current                        + 1%            –           –          35       mV
+ IOS             Digital supply current                                                  ±10                mA
+ IOZ           Output current when driver is tri-state                                      ±1                   A
+
+ LVDS Receiver DC Specifications
+
+ VIDTH+       Input differential                         |VGPD| < 925mV       –100         –          100       mV
+  Iin             Input current                                             –           –          ±20         A
+
+
+
+
+
+                                      www.onsemi.com
+                                                      34
+
+=== PAGE 35 ===
+                              MT9V034
+
+
+ Table 18. ABSOLUTE MAXIMUM RATINGS
+
+       Symbol               Parameter                  Min.                  Max.                     Unit
+
+ VSUPPLY               Power supply voltage               –0.3                       4.5                 V
+                                       (all supplies)
+
+ ISUPPLY                      Total power supply                 –                    200              mA
+                             current
+
+ IGND                         Total ground current                –                    200              mA
+
+ VIN               DC input voltage                   –0.3                VDD + 0.3               V
+
+ VOUT              DC output voltage                  –0.3                VDD + 0.3               V
+
+ TSTG1                    Storage temperature              –50                  +150                   °C
+Stresses exceeding those listed in the Maximum Ratings table may damage the device. If any of these limits are exceeded, device functionality
+should not be assumed, damage may occur and reliability may be affected.
+1. This is a stress rating only, and functional operation of the device at these or any other conditions above those indicated in
+   the operational sections of this specification is not implied. Exposure to absolute maximum rating conditions for extended
+   periods may affect reliability.
+
+ Table 19. AE ELECTRICAL CHARACTERISTICS
+          (VPWR = 3.3 V ±0.3 V; TJ= –30°C to +70°C; Output Load = 10 pF)
+
+  Symbol                       Definition                        Condition         Min.       Typ.      Max.       Unit
+
+ SYSCLK   Input clock frequency                                 Note 1           13.0       26.6       27.0     MHz
+
+            Clock duty cycle                                                          45.0       50.0       55.0     %
+ tR          Input clock rise time                                                 –         3         5         ns
+  tF          Input clock fall time                                                  –         3         5         ns
+
+ tPLHP    SYSCLK to PIXCLK propagation delay             CLOAD = 10 pF        4         6         8         ns
+
+ tPD      PIXCLK to valid DOUT(9:0) propagation delay         CLOAD = 10 pF       –3         0.6        3         ns
+
+ tSD       Data setup time                                                    14        16        –         ns
+
+ tHD       Data hold time                                                     14        16        –
+
+ tPFLR    PIXCLK to LV propagation delay                  CLOAD = 10 pF        5         7         9         ns
+
+ tPFLF     PIXCLK to FV propagation delay                 CLOAD = 10 pF        5         7         9         ns
+
+
+Propagation Delays for PIXCLK and Data Out Signals        falling edge and the data output transition is typically 7ns.
+  The pixel clock is inverted and delayed relative to the     Note that the falling edge of the pixel clock occurs at
+master clock. The relative delay from the master clock     approximately the same time as the data output transitions.
+(SYSCLK) rising edge to both the pixel clock (PIXCLK)     See Table 19 for data setup and hold times.
+
+                                                                tF                 tR
+
+                     SYSCLK
+
+                                              tPLHP
+
+                       PIXCLK
+
+                                tPD
+                                              tSD             tHD
+
+                          DOUT(9:0)
+
+
+                        Figure 37. Propagation Delays for PIXCLK and Data Out Signals
+
+
+
+
+
+                                      www.onsemi.com
+                                                      35
+
+=== PAGE 36 ===
+                              MT9V034
+
+Propagation Delays for FRAME_VALID and                    rising edge as the end of the output of the last valid pixel’s
+LINE_VALID Signals                                             data.
+  The LV and FV signals change on the same rising master      As shown in the “Output Data Timing”, FV goes HIGH
+clock edge as the data output. The LV goes HIGH on the     143 pixel clocks before the first LV goes HIGH. It returns
+same rising master clock edge as the output of the first valid   LOW 23 pixel clocks after the last LV goes LOW.
+pixel’s data and returns LOW on the same master clock
+
+                                                       tPFLR                                          tPFLF
+
+                         PIXCLK                          PIXCLK
+
+
+
+                   FRAME_VALID                  FRAME_VALID
+                       LINE_VALID                      LINE_VALID
+
+
+                   Figure 38. Propagation Delays for FRAME_VALID and LINE_VALID Signals
+
+Two-Wire Serial Bus Timing
+  Detailed timing waveforms and parameters  for  the
+two-wire serial interface bus are shown in Figure 39 and
+Table 20.
+
+
+
+   SDATA
+
+            tf                      t LOW         tr       tSU;DAT          tf                                                     t HD;STA                                 tr      tBUF
+
+  SCLK
+
+               tHD;STA                             tSU;STA                        tSU;STO         S                   tHD;DAT    tHIGH                         Sr                                P         S
+
+                              Figure 39. Two-Wire Serial Bus Timing Parameters
+
+
+
+
+
+                                      www.onsemi.com
+                                                      36
+
+=== PAGE 37 ===
+                              MT9V034
+
+
+ Table 20. TWO-WIRE SERIAL BUS CHARACTERISTICS (fEXTCLK = 27 MHz; VPWR = 3.3 V +0.3 V; TA = 25°C)
+                                                             Standard-Mode           Fast-Mode
+
+                   Parameter                   Symbol      Min       Max        Min       Max        Unit
+ SCLK Clock Frequency                                   fSCL         0         100         0         400      KHz
+  After this period, the first clock pulse is generated         tHD;STA        4.0         −           0.6         −         μs
+ LOW period of the SCLK clock                       tLOW         4.7         −           1.3         −         μs
+ HIGH period of the SCLK clock                         tHIGH         4.0         −           0.6         −         μs
+ Set−up time for a repeated START condition              tSU;STA        4.7         −           0.6         −         μs
+ Data hold time:                                      tHD;DAT        04         3.455         06          0.95        μs
+ Data set−up time                                      tSU;DAT       250         −         1006        −         ns
+                                                                                                  tr          −         1000       20 +        300        ns
+ Rise time of both SDATA and SCLK signals                                                   0.1Cb7
+
+                                                                                                  tf          −         300        20 +        300        ns
+  Fall time of both SDATA and SCLK signals                                                    0.1Cb7
+
+ Set−up time for STOP condition                         tSU;STO        4.0         −           0.6         −         μs
+ Bus free time between a STOP and START condition       tBUF          4.7         −           1.3         −         μs
+ Capacitive load for each bus line                    Cb         −         400         −         400       pF
+  Serial interface input pin capacitance                     CIN_SI        −           3.3         −           3.3        pF
+ SDATA max load capacitance                     CLOAD_SD      −          30         −          30        pF
+ SDATA pull−up resistor                        RSD          1.5          4.7          1.5          4.7      KΩ
+1. This table is based on I2C standard (v2.1 January 2000). Philips Semiconductor.
+2. Two-wire control is I2C-compatible.
+3.  All values referred to VIHmin = 0.9 VDD and VILmax = 0.1VDD levels. Sensor EXCLK = 27 MHz.
+4. A device must internally provide a hold time of at least 300 ns for the SDATA signal to bridge the undefined region of the falling edge of SCLK.
+5. The maximum tHD;DAT has only to be met if the device does not stretch the LOW period (tLOW) of the SCLK signal.
+6. A Fast-mode I2C-bus device can be used in a Standard-mode I2C-bus system, but the requirement tSU;DAT 250 ns must then be met. This
+    will automatically be the case if the device does not stretch the LOW period of the SCLK signal. If such a device does stretch the LOW period
+    of the SCLK signal, it must output the next data bit to the SDATA line tr max + tSU;DAT = 1000 + 250 = 1250 ns (according to the Standard-mode
+   I2C-bus specification) before the SCLK line is released.
+7. Cb = total capacitance of one bus line in pF.
+
+
+
+
+
+                                      www.onsemi.com
+                                                      37
+
+=== PAGE 38 ===
+                              MT9V034
+
+Minimum Master Clock Cycles                                   certain minimum master clock cycles between transitions.
+  In addition to the AC timing requirements described in     These are specified in Figures 40 through 45, in units of
+Table 20, the two-wire serial bus operation also requires     master clock cycles.
+
+
+                                                     4         4
+
+
+                                 SCLK
+
+                                          SDATA
+
+
+
+                            Figure 40. Serial Host Interface Start Condition Timing
+
+
+
+
+                                                     4         4
+
+
+                                 SCLK
+
+
+
+                                          SDATA
+
+                                        Note:     All timing are in units of master clock cycle.
+
+                            Figure 41. Serial Host Interface Stop Condition Timing
+
+
+
+                                                       4       4
+
+                                    SCLK
+
+
+
+                                              SDATA
+
+                                         Note:   SDATA is driven by an off-chip transmitter.
+
+                            Figure 42. Serial Host Interface Data Timing for WRITE
+
+
+
+                                                      5
+
+                                    SCLK
+
+
+
+                                              SDATA
+
+
+                   Note:   SDATA is pulled LOW by the sensor, or allowed to be pulled HIGH by a pull-up resistor off-chip.
+
+                             Figure 43. Serial Host Interface Data Timing for Read
+
+
+
+
+
+                                      www.onsemi.com
+                                                      38
+
+=== PAGE 39 ===
+                           MT9V034
+
+
+                                6                               3
+
+               SCLK
+
+
+                                            Sensor pulls down
+                                                  SDATA pin
+                   SDATA
+
+
+              Figure 44. Acknowledge Signal Timing After an 8-Bit WRITE to the Sensor
+
+
+
+                                  7                               6
+
+                SCLK
+
+
+                                            Sensor tri−states SDATA pin
+                                                          (turns off pull down)
+                       SDATA
+
+
+Note:    After a READ, the master receiver must pull down SDATA to acknowledge receipt of data bits. When read sequence is
+         complete, the master must generate a “No Acknowledge” by leaving SDATA to float HIGH. On the following cycle,
+        a start or stop bit may be used.
+
+             Figure 45. Acknowledge Signal Timing After an 8-Bit READ from the Sensor
+
+
+
+
+
+                        Figure 46. Typical Quantum Efficiency − RGB Bayer
+
+
+                                  www.onsemi.com
+                                                 39
+
+=== PAGE 40 ===
+             MT9V034
+
+
+
+
+
+Figure 47. Typical Quantum Efficiency − Monochrome
+
+
+
+
+
+              www.onsemi.com
+                         40
+
+=== PAGE 41 ===
+                              MT9V034
+
+APPENDIX A – POWER-ON RESET AND STANDBY TIMING
+  There are no constraints concerning the order in which the      requires reset to operate properly at power-up. Refer to
+various power supplies are applied; however, the MT9V034     Figure 48 for the power-up, reset, and standby sequences.
+
+
+                            non−Low−Power               Low−Power               non−Low−Power
+
+                                                                  Wake
+                                                                           up                           Power
+           Power          Active         Pre−Standby          Standby                               Active       down             up
+
+VDD,VDDLVDS,
+VAA,VAAPIX
+                       MIN 20 SYSCLK cycles
+
+
+ RESET_BAR
+                                          Note 3
+
+   STANDBY
+
+
+
+                                                         MIN 10 SYSCLK cycles
+
+
+    SYSCLK
+
+  MIN 10 SYSCLK cycles                                                                                MIN 10 SYSCLK cycles
+
+ SCLK,SDATA                                            Does not
+                                                               respond to
+Two−Wire Serial I/F                                                                 serial
+                                                                              interface
+                                                          when
+                                              STANDBY = 1
+
+     DOUT[9:0]                    Driven = 0                                                   DOUT[9:0]
+   DATA OUTPUT
+
+ Notes:  1.  All output signals are defined during initial power-up with RESET_BAR held LOW without SYSCLK being active. To properly
+             reset the rest of the sensor, during initial power-up, assert RESET_BAR (set to LOW state) for at least 750 ns after all power
+             supplies have stabilized and SYSCLK is active (being clocked). Driving RESET_BAR to LOW state does not put the part in
+          a low power state.
+          2. Before using two-wire serial interface, wait for 10 SYSCLK rising edges after RESET_BAR is de-asserted.
+          3. Once the sensor detects that STANDBY has been asserted, it completes the current frame readout before entering standby
+          mode. The user must supply enough SYSCLKs to allow a complete frame readout. See Table 4, “Frame Time,” for more
+             information.
+          4.  In standby, all video data and synchronization output signals are driven to a low state.
+          5.  In standby, the two-wire serial interface is not active.
+
+                           Figure 48. Power-up, Reset, Clock and Standby Sequence
+
+
+APPENDIX B: ELECTRICAL IDENTIFICATION OF CFA TYPE
+  In order to identify the CFA type (RGB Bayer, Monochrome) that
+a specific MT9V034 has been, the following table may be used.
+
+ Table 21. ELECTRICAL IDENTIFICATION OF CFA
+
+      CFA           R0x6B[11:9]        R0x6B[8:0]
+
+     RGB               6                 4
+
+      Mono               0                 4
+
+
+
+
+
+                                      www.onsemi.com
+                                                      41
+
+=== PAGE 42 ===
+                         MT9V034
+
+
+                                CLCC48 11.43 x 11.43
+                             CASE 848AN
+                 D                                             2.3 ±0.2
+
+
+                                                                       1.7
+                     Seating
+                      plane
+                   A
+                                                   8.8                48X R 0.15
+                     47X              4.4       0.8              1.75
+                       1.0 ±0.2                 TYP
+                  48X                          48 1
+                 0.40 ±0.05
+
+                                                                       5.215
+                                                                      4.84
+
+                        8.8                                                   11.43
+
+                            4.4
+                                                                    5.715
+                                                                    0.8 TYP
+
+                   4X   0.2
+                                      5.215         5.715                                            C
+                                               11.43          B
+
+                                          Lead finish:
+                              Au plating, 0.50 microns
+                                  minimum thickness
+                                over Ni plating, 1.27 microns
+                                  minimum thickness
+
+                        Substrate material: alumina ceramic 0.7 thickness
+                       Wall material: alumina ceramic
+                         Lid material: borosilicate glass 0.55 thickness
+
+                                          H CTR
+                                                       ∅0.20 A B C               First                                                                                            clear
+                                                                                                pixel
+
+
+
+
+
+                             V CTR                                   10.9 ±0.1
+                                  ∅0.20 A B C                          CTR
+
+
+
+                    Image
+                      sensor die:
+                      0.675 thickness
+       A                              Optical                                    Optical                                         area              10.9 ±0.1             center1
+                                             CTR            0.05          0.10 A
+                                                Optical area:
+1.400 ±0.125                         Maximum rotation of optical area relative to package edges: 1º
+            0.90                      Maximum tilt of optical area relative to
+for reference only                                       seating plane A  : 50 microns
+            0.35                      Maximum tilt of optical area relative to
+for reference only                                       top of cover glass D  : 100 microns
+                                            Note: 1. Optical center = package center.
+
+
+
+
+
+                               www.onsemi.com
+                                             42
+
+=== PAGE 43 ===
+                              MT9V034
+
+
+
+
+
+  ON Semiconductor and    are trademarks of Semiconductor Components Industries, LLC dba ON Semiconductor or its subsidiaries in the United States and/or other countries.
+  ON Semiconductor owns the rights to a number of patents, trademarks, copyrights, trade secrets, and other intellectual property. A listing of ON Semiconductor’s product/patent
+  coverage may be accessed at www.onsemi.com/site/pdf/Patent−Marking.pdf. ON Semiconductor reserves the right to make changes without further notice to any products herein.
+  ON Semiconductor makes no warranty, representation or guarantee regarding the suitability of its products for any particular purpose, nor does ON Semiconductor assume any liability
+   arising out of the application or use of any product or circuit, and specifically disclaims any and all liability, including without limitation special, consequential or incidental damages.
+  Buyer is responsible for its products and applications using ON Semiconductor products, including compliance with all laws, regulations and safety requirements or standards,
+   regardless of any support or applications information provided by ON Semiconductor. “Typical” parameters which may be provided in ON Semiconductor data sheets and/or
+   specifications can and do vary in different applications and actual performance may vary over time. All operating parameters, including “Typicals” must be validated for each customer
+   application by customer’s technical experts. ON Semiconductor does not convey any license under its patent rights nor the rights of others. ON Semiconductor products are not
+   designed, intended, or authorized for use as a critical component in life support systems or any FDA Class 3 medical devices or medical devices with a same or similar classification
+   in a foreign jurisdiction or any devices intended for implantation in the human body. Should Buyer purchase or use ON Semiconductor products for any such unintended or unauthorized
+   application, Buyer shall indemnify and hold ON Semiconductor and its officers, employees, subsidiaries, affiliates, and distributors harmless against all claims, costs, damages, and
+  expenses, and reasonable attorney fees arising out of, directly or indirectly, any claim of personal injury or death associated with such unintended or unauthorized use, even if such
+   claim alleges that ON Semiconductor was negligent regarding the design or manufacture of the part. ON Semiconductor is an Equal Opportunity/Affirmative Action Employer. This
+   literature is subject to all applicable copyright laws and is not for resale in any manner.
+
+PUBLICATION ORDERING INFORMATION
+ LITERATURE FULFILLMENT:                                  N. American Technical Support: 800−282−9855 Toll Free  ON Semiconductor Website: www.onsemi.com
+  Literature Distribution Center for ON Semiconductor             USA/Canada
+  19521 E. 32nd Pkwy, Aurora, Colorado 80011 USA              Europe, Middle East and Africa Technical Support:       Order Literature: http://www.onsemi.com/orderlit
+  Phone: 303−675−2175 or 800−344−3860 Toll Free USA/Canada    Phone: 421 33 790 2910
+  Fax: 303−675−2176 or 800−344−3867 Toll Free USA/Canada     Japan Customer Focus Center                           For additional information, please contact your local
+  Email: orderlit@onsemi.com                                  Phone: 81−3−5817−1050                                Sales Representative
+
+ ◊                                     www.onsemi.com                             MT9V034/D
+                                                      43

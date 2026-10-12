@@ -4,9 +4,37 @@
 #include <stdlib.h>
 
 static float minimum(float a,float b) { return a<b?a:b; }
+static uint8_t curve_outer_mode(const autonomous_drive_t *d,const autonomous_drive_input_t *i)
+{
+    return d->status.active &&
+        (d->status.state==AUTO_DRIVE_RUNNING || d->status.state==AUTO_DRIVE_FINISHING) &&
+        i->curve && i->element==TRACK_ELEMENT_CURVE && !i->element_supported &&
+        (i->curve_outer_side==TRACK_SIDE_LEFT || i->curve_outer_side==TRACK_SIDE_RIGHT) &&
+        i->curve_outer_supported && i->vision_valid &&
+        !i->element_fault && (uint32_t)(i->now_ms-i->frame_ms)<=AUTO_FRAME_MAX_AGE_MS;
+}
 static uint8_t minimum_confidence(const autonomous_drive_t *d,const autonomous_drive_input_t *i)
 {
+    if(curve_outer_mode(d,i)) return AUTO_CURVE_OUTER_MIN_CONFIDENCE;
     return d->status.active && i->element_supported ? AUTO_ELEMENT_MIN_CONFIDENCE : AUTO_MIN_CONFIDENCE;
+}
+static void update_path_status(autonomous_drive_t *d,const autonomous_drive_input_t *i)
+{
+    autonomous_path_reason_t previous_reason=d->status.path_reason;
+    /* LOST锁存时保留触发帧诊断；停车后恢复图像不能覆盖故障证据。 */
+    if(d->status.state==AUTO_DRIVE_FAULT && d->status.fault==AUTO_FAULT_PATH_LOST) return;
+    d->status.confidence=i->confidence;d->status.minimum_confidence=minimum_confidence(d,i);
+    d->status.vision_valid=i->vision_valid;d->status.element=i->element;
+    d->status.curve_outer_side=i->curve_outer_side;d->status.curve_outer_supported=i->curve_outer_supported;
+    d->status.curve_outer_near_rows=i->curve_outer_near_rows;d->status.curve_outer_far_rows=i->curve_outer_far_rows;
+    d->status.path_reason=AUTO_PATH_ACCEPTED;
+    if(!i->vision_valid) d->status.path_reason=i->vision_near_supported?AUTO_PATH_INVALID:AUTO_PATH_NEAR;
+    else if(i->confidence<d->status.minimum_confidence) {
+        d->status.path_reason=i->curve && i->curve_outer_side && !i->curve_outer_supported &&
+            i->curve_outer_reject_reason!=AUTO_PATH_ACCEPTED?i->curve_outer_reject_reason:AUTO_PATH_Q_LOW;
+    }
+    if(d->status.path_reason==AUTO_PATH_ACCEPTED || previous_reason==AUTO_PATH_ACCEPTED)
+        d->status.diagnostic_steering_permille=d->status.steering_permille;
 }
 static uint16_t duty_slew(uint16_t previous,float target)
 {
@@ -37,6 +65,7 @@ void autonomous_drive_init(autonomous_drive_t *d)
     memset(d,0,sizeof(*d));d->key_stable=1;d->key_sample=1;
     d->config_valid=control_pid_init(&d->left_pid,&speed) && control_pid_init(&d->right_pid,&speed) &&
         control_pid_init(&d->steering_pid,&steering);
+    if(!(AUTO_CURVE_OUTER_SPEED_MM_S>0.0f && AUTO_CURVE_OUTER_SPEED_MM_S<=AUTO_CURVE_SPEED_MM_S))d->config_valid=0;
     if(!d->config_valid)stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_CONFIG);
 }
 static uint8_t key_pressed(autonomous_drive_t *d,const autonomous_drive_input_t *i)
@@ -94,9 +123,10 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     if(!d || !i)return;
     fresh_frame=i->frame_sequence!=d->frame_sequence;
     fresh_feedback=i->feedback_sequence!=d->feedback_sequence;
+    update_path_status(d,i);
     if(fresh_feedback){d->feedback_sequence=i->feedback_sequence;d->feedback_ms=i->now_ms;}
     if(fresh_frame){
-        d->frame_sequence=i->frame_sequence;d->status.confidence=i->confidence;
+        d->frame_sequence=i->frame_sequence;
         if(i->vision_valid && i->confidence>=minimum_confidence(d,i) && !i->element_fault){
             d->bad_frames=0;if(d->good_frames<255)++d->good_frames;
         }else{d->good_frames=0;d->zebra_frames=0;d->clear_frames=0;if(d->bad_frames<255)++d->bad_frames;}
@@ -140,6 +170,7 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     if(d->status.state==AUTO_DRIVE_STARTING){
         if((uint32_t)(i->now_ms-d->started_ms)<AUTO_CENTER_SETTLE_MS || i->servo_generation!=d->status.run_generation){zero_output(d);return;}
         d->status.state=AUTO_DRIVE_RUNNING;
+        update_path_status(d,i);
     }
     /* 第一帧低可信即撤销PWM；连续低可信才锁存故障，恢复不继承积分。 */
     if(!i->vision_valid || i->confidence<minimum_confidence(d,i)){zero_output(d);return;}
@@ -153,6 +184,7 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     target=AUTO_CRUISE_SPEED_MM_S;
     if(i->curve || abs(i->near_error_px)>12 || abs(i->far_error_px)>16)target=minimum(target,AUTO_CURVE_SPEED_MM_S);
     if(i->element_slow || i->confidence<65)target=minimum(target,AUTO_ELEMENT_SPEED_MM_S);
+    if(curve_outer_mode(d,i))target=minimum(target,AUTO_CURVE_OUTER_SPEED_MM_S);
     if(d->status.state==AUTO_DRIVE_FINISHING)target=minimum(target,AUTO_FINISH_SPEED_MM_S);
     d->status.target_speed_mm_s=minimum(target,d->status.target_speed_mm_s+AUTO_ACCEL_MM_S2*0.01f);
     d->left_filtered+=AUTO_SPEED_FILTER_ALPHA*((float)i->left_speed_mm_s-d->left_filtered);

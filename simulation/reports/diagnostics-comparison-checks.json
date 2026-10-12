@@ -1,0 +1,60 @@
+{
+  "default_projection_control_and_prior_telemetry": "exactly unchanged for 10s",
+  "default_widths": [
+    21.649530025756835,
+    144.64953002575686
+  ],
+  "pose_ground_projection_frustum_render": "passed",
+  "native_fault_and_healthy_post_frames": "passed",
+  "sequence_export": "E:\\AA\\car\\simulation\\runs\\20261011-213139-diagnostics-verification-225900",
+  "locked_vs_live": {
+    "locked": {
+      "confidence": 0,
+      "minimum": 45,
+      "vision_valid": false,
+      "accepted": false,
+      "reason": "近场不足",
+      "element": 0,
+      "frame_fresh": true,
+      "frame_id": 154,
+      "frame_time_ms": 3050,
+      "sample_time_ms": 3050,
+      "near_px": 0,
+      "far_px": 0,
+      "vision_fault": 2
+    },
+    "live": {
+      "confidence": 94,
+      "minimum": 45,
+      "vision_valid": true,
+      "accepted": true,
+      "reason": "接受",
+      "element": 0,
+      "frame_fresh": true,
+      "frame_id": 269,
+      "frame_time_ms": 5350,
+      "sample_time_ms": 5350,
+      "near_px": 0,
+      "far_px": 0,
+      "vision_fault": 0
+    },
+    "frames": 254
+  },
+  "stale_camera_no_fabricated_post_frames": "passed",
+  "comparison_point_residual_and_csv": "passed with synthetic fixture only",
+  "tk_quality_import_points_pose_small_window": "passed",
+  "timings": {
+    "tick_with_frame_buffer": {
+      "median_ms": 1.4324000003398396,
+      "p95_ms": 1.9680000004882459
+    },
+    "scene": {
+      "median_ms": 11.377899998478824,
+      "p95_ms": 12.222500001371372
+    },
+    "comparison": {
+      "median_ms": 4.572400001052301,
+      "p95_ms": 5.071800002042437
+    }
+  }
+}

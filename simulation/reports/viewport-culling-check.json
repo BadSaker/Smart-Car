@@ -1,0 +1,134 @@
+[
+  {
+    "follow": false,
+    "yaw": -55,
+    "size": [
+      760,
+      550
+    ],
+    "different_channels": 0,
+    "before_ms": 19.25785000094038,
+    "after_ms": 20.702600000731763
+  },
+  {
+    "follow": false,
+    "yaw": -55,
+    "size": [
+      610,
+      570
+    ],
+    "different_channels": 0,
+    "before_ms": 19.447099999524653,
+    "after_ms": 21.39810000153375
+  },
+  {
+    "follow": false,
+    "yaw": -23,
+    "size": [
+      760,
+      550
+    ],
+    "different_channels": 0,
+    "before_ms": 18.085950001477613,
+    "after_ms": 19.04035000188742
+  },
+  {
+    "follow": false,
+    "yaw": -23,
+    "size": [
+      610,
+      570
+    ],
+    "different_channels": 0,
+    "before_ms": 19.462349999230355,
+    "after_ms": 18.43609999923501
+  },
+  {
+    "follow": false,
+    "yaw": 70,
+    "size": [
+      760,
+      550
+    ],
+    "different_channels": 0,
+    "before_ms": 21.6643000003387,
+    "after_ms": 23.119800000131363
+  },
+  {
+    "follow": false,
+    "yaw": 70,
+    "size": [
+      610,
+      570
+    ],
+    "different_channels": 0,
+    "before_ms": 27.264000000286615,
+    "after_ms": 24.701800000912044
+  },
+  {
+    "follow": true,
+    "yaw": -55,
+    "size": [
+      760,
+      550
+    ],
+    "different_channels": 0,
+    "before_ms": 25.17970000008063,
+    "after_ms": 17.75930000076187
+  },
+  {
+    "follow": true,
+    "yaw": -55,
+    "size": [
+      610,
+      570
+    ],
+    "different_channels": 0,
+    "before_ms": 25.31780000026629,
+    "after_ms": 17.39214999906835
+  },
+  {
+    "follow": true,
+    "yaw": -23,
+    "size": [
+      760,
+      550
+    ],
+    "different_channels": 0,
+    "before_ms": 25.07490000243706,
+    "after_ms": 19.133800000417978
+  },
+  {
+    "follow": true,
+    "yaw": -23,
+    "size": [
+      610,
+      570
+    ],
+    "different_channels": 0,
+    "before_ms": 23.084050000761636,
+    "after_ms": 17.089050001231954
+  },
+  {
+    "follow": true,
+    "yaw": 70,
+    "size": [
+      760,
+      550
+    ],
+    "different_channels": 0,
+    "before_ms": 25.179050000588177,
+    "after_ms": 23.04780000122264
+  },
+  {
+    "follow": true,
+    "yaw": 70,
+    "size": [
+      610,
+      570
+    ],
+    "different_channels": 0,
+    "before_ms": 29.924550000941963,
+    "after_ms": 25.015149998580455
+  }
+]

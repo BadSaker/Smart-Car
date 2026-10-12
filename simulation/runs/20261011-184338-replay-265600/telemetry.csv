@@ -1,0 +1,2 @@
+﻿time_s,x_m,y_m,heading_deg,speed_mm_s,target_mm_s,pulse_us,steer_deg,Q,valid,near_px,far_px,element,outer_side,outer_supported,path_reason,command,left_pwm,right_pwm,applied_command,applied_left_pwm,applied_right_pwm,left_mm_s,right_mm_s,state,fault,error_m,progress_m,distance_m,outside_wheels,completed,mode
+0.0,1.95,3.5,180.0,0.0,0.0,1480.0,0.0,100,1,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0,0,-0.0,0.0,0.0,0,False,native

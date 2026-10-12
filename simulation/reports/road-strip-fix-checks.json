@@ -1,0 +1,130 @@
+{
+  "old_interior_samples": {
+    "points": 19350,
+    "non_road_pixels": 127
+  },
+  "scenarios": [
+    {
+      "scenario": "full",
+      "direction": "A→B",
+      "interior": {
+        "points": 19350,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "full",
+      "direction": "B→A",
+      "interior": {
+        "points": 19350,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "midterm",
+      "direction": "A→B",
+      "interior": {
+        "points": 19350,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "midterm",
+      "direction": "B→A",
+      "interior": {
+        "points": 19350,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "circle",
+      "direction": "A→B",
+      "interior": {
+        "points": 1965,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "circle",
+      "direction": "B→A",
+      "interior": {
+        "points": 1965,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "straight",
+      "direction": "A→B",
+      "interior": {
+        "points": 5010,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    },
+    {
+      "scenario": "straight",
+      "direction": "B→A",
+      "interior": {
+        "points": 5010,
+        "non_road_pixels": 0
+      },
+      "geometry_and_edge_checks": "passed"
+    }
+  ],
+  "my_BA_rows": [
+    {
+      "row": 86,
+      "before_center": 93,
+      "after_center": 93,
+      "after_left": 46,
+      "after_right": 141,
+      "flags": 7
+    },
+    {
+      "row": 100,
+      "before_center": 97,
+      "after_center": 96,
+      "after_left": 39,
+      "after_right": 154,
+      "flags": 7
+    },
+    {
+      "row": 108,
+      "before_center": 98,
+      "after_center": 99,
+      "after_left": 35,
+      "after_right": 163,
+      "flags": 7
+    },
+    {
+      "row": 112,
+      "before_center": 100,
+      "after_center": 100,
+      "after_left": 32,
+      "after_right": 168,
+      "flags": 7
+    },
+    {
+      "row": 116,
+      "before_center": 87,
+      "after_center": 102,
+      "after_left": 31,
+      "after_right": 173,
+      "flags": 7
+    }
+  ],
+  "before_confidence": 85,
+  "after_confidence": 93,
+  "track_and_simulation_construction_ms": 355.588300000818,
+  "my_parameters_unchanged": true,
+  "straight_C_center": "93 at all processed rows",
+  "road_sampling_cell_mm": 4,
+  "camera_sampling": "nearest neighbour unchanged",
+  "tk_my_parameters_reset_2s": "passed"
+}

@@ -1,0 +1,53 @@
+{
+  "metric_checks": "passed",
+  "ackermann_checks": "passed",
+  "render_purity": "passed",
+  "legacy_10s_fingerprint_matches": true,
+  "config_roundtrip": "passed",
+  "tk_tabs_and_reset": "passed",
+  "desktop_capture": "saved",
+  "timings": {
+    "2d": {
+      "median_ms": 3.7527999993471894,
+      "p95_ms": 4.724200000055134
+    },
+    "3d": {
+      "median_ms": 10.089549999975134,
+      "p95_ms": 13.196799998695496
+    },
+    "model_detail": {
+      "median_ms": 15.471050000087416,
+      "p95_ms": 19.09429999977874
+    }
+  },
+  "new_measured_profile_10s": {
+    "mode": "native",
+    "completed": false,
+    "time_s": 10.0,
+    "distance_m": 1.1828825296620231,
+    "route_length_m": 30.021128796792553,
+    "max_error_m": 0.011151657037580242,
+    "max_outside_wheels": 0,
+    "state": "运行",
+    "fault": "无",
+    "shadow_c_state": "运行",
+    "shadow_c_fault": "无",
+    "algorithm_build": "b09bee4813ed377a",
+    "closure_connector_m": 0.22157287525380576,
+    "predicted_width_row30": 44.0,
+    "predicted_width_row116": 167.0,
+    "vehicle_geometry": {
+      "model": "C1 03-361-1",
+      "overall_length_m": 0.28,
+      "plate_length_m": 0.245,
+      "wheelbase_m": 0.19,
+      "outer_width_straight_m": 0.18,
+      "camera_from_rear_axle_m": 0.08
+    },
+    "model_status": "C1产品图外形近似、实测轴线定位；相机条件拟合、执行机构未标定"
+  },
+  "polygon_count": 966,
+  "overall_length_m": 0.28,
+  "resolved_geometry_envelope_m": 0.262,
+  "unresolved_longitudinal_envelope_m": 0.018
+}

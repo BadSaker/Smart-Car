@@ -1,0 +1,11 @@
+{
+  "launcher_opened_actual_desktop_window": true,
+  "window_title": "小车仿真实验室 · 完整赛道",
+  "real_click_started_native_controller": true,
+  "observed_time_s": 1.5,
+  "observed_distance_m_approx": 0.062,
+  "observed_nonzero_wheel_speed_and_pwm": true,
+  "real_click_paused": true,
+  "real_click_switched_3d": true,
+  "scope": "Only the simulation window; no vehicle commands or unrelated app actions"
+}

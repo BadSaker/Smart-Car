@@ -14,6 +14,8 @@ class TrackVisionTests(unittest.TestCase):
         SCRATCH.mkdir(parents=True, exist_ok=True)
         executable = SCRATCH / "test-track-vision.exe"
         command = [COMPILER, "-std=c99", "-Wall", "-Wextra", "-Werror", "-O2",
+                   # 本组独立合成图为36/122px；实车44/167由test_curve_outer覆盖。
+                   "-DVISION_WIDTH_TOP_PX=36", "-DVISION_WIDTH_BOTTOM_PX=122",
                    "-I" + str(ROOT / "car/include"), "-I" + str(ROOT / "car/config"),
                    str(ROOT / "car/tests/test_track_vision.c"),
                    str(ROOT / "car/src/track_vision.c"), "-o", str(executable)]

@@ -1,0 +1,53 @@
+=== PAGE 1 ===
+                          5                                               4                                               3                                               2                                               1
+
+
+
+
+
+D                                                                                                                                                                                         D
+
+
+
+
+
+                                                                             J1
+                                              PCLK_OUT      1
+                                                                     2  1
+                                               TXD          3  2
+                                             RXD         4  3
+                                              HREF        5  4
+                                              VSYNC       6  5                                                      J2
+C                                                                    7  6                            PCLK_OUT      1           2       OUT1                                            C
+                                               OUT1        8  7                                               3  1    2  4       OUT2
+                                               OUT2        9  8                             TXD          5  3    4  6       OUT3
+                                               OUT3       10  9                            RXD         7  5    6  8       OUT4
+                                               OUT4       11  10                            HREF        9  7    8  10      OUT5
+                                               OUT5       12  11                           VSYNC      11  9   10  12      OUT6
+                                               OUT6       13  12                                              13  11  12  14      OUT7
+                                               OUT7       14  13                                              15  13  14  16      OUT8
+                                               OUT8       15  14                                                  15  16
+                                                                    16  15                        VDD3V3
+                                                                    17  16                                                    CON_SMD-2*8-00-2.54*2.54-M
+                                                                    18  17
+                                      VDD3V3                     18
+                                                                    19
+                                                                    20  19
+                                                                        20
+                                                                      FPC05-18
+
+B                                                                                                                                                                                                        B
+
+
+
+
+
+A                                                                                      ----------------逐飞科技 SEEKFREE-----------------      A
+                                                                                                                                                                                 TitleTitleTitle
+                                                                                                             fpc_pcb.schfpc_pcb.schfpc_pcb.sch
+
+                                                                                                                                           SizeSizeSize    DocumentDocumentDocument NumberNumberNumber                                         RevRevRev
+                                                                                                       AAA     <Doc><Doc><Doc>                                                            V1.0V1.0V1.0
+
+                                                                                                                                            Date:Date:Date:      Monday,Monday,Monday, DecemberDecemberDecember 07,07,07, 201520152015       SheetSheetSheet     111       ofofof     111
+                          5                                               4                                               3                                               2                                               1

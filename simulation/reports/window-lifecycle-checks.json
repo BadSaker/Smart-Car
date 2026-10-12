@@ -1,0 +1,87 @@
+{
+  "cycles": [
+    {
+      "tab": 0,
+      "running": false,
+      "hidden_simulation_frozen": true,
+      "deiconify_call_ms": 4.665299999032868,
+      "restore_to_ready_ms": 74.91839999784133,
+      "complete_repaint_ms": 69.1698999980872,
+      "stages": {
+        "layout_ms": 0.0011999982234556228,
+        "render_ms": 16.17370000167284,
+        "paint_ms": 52.472599996690406
+      }
+    },
+    {
+      "tab": 0,
+      "running": true,
+      "hidden_simulation_frozen": true,
+      "deiconify_call_ms": 3.5961999965365976,
+      "restore_to_ready_ms": 69.67629999780911,
+      "complete_repaint_ms": 65.06850000005215,
+      "stages": {
+        "layout_ms": 0.0006999980541877449,
+        "render_ms": 16.458999998576473,
+        "paint_ms": 48.083999998198124
+      }
+    },
+    {
+      "tab": 1,
+      "running": true,
+      "hidden_simulation_frozen": true,
+      "deiconify_call_ms": 3.5179999977117404,
+      "restore_to_ready_ms": 83.14740000059828,
+      "complete_repaint_ms": 78.36459999816725,
+      "stages": {
+        "layout_ms": 0.0002999986463692039,
+        "render_ms": 33.62340000239783,
+        "paint_ms": 44.26479999892763
+      }
+    },
+    {
+      "tab": 2,
+      "running": false,
+      "hidden_simulation_frozen": true,
+      "deiconify_call_ms": 5.479800001921831,
+      "restore_to_ready_ms": 95.29420000035316,
+      "complete_repaint_ms": 88.72859999974025,
+      "stages": {
+        "layout_ms": 0.0006000009307172149,
+        "render_ms": 23.431199999322416,
+        "paint_ms": 64.62789999932284
+      }
+    },
+    {
+      "tab": 4,
+      "running": false,
+      "hidden_simulation_frozen": true,
+      "deiconify_call_ms": 3.8122000005387235,
+      "restore_to_ready_ms": 79.92010000089067,
+      "complete_repaint_ms": 74.88369999919087,
+      "stages": {
+        "layout_ms": 0.00039999940781854093,
+        "render_ms": 27.252200001385063,
+        "paint_ms": 47.10640000121202
+      }
+    },
+    {
+      "tab": 5,
+      "running": false,
+      "hidden_simulation_frozen": true,
+      "deiconify_call_ms": 3.537799999321578,
+      "restore_to_ready_ms": 65.07140000030631,
+      "complete_repaint_ms": 60.587600000872044,
+      "stages": {
+        "layout_ms": 0.00039999940781854093,
+        "render_ms": 16.415899997809902,
+        "paint_ms": 43.60619999715709
+      }
+    }
+  ],
+  "prepared_first_visible_frame": true,
+  "startup_timing": {
+    "ui_prepare_ms": 2874.6042999991914
+  },
+  "native_frames_and_positions": "camera pixels exactly match source; one image per canvas after every restore"
+}

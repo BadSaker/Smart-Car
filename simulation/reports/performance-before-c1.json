@@ -1,0 +1,41 @@
+{
+  "tick": {
+    "median_ms": 1.0676499996407074,
+    "p95_ms": 1.8653000006452203
+  },
+  "2d": {
+    "median_ms": 3.011700000570272,
+    "p95_ms": 3.5963999998784857
+  },
+  "3d": {
+    "median_ms": 4.268550001143012,
+    "p95_ms": 5.1187000008212635
+  },
+  "camera": {
+    "median_ms": 0.3721999992194469,
+    "p95_ms": 0.5282999991322868
+  },
+  "chart": {
+    "median_ms": 1.3146000001142966,
+    "p95_ms": 1.6593999989709118
+  },
+  "numerical_fingerprint_10s": "b7e0cece574777e0a5222e40e53e280737b55aecc499e13aa9a48f401902d570",
+  "result_10s": {
+    "mode": "native",
+    "completed": false,
+    "time_s": 10.0,
+    "distance_m": 1.1439797967473153,
+    "route_length_m": 30.021128796792553,
+    "max_error_m": 0.01625509620722865,
+    "max_outside_wheels": 0,
+    "state": "运行",
+    "fault": "无",
+    "shadow_c_state": "运行",
+    "shadow_c_fault": "无",
+    "algorithm_build": "b09bee4813ed377a",
+    "closure_connector_m": 0.22157287525380576,
+    "predicted_width_row30": 44.0,
+    "predicted_width_row116": 167.0,
+    "model_status": "条件相机拟合；电机响应、前轮角度、轮胎尺寸未实车标定"
+  }
+}

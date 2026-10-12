@@ -17,6 +17,8 @@ typedef struct {
     uint8_t candidate_left;
     uint8_t candidate_right;
     uint8_t candidate_cross;
+    track_side_t curve_outer_candidate;
+    uint8_t curve_outer_frames;
     uint8_t recovery;
     uint8_t approach_clear;
     uint8_t curve_seen;
@@ -113,9 +115,11 @@ static int vision_zebra_row(const uint8_t *gray,int row,int center,uint8_t thres
         black*5U<(unsigned)(right-left+1)*4U;
 }
 
-static void vision_scan(const uint8_t *gray,track_vision_result_t *out,vision_features_t *features)
+static void vision_scan(const uint8_t *gray,track_vision_result_t *out,vision_features_t *features,
+                        track_side_t preferred_outer)
 {
     int row,predicted=VISION_CENTER_COL;
+    int previous_outer=0,previous_outer_row=-1;
     unsigned unsupported=0;
     memset(features,0,sizeof(*features));
     for(row=VISION_BOTTOM_ROW;row>=VISION_TOP_ROW;--row) {
@@ -140,12 +144,34 @@ static void vision_scan(const uint8_t *gray,track_vision_result_t *out,vision_fe
                 }
             }
             if(found) {
+                int use_outer=0;
                 for(col=seed;col>=2;--col)
                     if(!vision_white(gray,row,col-1,out->threshold) &&
                        !vision_white(gray,row,col-2,out->threshold)) { left=col;has_left=1;break; }
                 for(col=seed;col<=185;++col)
                     if(!vision_white(gray,row,col+1,out->threshold) &&
                        !vision_white(gray,row,col+2,out->threshold)) { right=col;has_right=1;break; }
+                /* 只信任相邻行连续、且与预测路径接近的实测外侧。
+                 * 预计内侧已离开画面时，背景形成的假内侧不能参与双边平均。 */
+                if(preferred_outer!=TRACK_SIDE_NONE) {
+                    int outer=preferred_outer==TRACK_SIDE_LEFT?left:right;
+                    int present=preferred_outer==TRACK_SIDE_LEFT?has_left:has_right;
+                    int outer_center=preferred_outer==TRACK_SIDE_LEFT?outer+half:outer-half;
+                    int row_gap=previous_outer_row-row;
+                    int inner_offscreen=preferred_outer==TRACK_SIDE_LEFT?
+                        outer+vision_width(row)>=187-VISION_CURVE_OUTER_BORDER_MARGIN_PX:
+                        outer-vision_width(row)<=VISION_CURVE_OUTER_BORDER_MARGIN_PX;
+                    use_outer=present && inner_offscreen && row_gap>0 &&
+                        row_gap<=(int)VISION_MAX_UNSUPPORTED_ROWS+1 &&
+                        vision_abs(outer-previous_outer)<=VISION_MAX_ROW_STEP_PX*row_gap &&
+                        vision_abs(outer_center-predicted)<=VISION_CURVE_OUTER_MAX_CENTER_ERROR_PX;
+                    if(present) { previous_outer=outer;previous_outer_row=row; }
+                    if(use_outer) {
+                        if(preferred_outer==TRACK_SIDE_LEFT) has_right=0;
+                        else has_left=0;
+                        out->curve_outer_side=preferred_outer;
+                    }
+                }
                 /* 开口必须向道路外侧增宽；内侧黑块或急弯不作为开口。 */
                 features->left_open[row]=(uint8_t)(expected_left>4 &&
                     (!has_left || left<expected_left-VISION_EDGE_WINDOW_PX));
@@ -153,6 +179,11 @@ static void vision_scan(const uint8_t *gray,track_vision_result_t *out,vision_fe
                     (!has_right || right>expected_right+VISION_EDGE_WINDOW_PX));
                 if(features->left_open[row]) has_left=0;
                 if(features->right_open[row]) has_right=0;
+                /* 外侧通过上面的连续性与出画面验证后，保留其原始实测证据。 */
+                if(use_outer) {
+                    if(preferred_outer==TRACK_SIDE_LEFT) { has_left=1;features->left_open[row]=0; }
+                    else { has_right=1;features->right_open[row]=0; }
+                }
                 if(has_left && has_right && (right-left)*100<vision_width(row)*VISION_MIN_WIDTH_PERCENT) {
                     has_left=0;has_right=0;
                 }
@@ -223,6 +254,50 @@ static int16_t vision_error(const track_vision_result_t *out,int first,int last)
         sum+=(int)out->center[row]-VISION_CENTER_COL;++count;
     }
     return count ? (int16_t)(sum/count) : 0;
+}
+
+/* 第一遍保留原始扫线/元素证据；只有普通弯道有连续内侧缺失证据，
+ * 才允许第二遍选择外边线。每帧重新验证，不能靠历史方向盲行。 */
+static track_side_t vision_curve_outer(const track_vision_result_t *out,
+                                      const vision_features_t *features,uint32_t now_ms)
+{
+    track_side_t side=TRACK_SIDE_NONE;
+    int near_error=vision_error(out,VISION_NEAR_FIRST_ROW,VISION_NEAR_LAST_ROW);
+    int far_error=vision_error(out,VISION_FAR_FIRST_ROW,VISION_FAR_LAST_ROW);
+    unsigned run=0,best=0;
+    int row,previous=0;
+    uint8_t gap_bottom=0;
+    int bounded_opening=vision_gap(features->left_open,out,TRACK_ROW_LEFT_MEASURED,&gap_bottom) ||
+                        vision_gap(features->right_open,out,TRACK_ROW_RIGHT_MEASURED,&gap_bottom);
+    if(VISION_CURVE_OUTER_ENABLED && vision.phase<=TRACK_ELEMENT_CURVE && !vision.fault && !bounded_opening) {
+        if(far_error>=VISION_CURVE_OUTER_MIN_ERROR_PX && far_error-near_error>=VISION_CURVE_ERROR_PX)
+            side=TRACK_SIDE_LEFT;
+        else if(far_error<=-VISION_CURVE_OUTER_MIN_ERROR_PX && near_error-far_error>=VISION_CURVE_ERROR_PX)
+            side=TRACK_SIDE_RIGHT;
+    }
+    if(side!=TRACK_SIDE_NONE) for(row=VISION_BOTTOM_ROW;row>=VISION_TOP_ROW;--row) {
+        uint8_t outer_mask=side==TRACK_SIDE_LEFT?TRACK_ROW_LEFT_MEASURED:TRACK_ROW_RIGHT_MEASURED;
+        uint8_t inner_mask=side==TRACK_SIDE_LEFT?TRACK_ROW_RIGHT_MEASURED:TRACK_ROW_LEFT_MEASURED;
+        int outer=side==TRACK_SIDE_LEFT?out->left[row]:out->right[row];
+        int inner=side==TRACK_SIDE_LEFT?out->right[row]:out->left[row];
+        int offscreen=side==TRACK_SIDE_LEFT?
+            outer+vision_width(row)>=187-VISION_CURVE_OUTER_BORDER_MARGIN_PX:
+            outer-vision_width(row)<=VISION_CURVE_OUTER_BORDER_MARGIN_PX;
+        int inner_missing=!(out->row_flags[row]&inner_mask) ||
+            (side==TRACK_SIDE_LEFT?inner>=187-VISION_CURVE_OUTER_BORDER_MARGIN_PX:
+                                   inner<=VISION_CURVE_OUTER_BORDER_MARGIN_PX);
+        if((out->row_flags[row]&outer_mask) && !(out->row_flags[row]&TRACK_ROW_ZEBRA) &&
+           offscreen && inner_missing) {
+            run=run && vision_abs(outer-previous)>VISION_MAX_ROW_STEP_PX?1U:run+1U;
+            previous=outer;if(run>best)best=run;
+        } else run=0;
+    }
+    if(best<VISION_CURVE_OUTER_MIN_ROWS) side=TRACK_SIDE_NONE;
+    if(side==TRACK_SIDE_NONE || side!=vision.curve_outer_candidate ||
+       now_ms-vision.last_frame_ms>VISION_CANDIDATE_MAX_GAP_MS) vision.curve_outer_frames=0;
+    vision.curve_outer_candidate=side;
+    if(side!=TRACK_SIDE_NONE && vision.curve_outer_frames<255) ++vision.curve_outer_frames;
+    return vision.curve_outer_frames>=VISION_CURVE_OUTER_CONFIRM_FRAMES?side:TRACK_SIDE_NONE;
 }
 
 static uint8_t vision_opposite_continuous(const uint8_t *opening,
@@ -428,6 +503,36 @@ static int vision_cross_near_open(const vision_features_t *features)
     return opened>=(VISION_NEAR_LAST_ROW-VISION_NEAR_FIRST_ROW+1)/2;
 }
 
+/* 只统计外侧实测位；同一行补出的内侧不提供覆盖证据。
+ * 覆盖与连续性每帧重算，不能将外侧方向标志本身视为行驶许可。 */
+static void vision_curve_outer_support(track_vision_result_t *out)
+{
+    unsigned near_rows=0,far_rows=0,run=0,best=0;
+    uint8_t measured;
+    int row,previous=0;
+    if(out->curve_outer_side==TRACK_SIDE_NONE) return;
+    measured=out->curve_outer_side==TRACK_SIDE_LEFT?TRACK_ROW_LEFT_MEASURED:TRACK_ROW_RIGHT_MEASURED;
+    for(row=VISION_BOTTOM_ROW;row>=VISION_TOP_ROW;--row) {
+        int edge=out->curve_outer_side==TRACK_SIDE_LEFT?out->left[row]:out->right[row];
+        if((out->row_flags[row]&measured) && (out->row_flags[row]&TRACK_ROW_PATH_VALID) &&
+           !(out->row_flags[row]&TRACK_ROW_ZEBRA)) {
+            if(row>=VISION_NEAR_FIRST_ROW && row<=VISION_NEAR_LAST_ROW) ++near_rows;
+            if(row>=VISION_FAR_FIRST_ROW && row<=VISION_FAR_LAST_ROW) ++far_rows;
+            run=run && vision_abs(edge-previous)>VISION_MAX_ROW_STEP_PX?1U:run+1U;
+            previous=edge;if(run>best)best=run;
+        } else run=0;
+    }
+    out->curve_outer_near_rows=(uint8_t)near_rows;out->curve_outer_far_rows=(uint8_t)far_rows;
+    if(near_rows*100U<(VISION_NEAR_LAST_ROW-VISION_NEAR_FIRST_ROW+1)*VISION_CURVE_OUTER_NEAR_MIN_PERCENT)
+        out->curve_outer_reject=TRACK_OUTER_REJECT_NEAR;
+    else if(far_rows*100U<(VISION_FAR_LAST_ROW-VISION_FAR_FIRST_ROW+1)*VISION_CURVE_OUTER_FAR_MIN_PERCENT)
+        out->curve_outer_reject=TRACK_OUTER_REJECT_FAR;
+    else if(best<VISION_CURVE_OUTER_MIN_ROWS) out->curve_outer_reject=TRACK_OUTER_REJECT_CONTINUITY;
+    out->curve_outer_supported=VISION_CURVE_OUTER_ENABLED && out->valid && !out->fault &&
+        out->element==TRACK_ELEMENT_CURVE && out->near_path_supported &&
+        out->curve_outer_reject==TRACK_OUTER_REJECT_NONE;
+}
+
 void track_vision_reset(void)
 {
     memset(&vision,0,sizeof(vision));
@@ -444,24 +549,36 @@ void track_vision_process(const uint8_t *gray, uint32_t now_ms,
     for(row=0;row<120;++row) {
         out->center[row]=VISION_CENTER_COL;out->right[row]=187;
     }
-    if(gray==0) { out->fault=TRACK_FAULT_PATH_LOST|vision.fault;return; }
+    if(gray==0) {
+        vision.curve_outer_candidate=TRACK_SIDE_NONE;vision.curve_outer_frames=0;
+        out->fault=TRACK_FAULT_PATH_LOST|vision.fault;return;
+    }
     out->threshold=vision_threshold(gray,&contrast);
     if(contrast<VISION_MIN_CONTRAST) {
+        vision.curve_outer_candidate=TRACK_SIDE_NONE;vision.curve_outer_frames=0;
         out->fault=TRACK_FAULT_PATH_LOST|vision.fault;
         /* 黑白板无几何证据，不推进元素，但仍执行时间故障检查。 */
         memset(&features,0,sizeof(features));
         vision_elements(out,&features,now_ms,distance_mm);return;
     }
-    vision_scan(gray,out,&features);
+    vision_scan(gray,out,&features,TRACK_SIDE_NONE);
+    {
+        track_side_t outer=vision_curve_outer(out,&features,now_ms);
+        if(outer!=TRACK_SIDE_NONE) {
+            out->zebra_rows=0;out->zebra_near_row=255;
+            vision_scan(gray,out,&features,outer);
+        }
+    }
     features.left_gap=vision_gap(features.left_open,out,TRACK_ROW_LEFT_MEASURED,&features.left_bottom);
     features.right_gap=vision_gap(features.right_open,out,TRACK_ROW_RIGHT_MEASURED,&features.right_bottom);
     features.left_supported=vision_opposite_continuous(features.left_open,out,TRACK_SIDE_LEFT);
     features.right_supported=vision_opposite_continuous(features.right_open,out,TRACK_SIDE_RIGHT);
     out->confidence=(uint8_t)((features.measured_rows+features.paired_rows)*50U/
         (VISION_BOTTOM_ROW-VISION_TOP_ROW+1));
+    out->near_path_supported=(uint8_t)vision_near_supported(out);
     out->valid=(uint8_t)(features.measured_rows>=VISION_MIN_MEASURED_ROWS &&
         out->confidence>=VISION_MIN_CONFIDENCE &&
-        (vision_near_supported(out) || vision_cross_near_open(&features)));
+        (out->near_path_supported || vision_cross_near_open(&features)));
     out->near_error_px=vision_error(out,VISION_NEAR_FIRST_ROW,VISION_NEAR_LAST_ROW);
     out->far_error_px=vision_error(out,VISION_FAR_FIRST_ROW,VISION_FAR_LAST_ROW);
     vision_elements(out,&features,now_ms,distance_mm);
@@ -470,4 +587,5 @@ void track_vision_process(const uint8_t *gray, uint32_t now_ms,
     out->far_error_px=vision_error(out,VISION_FAR_FIRST_ROW,VISION_FAR_LAST_ROW);
     if(out->fault&TRACK_FAULT_ELEMENT_TIMEOUT) out->valid=0;
     if(!out->valid) out->fault|=TRACK_FAULT_PATH_LOST;
+    vision_curve_outer_support(out);
 }

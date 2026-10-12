@@ -1,0 +1,63 @@
+{
+  "config_checks": [
+    {
+      "config": "my",
+      "direction": "A→B",
+      "bottom_rows_restored": true,
+      "changed_pixels": 2601,
+      "Q": 90
+    },
+    {
+      "config": "my",
+      "direction": "B→A",
+      "bottom_rows_restored": true,
+      "changed_pixels": 2736,
+      "Q": 85
+    },
+    {
+      "config": "default",
+      "direction": "A→B",
+      "bottom_rows_restored": true,
+      "changed_pixels": 1616,
+      "Q": 98
+    },
+    {
+      "config": "default",
+      "direction": "B→A",
+      "bottom_rows_restored": true,
+      "changed_pixels": 1621,
+      "Q": 94
+    }
+  ],
+  "pose_checks": [
+    {
+      "yaw": 0,
+      "roll": 0,
+      "roundtrip_passed": true,
+      "valid_ground_behind_vertical_projection": 1692
+    },
+    {
+      "yaw": 10,
+      "roll": 0,
+      "roundtrip_passed": true,
+      "valid_ground_behind_vertical_projection": 2080
+    },
+    {
+      "yaw": 0,
+      "roll": 12,
+      "roundtrip_passed": true,
+      "valid_ground_behind_vertical_projection": 1852
+    },
+    {
+      "yaw": -15,
+      "roll": -8,
+      "roundtrip_passed": true,
+      "valid_ground_behind_vertical_projection": 2303
+    }
+  ],
+  "my_parameters_unchanged": true,
+  "tk_my_parameters_reset_and_2s_run": "passed",
+  "range_limit": "15m optical depth, valid downward ground intersections",
+  "sampling": "unchanged nearest neighbour",
+  "native_algorithm": "unchanged"
+}

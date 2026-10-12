@@ -301,8 +301,16 @@ int main(int argc, char **argv)
 #ifdef TEST_AUTONOMOUS_DISPLAY
     auto_status.active=1;auto_status.state=AUTO_DRIVE_RUNNING;auto_status.confidence=95;
     auto_status.distance_mm=123;auto_status.left_duty_permille=85;auto_status.right_duty_permille=87;
+    auto_status.minimum_confidence=40;auto_status.vision_valid=1;auto_status.element=TRACK_ELEMENT_CURVE;
+    auto_status.curve_outer_side=TRACK_SIDE_RIGHT;auto_status.curve_outer_supported=1;
+    auto_status.curve_outer_near_rows=17;auto_status.curve_outer_far_rows=13;
     camera_display_statistics();CHECK(strstr(telemetry_line0,"AUTO:RUN")!=NULL);
-    CHECK(strstr(telemetry_line1,"85/87")!=NULL);
+    CHECK(strstr(telemetry_line0,"Q95/40")!=NULL && strstr(telemetry_line0,"O2+")!=NULL);
+    CHECK(strstr(telemetry_line1,"N17F13 OK")!=NULL);
+    auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_PATH_LOST;
+    auto_status.path_reason=AUTO_PATH_Q_LOW;auto_status.diagnostic_steering_permille=1000;
+    camera_display_statistics();CHECK(strstr(telemetry_line0,"LOST")!=NULL);
+    CHECK(strstr(telemetry_line1,"QLOW S1000")!=NULL);
     auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_CAMERA_STALE;
     camera_display_statistics();CHECK(strstr(telemetry_line0,"CAMERA")!=NULL);
     motor_status.remote_armed=1;motor_status.remote_link=1;

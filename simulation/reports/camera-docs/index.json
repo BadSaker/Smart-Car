@@ -1,0 +1,89 @@
+[
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【必看】总钻风资料说明V1.4.pdf",
+    "sha256": "ce63c45825ddfd0b47835de7cac601f9a04ab22b8dd2f7d4b57b5f9556b7ccb9",
+    "size": 310712,
+    "pages": 9,
+    "low_text_pages": [
+      1
+    ]
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\MT9V032数据手册.PDF",
+    "sha256": "57bef3b35e4fb340dc0dbb5c1ec13c64080916bde9032568a9abeaf03ae29d7b",
+    "size": 1726610,
+    "pages": 74,
+    "low_text_pages": []
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\MT9V034-数据手册.PDF",
+    "sha256": "3f877fd979baa7f6ddd91e44547f28d893ba897b992730d5340a09a128b6f6d5",
+    "size": 506446,
+    "pages": 43,
+    "low_text_pages": []
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\PCB注意事项.docx",
+    "sha256": "24706df3a0106c8688764d7fe43a8c816eed2de04d973b29d840dedde96e3c28",
+    "size": 45969
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\【必看】总钻风资料说明V1.4.pdf",
+    "sha256": "ce63c45825ddfd0b47835de7cac601f9a04ab22b8dd2f7d4b57b5f9556b7ccb9",
+    "size": 310712,
+    "pages": 9,
+    "low_text_pages": [
+      1
+    ]
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\二值化摄像头与灰度摄像头比较.txt",
+    "sha256": "69b413a657fd541270c609a07febe338153f0ca657754fa97ea27a0d7f790489",
+    "size": 1273
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\供电建议.txt",
+    "sha256": "6b27dc8532542d7e8abb7bd15224beb035338ddd914f81f7d7de741551a3b852",
+    "size": 499
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\卷帘快门弊端效果图.gif",
+    "sha256": "4c04fadd13abf4c56a132dd60ab273410da98db9a86d6d03e13b213f904f0f8c",
+    "size": 5315084,
+    "frames": 182,
+    "dimensions": [
+      420,
+      235
+    ]
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\图像不居中的解决办法.pdf",
+    "sha256": "22a3c04e87badefcf4c468c38cb660ad5f9254f767b6245f0898006163cb21fd",
+    "size": 251965,
+    "pages": 1,
+    "low_text_pages": []
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\总钻风拆除51单片机改I2C配置.pdf",
+    "sha256": "7f5f01ea2fd1e5eef603719e2fd94164182d7f32c84815443a506921f5797b71",
+    "size": 3910316,
+    "pages": 12,
+    "low_text_pages": []
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\总钻风摄像头使用说明 V2.7.pdf",
+    "sha256": "5e034968b4567db5b046f86e03b25237a798344baa5ad8ead758a002041f0a19",
+    "size": 2470843,
+    "pages": 33,
+    "low_text_pages": [
+      1
+    ]
+  },
+  {
+    "path": "E:\\AA\\car\\downloads\\camera\\【文档资料】摄像头相关资料\\摄像头转接板.pdf",
+    "sha256": "a03cc699babfe2b808b11369ed1609380cdadb2feeeed5cfb6085c474ba09a18",
+    "size": 53287,
+    "pages": 1,
+    "low_text_pages": []
+  }
+]

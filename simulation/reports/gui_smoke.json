@@ -1,0 +1,13 @@
+{
+  "desktop_capture": true,
+  "native_started": true,
+  "3d_rendered": true,
+  "nominal_applied": true,
+  "fit_applied": true,
+  "new_c_build": true,
+  "camera_fault_from_ui": true,
+  "exported": true,
+  "markers_toggle": true,
+  "image_replay": true,
+  "full_track_default": true
+}

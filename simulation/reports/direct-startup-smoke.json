@@ -1,0 +1,9 @@
+{
+  "direct_pythonw_launch_to_prepared_report_ms": 1312.1258999999554,
+  "process_pid": 37604,
+  "startup": {
+    "ui_prepare_ms": 865.2647999988403,
+    "entry_to_prepared_frame_ms": 1225.6231999999727
+  },
+  "native_window_created": true
+}

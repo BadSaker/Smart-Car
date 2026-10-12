@@ -11,6 +11,8 @@
 typedef struct {
     uint32_t sequence,time_ms;
     uint8_t valid,confidence,zebra,element_fault,element_slow,element_supported,curve;
+    uint8_t near_supported,outer_supported,outer_side,outer_near_rows,outer_far_rows,element;
+    autonomous_path_reason_t outer_reject_reason;
     int16_t near_error_px,far_error_px;
 } autonomous_vision_mailbox_t;
 static autonomous_drive_t drive;
@@ -37,6 +39,17 @@ void autonomous_control_publish_vision(const track_vision_result_t *v,uint32_t s
     m.element_fault=(v->fault & TRACK_FAULT_ELEMENT_TIMEOUT)!=0;
     m.element_slow=v->element>=TRACK_ELEMENT_CROSS;
     m.curve=v->element==TRACK_ELEMENT_CURVE;
+    m.element=(uint8_t)v->element;m.near_supported=v->near_path_supported;
+    m.outer_side=(uint8_t)v->curve_outer_side;m.outer_near_rows=v->curve_outer_near_rows;
+    m.outer_far_rows=v->curve_outer_far_rows;
+    m.outer_supported=m.curve && v->valid && !v->fault && v->curve_outer_supported &&
+        (v->curve_outer_side==TRACK_SIDE_LEFT || v->curve_outer_side==TRACK_SIDE_RIGHT);
+    switch(v->curve_outer_reject) {
+        case TRACK_OUTER_REJECT_NEAR:m.outer_reject_reason=AUTO_PATH_OUTER_NEAR;break;
+        case TRACK_OUTER_REJECT_FAR:m.outer_reject_reason=AUTO_PATH_OUTER_FAR;break;
+        case TRACK_OUTER_REJECT_CONTINUITY:m.outer_reject_reason=AUTO_PATH_OUTER_CONTINUITY;break;
+        default:m.outer_reject_reason=AUTO_PATH_ACCEPTED;break;
+    }
     m.element_supported=v->valid && !v->fault &&
         (v->element==TRACK_ELEMENT_CROSS || v->element==TRACK_ELEMENT_ROUNDABOUT_ENTER ||
          v->element==TRACK_ELEMENT_ROUNDABOUT_INSIDE || v->element==TRACK_ELEMENT_ROUNDABOUT_EXIT);
@@ -68,6 +81,9 @@ void autonomous_control_tick_10ms(uint32_t now_ms)
         (2LL*ENCODER_PULSES_PER_REV*ENCODER_STEP_EDGE_FACTOR*ENCODER_TO_WHEEL_RATIO_NUM));
     i.frame_sequence=v.sequence;i.frame_ms=v.time_ms;i.vision_valid=v.valid;i.confidence=v.confidence;
     i.zebra=v.zebra;i.element_fault=v.element_fault;i.element_slow=v.element_slow;i.element_supported=v.element_supported;i.curve=v.curve;
+    i.vision_near_supported=v.near_supported;i.curve_outer_supported=v.outer_supported;
+    i.curve_outer_side=v.outer_side;i.curve_outer_near_rows=v.outer_near_rows;
+    i.curve_outer_far_rows=v.outer_far_rows;i.element=v.element;i.curve_outer_reject_reason=v.outer_reject_reason;
     i.near_error_px=v.near_error_px;i.far_error_px=v.far_error_px;
     i.servo_generation=servo_generation;i.servo_service_ms=servo_service_ms;
     autonomous_drive_tick(&drive,&i);

@@ -1,0 +1,32 @@
+{
+  "1100x720": {
+    "follow_visible": true,
+    "viewport": [
+      376,
+      519
+    ]
+  },
+  "1200x780": {
+    "follow_visible": true,
+    "viewport": [
+      476,
+      579
+    ]
+  },
+  "1480x930": {
+    "follow_visible": true,
+    "viewport": [
+      756,
+      702
+    ]
+  },
+  "toggle_and_simulation": "passed",
+  "other_canvas_views": "passed",
+  "near_width_row116_px": 144.64953002575686,
+  "parameters_unchanged": {
+    "hfov": 120.0,
+    "pitch": 39.43681418720861,
+    "height": 0.27,
+    "road_width": 0.5
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-11",
+  "core_and_snapshot_files": [
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\src\\autonomous_drive.c",
+      "source": "E:\\AA\\car\\Autodrive\\car\\src\\autonomous_drive.c",
+      "identical": true,
+      "sha256": "07eaf3af6c1233825fee8645a60ffc2a3b15f663adcb6424c71a09df5d0c8055"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\src\\control_pid.c",
+      "source": "E:\\AA\\car\\Autodrive\\car\\src\\control_pid.c",
+      "identical": true,
+      "sha256": "16fc4b8a9aa4155b1710c2195cc5081038fa9ef33d06d597a9acb8bcb8b8fe7d"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\src\\track_vision.c",
+      "source": "E:\\AA\\car\\Autodrive\\car\\src\\track_vision.c",
+      "identical": true,
+      "sha256": "63e39d481368a76a7e501d26c63bc266f3a1156c5b523aaaf575501693558d81"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\include\\autonomous_drive.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\include\\autonomous_drive.h",
+      "identical": true,
+      "sha256": "1a0e6f9f03abedc0120fa2105ee8ccddad6f563a7ba21a09106258bfc3732fee"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\include\\control_pid.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\include\\control_pid.h",
+      "identical": true,
+      "sha256": "b46b3b1ac879c29229f9f6c69498e798320147c4d3508ff87e9ac15711d203e6"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\include\\track_vision.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\include\\track_vision.h",
+      "identical": true,
+      "sha256": "1d9481a3cb9d74acb5480850f0d103519d4d162301e3dd2236d66a4d83eac957"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\config\\autonomous_config.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\config\\autonomous_config.h",
+      "identical": true,
+      "sha256": "e63e5892c992e6a7f0312478ff41b0996a2c60325f4ee8646ff2285a45e5239c"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\config\\encoder_config.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\config\\encoder_config.h",
+      "identical": true,
+      "sha256": "c20a052b0e12d26083f719f206133c770108086f5d1c5b51463061e5607fcb15"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\config\\servo_config.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\config\\servo_config.h",
+      "identical": true,
+      "sha256": "c94bd3111a1b8a2b226e55812855432b6b8ae734ad1482ee68546f25587cc8a6"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\config\\vision_config.h",
+      "source": "E:\\AA\\car\\Autodrive\\car\\config\\vision_config.h",
+      "identical": true,
+      "sha256": "ce7cb5823179076c618948b115e31575a8798ee4dd92710b6204ff71aef1345f"
+    },
+    {
+      "simulation": "E:\\AA\\car\\simulation\\vendor\\autonomous_control_reference.c",
+      "source": "E:\\AA\\car\\Autodrive\\car\\src\\autonomous_control.c",
+      "identical": true
+    }
+  ],
+  "all_snapshot_files_identical": true,
+  "current_default_algorithm_build": "b09bee4813ed377a",
+  "dll_exists": true,
+  "dll_sha256": "65bf01729c23827faf07f07aee33a4ede73866186f82f0bbb9d09412091a3259",
+  "effective_config_comparison": {
+    "autonomous_config.h": {
+      "original_macros": 58,
+      "compiled_macros": 58,
+      "semantic_differences": []
+    },
+    "vision_config.h": {
+      "original_macros": 53,
+      "compiled_macros": 53,
+      "semantic_differences": []
+    }
+  },
+  "parameter_overrides": {
+    "cruise": 180.0,
+    "curve_speed": 120.0,
+    "outer_speed": 80.0,
+    "kp": 28.0,
+    "ki": 0.0,
+    "kd": 0.5,
+    "speed_kp": 0.5,
+    "speed_ki": 0.15,
+    "min_q": 45,
+    "outer_q": 40,
+    "width_top": 44,
+    "width_bottom": 167,
+    "outer_enabled": 1
+  },
+  "source_manifest_files": 1215,
+  "source_manifest_changes": [],
+  "compiled_sources": [
+    "native_bridge.c",
+    "vendor/src/track_vision.c",
+    "vendor/src/autonomous_drive.c",
+    "vendor/src/control_pid.c"
+  ],
+  "not_compiled_original_hardware": [
+    "autonomous_control.c",
+    "servo_control.c",
+    "motor_control.c",
+    "encoder_feedback.c",
+    "main.c",
+    "isr.c"
+  ],
+  "boundary_differences": [
+    "ready forced 1; remote_busy/cancel default 0",
+    "servo service time forced now and generation acknowledged immediately",
+    "encoder corrected speed and distance simulated; 4352 counts/rev hardcoded, pi*diameter floating computation differs from firmware integer circumference/rounding",
+    "C vision distance receives Python travelled distance, firmware supplies C status.distance_mm",
+    "servo response and no-slip drivetrain are Python models; independent C wheel PWM is averaged before Ackermann wheel speeds",
+    "reference controller uses track geometry and overrides C driving outputs",
+    "GUI path diagnostic uses separate accepted predicate and stop evidence latch; C path_reason is authoritative controller reason"
+  ],
+  "scope": "Read-only source audit. Only report files written beneath simulation; no compilation, firmware flashing or hardware access."
+}

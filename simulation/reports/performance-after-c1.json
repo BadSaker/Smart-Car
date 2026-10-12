@@ -1,0 +1,49 @@
+{
+  "tick": {
+    "median_ms": 1.319050000347488,
+    "p95_ms": 2.5640999992901925
+  },
+  "2d": {
+    "median_ms": 4.909850000331062,
+    "p95_ms": 7.19319999916479
+  },
+  "3d": {
+    "median_ms": 12.293599999793514,
+    "p95_ms": 14.602799999920535
+  },
+  "camera": {
+    "median_ms": 0.4975499996362487,
+    "p95_ms": 0.747800000681309
+  },
+  "chart": {
+    "median_ms": 1.7603500000404892,
+    "p95_ms": 3.097400000115158
+  },
+  "numerical_fingerprint_10s": "4262976915dd093c3ae837872eb2f6bf3f96e0b6135b901f1767f0fd1fec3f80",
+  "result_10s": {
+    "mode": "native",
+    "completed": false,
+    "time_s": 10.0,
+    "distance_m": 1.1828825296620231,
+    "route_length_m": 30.021128796792553,
+    "max_error_m": 0.011151657037580242,
+    "max_outside_wheels": 0,
+    "state": "运行",
+    "fault": "无",
+    "shadow_c_state": "运行",
+    "shadow_c_fault": "无",
+    "algorithm_build": "b09bee4813ed377a",
+    "closure_connector_m": 0.22157287525380576,
+    "predicted_width_row30": 44.0,
+    "predicted_width_row116": 167.0,
+    "vehicle_geometry": {
+      "model": "C1 03-361-1",
+      "overall_length_m": 0.28,
+      "plate_length_m": 0.245,
+      "wheelbase_m": 0.19,
+      "outer_width_straight_m": 0.18,
+      "camera_from_rear_axle_m": 0.08
+    },
+    "model_status": "C1产品图外形近似、实测轴线定位；相机条件拟合、执行机构未标定"
+  }
+}

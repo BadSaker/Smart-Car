@@ -1,0 +1,15 @@
+﻿{
+    "executable":  "C:\\Users\\橙叶\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "version":  "3.13.0",
+    "bits":  64,
+    "packages":  {
+                     "tkinter":  true,
+                     "_tkinter":  true,
+                     "numpy":  true,
+                     "PIL":  true
+                 },
+    "versions":  {
+                     "numpy":  "2.5.0",
+                     "Pillow":  "12.3.0"
+                 }
+}

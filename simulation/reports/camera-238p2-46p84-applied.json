@@ -1,0 +1,52 @@
+{
+  "height_mm": 238.2,
+  "pitch_deg": 46.84,
+  "horizontal_fov_deg": 120.0,
+  "rows": [
+    {
+      "y": 30,
+      "measured_px": 44,
+      "predicted_px": 40.74014882240951,
+      "error_px": -3.259851177590491
+    },
+    {
+      "y": 45,
+      "measured_px": 59,
+      "predicted_px": 62.27786995094752,
+      "error_px": 3.277869950947519
+    },
+    {
+      "y": 70,
+      "measured_px": 97,
+      "predicted_px": 98.17407183184419,
+      "error_px": 1.1740718318441878
+    },
+    {
+      "y": 86,
+      "measured_px": 120,
+      "predicted_px": 121.14764103561804,
+      "error_px": 1.1476410356180367
+    },
+    {
+      "y": 108,
+      "measured_px": 156,
+      "predicted_px": 152.73629869080713,
+      "error_px": -3.263701309192868
+    },
+    {
+      "y": 116,
+      "measured_px": 167,
+      "predicted_px": 164.22308329269407,
+      "error_px": -2.7769167073059293
+    }
+  ],
+  "max_error_px": 3.277869950947519,
+  "checks": [
+    "startup values",
+    "apply reset preserves exact values",
+    "preset changes bounded to camera values",
+    "nominal 20deg preset unchanged",
+    "2s simulation and 3D rendering"
+  ],
+  "full_track_control_validation": "not rerun for this parameter-only change"
+}

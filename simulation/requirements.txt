@@ -1,0 +1,3 @@
+numpy==2.5.0
+Pillow==12.3.0
+# tkinter ships with the verified Python installation; GCC is an external tool.

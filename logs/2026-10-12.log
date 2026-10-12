@@ -1,0 +1,14 @@
+
+[2026-10-12 17:27:55 +0800] 任务：仿真相机固定实测高度校准与截图对照
+授权：用户审核范围后明确执行；仅simulation源码/配置/说明、报告备份及日志，不操作硬件。
+事实：镜头中心高297mm，前轴后110mm即后轴前80mm；道路内宽500mm；俯角未测、120度原称畸变角且定义未知、外宽未知；8张截图同安装状态。
+变更：固定高度拟合theta/hfov，统一地面射线/畸变/直道宽度，排除折叠分支；增加1/2/3采样和双线性选项、零黑边；逐飞截图导入及遮挡掩码；默认和我的参数采用条件31.46896/89.66951，关闭扰动、灰度255/153；原53/120配置保留历史预设。
+验证：修改前基线13项中2个旧断言失败；新增测试先红后绿，最终22项0失败0错误；真实Tk六种采样往返、保高标定、保存加载、8图导入、4秒运行/停车通过；正反方向各10秒无故障。临时镜像启动CheckOnly成功，交付Python与验证副本字节一致。
+指标：六行拟合最大误差36.7892->3.26923px；8图独立估计车姿后的完整分辨率道路IoU均值85.9494%->90.7104%，7张改善1张略降。属于配准诊断，非已知车姿实测标定。
+性能：150帧短测，旧单点中位0.577ms/P95 0.727ms，新2x2中位4.554ms/P95 5.255ms。
+保护：46个主工程应用/配置及原截图保护文件SHA256不变，simulation/vendor不变；备份ZIP CRC通过。无固件改动、无烧录。
+产物：outputs/reports/camera-alignment-2026-10-12.md及同名资源目录；logs/simulation-camera-tests-2026-10-12.log；备份C:\Users\Lynn\Desktop\Files\Autodrive\outputs\backups\simulation_before-camera-realignment_20261012_165857.zip。
+未解决：六行参考与近直道截图真实白色轮廓不一致；真实光学参数、外宽、车姿未知；墙体/杂物/接缝/曝光与真实动力学未建模，不宣称实车或完整圈通过。
+收尾：文档21个本地链接有效；仅清理tmp/camera-realignment，保留tmp/figs和其他既有目录。
+已修改原文件：app.py, calibration.py, camera_optics.py, comparison.py, geometry.py, parameters.py, README.md, configs\中期区段_完整背景.json, configs\完整赛道_理想几何参考.json, configs\我的参数.json, configs\默认_完整赛道_C算法.json, tests\test_simulation.py, docs\C1车模与实测参数.md, docs\参数界面与随机扰动.md, docs\实施方案与参数.md
+[2026-10-12 17:28:41 +08:00] 收尾核实：供应商副本逐文件哈希及桥接C字节核对通过；已验证绝对路径并删除tmp/camera-realignment，无重解析点；tmp/figs八张原图保留。

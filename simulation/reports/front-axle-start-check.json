@@ -1,0 +1,119 @@
+{
+  "start_reference": "front axle midpoint on starting marker, pose origin remains rear axle",
+  "cases": [
+    {
+      "scenario": "full",
+      "direction": "A→B",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 2.220446049250313e-16
+    },
+    {
+      "scenario": "full",
+      "direction": "A→B",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 0.0
+    },
+    {
+      "scenario": "full",
+      "direction": "B→A",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 7.34674325754333e-19
+    },
+    {
+      "scenario": "full",
+      "direction": "B→A",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 6.938893903907228e-18
+    },
+    {
+      "scenario": "midterm",
+      "direction": "A→B",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 2.220446049250313e-16
+    },
+    {
+      "scenario": "midterm",
+      "direction": "A→B",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 0.0
+    },
+    {
+      "scenario": "midterm",
+      "direction": "B→A",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 7.34674325754333e-19
+    },
+    {
+      "scenario": "midterm",
+      "direction": "B→A",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 6.938893903907228e-18
+    },
+    {
+      "scenario": "straight",
+      "direction": "A→B",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 0.0
+    },
+    {
+      "scenario": "straight",
+      "direction": "A→B",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 6.938893903907228e-18
+    },
+    {
+      "scenario": "straight",
+      "direction": "B→A",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 8.881784197001252e-16
+    },
+    {
+      "scenario": "straight",
+      "direction": "B→A",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 6.938893903907228e-18
+    },
+    {
+      "scenario": "circle",
+      "direction": "A→B",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 0.0
+    },
+    {
+      "scenario": "circle",
+      "direction": "A→B",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 6.938893903907228e-18
+    },
+    {
+      "scenario": "circle",
+      "direction": "B→A",
+      "offset_m": 0,
+      "heading_error_deg": 0,
+      "front_midpoint_error_m": 1.1442377452219667e-17
+    },
+    {
+      "scenario": "circle",
+      "direction": "B→A",
+      "offset_m": 0.04,
+      "heading_error_deg": 12,
+      "front_midpoint_error_m": 7.124910503257741e-18
+    }
+  ],
+  "tk_startup_reset": "passed",
+  "camera_parameters": "238.2mm / 46.84deg / 120deg unchanged"
+}

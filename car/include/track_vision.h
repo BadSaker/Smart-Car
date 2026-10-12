@@ -33,6 +33,9 @@ typedef enum {
 #define TRACK_FAULT_ELEMENT_TIMEOUT 0x01U
 #define TRACK_FAULT_PATH_LOST       0x02U
 
+typedef enum { TRACK_OUTER_REJECT_NONE=0, TRACK_OUTER_REJECT_NEAR,
+    TRACK_OUTER_REJECT_FAR, TRACK_OUTER_REJECT_CONTINUITY } track_outer_reject_t;
+
 typedef struct {
     uint8_t valid;
     uint8_t confidence; /* 0..100，表示路径支持度，不是统计概率。 */
@@ -45,6 +48,11 @@ typedef struct {
     int16_t far_error_px;
     track_element_t element;
     track_side_t side;
+    track_side_t curve_outer_side; /* 本帧实际用于普通弯道重建的外侧；NONE表示未启用。 */
+    uint8_t near_path_supported;
+    uint8_t curve_outer_supported;
+    uint8_t curve_outer_near_rows, curve_outer_far_rows;
+    track_outer_reject_t curve_outer_reject;
     uint8_t left[TRACK_VISION_HEIGHT];
     uint8_t right[TRACK_VISION_HEIGHT];
     uint8_t center[TRACK_VISION_HEIGHT];
@@ -58,7 +66,7 @@ void track_vision_reset(void);
 /* 主循环每个新帧调用一次。gray指向连续188*120字节，函数不修改灰度。
  * now_ms允许uint32回绕；distance_mm是前进累计毫米，允许uint32回绕。
  * 无堆分配、无硬件访问；空gray输出失效，空out直接返回且不推进状态。
- * 参数与透视宽度是待实车标定的工程初值，不能据此宣称可直接上赛道。 */
+ * 44/167透视端点为用户实测，其余门限及弯道效果仍需实车验证。 */
 void track_vision_process(const uint8_t *gray, uint32_t now_ms,
                           uint32_t distance_mm, track_vision_result_t *out);
 

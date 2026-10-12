@@ -1,0 +1,36 @@
+{
+  "compiler": "E:\\AA\\car\\simulation\\toolchain\\mingw64\\bin\\gcc.exe",
+  "cases": [
+    {
+      "scenario": "full",
+      "direction": "A→B",
+      "steps": 7000,
+      "samples": 7001,
+      "max_float_difference": 0.0
+    },
+    {
+      "scenario": "full",
+      "direction": "B→A",
+      "steps": 7000,
+      "samples": 7001,
+      "max_float_difference": 0.0
+    },
+    {
+      "scenario": "straight",
+      "direction": "A→B",
+      "steps": 1000,
+      "samples": 1001,
+      "max_float_difference": 0.0
+    },
+    {
+      "scenario": "circle",
+      "direction": "A→B",
+      "steps": 1000,
+      "samples": 1001,
+      "max_float_difference": 0.0
+    }
+  ],
+  "cached_load_without_compiler": "c26fe24193056923",
+  "new_parameters_compile": "767014a91bb8b489",
+  "passed": true
+}

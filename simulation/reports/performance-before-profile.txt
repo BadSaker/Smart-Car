@@ -1,0 +1,26 @@
+         1743251 function calls in 1.083 seconds
+
+   Ordered by: cumulative time
+   List reduced from 131 to 18 due to restriction <18>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    0.198    0.040    1.083    0.217 E:\AA\car\simulation\render.py:47(scene_image)
+    62525    0.331    0.000    0.471    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\lib\_index_tricks_impl.py:343(__getitem__)
+    15885    0.152    0.000    0.232    0.000 E:\AA\car\simulation\render.py:57(project)
+    15630    0.013    0.000    0.091    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\fromnumeric.py:3737(mean)
+   245420    0.079    0.000    0.079    0.000 {built-in method numpy.array}
+    15630    0.031    0.000    0.078    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\_methods.py:115(_mean)
+    15890    0.044    0.000    0.062    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\lib\_shape_base_impl.py:607(column_stack)
+   406890    0.040    0.000    0.040    0.000 {built-in method builtins.isinstance}
+   297540    0.035    0.000    0.035    0.000 {method 'append' of 'list' objects}
+    15655    0.006    0.000    0.032    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\ImageDraw.py:339(polygon)
+    15630    0.021    0.000    0.024    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\_methods.py:73(_count_reduce_items)
+    15660    0.015    0.000    0.015    0.000 {method 'draw_polygon' of 'ImagingDraw' objects}
+    15890    0.005    0.000    0.014    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\lib\_shape_base_impl.py:603(_column_stack_dispatcher)
+    15895    0.010    0.000    0.014    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\PIL\ImageDraw.py:135(_getink)
+    15860    0.014    0.000    0.014    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+      195    0.001    0.000    0.010    0.000 E:\AA\car\simulation\render.py:61(line3)
+    15895    0.006    0.000    0.009    0.000 C:\Users\Sumi\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\shape_base.py:206(_arrays_for_stack_dispatcher)
+       40    0.005    0.000    0.007    0.000 {built-in method builtins.sorted}
+
+

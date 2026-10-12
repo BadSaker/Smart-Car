@@ -1,0 +1,14 @@
+{
+  "raster_parity": "8 scenario/direction pairs identical, immutable cache keyed by geometry and grey values",
+  "construct_and_first_paint_ms": 835.262699998566,
+  "no_image_residue": "24 alternating frames/resizes match source pixels; exactly one canvas image",
+  "reset_ms": [
+    53.97140000059153,
+    52.12799999935669,
+    50.810100001399405,
+    49.11089999950491,
+    45.37969999728375
+  ],
+  "click_redraw_coalesced": true,
+  "camera_chart_canvas_centering": "passed"
+}
