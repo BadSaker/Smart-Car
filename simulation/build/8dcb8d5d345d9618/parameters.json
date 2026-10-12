@@ -1,0 +1,17 @@
+{
+  "cruise": 300.0,
+  "curve_speed": 200.0,
+  "element_speed": 160.0,
+  "max_duty": 300,
+  "outer_speed": 140.0,
+  "kp": 28.0,
+  "ki": 0.0,
+  "kd": 0.5,
+  "speed_kp": 0.5,
+  "speed_ki": 0.15,
+  "min_q": 45,
+  "outer_q": 40,
+  "width_top": 44,
+  "width_bottom": 167,
+  "outer_enabled": 1
+}

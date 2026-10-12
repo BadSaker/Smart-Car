@@ -4,6 +4,7 @@
 #include "zf_driver_gpio.h"
 #include "zf_driver_pwm.h"
 #include "motor_control.h"
+#include "remote_control_config.h"
 
 static uint8_t start_key;
 static uint8_t stop_key;
@@ -86,8 +87,8 @@ void pwm_set_duty(pwm_channel_enum channel, uint32_t duty)
     CHECK(in_tick && interrupt_mask == 0U, "ongoing PWM writes belong to unmasked PIT");
     CHECK(channel == PWM2_MODULE1_CHA_C8 || channel == PWM2_MODULE0_CHA_C6,
           "PWM updates use only motor channels");
-    CHECK((uint64_t)duty * 1000U <= (uint64_t)PWM_DUTY_MAX * 100U,
-          "all remote commands are capped at ten percent");
+    CHECK((uint64_t)duty * 1000U <= (uint64_t)PWM_DUTY_MAX * REMOTE_CONTROL_MAX_DUTY_PERMILLE,
+          "遥控命令遵守配置限幅");
     if (duty != 0U) ++nonzero_commands;
     if (channel == PWM2_MODULE1_CHA_C8) duty1 = duty;
     else duty2 = duty;
@@ -171,12 +172,13 @@ static void check_zero(motor_test_state_t expected)
 static void check_drive(int16_t signed_duty)
 {
     motor_control_status_t out = status();
-    uint32_t expected_duty = (uint32_t)((uint64_t)PWM_DUTY_MAX * 100U / 1000U);
+    uint16_t magnitude=(uint16_t)(signed_duty<0?-signed_duty:signed_duty);
+    uint32_t expected_duty = (uint32_t)((uint64_t)PWM_DUTY_MAX * magnitude / 1000U);
     uint8_t expected_direction = signed_duty > 0 ? GPIO_HIGH : GPIO_LOW;
     CHECK(out.state == MOTOR_REMOTE_DRIVING && out.remote_armed && !out.remote_wait_neutral,
           "only armed neutral-confirmed state may drive");
     CHECK(out.requested_permille == signed_duty && out.applied_permille == signed_duty &&
-          out.duty_permille == 100U, "status reports clamped requested and applied signed command");
+          out.duty_permille == magnitude, "status reports clamped requested and applied signed command");
     CHECK(duty1 == expected_duty && duty2 == expected_duty &&
           direction1 == expected_direction && direction2 == expected_direction,
           "both channels follow the confirmed forward or reverse direction");
@@ -230,7 +232,7 @@ static void test_link_ready_and_new_neutral_barriers(void)
     check_zero(MOTOR_REMOTE_READY);
     submit(32767, 0U);
     ticks(1U);
-    check_drive(100);
+    check_drive(REMOTE_CONTROL_MAX_DUTY_PERMILLE);
     reset(GPIO_HIGH);
     motor_control_enable_test();
     submit(0, 1U);
@@ -432,17 +434,17 @@ static void test_reverse_gap_signed_clamp_and_replacement(void)
     arm_and_neutral();
     submit(32767, 0U);
     ticks(1U);
-    check_drive(100);
+    check_drive(REMOTE_CONTROL_MAX_DUTY_PERMILLE);
     submit(-32768, 0U);
     ticks(1U);
     check_zero(MOTOR_REMOTE_REVERSING);
-    CHECK(status().requested_permille == -100 && direction1 == GPIO_HIGH && direction2 == GPIO_HIGH,
+    CHECK(status().requested_permille == -REMOTE_CONTROL_MAX_DUTY_PERMILLE && direction1 == GPIO_HIGH && direction2 == GPIO_HIGH,
           "opposite request clamps safely before negation and starts a zero-output gap");
     ticks(9U);
     check_zero(MOTOR_REMOTE_REVERSING);
     CHECK(direction1 == GPIO_HIGH && direction2 == GPIO_HIGH, "DIR stays unchanged for first 90 ms");
     ticks(1U);
-    check_drive(-100);
+    check_drive(-REMOTE_CONTROL_MAX_DUTY_PERMILLE);
     submit(100, 0U);
     ticks(1U);
     check_zero(MOTOR_REMOTE_REVERSING);

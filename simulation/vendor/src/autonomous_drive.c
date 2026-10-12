@@ -175,7 +175,15 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     /* 第一帧低可信即撤销PWM；连续低可信才锁存故障，恢复不继承积分。 */
     if(!i->vision_valid || i->confidence<minimum_confidence(d,i)){zero_output(d);return;}
     if(fresh_frame){
-        error=AUTO_STEERING_NEAR_WEIGHT*i->near_error_px+AUTO_STEERING_FAR_WEIGHT*i->far_error_px;
+        float near_weight=AUTO_STEERING_NEAR_WEIGHT,far_weight=AUTO_STEERING_FAR_WEIGHT;
+        int near_magnitude=abs(i->near_error_px);
+        if((int32_t)i->near_error_px*i->far_error_px<0 && near_magnitude>AUTO_STEERING_NEAR_PRIORITY_START_PX) {
+            float blend=(float)(near_magnitude-AUTO_STEERING_NEAR_PRIORITY_START_PX)/
+                (AUTO_STEERING_NEAR_PRIORITY_FULL_PX-AUTO_STEERING_NEAR_PRIORITY_START_PX);
+            if(blend>1.0f)blend=1.0f;
+            near_weight+=far_weight*blend;far_weight*=1.0f-blend;
+        }
+        error=near_weight*i->near_error_px+far_weight*i->far_error_px;
         period=d->steering_initialized?(float)(uint32_t)(i->frame_ms-d->steering_frame_ms)/1000.0f:0.02f;
         if(period<0.001f)period=0.001f;
         d->status.steering_permille=(int16_t)control_pid_step(&d->steering_pid,0.0f,error,0.0f,period);

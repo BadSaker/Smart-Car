@@ -48,7 +48,7 @@ typedef struct {
     int16_t far_error_px;
     track_element_t element;
     track_side_t side;
-    track_side_t curve_outer_side; /* 本帧实际用于普通弯道重建的外侧；NONE表示未启用。 */
+    track_side_t curve_outer_side; /* 普通弯道或已确认环内实际用于重建的外侧；NONE表示未启用。 */
     uint8_t near_path_supported;
     uint8_t curve_outer_supported;
     uint8_t curve_outer_near_rows, curve_outer_far_rows;
@@ -57,6 +57,12 @@ typedef struct {
     uint8_t right[TRACK_VISION_HEIGHT];
     uint8_t center[TRACK_VISION_HEIGHT];
     uint8_t row_flags[TRACK_VISION_HEIGHT];
+    /* 第一遍原始证据，供诊断使用；外侧补线不改写这些字段。 */
+    int16_t raw_near_error_px,raw_far_error_px;
+    uint8_t left_opening_rows,right_opening_rows,joint_opening_rows;
+    uint8_t left_fork,right_fork;
+    uint8_t opening_left_bottom,opening_right_bottom;
+    uint8_t element_bridged; /* 当前帧使用已确认元素的限距白区通行证据。 */
 } track_vision_result_t;
 
 /* 在主循环启动/退出自动模式时调用；清除候选、元素、宽度历史和故障。

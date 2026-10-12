@@ -1,0 +1,115 @@
+[
+  {
+    "variant": "baseline",
+    "direction": "AB",
+    "time_s": 40.59,
+    "distance_m": 4.004478847511466,
+    "progress_m": 4.037428467233218,
+    "state": "故障",
+    "fault": "路径丢失"
+  },
+  {
+    "variant": "baseline",
+    "direction": "BA",
+    "time_s": 54.77,
+    "distance_m": 6.609339392664985,
+    "progress_m": 6.62729639430923,
+    "state": "故障",
+    "fault": "路径丢失"
+  },
+  {
+    "completed": false,
+    "time_s": 12.35,
+    "distance_m": 1.265197481319688,
+    "max_error_m": 0.05554433437500358,
+    "max_outside_wheels": 0,
+    "state": "故障",
+    "fault": "路径丢失",
+    "variant": "confirm40",
+    "direction": "AB",
+    "progress_m": 1.0855509520584428,
+    "wall_s": 3.7686308000011195,
+    "ring_events": [
+      {
+        "time_s": 7.83,
+        "progress": 0.8142857142857143,
+        "element": 3
+      }
+    ]
+  },
+  {
+    "completed": false,
+    "time_s": 38.51,
+    "distance_m": 5.05431203500472,
+    "max_error_m": 0.055695615990580656,
+    "max_outside_wheels": 0,
+    "state": "故障",
+    "fault": "路径丢失",
+    "variant": "confirm40",
+    "direction": "BA",
+    "progress_m": 4.936896286286295,
+    "wall_s": 10.53691709999839,
+    "ring_events": [
+      {
+        "time_s": 34.33,
+        "progress": 4.68139816339745,
+        "element": 3
+      }
+    ]
+  },
+  {
+    "completed": false,
+    "time_s": 9.35,
+    "distance_m": 1.2584595202613797,
+    "max_error_m": 0.054215474948674874,
+    "max_outside_wheels": 0,
+    "state": "故障",
+    "fault": "路径丢失",
+    "variant": "fast",
+    "direction": "AB",
+    "progress_m": 1.0775773666432402,
+    "wall_s": 2.9122210999994422,
+    "ring_events": [
+      {
+        "time_s": 5.65,
+        "progress": 0.8861344537815126,
+        "element": 3
+      }
+    ]
+  },
+  {
+    "completed": false,
+    "time_s": 36.17,
+    "distance_m": 3.907112151175822,
+    "max_error_m": 0.1149534763786044,
+    "max_outside_wheels": 0,
+    "state": "故障",
+    "fault": "路径丢失",
+    "variant": "fast_pd",
+    "direction": "AB",
+    "progress_m": 4.013507710987611,
+    "wall_s": 10.177226200001314,
+    "ring_events": [
+      {
+        "time_s": 5.65,
+        "progress": 0.8861344537815126,
+        "element": 3
+      },
+      {
+        "time_s": 7.57,
+        "progress": 1.0775773666432402,
+        "element": 4
+      },
+      {
+        "time_s": 9.25,
+        "progress": 1.2609698311928983,
+        "element": 5
+      },
+      {
+        "time_s": 26.35,
+        "progress": 3.1633948241200818,
+        "element": 6
+      }
+    ]
+  }
+]

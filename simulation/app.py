@@ -57,6 +57,7 @@ FIELDS={
  ('fps','相机帧率 Hz'),('gray_road','道路灰度 0–255'),('gray_edge','边线灰度 0–255'),
  ('gray_background','背景灰度 0–255'),('camera_lateral','镜头左偏 m'),('camera_yaw','镜头左偏航 °'),('camera_roll','镜头横滚 °')],
  '控制':[('cruise','直道目标 mm/s'),('curve_speed','弯道目标 mm/s'),('outer_speed','外侧目标 mm/s'),
+ ('element_speed','元素目标 mm/s'),('max_duty','PWM上限 ‰'),
  ('kp','转向 Kp'),('ki','转向 Ki'),('kd','转向 Kd'),('speed_kp','速度 Kp'),('speed_ki','速度 Ki'),
  ('min_q','普通Q门限'),('outer_q','外侧Q门限'),('outer_enabled','外侧补线 0/1'),
  ('width_top','第30行标定宽 px'),('width_bottom','第116行标定宽 px')],

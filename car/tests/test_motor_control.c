@@ -78,8 +78,8 @@ void pwm_set_duty(pwm_channel_enum channel, uint32_t duty)
 {
     CHECK(channel == PWM2_MODULE1_CHA_C8 || channel == PWM2_MODULE0_CHA_C6,
           "PWM update must only touch module M1 C8 or M2 C6");
-    CHECK((uint64_t)duty * 1000U <= (uint64_t)PWM_DUTY_MAX * 150U,
-          "all commands must remain within hard 15 percent limit");
+    CHECK((uint64_t)duty * 1000U <= (uint64_t)PWM_DUTY_MAX * MOTOR_TEST_MAX_DUTY_PERMILLE,
+          "所有输出必须遵守配置的硬限幅");
     if (duty != 0U)
     {
         CHECK(encoder_resets > 0U, "encoder totals must reset before first nonzero PWM");

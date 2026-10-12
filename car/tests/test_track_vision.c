@@ -35,6 +35,18 @@ static void opening(int side, int top, int bottom)
     }
 }
 
+/* 正向分叉近端是岛边，反向汇入支路的近端仍是直边。 */
+static void ring_opening(int side,int top,int bottom)
+{
+    int row,col,span=116-bottom;
+    opening(side,top,bottom);
+    for(row=bottom+1;row<=116;++row) {
+        int pos=row-bottom,bulge=16*pos*(span-pos)/(span*span);
+        int edge=93+side*(6+row)/2;
+        for(col=0;col<bulge;++col)image[row*188+edge-side*col]=20;
+    }
+}
+
 static void frames(unsigned count, uint32_t now, uint32_t distance)
 {
     unsigned i;
@@ -152,11 +164,11 @@ static void test_cross_visibility(void)
 static void test_ring(int side)
 {
     track_vision_reset(); lane(0,0,20,220); frames(1,0,0);
-    opening(side,47,81); frames(4,100,50);
+    ring_opening(side,47,81); frames(4,100,50);
     CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_APPROACH, "bounded single opening confirms approach");
     CHECK(result.side==(side<0?TRACK_SIDE_LEFT:TRACK_SIDE_RIGHT), "roundabout side is explicit");
     CHECK(abs(result.far_error_px)<=3, "approach still follows incoming road");
-    lane(0,0,20,220); opening(side,43,103); frames(3,250,200);
+    lane(0,0,20,220); ring_opening(side,43,96); frames(3,250,200);
     CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_ENTER, "opening reaching near rows triggers entry");
     CHECK(side*result.far_error_px>8, "entry guides path toward confirmed branch");
     lane(-side,0,20,220); frames(4,360,430);
@@ -167,14 +179,21 @@ static void test_ring(int side)
     lane(0,0,20,220); frames(6,650,1500);
     CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_INSIDE, "nearby straight path alone cannot trigger exit");
     lane(side,0,20,220); opening(-side,46,96); frames(4,900,1800);
-    CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_EXIT, "new outer opening after ring travel permits exit");
+    CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_INSIDE, "far outer opening only arms exit");
+    lane(side,0,20,220); opening(-side,46,110); frames(4,1000,1860);
+    CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_EXIT, "near outer opening after ring travel permits exit");
     CHECK(side*result.far_error_px<4, "exit path guides toward the confirmed outer branch");
     lane(0,0,20,220); frames(4,1100,2130);
     CHECK(result.element==TRACK_ELEMENT_STRAIGHT && result.side==TRACK_SIDE_NONE,
           "exit recovers both stable boundaries");
-    track_vision_reset(); lane(0,0,20,220); opening(side,47,81); frames(4,0,0);
+    track_vision_reset(); lane(0,0,20,220); ring_opening(side,47,81); frames(4,0,0);
     frames(1,61000,100);
-    CHECK(!result.valid && (result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "roundabout stalled state times out");
+    CHECK(result.valid && result.element==TRACK_ELEMENT_STRAIGHT &&
+          !(result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "unconfirmed candidate expires without latching an element fault");
+    track_vision_reset(); lane(0,0,20,220); ring_opening(side,47,81); frames(4,0,0);
+    lane(0,0,20,220); ring_opening(side,43,96); frames(3,250,200);
+    frames(1,61000,300);
+    CHECK(!result.valid && (result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "confirmed roundabout still enforces phase timeout");
 }
 
 int main(void)

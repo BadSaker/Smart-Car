@@ -53,3 +53,14 @@ API void sim_data(float *o,unsigned char *rows) {
     memcpy(rows,vision.left,120);memcpy(rows+120,vision.right,120);
     memcpy(rows+240,vision.center,120);memcpy(rows+360,vision.row_flags,120);
 }
+/* 诊断通道独立于控制输入；记录原始证据和补线支持，不提供赛道真值。 */
+API void sim_features(float *o) {
+    o[0]=(float)vision.side;
+    o[1]=(float)vision.raw_near_error_px;o[2]=(float)vision.raw_far_error_px;
+    o[3]=(float)vision.left_opening_rows;o[4]=(float)vision.right_opening_rows;
+    o[5]=(float)vision.joint_opening_rows;o[6]=(float)vision.left_fork;o[7]=(float)vision.right_fork;
+    o[8]=(float)vision.opening_left_bottom;o[9]=(float)vision.opening_right_bottom;
+    o[10]=(float)vision.near_path_supported;o[11]=(float)vision.curve_outer_near_rows;
+    o[12]=(float)vision.curve_outer_far_rows;o[13]=(float)vision.curve_outer_reject;
+    o[14]=(float)vision.element_bridged;
+}

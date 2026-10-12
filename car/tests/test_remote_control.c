@@ -257,7 +257,7 @@ static void test_arm(void)
     check(submit_calls == 1U && submitted_duty[0] == 0 && submitted_ack[0] == 1U,
           "only neutral acknowledgement acts in its coalesced chunk");
     poll_text("W\r\n");
-    check(submit_calls == 2U && submitted_duty[1] == 100,
+    check(submit_calls == 2U && submitted_duty[1] == REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "only a later new chunk can drive after acknowledgement");
     motor.arm_generation = UINT32_MAX;
     service_at(now_ms);
@@ -271,7 +271,7 @@ static void test_mapping(void)
 {
     begin_armed();
     poll_text("W\r\nS\r\n");
-    check(submit_calls == 2U && submitted_duty[0] == 100 && submitted_duty[1] == -100,
+    check(submit_calls == 2U && submitted_duty[0] == REMOTE_CONTROL_MAX_DUTY_PERMILLE && submitted_duty[1] == -REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "W/S submit bounded signed throttle");
     check(submitted_ack[0] == 0U && submitted_ack[1] == 0U, "drive is not a neutral acknowledgement");
     poll_text("A\r\n");
@@ -301,7 +301,7 @@ static void test_parser(void)
     poll_text("ght\r");
     check(status().received_commands == 1U, "partial text has no recognized event");
     poll_text("\nW\r\n");
-    check(status().received_commands == 3U && submit_calls == 1U && submitted_duty[0] == 100,
+    check(status().received_commands == 3U && submit_calls == 1U && submitted_duty[0] == REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "split Right followed by W is parsed in stream order");
     service_at(now_ms);
     check(servo_enabled && servo_steering == -1000, "coalesced drive preserves a recent turn");
@@ -328,7 +328,7 @@ static void test_stop(void)
     check(servo_enabled && servo_steering == 0, "acknowledged STOP activity centers steering");
     submit_calls = 0U;
     poll_text("W\r\nDown\r\nW\r\n");
-    check(submit_calls == 2U && submitted_duty[0] == 100 && submitted_duty[1] == 0,
+    check(submit_calls == 2U && submitted_duty[0] == REMOTE_CONTROL_MAX_DUTY_PERMILLE && submitted_duty[1] == 0,
           "STOP is the last submitted action when drive precedes it");
 }
 
@@ -341,7 +341,7 @@ static void test_steering(void)
     now_ms = 400U;
     poll_text("Right\r\nUp\r\n");
     service_at(now_ms);
-    check(submit_calls == 1U && submitted_duty[0] == 100,
+    check(submit_calls == 1U && submitted_duty[0] == REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "steering never submits throttle or neutral and cannot renew drive lease");
     check(servo_enabled && servo_steering == 0, "authorized steering refreshes only steering activity");
 }
@@ -570,7 +570,7 @@ static void test_main_gap_poll(void)
     check(submit_calls == 0U, "new local arm still requires a fresh Down");
     poll_text("Down\r\n");
     poll_text("W\r\n");
-    check(submit_calls == 2U && submitted_duty[0] == 0 && submitted_duty[1] == 100,
+    check(submit_calls == 2U && submitted_duty[0] == 0 && submitted_duty[1] == REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "only new local arm plus future neutral acknowledgement restores drive");
 }
 
@@ -630,7 +630,7 @@ static void test_main_silent_polling(void)
     check(motor.remote_armed && !servo_enabled && submit_calls == 0U,
           "silence expires steering activity without revoking the local arm");
     poll_text("W\r\n");
-    check(submit_calls == 1U && submitted_duty[0] == 100,
+    check(submit_calls == 1U && submitted_duty[0] == REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "point commands remain usable after silent but regularly serviced time");
 }
 

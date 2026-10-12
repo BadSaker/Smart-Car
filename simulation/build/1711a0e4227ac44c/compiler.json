@@ -1,0 +1,23 @@
+{
+  "path": "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\toolchain\\mingw64\\bin\\gcc.exe",
+  "options": [
+    "-std=c99",
+    "-shared",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-static-libgcc"
+  ],
+  "distribution": {
+    "source": "https://github.com/brechtsanders/winlibs_mingw/releases/tag/14.3.0posix-12.0.0-ucrt-r1",
+    "archive_url": "https://github.com/brechtsanders/winlibs_mingw/releases/download/14.3.0posix-12.0.0-ucrt-r1/winlibs-x86_64-posix-seh-gcc-14.3.0-mingw-w64ucrt-12.0.0-r1.zip",
+    "sha256": "d6e83bf3cfff02ddcb4ccb485a8a162e3852bf09976d0cb9d521f3d0d6855ea3",
+    "archive_bytes": 243665819,
+    "gcc_version": "14.3.0",
+    "mingw_w64_version": "12.0.0",
+    "target": "x86_64-w64-mingw32",
+    "runtime": "UCRT",
+    "thread_model": "POSIX"
+  }
+}

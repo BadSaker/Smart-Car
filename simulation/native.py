@@ -4,12 +4,16 @@ from pathlib import Path
 from parameters import ROOT
 from toolchain import find_compiler
 MACROS={'cruise':'AUTO_CRUISE_SPEED_MM_S','curve_speed':'AUTO_CURVE_SPEED_MM_S',
+ 'element_speed':'AUTO_ELEMENT_SPEED_MM_S','max_duty':'AUTO_MAX_DUTY_PERMILLE',
  'outer_speed':'AUTO_CURVE_OUTER_SPEED_MM_S','kp':'AUTO_STEERING_KP','ki':'AUTO_STEERING_KI',
  'kd':'AUTO_STEERING_KD','speed_kp':'AUTO_SPEED_KP','speed_ki':'AUTO_SPEED_KI',
  'min_q':'AUTO_MIN_CONFIDENCE','outer_q':'AUTO_CURVE_OUTER_MIN_CONFIDENCE',
  'width_top':'VISION_WIDTH_TOP_PX','width_bottom':'VISION_WIDTH_BOTTOM_PX',
  'outer_enabled':'VISION_CURVE_OUTER_ENABLED'}
-INTS={'min_q','outer_q','width_top','width_bottom','outer_enabled'}
+INTS={'min_q','outer_q','width_top','width_bottom','outer_enabled','max_duty'}
+FEATURE_KEYS=('ring_side','raw_near_px','raw_far_px','left_open_rows','right_open_rows',
+ 'joint_open_rows','left_fork','right_fork','left_open_bottom','right_open_bottom',
+ 'near_supported','outer_near_rows','outer_far_rows','outer_reject','element_bridged')
 COMPILE_OPTIONS=['-std=c99','-shared','-O2','-Wall','-Wextra','-Werror','-static-libgcc']
 class Native:
     def __init__(self,p):
@@ -56,6 +60,8 @@ class Native:
         self.lib.sim_vision.argtypes=[C.POINTER(C.c_uint8),C.c_uint32,C.c_uint32];self.lib.sim_vision.restype=None
         self.lib.sim_tick.argtypes=[C.c_uint32,*([C.c_int]*6)];self.lib.sim_tick.restype=None
         self.lib.sim_data.argtypes=[C.POINTER(C.c_float),C.POINTER(C.c_uint8)];self.lib.sim_data.restype=None
+        self.feature_values=(C.c_float*len(FEATURE_KEYS))();self.features={key:0 for key in FEATURE_KEYS}
+        self.lib.sim_features.argtypes=[C.POINTER(C.c_float)];self.lib.sim_features.restype=None
         self.lib.sim_reset()
     def vision(self,image,now,distance):
         import numpy as np
@@ -67,4 +73,6 @@ class Native:
     def data(self):
         import numpy as np
         self.lib.sim_data(self.out,self.rows)
+        self.lib.sim_features(self.feature_values)
+        self.features=dict(zip(FEATURE_KEYS,map(int,self.feature_values)))
         return np.array(self.out,dtype=float),np.array(self.rows,dtype=np.uint8).reshape(4,120)

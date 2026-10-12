@@ -4,6 +4,7 @@
 #include "zf_driver_gpio.h"
 #include "zf_driver_pwm.h"
 #include "motor_control.h"
+#include "motor_test_config.h"
 #include "remote_control_config.h"
 
 /* 桩只替代硬件边界；真实后端必须在PIT内完成所有持续PWM/DIR写入。 */
@@ -42,8 +43,8 @@ void pwm_set_duty(pwm_channel_enum channel, uint32_t duty)
 {
     uint8_t before = duty1 || duty2;
     CHECK(in_tick && !interrupt_mask, "持续PWM由未屏蔽的PIT唯一更新");
-    CHECK((uint64_t)duty * 1000U <= (uint64_t)PWM_DUTY_MAX * 150U,
-          "自动驾驶后端硬限幅为150千分比");
+    CHECK((uint64_t)duty * 1000U <= (uint64_t)PWM_DUTY_MAX * MOTOR_TEST_MAX_DUTY_PERMILLE,
+          "自动驾驶后端遵守配置硬限幅");
     if (channel == PWM2_MODULE1_CHA_C8) duty1 = duty; else duty2 = duty;
     if (before && !duty1 && !duty2) zero_since_ms = now_ms;
     if (duty) ++nonzero_writes;
@@ -118,7 +119,7 @@ static void test_auto_without_link_and_independent_clamp(void)
     motor_control_remote_set_link(0U);
     motor_control_submit_remote(-100, 0U);
     ticks(40U, 1U, 65535U, 30U);
-    check_duty(150U, 30U);
+    check_duty(MOTOR_TEST_MAX_DUTY_PERMILLE, 30U);
     CHECK(!status().remote_armed, "auto占用期间不保留遥控武装");
     tick(1U, 0U, 0U);
     check_duty(0U, 0U);

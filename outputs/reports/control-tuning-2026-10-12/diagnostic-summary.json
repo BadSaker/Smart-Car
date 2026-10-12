@@ -1,0 +1,9 @@
+{
+  "parameter_trials": 49,
+  "replay_segments": 245,
+  "passing_candidates": 0,
+  "source_unchanged_files": 705,
+  "source_backup": "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\outputs\\backups\\autocar_before-control-tuning_20261012_174205.zip",
+  "diagnostic_backup": "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\outputs\\backups\\control-tuning-diagnostics_20261012_175808.zip",
+  "diagnostic_backup_bytes": 5116947
+}

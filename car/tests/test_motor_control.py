@@ -34,10 +34,10 @@ void encoder_feedback_reset_totals(void);
 '''
 PROFILES = {
     'nominal': [],
-    'maximum-duty': ['MOTOR_TEST_DUTY_PERMILLE=150'],
+    'maximum-duty': ['MOTOR_TEST_DUTY_PERMILLE=MOTOR_TEST_MAX_DUTY_PERMILLE'],
     'minimum-duty': ['MOTOR_TEST_DUTY_PERMILLE=1'],
     'duty-scale': ['PWM_DUTY_MAX=20000U'],
-    'over-duty': ['MOTOR_TEST_DUTY_PERMILLE=151', 'EXPECT_CONFIG_ERROR=1'],
+    'over-duty': ['MOTOR_TEST_DUTY_PERMILLE=(MOTOR_TEST_MAX_DUTY_PERMILLE+1)', 'EXPECT_CONFIG_ERROR=1'],
     'zero-duty': ['MOTOR_TEST_DUTY_PERMILLE=0', 'EXPECT_CONFIG_ERROR=1'],
     'negative-duty': ['MOTOR_TEST_DUTY_PERMILLE=-1', 'EXPECT_CONFIG_ERROR=1'],
     'incorrect-period': ['MOTOR_CONTROL_TICK_MS=20', 'EXPECT_CONFIG_ERROR=1'],

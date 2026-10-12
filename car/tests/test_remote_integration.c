@@ -112,9 +112,9 @@ void pwm_set_duty(pwm_channel_enum channel, uint32_t duty)
     }
     else
     {
-        CHECK(in_tick && duty <= 1000U &&
+        CHECK(in_tick && (uint64_t)duty*1000U <= (uint64_t)PWM_DUTY_MAX*REMOTE_CONTROL_MAX_DUTY_PERMILLE &&
               (channel == PWM2_MODULE1_CHA_C8 || channel == PWM2_MODULE0_CHA_C6),
-              "PIT-only motor output stays within ten percent");
+              "PIT中的电机输出遵守配置限幅");
         if (channel == PWM2_MODULE1_CHA_C8) duty1 = duty;
         else duty2 = duty;
     }
@@ -223,10 +223,10 @@ static void expect_forward(void)
 {
     motor_control_status_t out = motor_status();
     CHECK(out.remote_armed && !out.remote_wait_neutral && out.state == MOTOR_REMOTE_DRIVING &&
-          out.requested_permille == 100 && out.applied_permille == 100,
+          out.requested_permille == REMOTE_CONTROL_MAX_DUTY_PERMILLE && out.applied_permille == REMOTE_CONTROL_MAX_DUTY_PERMILLE,
           "fresh W reaches the real armed and neutral-confirmed motor backend");
-    CHECK(duty1 == 1000U && duty2 == 1000U && direction1 == GPIO_HIGH && direction2 == GPIO_HIGH,
-          "W drives both confirmed forward channels at ten percent");
+    CHECK(duty1 == PWM_DUTY_MAX*REMOTE_CONTROL_MAX_DUTY_PERMILLE/1000U && duty2 == PWM_DUTY_MAX*REMOTE_CONTROL_MAX_DUTY_PERMILLE/1000U && direction1 == GPIO_HIGH && direction2 == GPIO_HIGH,
+          "W按配置幅值驱动两个已确认的前进通道");
 }
 
 /* 一个连续会话覆盖排空、分片命令、独立租约、重连和跨主循环停顿的S3锁存。 */

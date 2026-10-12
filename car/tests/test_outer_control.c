@@ -39,7 +39,7 @@ int main(void)
     autonomous_control_get_status(&s);
     CHECK(s.active && s.confidence==40 && s.minimum_confidence==40 && s.curve_outer_supported);
     CHECK(s.curve_outer_near_rows==23 && s.curve_outer_far_rows==13);
-    CHECK(s.target_speed_mm_s==80 && s.steering_permille==-1000);
+    CHECK(s.target_speed_mm_s==AUTO_CURVE_OUTER_SPEED_MM_S && s.steering_permille==-1000);
     CHECK(servo_control_get_status()->target_pulse_us==SERVO_REFERENCE_CENTER_US-SERVO_AUTONOMOUS_EXCURSION_US);
     CHECK(servo_control_get_status()->current_pulse_us==servo_control_get_status()->target_pulse_us);
     /* 再缺一行得到Q39：第一帧撤输出，第三个新帧锁存LOST。 */

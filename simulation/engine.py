@@ -57,7 +57,8 @@ class Simulation:
         return {'confidence':q,'minimum':minimum,'vision_valid':valid,'accepted':bool(accepted),
                 'reason':reason,'element':int(self.data[7]),'frame_fresh':fresh,
                 'frame_id':self.frame_id,'frame_time_ms':self.frame_time_ms,'sample_time_ms':self.now,
-                'near_px':int(self.data[5]),'far_px':int(self.data[6]),'vision_fault':int(self.data[20])}
+                'near_px':int(self.data[5]),'far_px':int(self.data[6]),'vision_fault':int(self.data[20]),
+                **self.native.features}
     def capture_frame(self):
         if not self._new_frame:return
         meta={'frame_id':self.frame_id,'frame_time_ms':self.frame_time_ms,'control_time_ms':self.now,
@@ -159,7 +160,7 @@ class Simulation:
           'outside_wheels':self.outside_wheels(),'completed':self.completed,'mode':self.p['controller'],
           'minimum_confidence':path['minimum'],'path_accepted':path['accepted'],
           'camera_frame_id':self.frame_id,'camera_frame_time_ms':self.frame_time_ms,
-          'brightness_offset':self.brightness_offset})
+          'brightness_offset':self.brightness_offset,**self.native.features})
     def result(self):
         return {'perturbation':self.perturbation.record(),'mode':'replay' if self.replay else self.p['controller'],'completed':self.completed,'time_s':self.now/1000,
          'distance_m':self.distance,'route_length_m':self.track.length,'max_error_m':self.max_error,

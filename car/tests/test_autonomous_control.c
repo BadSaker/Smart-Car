@@ -47,13 +47,14 @@ int main(void)
     step(85,1,1);autonomous_control_get_status(&s);CHECK(s.state==AUTO_DRIVE_RUNNING);
     CHECK(duties[PWM2_MODULE1_CHA_C8]>0 && duties[PWM2_MODULE0_CHA_C6]>0);
     CHECK(servo_control_get_status()->current_pulse_us<1480);
-    /* 摘要经真实mailbox传递，可靠普通外侧Q40允许运行且使用80mm/s。 */
+    /* 摘要经真实mailbox传递，可靠普通外侧Q40允许运行且使用配置速度。 */
     {
         unsigned n;track_vision_result_t v;
         memset(&v,0,sizeof v);v.valid=1;v.confidence=40;v.element=TRACK_ELEMENT_CURVE;
         v.near_path_supported=1;v.curve_outer_side=TRACK_SIDE_LEFT;v.curve_outer_supported=1;
         v.curve_outer_near_rows=17;v.curve_outer_far_rows=13;v.near_error_px=20;v.far_error_px=40;
-        for(n=0;n<6;++n) {
+        /* 提速后从起步目标到外侧目标仍须经过真实加速斜坡。 */
+        for(n=0;n<(unsigned)(AUTO_CURVE_OUTER_SPEED_MM_S/(AUTO_ACCEL_MM_S2*0.01f))+5U;++n) {
             now+=10;++feedback.sample_sequence;
             autonomous_control_publish_vision(&v,++frame_sequence,now);
             autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);

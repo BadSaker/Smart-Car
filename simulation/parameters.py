@@ -9,9 +9,10 @@ DEFAULTS={
  'camera_lateral':0.0,'camera_yaw':0.0,'camera_roll':0.0,
  'hfov':89.66951494024845,'fy_ratio':1.0,'cx':93.0,'cy':59.5,'k1':0.0,'fps':50.0,'road_width':0.5,'edge_width':0.,
  'radius':0.5,'steer_max_deg':28.0,'servo_center':1480.0,'servo_range':130.0,
- 'servo_step':6.0,'servo_interval':0.02,'servo_tau':0.08,
+ 'servo_step':12.0,'servo_interval':0.02,'servo_tau':0.08,
  'motor_gain':1.25,'motor_deadzone':15.0,'motor_tau':0.18,'coast_tau':0.25,
- 'cruise':180.0,'curve_speed':120.0,'outer_speed':80.0,'kp':28.0,'ki':0.0,'kd':0.5,
+ 'cruise':300.0,'curve_speed':200.0,'outer_speed':140.0,'element_speed':160.0,'max_duty':300,
+ 'kp':28.0,'ki':0.0,'kd':0.5,
  'speed_kp':0.5,'speed_ki':0.15,'min_q':45,'outer_q':40,'outer_enabled':1,
  'width_top':44,'width_bottom':167,'offset':0.0,'heading_error':0.0,
  'gray_road':255,'gray_edge':20,'gray_background':153,'noise':0.0,'seed':42,
@@ -52,7 +53,8 @@ def validate(p):
       'steer_max_deg':(2,60),'servo_center':(1000,2000),'servo_range':(10,300),'servo_step':(1,40),
       'servo_interval':(.01,.1),'servo_tau':(.01,1),'motor_gain':(.1,5),'motor_deadzone':(0,100),
       'motor_tau':(.02,2),'coast_tau':(.02,3),'cruise':(10,500),'curve_speed':(10,500),
-      'outer_speed':(10,500),'kp':(0,100),'ki':(0,20),'kd':(0,10),'speed_kp':(0,5),'speed_ki':(0,5),
+      'outer_speed':(10,500),'element_speed':(10,500),'max_duty':(1,300),
+      'kp':(0,100),'ki':(0,20),'kd':(0,10),'speed_kp':(0,5),'speed_ki':(0,5),
       'min_q':(1,100),'outer_q':(1,100),'width_top':(8,150),'width_bottom':(8,185),
       'offset':(-.5,.5),'heading_error':(-90,90),'noise':(0,50),'seed':(0,2147483647),
       'gray_road':(0,255),'gray_edge':(0,255),'gray_background':(0,255),
@@ -61,7 +63,7 @@ def validate(p):
     for key,(lo,hi) in ranges.items():
         if key not in p or not isinstance(p[key],(int,float)) or not math.isfinite(p[key]) or not lo<=p[key]<=hi:
             raise ValueError(f'{key} 必须在 {lo}～{hi} 之间')
-    for key in ('seed','min_q','outer_q','width_top','width_bottom','outer_enabled','disturbance_level','seed_auto'):
+    for key in ('seed','min_q','outer_q','width_top','width_bottom','outer_enabled','disturbance_level','seed_auto','max_duty'):
         if int(p[key])!=p[key]: raise ValueError(f'{key} 必须为整数')
     if p['width_top']>p['width_bottom']: raise ValueError('远端宽度不能大于近端宽度')
     if p['outer_q']>p['min_q']: raise ValueError('外侧Q门限不得高于普通Q门限')
@@ -84,5 +86,8 @@ def load(path):
     # 旧实验保持最近邻单点采样；新配置明确记录采样方式。
     if 'camera_samples' not in values:p['camera_samples']=1
     if 'camera_sampling' not in values:p['camera_sampling']='nearest'
+    # 旧参数文件保留原先未暴露的100mm/s元素速度和200‰上限。
+    if 'element_speed' not in values:p['element_speed']=100.
+    if 'max_duty' not in values:p['max_duty']=200
     if 'disturbance_level' not in values and p['noise']>0:p['disturbance_level']=4
     return validate(p)

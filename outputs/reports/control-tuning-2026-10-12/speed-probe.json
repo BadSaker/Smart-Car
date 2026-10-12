@@ -1,0 +1,52 @@
+[
+  {
+    "target_mm_s": 180,
+    "duty_cap_permille": 200,
+    "steady_speed_mm_s": 178.2802613995761,
+    "steady_pwm": 157.73333333333332,
+    "theoretical_model_cap_mm_s": 231.25,
+    "state": "运行",
+    "fault": "无",
+    "wall_s": 3.2797755999999936
+  },
+  {
+    "target_mm_s": 250,
+    "duty_cap_permille": 250,
+    "steady_speed_mm_s": 248.73115152385193,
+    "steady_pwm": 214.03333333333333,
+    "theoretical_model_cap_mm_s": 293.75,
+    "state": "运行",
+    "fault": "无",
+    "wall_s": 3.201159000000189
+  },
+  {
+    "target_mm_s": 300,
+    "duty_cap_permille": 300,
+    "steady_speed_mm_s": 298.7936414695218,
+    "steady_pwm": 254.06666666666666,
+    "theoretical_model_cap_mm_s": 356.25,
+    "state": "运行",
+    "fault": "无",
+    "wall_s": 2.7546283999981824
+  },
+  {
+    "target_mm_s": 350,
+    "duty_cap_permille": 300,
+    "steady_speed_mm_s": 348.8242103737337,
+    "steady_pwm": 294.06666666666666,
+    "theoretical_model_cap_mm_s": 356.25,
+    "state": "运行",
+    "fault": "无",
+    "wall_s": 2.5779363000001467
+  },
+  {
+    "target_mm_s": 400,
+    "duty_cap_permille": 300,
+    "steady_speed_mm_s": 356.2499999999995,
+    "steady_pwm": 300.0,
+    "theoretical_model_cap_mm_s": 356.25,
+    "state": "运行",
+    "fault": "无",
+    "wall_s": 2.340348300000187
+  }
+]
