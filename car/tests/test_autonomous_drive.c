@@ -48,7 +48,7 @@ static void test_outer_quality(void)
         in.curve_outer_side=TRACK_SIDE_LEFT;in.curve_outer_supported=1;
         in.curve_outer_near_rows=17;in.curve_outer_far_rows=13;
         in.near_error_px=20;in.far_error_px=40;in.confidence=quality[index];
-        tick(60,1,1,1);
+        tick((unsigned)(AUTO_CURVE_OUTER_SPEED_MM_S*1.5f/(AUTO_ACCEL_MM_S2*0.01f))+10U,1,1,1);
         CHECK(car.status.minimum_confidence==AUTO_CURVE_OUTER_MIN_CONFIDENCE);
         if(quality[index]<AUTO_CURVE_OUTER_MIN_CONFIDENCE) {
             fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.path_reason==AUTO_PATH_Q_LOW);
@@ -56,7 +56,8 @@ static void test_outer_quality(void)
             CHECK(car.status.confidence==quality[index]);CHECK(!car.status.active);
         } else {
             CHECK(car.status.state==AUTO_DRIVE_RUNNING && car.bad_frames==0);
-            CHECK(car.status.target_speed_mm_s==AUTO_CURVE_OUTER_SPEED_MM_S);
+            CHECK(car.status.target_speed_mm_s==(AUTO_CURVE_OUTER_SPEED_MM_S<AUTO_ELEMENT_SPEED_MM_S?
+                  AUTO_CURVE_OUTER_SPEED_MM_S:AUTO_ELEMENT_SPEED_MM_S));
             CHECK(car.status.steering_permille<0 && car.status.path_reason==AUTO_PATH_ACCEPTED);
         }
     }
@@ -77,7 +78,7 @@ static void test_outer_quality(void)
     in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=40;in.near_error_px=20;in.far_error_px=40;
     tick(6,1,1,1);CHECK(car.status.steering_permille<0);
     in.curve_outer_supported=0;in.curve_outer_reject_reason=AUTO_PATH_OUTER_FAR;
-    tick(1,1,1,1);CHECK(car.status.left_duty_permille==0 && car.status.steering_permille==0);
+    tick(1,1,1,1);CHECK(car.status.left_duty_permille==0 && car.status.steering_permille==car.status.diagnostic_steering_permille);
     CHECK(car.status.diagnostic_steering_permille<0 && car.status.path_reason==AUTO_PATH_OUTER_FAR);
     tick(7,1,1,1);fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.diagnostic_steering_permille<0);
     reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
@@ -105,14 +106,16 @@ int main(void)
     reset();start();tick(20,1,1,0);fault(AUTO_FAULT_SERVO_STALE);
     reset();start();in.vision_valid=0;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
     reset();start();in.left_speed_mm_s=-100;in.forward_step_um=0;tick(20,1,1,1);fault(AUTO_FAULT_ENCODER_DIRECTION);
-    reset();start();in.left_speed_mm_s=1500;tick(1,1,1,1);fault(AUTO_FAULT_OVERSPEED);
+    reset();start();in.left_speed_mm_s=AUTO_MAX_MEASURED_SPEED_MM_S+1;tick(1,1,1,1);fault(AUTO_FAULT_OVERSPEED);
     reset();start();in.left_speed_mm_s=0;in.forward_step_um=0;tick(250,1,1,1);fault(AUTO_FAULT_STALL);
     reset();start();in.near_error_px=25;in.far_error_px=30;tick(10,1,1,1);
     CHECK(car.status.steering_permille<0);CHECK(car.status.target_speed_mm_s<=AUTO_CRUISE_SPEED_MM_S);
     reset();start();in.left_speed_mm_s=100;in.right_speed_mm_s=100;tick(100,1,1,1);
     in.near_error_px=25;in.far_error_px=30;tick(30,1,1,1);
     CHECK(car.status.left_duty_permille>car.status.right_duty_permille);
-    reset();start();in.curve=1;tick(100,1,1,1);CHECK(car.status.target_speed_mm_s==AUTO_CURVE_SPEED_MM_S);
+    reset();start();in.curve=1;
+    tick((unsigned)(AUTO_CURVE_SPEED_MM_S/(AUTO_ACCEL_MM_S2*0.01f))+5U,1,1,1);
+    CHECK(car.status.target_speed_mm_s==AUTO_CURVE_SPEED_MM_S);
     reset();in.now_ms=0xfffffe00U;tick(5,1,1,1);start();CHECK(car.status.active);
     reset();start();in.zebra=1;tick(4,1,1,1);
     in.vision_valid=0;tick(4,1,1,1);in.vision_valid=1;
@@ -138,7 +141,7 @@ int main(void)
     reset();start();{uint32_t distance=car.status.distance_mm;tick(2,0,0,1);CHECK(car.status.distance_mm==distance);}
     in.start_pressed=1;tick(4,1,1,1);CHECK(!car.status.active);
     reset();start();in.right_speed_mm_s=-100;tick(20,1,1,1);fault(AUTO_FAULT_ENCODER_DIRECTION);
-    reset();start();in.right_speed_mm_s=1500;tick(1,1,1,1);fault(AUTO_FAULT_OVERSPEED);
+    reset();start();in.right_speed_mm_s=AUTO_MAX_MEASURED_SPEED_MM_S+1;tick(1,1,1,1);fault(AUTO_FAULT_OVERSPEED);
     reset();start();car.left_pid.config.kp=0.0f/0.0f;tick(1,1,1,1);fault(AUTO_FAULT_CONFIG);
     printf("%u autonomous controller checks passed\n",checks);return 0;
 }

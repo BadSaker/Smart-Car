@@ -1,0 +1,7 @@
+{
+  "frames": 2955,
+  "median_ms": 0.0415,
+  "p99_ms": 0.0994420000000001,
+  "max_ms": 0.3023,
+  "scope": "Windows host GCC C vision API including ctypes; not RT1064 timing"
+}

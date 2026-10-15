@@ -162,15 +162,17 @@ def camera_image(s,size=(376,240)):
 def chart_image(s,size=(376,175)):
     w,h=size;im=Image.new('RGB',size,'#101d2d');d=ImageDraw.Draw(im)
     data=s.history[-400:];margin=27
+    speed_limit=max(100.,*(float(s.p[k]) for k in ('cruise','curve_speed','outer_speed','element_speed')),
+                    *(row['speed_mm_s'] for row in data))*1.1
     for gy in range(margin,h-margin,25):d.line((margin,gy,w-12,gy),fill='#26374a')
     if len(data)>1:
-        series=[('Q','#41d2b3',100),('speed_mm_s','#f4bd63',500),('steer_deg','#669eff',60)]
+        series=[('Q','#41d2b3',100),('speed_mm_s','#f4bd63',speed_limit),('steer_deg','#669eff',60)]
         for key,color,limit in series:
             vals=[row[key]/limit if key!='steer_deg' else (row[key]/limit+.5) for row in data]
             points=[(margin+i*(w-margin-12)/(len(data)-1),h-margin-v*(h-2*margin)) for i,v in enumerate(vals)]
             d.line(points,fill=color,width=2)
     d.text((12,3),'Q 0–100',font=font(11),fill='#41d2b3')
-    d.text((100,3),'速度 0–500mm/s',font=font(11),fill='#f4bd63')
+    d.text((100,3),f'速度 0–{speed_limit:.0f}mm/s',font=font(11),fill='#f4bd63')
     d.text((245,3),'转角 ±30°',font=font(11),fill='#669eff')
     d.text((12,h-20),'最近20s · CSV保留完整数值',font=font(11),fill='#a7b7ca')
     return im

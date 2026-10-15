@@ -1,11 +1,16 @@
-# ASCII only: compatible with Windows PowerShell 5.1.
+﻿# UTF-8 BOM用于兼容Windows PowerShell 5.1的中文注释。
 param([switch]$CheckOnly, [string]$EntryPoint = 'start_app.py')
 $ErrorActionPreference = 'Stop'
 $simulationRoot = $PSScriptRoot
-$reportDirectory = Join-Path $simulationRoot 'reports'
+$reportDirectory = if ($env:SIMULATION_RUNTIME_ROOT) { [IO.Path]::GetFullPath($env:SIMULATION_RUNTIME_ROOT) } else { Join-Path $simulationRoot 'runtime' }
 New-Item -ItemType Directory -Path $reportDirectory -Force | Out-Null
 $launcherLog = Join-Path $reportDirectory 'launcher.log'
 $runtimeCache = Join-Path $reportDirectory 'launcher-runtime.json'
+# 兼容旧位置的发现缓存；只读取，成功探测后写入新的运行目录。
+$legacyCaches = @(
+    (Join-Path $simulationRoot 'reports/launcher-runtime.json'),
+    (Join-Path $simulationRoot '../outputs/reports/simulation-history-2026-10-14/launcher-runtime.json')
+)
 $candidates = New-Object 'System.Collections.Generic.List[string]'
 $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
 $attempts = New-Object 'System.Collections.Generic.List[object]'
@@ -60,6 +65,11 @@ try {
     if (Test-Path -LiteralPath $runtimeCache) {
         try { Add-Candidate ((Get-Content -LiteralPath $runtimeCache -Raw | ConvertFrom-Json).executable) } catch {}
     }
+    foreach ($legacyCache in $legacyCaches) {
+        if (Test-Path -LiteralPath $legacyCache) {
+            try { Add-Candidate ((Get-Content -LiteralPath $legacyCache -Raw | ConvertFrom-Json).executable) } catch {}
+        }
+    }
     $selected = Find-Runtime
     if (-not $selected) {
         $pythonLauncher = Get-Command py.exe -ErrorAction SilentlyContinue
@@ -91,7 +101,7 @@ try {
         $selected = Find-Runtime
     }
     ConvertTo-Json -InputObject @($attempts.ToArray()) -Depth 6 | Set-Content -LiteralPath (Join-Path $reportDirectory 'launcher-dependencies.json') -Encoding UTF8
-    if (-not $selected) { throw 'No usable 64-bit Python was found. Install Python with Tkinter, NumPy and Pillow, or provide simulation/.venv or SIMULATION_PYTHON. See reports/launcher-dependencies.json.' }
+    if (-not $selected) { throw ('No usable 64-bit Python was found. Install Python with Tkinter, NumPy and Pillow, or provide simulation/.venv or SIMULATION_PYTHON. See ' + (Join-Path $reportDirectory 'launcher-dependencies.json')) }
     $selected | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $runtimeCache -Encoding UTF8
     if ($CheckOnly) { $selected | ConvertTo-Json -Depth 5; exit 0 }
     $entry = [IO.Path]::GetFullPath((Join-Path $simulationRoot $EntryPoint))
@@ -101,7 +111,7 @@ try {
     $targetPython = $selected.executable
     $windowPython = Join-Path (Split-Path $targetPython -Parent) 'pythonw.exe'
     if (Test-Path -LiteralPath $windowPython) { $targetPython = $windowPython }
-    # The simulator is the interactive window explicitly requested by the user.
+    # 用户启动入口请求可见仿真窗口。
     $appProcess = Start-Process -FilePath $targetPython -ArgumentList @('-B', ('"' + $entry + '"')) -WorkingDirectory $simulationRoot -WindowStyle Normal -PassThru
     ('Started simulator. PID=' + $appProcess.Id + '; PowerShell=' + $PSVersionTable.PSVersion + '; Python=' + $targetPython) | Set-Content -LiteralPath $launcherLog -Encoding UTF8
     $appProcess.Id | Set-Content -LiteralPath (Join-Path $reportDirectory 'launcher-pid.txt') -Encoding ASCII

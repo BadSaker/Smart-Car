@@ -13,7 +13,7 @@
 
 ## 备份
 
-`outputs/backups/before-simulation-cleanup_20261013_003408/`包含179个逐文件哈希核对的修改前文件、manifest、工作区差异、Git状态、暂存删除清单及原Git索引副本。旧`before-portability_20261012_232252`备份保留。备份不提交Git。
+`before-simulation-cleanup_20261013_003408（已于 2026-10-15 精简中删除）/`包含179个逐文件哈希核对的修改前文件、manifest、工作区差异、Git状态、暂存删除清单及原Git索引副本。旧`before-portability_20261012_232252（已于 2026-10-15 精简中删除）`备份保留。备份不提交Git。
 
 ## 本轮验证
 

@@ -46,5 +46,9 @@ void control_pid_reset(control_pid_t *pid);
  * 不得用fast-math或有限数学假设编译，否则NaN/Inf检查可能被优化掉。 */
 float control_pid_step(control_pid_t *pid, float setpoint, float measurement,
                        float feedforward, float dt_s);
+/* 步进之后，以同拍最终执行输出校正积分；gain单位1/s，0关闭。
+ * 非法输入使valid=0，调用者必须保留原有故障停车处理。 */
+void control_pid_track_output(control_pid_t *pid, float applied, float requested,
+                              float gain, float dt_s);
 
 #endif

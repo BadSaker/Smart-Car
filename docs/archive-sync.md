@@ -20,7 +20,7 @@
 
 ## 合并前基线
 
-本机正常权限下71项测试跑完，17个断言失败、0个执行错误；主要为现有测试中的旧PWM上限/命令值以及旧36/122像素图像夹具与已调实车参数不符。日志[archive-sync-baseline-tests.log](../logs/archive-sync-baseline-tests.log)。普通受限环境在构建脚本子进程阶段挂起，已仅终止该测试进程树后以正常本机权限完成同一套基线；未修改系统安全设置。
+本机正常权限下71项测试跑完，17个断言失败、0个执行错误；主要为现有测试中的旧PWM上限/命令值以及旧36/122像素图像夹具与已调实车参数不符。日志[archive-sync-baseline-tests.log](../outputs/reports/historical-logs/archive-sync-baseline-tests.log)。普通受限环境在构建脚本子进程阶段挂起，已仅终止该测试进程树后以正常本机权限完成同一套基线；未修改系统安全设置。
 
 同步验证不会把旧配置断言失败隐藏为通过，也不回退实车参数来迎合旧测试。最终结果在本节下方记录。
 
@@ -34,6 +34,6 @@
 - 输出AXF/HEX/BIN与Keil实际下载缓存逐字节一致；ELF头、HEX校验和及BIN地址数据核对通过。本机保留Wi-Fi配置，故不要求与他机固件哈希相同。
 - 未自动烧录、操作热点或驱动实车；±130us机械余量、二次扫线耗时和赛道表现仍待实测。
 
-日志：[合并前基线](../logs/archive-sync-baseline-tests.log)、[合并后回归](../logs/archive-sync-tests.log)、[本机构建](../logs/archive-sync-build.log)。
+日志：[合并前基线](../outputs/reports/historical-logs/archive-sync-baseline-tests.log)、[合并后回归](../outputs/reports/historical-logs/archive-sync-tests.log)、[本机构建](../outputs/reports/historical-logs/archive-sync-build.log)。
 
 修改前备份：[car_before-archive-sync_20261011_180922.zip](../outputs/backups/car_before-archive-sync_20261011_180922.zip)。原RAR保持不变；本地历史报告、日志和备份没有被外部文件覆盖。

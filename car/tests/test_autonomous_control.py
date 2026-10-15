@@ -1,7 +1,7 @@
 from host_toolchain import find_compiler
 """真实自动驾驶适配、状态机、PID、电机和舵机的联合测试，替换硬件边界。"""
 from pathlib import Path
-import subprocess,unittest,os
+import subprocess,unittest,os,zipfile
 ROOT=Path(__file__).resolve().parents[2]
 SCRATCH=ROOT/"tmp/autodrive/integration-tests"
 COMPILER=find_compiler()
@@ -41,7 +41,9 @@ class AutonomousControlTests(unittest.TestCase):
         cmd += ["-lm","-o",str(exe)]
         build=subprocess.run(cmd,capture_output=True,text=True,errors="replace")
         self.assertEqual(build.returncode,0,build.stdout+build.stderr)
-        run=subprocess.run([str(exe)],capture_output=True,text=True,errors="replace")
+        with zipfile.ZipFile(ROOT/'car/tests/fixtures/geometric-path-sequences.zip') as archive:
+            fixture=SCRATCH/'curve.gray';fixture.write_bytes(archive.read('curve.gray')[:22560])
+        run=subprocess.run([str(exe),str(fixture)],capture_output=True,text=True,errors="replace")
         self.assertEqual(run.returncode,0,run.stdout+run.stderr);print(run.stdout.strip())
     def test_hardware_boundary_integration(self):
         source=ROOT/"car/src/autonomous_control.c"

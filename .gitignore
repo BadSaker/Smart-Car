@@ -14,6 +14,8 @@
 /simulation/reports/compiler-discovery.json
 /simulation/reports/startup*
 /car/config/camera_debug_local.h
+/wifi/camera_debug_local.h
+/car/build/
 /car/scripts/tool_paths.local.json
 /car/.vscode/*.log
 /car/.vscode/*.lock
@@ -22,3 +24,12 @@
 /outputs/backups/before-simulation-cleanup_*/
 /outputs/backups/portability-evidence_20261012.zip
 /outputs/reports/portability-2026-10-12/closed-loop-final/workspace/build/
+/outputs/backups/before-wifi-entry_*/
+/outputs/backups/before-wifi-folder_*/
+/outputs/backups/wifi-config_*/
+/outputs/backups/car_before-project-normalization_*.zip
+/outputs/reports/project-normalization-evidence-*.zip
+/outputs/reports/simulation-history-20261014/launcher*
+/outputs/reports/simulation-history-20261014/compiler-discovery.json
+/outputs/reports/simulation-history-20261014/startup*
+/outputs/firmware/autocar_normalization_check_20261014_*

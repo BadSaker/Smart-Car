@@ -2,10 +2,12 @@
 
 界面由Tk构建；geometry生成赛道和摄像头图像，native_bridge把帧、时间、按键与模拟编码器输入映射给真实C状态机，engine执行10ms控制和低速自行车运动学，render显示2D/3D、车模和图表。
 
-主工程算法唯一来源是`../../car`：track_vision、autonomous_drive、control_pid三个C文件和对应头文件，加autonomous_config、vision_config。运行时仿真覆盖头只写入缓存。SIMULATION_SOURCE_ROOT可指定验收快照目录。native_bridge保留桌面硬件边界；它不模拟完整main/ISR、GPIO、SPI阻塞及执行器竞争。
+主工程算法唯一来源是`../../car`：track_vision、autonomous_drive、control_pid三个C文件和对应头文件，加autonomous_config、vision_config、encoder_config、vehicle_geometry、servo_config五个配置头。运行时仿真覆盖头只写入缓存。SIMULATION_SOURCE_ROOT可指定验收快照目录。native_bridge保留桌面硬件边界；它不模拟完整main/ISR、GPIO、SPI阻塞及执行器竞争。
 
 后轴中心为原点，前方+x、左方+y、地面z=0；内部长度m，时间s，界面常用mm/ms。整车长280mm、轴距190mm、前悬40mm、后悬15mm；轮径64mm、轮宽27mm、中心轮距153mm。镜头后轴前80mm、高297mm。实测、产品规格与外形近似的逐项出处见[历史车模依据](archive/C1车模与实测参数.md)。原始证据保留，旧相机值不作为当前默认。
 
-当前servo中心1480us、摆幅130us、步进12us/20ms；28度满幅车轮转角、电机增益1.25、死区15、响应时间均为模型假设。编码器4352计数/圈和浮点轮周长独立建模，与固件整数舍入存在差别。左右PWM平均驱动无侧滑底盘，再按转弯几何产生轮速，不模拟轮胎擦滑和负载差异。
+当前舵机中位1480µs、自动摆幅150µs，前轮端点±34.74318°来自用户实测；中间段线性映射及80ms响应为模型假设。软件步进20µs/20ms，共同转向轨迹5000‰/s、50000‰/s²。编码器使用同一encoder_config.h：1024×68/30计数/轮圈，整数换算与固件一致。默认dynamics.py分别积分两轮转速，通过有限纵向接地力耦合底盘；轮速可与底盘速度分离，单轮空转不再被理想轮速覆盖。电机增益1.25、死区15、轮惯性比0.04、接地刚度60/s和附着0.9均为条件模型参数，未实测；横向仍为无侧滑自行车运动学，不能证明高速抓地极限。legacy保留旧平均PWM模型，仅用于显式对照。
 
 地图仅提供合成图像、参考控制和评分，不能向native控制器传入元素身份。完整参考路线约30.021m，含221.57mm近似闭合段。终点评分为仿真位置标记，不证明实车斑马线停车。中央270度环道身份仍存在CURVE边界，详见[控制验收](control-tuning.md)。
+
+当前视觉向控制器传递毫米几何目标，轴距/轮距/转角定义共用car/config/vehicle_geometry.h。图像延迟和模糊可配置；延迟模型保持固件处理完成时间戳习惯，另记采集时刻，不能假称硬件提供了曝光时间戳。轮胎角点余量和地图身份只用于评分。

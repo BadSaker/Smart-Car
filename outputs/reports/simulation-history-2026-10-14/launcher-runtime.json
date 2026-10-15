@@ -1,0 +1,15 @@
+﻿{
+    "executable":  "D:\\anaconda3\\python.exe",
+    "version":  "3.14.6",
+    "bits":  64,
+    "packages":  {
+                     "tkinter":  true,
+                     "_tkinter":  true,
+                     "numpy":  true,
+                     "PIL":  true
+                 },
+    "versions":  {
+                     "numpy":  "2.4.6",
+                     "Pillow":  "12.3.0"
+                 }
+}

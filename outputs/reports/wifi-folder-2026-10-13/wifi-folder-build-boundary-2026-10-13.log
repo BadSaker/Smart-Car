@@ -1,0 +1,10 @@
+test_export_failure_preserves_previous_complete_set (test_build_script.BuildExportTests.test_export_failure_preserves_previous_complete_set) ... ok
+test_linker_map_stays_temporary_and_preserves_reports (test_build_script.BuildExportTests.test_linker_map_stays_temporary_and_preserves_reports) ... ok
+test_missing_exporter_fails_without_publishing (test_build_script.BuildExportTests.test_missing_exporter_fails_without_publishing) ... ok
+test_missing_wifi_config_fails_without_publishing (test_build_script.BuildExportTests.test_missing_wifi_config_fails_without_publishing) ... ok
+test_success_publishes_all_three_new_files (test_build_script.BuildExportTests.test_success_publishes_all_three_new_files) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 10.019s
+
+OK

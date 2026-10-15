@@ -2,6 +2,7 @@
 from pathlib import Path
 import subprocess
 import sys
+import re
 import unittest
 
 sys.dont_write_bytecode = True
@@ -13,6 +14,7 @@ PROFILES = {
     'remote': ['REMOTE_CONTROL_ENABLED=1'],
     'bench': ['REMOTE_CONTROL_ENABLED=0'],
     'scaled': ['REMOTE_CONTROL_ENABLED=1', 'PWM_DUTY_MAX=20000U'],
+    'high-auto-limit': ['REMOTE_CONTROL_ENABLED=1'],
     'invalid-remote': ['REMOTE_CONTROL_ENABLED=1', 'MOTOR_CONTROL_TICK_MS=20', 'EXPECT_CONFIG_ERROR'],
     'invalid-bench': ['REMOTE_CONTROL_ENABLED=0', 'MOTOR_CONTROL_TICK_MS=20', 'EXPECT_CONFIG_ERROR'],
 }
@@ -28,6 +30,10 @@ class AutonomousMotorTests(unittest.TestCase):
                 (stub / 'motor_test_platform.h').write_text(PLATFORM, encoding='ascii')
                 for header in ['zf_driver_gpio.h', 'zf_driver_pwm.h', 'encoder_feedback.h']:
                     (stub / header).write_text('#include "motor_test_platform.h"\n', encoding='ascii')
+                cfg=(ROOT/'car/config/autonomous_config.h').read_text(encoding='utf-8')
+                if name=='high-auto-limit':
+                    cfg=re.sub(r'(#define\s+AUTO_MAX_DUTY_PERMILLE\s+)\S+',r'\g<1>1000U',cfg)
+                (stub/'autonomous_config.h').write_text(cfg,encoding='utf-8')
                 exe = SCRATCH / name / 'autonomous-motor.exe'
                 command = [COMPILER, '-std=c99', '-Wall', '-Wextra', '-Werror',
                            '-I' + str(stub), '-I' + str(ROOT / 'car/include'),

@@ -26,6 +26,11 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
  v[3]=output.confidence;v[4]=output.fault;v[5]=output.curve_outer_supported;
  v[6]=output.near_error_px;v[7]=output.far_error_px;
  v[8]=output.curve_outer_side;
+ v[9]=output.ring_left_reject;v[10]=output.ring_right_reject;
+ v[11]=output.left_island;v[12]=output.right_island;
+ v[13]=output.ring_entry_supported;v[14]=output.fault_element;
+ v[15]=output.element_diagnostic.limit_reason;v[16]=output.element_diagnostic.fault_traveled_mm;
+ v[17]=output.element_diagnostic.fault_elapsed_ms;
 }
 ''',encoding='utf-8')
         dll=SCRATCH/'element-tests.dll'
@@ -43,7 +48,7 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         with zipfile.ZipFile(ROOT/'car/tests/fixtures/element-sequences.zip') as archive:
             meta=json.loads(archive.read('metadata.json'));info=meta['segments'][name]
             data=bytearray(archive.read(info['file']))
-        self.lib.reset();result=[];values=(C.c_int*9)()
+        self.lib.reset();result=[];values=(C.c_int*18)()
         for i in range(min(info['frames'],max_frames or info['frames'])):
             frame=(C.c_ubyte*(188*120)).from_buffer(data,i*188*120)
             distance=info['distances_mm'][i] if 'distances_mm' in info else info['distance_start_mm']+i*info['step_mm']
@@ -97,9 +102,32 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         return image
 
     def feed(self,image,ms,mm):
-        values=(C.c_int*9)();pixels=(C.c_ubyte*len(image)).from_buffer(image)
+        values=(C.c_int*18)();pixels=(C.c_ubyte*len(image)).from_buffer(image)
         self.lib.frame(pixels,ms,mm,values)
         return tuple(values)
+
+    def test_topology_accumulates_before_the_near_island_becomes_visible(self):
+        self.lib.reset();plain=self.fork_image(79)
+        for row in range(80,117):
+            width=44+(row-30)*123//86;left=93-width//2
+            plain[row*188+left:row*188+94]=bytes([220])*(94-left)
+        for ms in (0,20,40):result=self.feed(plain,ms,ms//4)
+        self.assertLess(result[0],3,'未见岛边时不能提交环岛候选')
+        self.assertTrue(result[9]&8,'缺少岛边的拒绝原因应可读')
+        result=self.feed(self.fork_image(79),60,15)
+        self.assertEqual(result[0],3,'拓扑已连续确认时当前岛边可提交候选')
+        self.assertEqual(result[13],1)
+
+    def test_missing_island_cannot_commit_entry_but_does_not_erase_visible_topology(self):
+        self.lib.reset();low=self.fork_image(79)
+        for ms in (0,20,40):self.feed(low,ms,ms//4)
+        plain=self.fork_image(96)
+        for row in range(97,117):
+            width=44+(row-30)*123//86;left=93-width//2
+            plain[row*188+left:row*188+94]=bytes([220])*(94-left)
+        for ms in (60,80,100):result=self.feed(plain,ms,ms//4)
+        self.assertEqual(result[0],3)
+        self.assertEqual(result[13],0,'无当前岛边时候选不能取得元素通行许可')
 
     def test_approach_limit_precedes_entry_commit(self):
         low=self.fork_image(79);high=self.fork_image(96)
@@ -109,9 +137,9 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
                 for ms,mm in ((0,0),(20,5),(40,10)):result=self.feed(low,ms,mm)
                 self.assertEqual(result[0],3)
                 if boundary=='distance':
-                    self.feed(low,60,690);samples=((80,695),(100,705),(120,715))
+                    self.feed(low,60,690);samples=((80,700),(100,715),(120,720))
                 else:
-                    self.feed(low,9940,20);samples=((9960,25),(10020,30),(10060,35))
+                    self.feed(low,9940,20);samples=((9960,25),(10060,30),(10080,35))
                 phases=[self.feed(high,ms,mm)[0] for ms,mm in samples]
                 self.assertNotIn(4,phases,'过期候选不能在确认提交时越过限界')
 
@@ -123,7 +151,7 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         self.assertNotIn(4,phases,'旧分叉证据不能为全黑远场提交入环')
 
     def test_missing_frame_breaks_continuous_candidate_confirmation(self):
-        self.lib.reset();image=self.fork_image(79);values=(C.c_int*9)()
+        self.lib.reset();image=self.fork_image(79);values=(C.c_int*18)()
         self.feed(image,0,0);self.feed(image,20,5)
         self.lib.frame(None,40,10,values)
         self.assertNotEqual(self.feed(image,60,15)[0],3,'缺失帧不能把不连续证据凑成三帧候选')
@@ -250,6 +278,59 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         result=self.feed(image,22000,3000)
         self.assertLessEqual(abs(result[6]),2)
         self.assertLessEqual(abs(result[7]),2,'当前实测的闭合走廊优先于历史图像路径')
+
+    def test_ring_exit_can_close_into_a_curve_without_a_full_straight_frame(self):
+        with zipfile.ZipFile(ROOT/'car/tests/fixtures/element-sequences.zip') as archive:
+            meta=json.loads(archive.read('metadata.json'));info=meta['segments']['ring_exit_complete']
+            data=bytearray(archive.read(info['file']))
+        self.lib.reset();values=(C.c_int*18)();entry=None
+        for i in range(info['frames']):
+            distance=info['distances_mm'][i] if 'distances_mm' in info else info['distance_start_mm']+i*info['step_mm']
+            pixels=(C.c_ubyte*(188*120)).from_buffer(data,i*188*120)
+            self.lib.frame(pixels,i*meta['frame_ms'],distance,values)
+            if values[0]==6:entry=(i*meta['frame_ms'],distance);break
+        self.assertIsNotNone(entry)
+        image=bytearray([20])*(188*120)
+        # 117..119也在相机中；不能在ROI末端人工添一条黑带。
+        for row in range(30,120):
+            width=44+(row-30)*123//86
+            center=93+int(18*(116-row)/86)
+            left=max(0,center-width//2);right=min(187,center+width//2)
+            image[row*188+left:row*188+right+1]=bytes([220])*(right-left+1)
+        for step in range(1,5):result=self.feed(image,entry[0]+step*20,entry[1]+180+step*5)
+        self.assertEqual(result[2],1)
+        self.assertLess(result[0],3,'出口已闭合且满足出环里程时不能要求整幅直道才能退出')
+        self.assertFalse(result[4]&1)
+
+    def test_element_limit_records_original_phase_and_context_after_recovery(self):
+        with zipfile.ZipFile(ROOT/'car/tests/fixtures/element-sequences.zip') as archive:
+            meta=json.loads(archive.read('metadata.json'));info=meta['segments']['cross_angled']
+            first=bytearray(archive.read(info['file'])[:188*120])
+        self.lib.reset()
+        for ms,mm in ((0,0),(20,5),(40,10)):result=self.feed(first,ms,mm)
+        self.assertEqual(result[0],2)
+        result=self.feed(first,60,1600)
+        self.assertTrue(result[4]&1);self.assertEqual(result[14],2)
+        self.assertEqual(result[15],1);self.assertGreater(result[16],1500)
+        original=result[14:18]
+        plain=bytearray([20])*(188*120)
+        for row in range(30,117):
+            width=44+(row-30)*123//86;left=93-width//2;right=93+width//2
+            plain[row*188+left:row*188+right+1]=bytes([220])*(right-left+1)
+        for ms in (80,100,120,140):result=self.feed(plain,ms,1610)
+        self.assertEqual(result[14:18],original,'后续退出或正常图像不能覆盖首次故障上下文')
+
+    def test_r50a45_frozen_two_direction_sequences_do_not_confirm_elements(self):
+        with zipfile.ZipFile(ROOT/'car/tests/fixtures/r50a45-sequences.zip') as archive:
+            meta=json.loads(archive.read('metadata.json'))
+            for name,info in meta['segments'].items():
+                with self.subTest(case=name):
+                    self.lib.reset();data=bytearray(archive.read(info['file']));values=(C.c_int*18)()
+                    for i,sample in enumerate(info['samples']):
+                        frame=(C.c_ubyte*(188*120)).from_buffer(data,i*188*120)
+                        self.lib.frame(frame,sample['time_ms'],sample['distance_mm'],values)
+                        self.assertLess(values[0],2,'普通八连弯不得确认十字或环岛')
+                        self.assertFalse(values[4]&1,'普通八连弯不得产生元素超时')
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

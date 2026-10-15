@@ -16,6 +16,20 @@ typedef enum {
     TRACK_ELEMENT_ROUNDABOUT_EXIT
 } track_element_t;
 
+#define TRACK_ELEMENT_HISTORY_SIZE 8U
+typedef struct {
+    uint32_t time_ms,distance_mm;
+    uint8_t from,to;
+} track_element_event_t;
+typedef struct {
+    uint32_t entry_ms,entry_mm,elapsed_ms,traveled_mm;
+    uint32_t fault_entry_ms,fault_entry_mm,fault_elapsed_ms,fault_traveled_mm;
+    uint8_t recovery_frames,exit_evidence,limit_reason,history_count;
+    /* exit_evidence:1近场已见开口、2近场闭合、4双边覆盖、8有效路径、16正常直道。
+     * limit_reason:1距离、2时间；故障上下文在reset前锁存。 */
+    track_element_event_t history[TRACK_ELEMENT_HISTORY_SIZE];
+} track_element_diagnostic_t;
+
 typedef enum {
     TRACK_SIDE_NONE = 0,
     TRACK_SIDE_LEFT,
@@ -36,9 +50,23 @@ typedef enum {
 typedef enum { TRACK_OUTER_REJECT_NONE=0, TRACK_OUTER_REJECT_NEAR,
     TRACK_OUTER_REJECT_FAR, TRACK_OUTER_REJECT_CONTINUITY } track_outer_reject_t;
 
+#define TRACK_PATH_MIN_TARGET_MM 320.0f
+#define TRACK_PATH_MAX_TARGET_MM 780.0f
+
+/* 同一帧的几何目标及其通行证据。右为正，单位毫米；不是像素误差。
+ * valid仅表示该目标经过路径检查，仍须服从总valid、Q及元素故障门控。 */
+typedef struct {
+    float target_right_mm,target_forward_mm,fit_rms_mm;
+    uint16_t contour_points,visible_samples,inferred_samples;
+    uint8_t valid,model_kind,reject_reason;
+} track_path_geometry_t;
+
 typedef struct {
     uint8_t valid;
     uint8_t confidence; /* 0..100，表示路径支持度，不是统计概率。 */
+    uint8_t observation_confidence; /* 第一遍实测边线覆盖评分，不含补线或记忆。 */
+    uint8_t preview_first_row,preview_last_row; /* 本帧可见的实际远预瞄窗口。 */
+    track_path_geometry_t geometry;
     uint8_t zebra;
     uint8_t zebra_near_row; /* 最靠近车辆的斑马线证据行；无证据时255。 */
     uint8_t zebra_rows;
@@ -63,6 +91,13 @@ typedef struct {
     uint8_t left_fork,right_fork;
     uint8_t opening_left_bottom,opening_right_bottom;
     uint8_t element_bridged; /* 当前帧使用已确认元素的限距白区通行证据。 */
+    /* 环岛入口拒绝位：1缺口、2对侧、4前向分支、8岛边、16来向、32路径。
+     * 记录当前原始证据，不授予控制通行许可。 */
+    uint8_t ring_left_reject,ring_right_reject;
+    uint8_t left_island,right_island;
+    uint8_t ring_entry_supported;
+    track_element_t fault_element; /* 元素超时首次发生的阶段，reset前保留。 */
+    track_element_diagnostic_t element_diagnostic;
 } track_vision_result_t;
 
 /* 在主循环启动/退出自动模式时调用；清除候选、元素、宽度历史和故障。

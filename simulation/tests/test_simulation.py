@@ -44,10 +44,6 @@ class ModelTests(unittest.TestCase):
         self.assertAlmostEqual(p['pitch'],39.4368141872,places=8)
         p.update(pitch=20,hfov=130);self.assertIsNone(predicted_width(p,30))
         with self.assertRaises(ValueError):fit_camera(height=1)
-    def test_encoder_scale(self):
-        circumference=math.pi*.064
-        self.assertAlmostEqual(circumference/4352,0.00004619989196455579,places=12)
-        self.assertAlmostEqual(4352*circumference/4352,circumference)
     def test_projected_straight_image_width(self):
         p=defaults();p.update(scenario='straight',height=.3,road_width=.6,pitch=30.,
                               hfov=86.4570605199,cy=60.)

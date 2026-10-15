@@ -7,7 +7,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRATCH = ROOT / "tmp/encoder-feedback-tests"
+SCRATCH = Path(os.environ.get("AUTOCAR_TEST_ROOT", ROOT / "tmp/encoder-feedback-tests")) / "encoder"
 COMPILER = find_compiler()
 CMSIS = """#ifndef ENCODER_TEST_CMSIS_H
 #define ENCODER_TEST_CMSIS_H

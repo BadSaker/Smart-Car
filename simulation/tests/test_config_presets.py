@@ -15,7 +15,7 @@ from tools.check_camera_alignment import argument_parser
 class ConfigPresetTests(unittest.TestCase):
     def test_all_active_presets_load(self):
         paths = list((ROOT / 'configs').glob('*.json'))
-        self.assertEqual(len(paths), 7)
+        self.assertEqual(len(paths), 11)
         for path in paths:
             with self.subTest(preset=path.name):
                 load(path)

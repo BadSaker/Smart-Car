@@ -1,0 +1,826 @@
+    autonomous_drive_tick
+        0x8000a408:    b580        ..      PUSH     {r7,lr}
+        0x8000a40a:    b09e        ..      SUB      sp,sp,#0x78
+        0x8000a40c:    901d        ..      STR      r0,[sp,#0x74]
+        0x8000a40e:    911c        ..      STR      r1,[sp,#0x70]
+        0x8000a410:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a412:    b118        ..      CBZ      r0,0x8000a41c ; autonomous_drive_tick + 20
+        0x8000a414:    e7ff        ..      B        0x8000a416 ; autonomous_drive_tick + 14
+        0x8000a416:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a418:    b910        ..      CBNZ     r0,0x8000a420 ; autonomous_drive_tick + 24
+        0x8000a41a:    e7ff        ..      B        0x8000a41c ; autonomous_drive_tick + 20
+        0x8000a41c:    f000bc3a    ..:.    B.W      0x8000ac94 ; 0x8000ac94
+        0x8000a420:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a422:    6840        @h      LDR      r0,[r0,#4]
+        0x8000a424:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a426:    f8d110b0    ....    LDR      r1,[r1,#0xb0]
+        0x8000a42a:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a42c:    bf18        ..      IT       NE
+        0x8000a42e:    2001        .       MOVNE    r0,#1
+        0x8000a430:    f88d006f    ..o.    STRB     r0,[sp,#0x6f]
+        0x8000a434:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a436:    68c0        .h      LDR      r0,[r0,#0xc]
+        0x8000a438:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a43a:    f8d110b4    ....    LDR      r1,[r1,#0xb4]
+        0x8000a43e:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a440:    bf18        ..      IT       NE
+        0x8000a442:    2001        .       MOVNE    r0,#1
+        0x8000a444:    f88d006e    ..n.    STRB     r0,[sp,#0x6e]
+        0x8000a448:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a44a:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a44c:    f00dfb24    ..$.    BL       update_path_status ; 0x80017a98
+        0x8000a450:    f89d006e    ..n.    LDRB     r0,[sp,#0x6e]
+        0x8000a454:    b158        X.      CBZ      r0,0x8000a46e ; autonomous_drive_tick + 102
+        0x8000a456:    e7ff        ..      B        0x8000a458 ; autonomous_drive_tick + 80
+        0x8000a458:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a45a:    68c0        .h      LDR      r0,[r0,#0xc]
+        0x8000a45c:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a45e:    f8c100b4    ....    STR      r0,[r1,#0xb4]
+        0x8000a462:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a464:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a466:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a468:    f8c100b8    ....    STR      r0,[r1,#0xb8]
+        0x8000a46c:    e7ff        ..      B        0x8000a46e ; autonomous_drive_tick + 102
+        0x8000a46e:    f89d006f    ..o.    LDRB     r0,[sp,#0x6f]
+        0x8000a472:    2800        .(      CMP      r0,#0
+        0x8000a474:    d049        I.      BEQ      0x8000a50a ; autonomous_drive_tick + 258
+        0x8000a476:    e7ff        ..      B        0x8000a478 ; autonomous_drive_tick + 112
+        0x8000a478:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a47a:    6840        @h      LDR      r0,[r0,#4]
+        0x8000a47c:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a47e:    f8c100b0    ....    STR      r0,[r1,#0xb0]
+        0x8000a482:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a484:    7f40        @.      LDRB     r0,[r0,#0x1d]
+        0x8000a486:    b338        8.      CBZ      r0,0x8000a4d8 ; autonomous_drive_tick + 208
+        0x8000a488:    e7ff        ..      B        0x8000a48a ; autonomous_drive_tick + 130
+        0x8000a48a:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a48c:    f004facc    ....    BL       geometry_input_valid ; 0x8000ea28
+        0x8000a490:    b310        ..      CBZ      r0,0x8000a4d8 ; autonomous_drive_tick + 208
+        0x8000a492:    e7ff        ..      B        0x8000a494 ; autonomous_drive_tick + 140
+        0x8000a494:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a496:    7f88        ..      LDRB     r0,[r1,#0x1e]
+        0x8000a498:    900a        ..      STR      r0,[sp,#0x28]
+        0x8000a49a:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a49c:    f005fff4    ....    BL       minimum_confidence ; 0x80010488
+        0x8000a4a0:    4601        .F      MOV      r1,r0
+        0x8000a4a2:    980a        ..      LDR      r0,[sp,#0x28]
+        0x8000a4a4:    4288        .B      CMP      r0,r1
+        0x8000a4a6:    db17        ..      BLT      0x8000a4d8 ; autonomous_drive_tick + 208
+        0x8000a4a8:    e7ff        ..      B        0x8000a4aa ; autonomous_drive_tick + 162
+        0x8000a4aa:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a4ac:    f8900020    .. .    LDRB     r0,[r0,#0x20]
+        0x8000a4b0:    b990        ..      CBNZ     r0,0x8000a4d8 ; autonomous_drive_tick + 208
+        0x8000a4b2:    e7ff        ..      B        0x8000a4b4 ; autonomous_drive_tick + 172
+        0x8000a4b4:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a4b6:    2000        .       MOVS     r0,#0
+        0x8000a4b8:    f88100f9    ....    STRB     r0,[r1,#0xf9]
+        0x8000a4bc:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a4be:    f89000f8    ....    LDRB     r0,[r0,#0xf8]
+        0x8000a4c2:    28fe        .(      CMP      r0,#0xfe
+        0x8000a4c4:    dc07        ..      BGT      0x8000a4d6 ; autonomous_drive_tick + 206
+        0x8000a4c6:    e7ff        ..      B        0x8000a4c8 ; autonomous_drive_tick + 192
+        0x8000a4c8:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a4ca:    f89100f8    ....    LDRB     r0,[r1,#0xf8]
+        0x8000a4ce:    3001        .0      ADDS     r0,#1
+        0x8000a4d0:    f88100f8    ....    STRB     r0,[r1,#0xf8]
+        0x8000a4d4:    e7ff        ..      B        0x8000a4d6 ; autonomous_drive_tick + 206
+        0x8000a4d6:    e017        ..      B        0x8000a508 ; autonomous_drive_tick + 256
+        0x8000a4d8:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a4da:    2000        .       MOVS     r0,#0
+        0x8000a4dc:    f88100f8    ....    STRB     r0,[r1,#0xf8]
+        0x8000a4e0:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a4e2:    f88100fc    ....    STRB     r0,[r1,#0xfc]
+        0x8000a4e6:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a4e8:    f88100fd    ....    STRB     r0,[r1,#0xfd]
+        0x8000a4ec:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a4ee:    f89000f9    ....    LDRB     r0,[r0,#0xf9]
+        0x8000a4f2:    28fe        .(      CMP      r0,#0xfe
+        0x8000a4f4:    dc07        ..      BGT      0x8000a506 ; autonomous_drive_tick + 254
+        0x8000a4f6:    e7ff        ..      B        0x8000a4f8 ; autonomous_drive_tick + 240
+        0x8000a4f8:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a4fa:    f89100f9    ....    LDRB     r0,[r1,#0xf9]
+        0x8000a4fe:    3001        .0      ADDS     r0,#1
+        0x8000a500:    f88100f9    ....    STRB     r0,[r1,#0xf9]
+        0x8000a504:    e7ff        ..      B        0x8000a506 ; autonomous_drive_tick + 254
+        0x8000a506:    e7ff        ..      B        0x8000a508 ; autonomous_drive_tick + 256
+        0x8000a508:    e7ff        ..      B        0x8000a50a ; autonomous_drive_tick + 258
+        0x8000a50a:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a50c:    7ec0        .~      LDRB     r0,[r0,#0x1b]
+        0x8000a50e:    b940        @.      CBNZ     r0,0x8000a522 ; autonomous_drive_tick + 282
+        0x8000a510:    e7ff        ..      B        0x8000a512 ; autonomous_drive_tick + 266
+        0x8000a512:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a514:    7880        .x      LDRB     r0,[r0,#2]
+        0x8000a516:    b178        x.      CBZ      r0,0x8000a538 ; autonomous_drive_tick + 304
+        0x8000a518:    e7ff        ..      B        0x8000a51a ; autonomous_drive_tick + 274
+        0x8000a51a:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a51c:    7f00        ..      LDRB     r0,[r0,#0x1c]
+        0x8000a51e:    b158        X.      CBZ      r0,0x8000a538 ; autonomous_drive_tick + 304
+        0x8000a520:    e7ff        ..      B        0x8000a522 ; autonomous_drive_tick + 282
+        0x8000a522:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a524:    2105        .!      MOVS     r1,#5
+        0x8000a526:    2200        ."      MOVS     r2,#0
+        0x8000a528:    f00bfc2a    ..*.    BL       stop_drive ; 0x80015d80
+        0x8000a52c:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a52e:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a530:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a532:    f8c100d4    ....    STR      r0,[r1,#0xd4]
+        0x8000a536:    e3ad        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a538:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a53a:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a53c:    f005fe68    ..h.    BL       key_pressed ; 0x80010210
+        0x8000a540:    f88d006d    ..m.    STRB     r0,[sp,#0x6d]
+        0x8000a544:    f89d006d    ..m.    LDRB     r0,[sp,#0x6d]
+        0x8000a548:    2800        .(      CMP      r0,#0
+        0x8000a54a:    d05b        [.      BEQ      0x8000a604 ; autonomous_drive_tick + 508
+        0x8000a54c:    e7ff        ..      B        0x8000a54e ; autonomous_drive_tick + 326
+        0x8000a54e:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a550:    7880        .x      LDRB     r0,[r0,#2]
+        0x8000a552:    b130        0.      CBZ      r0,0x8000a562 ; autonomous_drive_tick + 346
+        0x8000a554:    e7ff        ..      B        0x8000a556 ; autonomous_drive_tick + 334
+        0x8000a556:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a558:    2105        .!      MOVS     r1,#5
+        0x8000a55a:    2200        ."      MOVS     r2,#0
+        0x8000a55c:    f00bfc10    ....    BL       stop_drive ; 0x80015d80
+        0x8000a560:    e398        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a562:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a564:    f89000f4    ....    LDRB     r0,[r0,#0xf4]
+        0x8000a568:    b930        0.      CBNZ     r0,0x8000a578 ; autonomous_drive_tick + 368
+        0x8000a56a:    e7ff        ..      B        0x8000a56c ; autonomous_drive_tick + 356
+        0x8000a56c:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a56e:    2106        .!      MOVS     r1,#6
+        0x8000a570:    2201        ."      MOVS     r2,#1
+        0x8000a572:    f00bfc05    ....    BL       stop_drive ; 0x80015d80
+        0x8000a576:    e38d        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a578:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a57a:    7e00        .~      LDRB     r0,[r0,#0x18]
+        0x8000a57c:    b3b8        ..      CBZ      r0,0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a57e:    e7ff        ..      B        0x8000a580 ; autonomous_drive_tick + 376
+        0x8000a580:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a582:    7e40        @~      LDRB     r0,[r0,#0x19]
+        0x8000a584:    bb98        ..      CBNZ     r0,0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a586:    e7ff        ..      B        0x8000a588 ; autonomous_drive_tick + 384
+        0x8000a588:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a58a:    7f00        ..      LDRB     r0,[r0,#0x1c]
+        0x8000a58c:    bb78        x.      CBNZ     r0,0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a58e:    e7ff        ..      B        0x8000a590 ; autonomous_drive_tick + 392
+        0x8000a590:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a592:    f89000f8    ....    LDRB     r0,[r0,#0xf8]
+        0x8000a596:    2803        .(      CMP      r0,#3
+        0x8000a598:    d329        ).      BCC      0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a59a:    e7ff        ..      B        0x8000a59c ; autonomous_drive_tick + 404
+        0x8000a59c:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a59e:    7f40        @.      LDRB     r0,[r0,#0x1d]
+        0x8000a5a0:    b328        (.      CBZ      r0,0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a5a2:    e7ff        ..      B        0x8000a5a4 ; autonomous_drive_tick + 412
+        0x8000a5a4:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a5a6:    f004fa3f    ..?.    BL       geometry_input_valid ; 0x8000ea28
+        0x8000a5aa:    b300        ..      CBZ      r0,0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a5ac:    e7ff        ..      B        0x8000a5ae ; autonomous_drive_tick + 422
+        0x8000a5ae:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a5b0:    7f88        ..      LDRB     r0,[r1,#0x1e]
+        0x8000a5b2:    9009        ..      STR      r0,[sp,#0x24]
+        0x8000a5b4:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a5b6:    f005ff67    ..g.    BL       minimum_confidence ; 0x80010488
+        0x8000a5ba:    4601        .F      MOV      r1,r0
+        0x8000a5bc:    9809        ..      LDR      r0,[sp,#0x24]
+        0x8000a5be:    4288        .B      CMP      r0,r1
+        0x8000a5c0:    db15        ..      BLT      0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a5c2:    e7ff        ..      B        0x8000a5c4 ; autonomous_drive_tick + 444
+        0x8000a5c4:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a5c6:    f8900020    .. .    LDRB     r0,[r0,#0x20]
+        0x8000a5ca:    b980        ..      CBNZ     r0,0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a5cc:    e7ff        ..      B        0x8000a5ce ; autonomous_drive_tick + 454
+        0x8000a5ce:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a5d0:    6808        .h      LDR      r0,[r1,#0]
+        0x8000a5d2:    6889        .h      LDR      r1,[r1,#8]
+        0x8000a5d4:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a5d6:    2896        .(      CMP      r0,#0x96
+        0x8000a5d8:    d809        ..      BHI      0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a5da:    e7ff        ..      B        0x8000a5dc ; autonomous_drive_tick + 468
+        0x8000a5dc:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a5de:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a5e0:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a5e2:    f8d110b8    ....    LDR      r1,[r1,#0xb8]
+        0x8000a5e6:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a5e8:    281f        .(      CMP      r0,#0x1f
+        0x8000a5ea:    d306        ..      BCC      0x8000a5fa ; autonomous_drive_tick + 498
+        0x8000a5ec:    e7ff        ..      B        0x8000a5ee ; autonomous_drive_tick + 486
+        0x8000a5ee:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a5f0:    2106        .!      MOVS     r1,#6
+        0x8000a5f2:    220c        ."      MOVS     r2,#0xc
+        0x8000a5f4:    f00bfbc4    ....    BL       stop_drive ; 0x80015d80
+        0x8000a5f8:    e34c        L.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a5fa:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a5fc:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a5fe:    f000fb67    ..g.    BL       begin_drive ; 0x8000acd0
+        0x8000a602:    e7ff        ..      B        0x8000a604 ; autonomous_drive_tick + 508
+        0x8000a604:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a606:    7880        .x      LDRB     r0,[r0,#2]
+        0x8000a608:    b908        ..      CBNZ     r0,0x8000a60e ; autonomous_drive_tick + 518
+        0x8000a60a:    e7ff        ..      B        0x8000a60c ; autonomous_drive_tick + 516
+        0x8000a60c:    e342        B.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a60e:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a610:    6c80        .l      LDR      r0,[r0,#0x48]
+        0x8000a612:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a614:    6208        .b      STR      r0,[r1,#0x20]
+        0x8000a616:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a618:    6cc0        .l      LDR      r0,[r0,#0x4c]
+        0x8000a61a:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a61c:    6248        Hb      STR      r0,[r1,#0x24]
+        0x8000a61e:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a620:    6808        .h      LDR      r0,[r1,#0]
+        0x8000a622:    6889        .h      LDR      r1,[r1,#8]
+        0x8000a624:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a626:    2897        .(      CMP      r0,#0x97
+        0x8000a628:    d306        ..      BCC      0x8000a638 ; autonomous_drive_tick + 560
+        0x8000a62a:    e7ff        ..      B        0x8000a62c ; autonomous_drive_tick + 548
+        0x8000a62c:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a62e:    2106        .!      MOVS     r1,#6
+        0x8000a630:    2202        ."      MOVS     r2,#2
+        0x8000a632:    f00bfba5    ....    BL       stop_drive ; 0x80015d80
+        0x8000a636:    e32d        -.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a638:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a63a:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a63c:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a63e:    f8d110b8    ....    LDR      r1,[r1,#0xb8]
+        0x8000a642:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a644:    281f        .(      CMP      r0,#0x1f
+        0x8000a646:    d306        ..      BCC      0x8000a656 ; autonomous_drive_tick + 590
+        0x8000a648:    e7ff        ..      B        0x8000a64a ; autonomous_drive_tick + 578
+        0x8000a64a:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a64c:    2106        .!      MOVS     r1,#6
+        0x8000a64e:    2204        ."      MOVS     r2,#4
+        0x8000a650:    f00bfb96    ....    BL       stop_drive ; 0x80015d80
+        0x8000a654:    e31e        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a656:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a658:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a65a:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a65c:    f8d110bc    ....    LDR      r1,[r1,#0xbc]
+        0x8000a660:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a662:    2865        e(      CMP      r0,#0x65
+        0x8000a664:    d314        ..      BCC      0x8000a690 ; autonomous_drive_tick + 648
+        0x8000a666:    e7ff        ..      B        0x8000a668 ; autonomous_drive_tick + 608
+        0x8000a668:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a66a:    6900        .i      LDR      r0,[r0,#0x10]
+        0x8000a66c:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a66e:    6909        .i      LDR      r1,[r1,#0x10]
+        0x8000a670:    4288        .B      CMP      r0,r1
+        0x8000a672:    d107        ..      BNE      0x8000a684 ; autonomous_drive_tick + 636
+        0x8000a674:    e7ff        ..      B        0x8000a676 ; autonomous_drive_tick + 622
+        0x8000a676:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a678:    6808        .h      LDR      r0,[r1,#0]
+        0x8000a67a:    6949        Ii      LDR      r1,[r1,#0x14]
+        0x8000a67c:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a67e:    2865        e(      CMP      r0,#0x65
+        0x8000a680:    d306        ..      BCC      0x8000a690 ; autonomous_drive_tick + 648
+        0x8000a682:    e7ff        ..      B        0x8000a684 ; autonomous_drive_tick + 636
+        0x8000a684:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a686:    2106        .!      MOVS     r1,#6
+        0x8000a688:    2208        ."      MOVS     r2,#8
+        0x8000a68a:    f00bfb79    ..y.    BL       stop_drive ; 0x80015d80
+        0x8000a68e:    e301        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a690:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a692:    f8900020    .. .    LDRB     r0,[r0,#0x20]
+        0x8000a696:    b130        0.      CBZ      r0,0x8000a6a6 ; autonomous_drive_tick + 670
+        0x8000a698:    e7ff        ..      B        0x8000a69a ; autonomous_drive_tick + 658
+        0x8000a69a:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a69c:    2106        .!      MOVS     r1,#6
+        0x8000a69e:    2209        ."      MOVS     r2,#9
+        0x8000a6a0:    f00bfb6e    ..n.    BL       stop_drive ; 0x80015d80
+        0x8000a6a4:    e2f6        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a6a6:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a6a8:    f89000f9    ....    LDRB     r0,[r0,#0xf9]
+        0x8000a6ac:    2803        .(      CMP      r0,#3
+        0x8000a6ae:    d306        ..      BCC      0x8000a6be ; autonomous_drive_tick + 694
+        0x8000a6b0:    e7ff        ..      B        0x8000a6b2 ; autonomous_drive_tick + 682
+        0x8000a6b2:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a6b4:    2106        .!      MOVS     r1,#6
+        0x8000a6b6:    2203        ."      MOVS     r2,#3
+        0x8000a6b8:    f00bfb62    ..b.    BL       stop_drive ; 0x80015d80
+        0x8000a6bc:    e2ea        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a6be:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a6c0:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a6c2:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a6c4:    f8d110bc    ....    LDR      r1,[r1,#0xbc]
+        0x8000a6c8:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a6ca:    f2453101    E..1    MOV      r1,#0x5301
+        0x8000a6ce:    f2c00107    ....    MOVT     r1,#7
+        0x8000a6d2:    4288        .B      CMP      r0,r1
+        0x8000a6d4:    d306        ..      BCC      0x8000a6e4 ; autonomous_drive_tick + 732
+        0x8000a6d6:    e7ff        ..      B        0x8000a6d8 ; autonomous_drive_tick + 720
+        0x8000a6d8:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a6da:    2106        .!      MOVS     r1,#6
+        0x8000a6dc:    220a        ."      MOVS     r2,#0xa
+        0x8000a6de:    f00bfb4f    ..O.    BL       stop_drive ; 0x80015d80
+        0x8000a6e2:    e2d7        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a6e4:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a6e6:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a6e8:    f003fb42    ..B.    BL       feedback_guard ; 0x8000dd70
+        0x8000a6ec:    b908        ..      CBNZ     r0,0x8000a6f2 ; autonomous_drive_tick + 746
+        0x8000a6ee:    e7ff        ..      B        0x8000a6f0 ; autonomous_drive_tick + 744
+        0x8000a6f0:    e2d0        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000a6f2:    f89d006e    ..n.    LDRB     r0,[sp,#0x6e]
+        0x8000a6f6:    b320         .      CBZ      r0,0x8000a742 ; autonomous_drive_tick + 826
+        0x8000a6f8:    e7ff        ..      B        0x8000a6fa ; autonomous_drive_tick + 754
+        0x8000a6fa:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a6fc:    6d00        .m      LDR      r0,[r0,#0x50]
+        0x8000a6fe:    2801        .(      CMP      r0,#1
+        0x8000a700:    db1f        ..      BLT      0x8000a742 ; autonomous_drive_tick + 826
+        0x8000a702:    e7ff        ..      B        0x8000a704 ; autonomous_drive_tick + 764
+        0x8000a704:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a706:    f8d000d0    ....    LDR      r0,[r0,#0xd0]
+        0x8000a70a:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a70c:    6d09        .m      LDR      r1,[r1,#0x50]
+        0x8000a70e:    4408        .D      ADD      r0,r0,r1
+        0x8000a710:    9012        ..      STR      r0,[sp,#0x48]
+        0x8000a712:    9912        ..      LDR      r1,[sp,#0x48]
+        0x8000a714:    f64450d3    D..P    MOV      r0,#0x4dd3
+        0x8000a718:    f2c10062    ..b.    MOVT     r0,#0x1062
+        0x8000a71c:    fba11300    ....    UMULL    r1,r3,r1,r0
+        0x8000a720:    9a1d        ..      LDR      r2,[sp,#0x74]
+        0x8000a722:    6951        Qi      LDR      r1,[r2,#0x14]
+        0x8000a724:    eb011193    ....    ADD      r1,r1,r3,LSR #6
+        0x8000a728:    6151        Qa      STR      r1,[r2,#0x14]
+        0x8000a72a:    9a12        ..      LDR      r2,[sp,#0x48]
+        0x8000a72c:    fba21000    ....    UMULL    r1,r0,r2,r0
+        0x8000a730:    0980        ..      LSRS     r0,r0,#6
+        0x8000a732:    f44f717a    O.zq    MOV      r1,#0x3e8
+        0x8000a736:    fb002011    ...     MLS      r0,r0,r1,r2
+        0x8000a73a:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a73c:    f8c100d0    ....    STR      r0,[r1,#0xd0]
+        0x8000a740:    e7ff        ..      B        0x8000a742 ; autonomous_drive_tick + 826
+        0x8000a742:    f89d006f    ..o.    LDRB     r0,[sp,#0x6f]
+        0x8000a746:    b1c8        ..      CBZ      r0,0x8000a77c ; autonomous_drive_tick + 884
+        0x8000a748:    e7ff        ..      B        0x8000a74a ; autonomous_drive_tick + 834
+        0x8000a74a:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a74c:    7f40        @.      LDRB     r0,[r0,#0x1d]
+        0x8000a74e:    b1a8        ..      CBZ      r0,0x8000a77c ; autonomous_drive_tick + 884
+        0x8000a750:    e7ff        ..      B        0x8000a752 ; autonomous_drive_tick + 842
+        0x8000a752:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a754:    f004f968    ..h.    BL       geometry_input_valid ; 0x8000ea28
+        0x8000a758:    b180        ..      CBZ      r0,0x8000a77c ; autonomous_drive_tick + 884
+        0x8000a75a:    e7ff        ..      B        0x8000a75c ; autonomous_drive_tick + 852
+        0x8000a75c:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a75e:    7f88        ..      LDRB     r0,[r1,#0x1e]
+        0x8000a760:    9008        ..      STR      r0,[sp,#0x20]
+        0x8000a762:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a764:    f005fe90    ....    BL       minimum_confidence ; 0x80010488
+        0x8000a768:    4601        .F      MOV      r1,r0
+        0x8000a76a:    9808        ..      LDR      r0,[sp,#0x20]
+        0x8000a76c:    4288        .B      CMP      r0,r1
+        0x8000a76e:    db05        ..      BLT      0x8000a77c ; autonomous_drive_tick + 884
+        0x8000a770:    e7ff        ..      B        0x8000a772 ; autonomous_drive_tick + 874
+        0x8000a772:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a774:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a776:    f00df8e7    ....    BL       update_marker ; 0x80017948
+        0x8000a77a:    e7ff        ..      B        0x8000a77c ; autonomous_drive_tick + 884
+        0x8000a77c:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a77e:    7800        .x      LDRB     r0,[r0,#0]
+        0x8000a780:    2803        .(      CMP      r0,#3
+        0x8000a782:    d121        !.      BNE      0x8000a7c8 ; autonomous_drive_tick + 960
+        0x8000a784:    e7ff        ..      B        0x8000a786 ; autonomous_drive_tick + 894
+        0x8000a786:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a788:    6948        Hi      LDR      r0,[r1,#0x14]
+        0x8000a78a:    f8d110cc    ....    LDR      r1,[r1,#0xcc]
+        0x8000a78e:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a790:    f5b07ffa    ....    CMP      r0,#0x1f4
+        0x8000a794:    d306        ..      BCC      0x8000a7a4 ; autonomous_drive_tick + 924
+        0x8000a796:    e7ff        ..      B        0x8000a798 ; autonomous_drive_tick + 912
+        0x8000a798:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a79a:    2104        .!      MOVS     r1,#4
+        0x8000a79c:    2200        ."      MOVS     r2,#0
+        0x8000a79e:    f00bfaef    ....    BL       stop_drive ; 0x80015d80
+        0x8000a7a2:    e277        w.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a7a4:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a7a6:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a7a8:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a7aa:    f8d110c8    ....    LDR      r1,[r1,#0xc8]
+        0x8000a7ae:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a7b0:    f2427111    B..q    MOV      r1,#0x2711
+        0x8000a7b4:    4288        .B      CMP      r0,r1
+        0x8000a7b6:    d306        ..      BCC      0x8000a7c6 ; autonomous_drive_tick + 958
+        0x8000a7b8:    e7ff        ..      B        0x8000a7ba ; autonomous_drive_tick + 946
+        0x8000a7ba:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a7bc:    2106        .!      MOVS     r1,#6
+        0x8000a7be:    220b        ."      MOVS     r2,#0xb
+        0x8000a7c0:    f00bfade    ....    BL       stop_drive ; 0x80015d80
+        0x8000a7c4:    e266        f.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a7c6:    e7ff        ..      B        0x8000a7c8 ; autonomous_drive_tick + 960
+        0x8000a7c8:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a7ca:    7800        .x      LDRB     r0,[r0,#0]
+        0x8000a7cc:    2801        .(      CMP      r0,#1
+        0x8000a7ce:    d11d        ..      BNE      0x8000a80c ; autonomous_drive_tick + 1028
+        0x8000a7d0:    e7ff        ..      B        0x8000a7d2 ; autonomous_drive_tick + 970
+        0x8000a7d2:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a7d4:    6800        .h      LDR      r0,[r0,#0]
+        0x8000a7d6:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a7d8:    f8d110bc    ....    LDR      r1,[r1,#0xbc]
+        0x8000a7dc:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a7de:    f5b07ffa    ....    CMP      r0,#0x1f4
+        0x8000a7e2:    d307        ..      BCC      0x8000a7f4 ; autonomous_drive_tick + 1004
+        0x8000a7e4:    e7ff        ..      B        0x8000a7e6 ; autonomous_drive_tick + 990
+        0x8000a7e6:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a7e8:    6900        .i      LDR      r0,[r0,#0x10]
+        0x8000a7ea:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a7ec:    6909        .i      LDR      r1,[r1,#0x10]
+        0x8000a7ee:    4288        .B      CMP      r0,r1
+        0x8000a7f0:    d004        ..      BEQ      0x8000a7fc ; autonomous_drive_tick + 1012
+        0x8000a7f2:    e7ff        ..      B        0x8000a7f4 ; autonomous_drive_tick + 1004
+        0x8000a7f4:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a7f6:    f014fb57    ..W.    BL       zero_output ; 0x8001eea8
+        0x8000a7fa:    e24b        K.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a7fc:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a7fe:    2002        .       MOVS     r0,#2
+        0x8000a800:    7008        .p      STRB     r0,[r1,#0]
+        0x8000a802:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a804:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a806:    f00df947    ..G.    BL       update_path_status ; 0x80017a98
+        0x8000a80a:    e7ff        ..      B        0x8000a80c ; autonomous_drive_tick + 1028
+        0x8000a80c:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a80e:    7f40        @.      LDRB     r0,[r0,#0x1d]
+        0x8000a810:    b180        ..      CBZ      r0,0x8000a834 ; autonomous_drive_tick + 1068
+        0x8000a812:    e7ff        ..      B        0x8000a814 ; autonomous_drive_tick + 1036
+        0x8000a814:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a816:    f004f907    ....    BL       geometry_input_valid ; 0x8000ea28
+        0x8000a81a:    b158        X.      CBZ      r0,0x8000a834 ; autonomous_drive_tick + 1068
+        0x8000a81c:    e7ff        ..      B        0x8000a81e ; autonomous_drive_tick + 1046
+        0x8000a81e:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a820:    7f88        ..      LDRB     r0,[r1,#0x1e]
+        0x8000a822:    9007        ..      STR      r0,[sp,#0x1c]
+        0x8000a824:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a826:    f005fe2f    ../.    BL       minimum_confidence ; 0x80010488
+        0x8000a82a:    4601        .F      MOV      r1,r0
+        0x8000a82c:    9807        ..      LDR      r0,[sp,#0x1c]
+        0x8000a82e:    4288        .B      CMP      r0,r1
+        0x8000a830:    da04        ..      BGE      0x8000a83c ; autonomous_drive_tick + 1076
+        0x8000a832:    e7ff        ..      B        0x8000a834 ; autonomous_drive_tick + 1068
+        0x8000a834:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a836:    f014fb37    ..7.    BL       zero_output ; 0x8001eea8
+        0x8000a83a:    e22b        +.      B        0x8000ac94 ; 0x8000ac94
+        0x8000a83c:    f89d006f    ..o.    LDRB     r0,[sp,#0x6f]
+        0x8000a840:    2800        .(      CMP      r0,#0
+        0x8000a842:    f0008117    ....    BEQ.W    0x8000aa74 ; autonomous_drive_tick + 1644
+        0x8000a846:    e7ff        ..      B        0x8000a848 ; autonomous_drive_tick + 1088
+        0x8000a848:    f2466066    F.f`    MOV      r0,#0x6666
+        0x8000a84c:    f6c360e6    ...`    MOVT     r0,#0x3ee6
+        0x8000a850:    9011        ..      STR      r0,[sp,#0x44]
+        0x8000a852:    f64c40cd    L..@    MOV      r0,#0xcccd
+        0x8000a856:    f6c3700c    ...p    MOVT     r0,#0x3f0c
+        0x8000a85a:    9010        ..      STR      r0,[sp,#0x40]
+        0x8000a85c:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a85e:    f9b0002c    ..,.    LDRSH    r0,[r0,#0x2c]
+        0x8000a862:    f7f5fe2f    ../.    BL       abs ; 0x800004c4
+        0x8000a866:    900f        ..      STR      r0,[sp,#0x3c]
+        0x8000a868:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000a86a:    f9b1002c    ..,.    LDRSH    r0,[r1,#0x2c]
+        0x8000a86e:    f9b1102e    ....    LDRSH    r1,[r1,#0x2e]
+        0x8000a872:    4348        HC      MULS     r0,r1,r0
+        0x8000a874:    f1b03fff    ...?    CMP      r0,#0xffffffff
+        0x8000a878:    dc35        5.      BGT      0x8000a8e6 ; autonomous_drive_tick + 1246
+        0x8000a87a:    e7ff        ..      B        0x8000a87c ; autonomous_drive_tick + 1140
+        0x8000a87c:    980f        ..      LDR      r0,[sp,#0x3c]
+        0x8000a87e:    280d        .(      CMP      r0,#0xd
+        0x8000a880:    db31        1.      BLT      0x8000a8e6 ; autonomous_drive_tick + 1246
+        0x8000a882:    e7ff        ..      B        0x8000a884 ; autonomous_drive_tick + 1148
+        0x8000a884:    980f        ..      LDR      r0,[sp,#0x3c]
+        0x8000a886:    380c        .8      SUBS     r0,r0,#0xc
+        0x8000a888:    ee000a10    ....    VMOV     s0,r0
+        0x8000a88c:    eeb80ac0    ....    VCVT.F32.S32 s0,s0
+        0x8000a890:    eeb31a04    ....    VMOV.F32 s2,#20.00000000
+        0x8000a894:    ee800a01    ....    VDIV.F32 s0,s0,s2
+        0x8000a898:    ed8d0a0e    ....    VSTR     s0,[sp,#0x38]
+        0x8000a89c:    ed9d0a0e    ....    VLDR     s0,[sp,#0x38]
+        0x8000a8a0:    eeb71a00    ....    VMOV.F32 s2,#1.00000000
+        0x8000a8a4:    eeb40a41    ..A.    VCMP.F32 s0,s2
+        0x8000a8a8:    eef1fa10    ....    VMRS     APSR_nzcv,FPSCR
+        0x8000a8ac:    dd04        ..      BLE      0x8000a8b8 ; autonomous_drive_tick + 1200
+        0x8000a8ae:    e7ff        ..      B        0x8000a8b0 ; autonomous_drive_tick + 1192
+        0x8000a8b0:    f04f507e    O.~P    MOV      r0,#0x3f800000
+        0x8000a8b4:    900e        ..      STR      r0,[sp,#0x38]
+        0x8000a8b6:    e7ff        ..      B        0x8000a8b8 ; autonomous_drive_tick + 1200
+        0x8000a8b8:    ed9d1a10    ....    VLDR     s2,[sp,#0x40]
+        0x8000a8bc:    ed9d2a0e    ...*    VLDR     s4,[sp,#0x38]
+        0x8000a8c0:    ed9d0a11    ....    VLDR     s0,[sp,#0x44]
+        0x8000a8c4:    eea10a02    ....    VFMA.F32 s0,s2,s4
+        0x8000a8c8:    ed8d0a11    ....    VSTR     s0,[sp,#0x44]
+        0x8000a8cc:    ed9d1a0e    ....    VLDR     s2,[sp,#0x38]
+        0x8000a8d0:    eeb70a00    ....    VMOV.F32 s0,#1.00000000
+        0x8000a8d4:    ee301a41    0.A.    VSUB.F32 s2,s0,s2
+        0x8000a8d8:    ed9d0a10    ....    VLDR     s0,[sp,#0x40]
+        0x8000a8dc:    ee200a01     ...    VMUL.F32 s0,s0,s2
+        0x8000a8e0:    ed8d0a10    ....    VSTR     s0,[sp,#0x40]
+        0x8000a8e4:    e7ff        ..      B        0x8000a8e6 ; autonomous_drive_tick + 1246
+        0x8000a8e6:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a8e8:    f8900042    ..B.    LDRB     r0,[r0,#0x42]
+        0x8000a8ec:    2800        .(      CMP      r0,#0
+        0x8000a8ee:    d04d        M.      BEQ      0x8000a98c ; autonomous_drive_tick + 1412
+        0x8000a8f0:    e7ff        ..      B        0x8000a8f2 ; autonomous_drive_tick + 1258
+        0x8000a8f2:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a8f4:    6b00        .k      LDR      r0,[r0,#0x30]
+        0x8000a8f6:    900d        ..      STR      r0,[sp,#0x34]
+        0x8000a8f8:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a8fa:    6b40        @k      LDR      r0,[r0,#0x34]
+        0x8000a8fc:    900c        ..      STR      r0,[sp,#0x30]
+        0x8000a8fe:    ed9d2a0d    ...*    VLDR     s4,[sp,#0x34]
+        0x8000a902:    ed9f0adf    ....    VLDR     s0,[pc,#892] ; [0x8000ac80] = 0x43be0000
+        0x8000a906:    ee220a00    "...    VMUL.F32 s0,s4,s0
+        0x8000a90a:    ed9d1a0c    ....    VLDR     s2,[sp,#0x30]
+        0x8000a90e:    ee211a01    !...    VMUL.F32 s2,s2,s2
+        0x8000a912:    eea21a02    ....    VFMA.F32 s2,s4,s4
+        0x8000a916:    ee800a01    ....    VDIV.F32 s0,s0,s2
+        0x8000a91a:    f014fd2d    ..-.    BL       __hardfp_atanf ; 0x8001f378
+        0x8000a91e:    ed9f1adf    ....    VLDR     s2,[pc,#892] ; [0x8000ac9c] = 0x447a0000
+        0x8000a922:    ee200a01     ...    VMUL.F32 s0,s0,s2
+        0x8000a926:    ed9f2ae0    ...*    VLDR     s4,[pc,#896] ; [0x8000aca8] = 0xbefa35dd
+        0x8000a92a:    ee800a02    ....    VDIV.F32 s0,s0,s4
+        0x8000a92e:    ed8d0a0b    ....    VSTR     s0,[sp,#0x2c]
+        0x8000a932:    ed9d0a0b    ....    VLDR     s0,[sp,#0x2c]
+        0x8000a936:    eeb40a41    ..A.    VCMP.F32 s0,s2
+        0x8000a93a:    eef1fa10    ....    VMRS     APSR_nzcv,FPSCR
+        0x8000a93e:    dd05        ..      BLE      0x8000a94c ; autonomous_drive_tick + 1348
+        0x8000a940:    e7ff        ..      B        0x8000a942 ; autonomous_drive_tick + 1338
+        0x8000a942:    2000        .       MOVS     r0,#0
+        0x8000a944:    f2c4407a    ..z@    MOVT     r0,#0x447a
+        0x8000a948:    900b        ..      STR      r0,[sp,#0x2c]
+        0x8000a94a:    e7ff        ..      B        0x8000a94c ; autonomous_drive_tick + 1348
+        0x8000a94c:    ed9d0a0b    ....    VLDR     s0,[sp,#0x2c]
+        0x8000a950:    ed9f1ad6    ....    VLDR     s2,[pc,#856] ; [0x8000acac] = 0xc47a0000
+        0x8000a954:    eeb40a41    ..A.    VCMP.F32 s0,s2
+        0x8000a958:    eef1fa10    ....    VMRS     APSR_nzcv,FPSCR
+        0x8000a95c:    da05        ..      BGE      0x8000a96a ; autonomous_drive_tick + 1378
+        0x8000a95e:    e7ff        ..      B        0x8000a960 ; autonomous_drive_tick + 1368
+        0x8000a960:    2000        .       MOVS     r0,#0
+        0x8000a962:    f2cc407a    ..z@    MOVT     r0,#0xc47a
+        0x8000a966:    900b        ..      STR      r0,[sp,#0x2c]
+        0x8000a968:    e7ff        ..      B        0x8000a96a ; autonomous_drive_tick + 1378
+        0x8000a96a:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a96c:    3084        .0      ADDS     r0,r0,#0x84
+        0x8000a96e:    f001fa5f    .._.    BL       control_pid_reset ; 0x8000be30
+        0x8000a972:    ed9d0a0b    ....    VLDR     s0,[sp,#0x2c]
+        0x8000a976:    eebd0ac0    ....    VCVT.S32.F32 s0,s0
+        0x8000a97a:    ee100a10    ....    VMOV     r0,s0
+        0x8000a97e:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a980:    8388        ..      STRH     r0,[r1,#0x1c]
+        0x8000a982:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a984:    2001        .       MOVS     r0,#1
+        0x8000a986:    f88100ff    ....    STRB     r0,[r1,#0xff]
+        0x8000a98a:    e069        i.      B        0x8000aa60 ; autonomous_drive_tick + 1624
+        0x8000a98c:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a98e:    f89000ff    ....    LDRB     r0,[r0,#0xff]
+        0x8000a992:    b160        `.      CBZ      r0,0x8000a9ae ; autonomous_drive_tick + 1446
+        0x8000a994:    e7ff        ..      B        0x8000a996 ; autonomous_drive_tick + 1422
+        0x8000a996:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a998:    3084        .0      ADDS     r0,r0,#0x84
+        0x8000a99a:    f001fa49    ..I.    BL       control_pid_reset ; 0x8000be30
+        0x8000a99e:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a9a0:    2000        .       MOVS     r0,#0
+        0x8000a9a2:    f88100fe    ....    STRB     r0,[r1,#0xfe]
+        0x8000a9a6:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a9a8:    f88100ff    ....    STRB     r0,[r1,#0xff]
+        0x8000a9ac:    e7ff        ..      B        0x8000a9ae ; autonomous_drive_tick + 1446
+        0x8000a9ae:    ed9d1a11    ....    VLDR     s2,[sp,#0x44]
+        0x8000a9b2:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a9b4:    f9b0102c    ..,.    LDRSH    r1,[r0,#0x2c]
+        0x8000a9b8:    f9b0002e    ....    LDRSH    r0,[r0,#0x2e]
+        0x8000a9bc:    ee001a10    ....    VMOV     s0,r1
+        0x8000a9c0:    eeb82ac0    ...*    VCVT.F32.S32 s4,s0
+        0x8000a9c4:    ed9d0a10    ....    VLDR     s0,[sp,#0x40]
+        0x8000a9c8:    ee030a10    ....    VMOV     s6,r0
+        0x8000a9cc:    eeb83ac3    ...:    VCVT.F32.S32 s6,s6
+        0x8000a9d0:    ee200a03     ...    VMUL.F32 s0,s0,s6
+        0x8000a9d4:    eea10a02    ....    VFMA.F32 s0,s2,s4
+        0x8000a9d8:    ed8d0a19    ....    VSTR     s0,[sp,#0x64]
+        0x8000a9dc:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000a9de:    f89000fe    ....    LDRB     r0,[r0,#0xfe]
+        0x8000a9e2:    b188        ..      CBZ      r0,0x8000aa08 ; autonomous_drive_tick + 1536
+        0x8000a9e4:    e7ff        ..      B        0x8000a9e6 ; autonomous_drive_tick + 1502
+        0x8000a9e6:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000a9e8:    6880        .h      LDR      r0,[r0,#8]
+        0x8000a9ea:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000a9ec:    f8d110e8    ....    LDR      r1,[r1,#0xe8]
+        0x8000a9f0:    1a40        @.      SUBS     r0,r0,r1
+        0x8000a9f2:    ee000a10    ....    VMOV     s0,r0
+        0x8000a9f6:    eeb80a40    ..@.    VCVT.F32.U32 s0,s0
+        0x8000a9fa:    ed9f1aa8    ....    VLDR     s2,[pc,#672] ; [0x8000ac9c] = 0x447a0000
+        0x8000a9fe:    ee800a01    ....    VDIV.F32 s0,s0,s2
+        0x8000aa02:    ed8d0a06    ....    VSTR     s0,[sp,#0x18]
+        0x8000aa06:    e004        ..      B        0x8000aa12 ; autonomous_drive_tick + 1546
+        0x8000aa08:    ed9f0aa3    ....    VLDR     s0,[pc,#652] ; [0x8000ac98] = 0x3ca3d70a
+        0x8000aa0c:    ed8d0a06    ....    VSTR     s0,[sp,#0x18]
+        0x8000aa10:    e7ff        ..      B        0x8000aa12 ; autonomous_drive_tick + 1546
+        0x8000aa12:    ed9d0a06    ....    VLDR     s0,[sp,#0x18]
+        0x8000aa16:    ed8d0a18    ....    VSTR     s0,[sp,#0x60]
+        0x8000aa1a:    ed9d0a18    ....    VLDR     s0,[sp,#0x60]
+        0x8000aa1e:    ed9f1aa0    ....    VLDR     s2,[pc,#640] ; [0x8000aca0] = 0x3a83126f
+        0x8000aa22:    eeb40a41    ..A.    VCMP.F32 s0,s2
+        0x8000aa26:    eef1fa10    ....    VMRS     APSR_nzcv,FPSCR
+        0x8000aa2a:    da06        ..      BGE      0x8000aa3a ; autonomous_drive_tick + 1586
+        0x8000aa2c:    e7ff        ..      B        0x8000aa2e ; autonomous_drive_tick + 1574
+        0x8000aa2e:    f241206f    A.o     MOV      r0,#0x126f
+        0x8000aa32:    f6c32083    ...     MOVT     r0,#0x3a83
+        0x8000aa36:    9018        ..      STR      r0,[sp,#0x60]
+        0x8000aa38:    e7ff        ..      B        0x8000aa3a ; autonomous_drive_tick + 1586
+        0x8000aa3a:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000aa3c:    3084        .0      ADDS     r0,r0,#0x84
+        0x8000aa3e:    eddd0a19    ....    VLDR     s1,[sp,#0x64]
+        0x8000aa42:    eddd1a18    ....    VLDR     s3,[sp,#0x60]
+        0x8000aa46:    ed9f1a97    ....    VLDR     s2,[pc,#604] ; [0x8000aca4] = 0
+        0x8000aa4a:    eeb00a41    ..A.    VMOV.F32 s0,s2
+        0x8000aa4e:    f001fa13    ....    BL       control_pid_step ; 0x8000be78
+        0x8000aa52:    eebd0ac0    ....    VCVT.S32.F32 s0,s0
+        0x8000aa56:    ee100a10    ....    VMOV     r0,s0
+        0x8000aa5a:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000aa5c:    8388        ..      STRH     r0,[r1,#0x1c]
+        0x8000aa5e:    e7ff        ..      B        0x8000aa60 ; autonomous_drive_tick + 1624
+        0x8000aa60:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000aa62:    6880        .h      LDR      r0,[r0,#8]
+        0x8000aa64:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000aa66:    f8c100e8    ....    STR      r0,[r1,#0xe8]
+        0x8000aa6a:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000aa6c:    2001        .       MOVS     r0,#1
+        0x8000aa6e:    f88100fe    ....    STRB     r0,[r1,#0xfe]
+        0x8000aa72:    e7ff        ..      B        0x8000aa74 ; autonomous_drive_tick + 1644
+        0x8000aa74:    2000        .       MOVS     r0,#0
+        0x8000aa76:    f2c44096    ...@    MOVT     r0,#0x4496
+        0x8000aa7a:    901a        ..      STR      r0,[sp,#0x68]
+        0x8000aa7c:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000aa7e:    f8900023    ..#.    LDRB     r0,[r0,#0x23]
+        0x8000aa82:    b980        ..      CBNZ     r0,0x8000aaa6 ; autonomous_drive_tick + 1694
+        0x8000aa84:    e7ff        ..      B        0x8000aa86 ; autonomous_drive_tick + 1662
+        0x8000aa86:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000aa88:    f9b0002c    ..,.    LDRSH    r0,[r0,#0x2c]
+        0x8000aa8c:    f7f5fd1a    ....    BL       abs ; 0x800004c4
+        0x8000aa90:    280c        .(      CMP      r0,#0xc
+        0x8000aa92:    dc08        ..      BGT      0x8000aaa6 ; autonomous_drive_tick + 1694
+        0x8000aa94:    e7ff        ..      B        0x8000aa96 ; autonomous_drive_tick + 1678
+        0x8000aa96:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000aa98:    f9b0002e    ....    LDRSH    r0,[r0,#0x2e]
+        0x8000aa9c:    f7f5fd12    ....    BL       abs ; 0x800004c4
+        0x8000aaa0:    2811        .(      CMP      r0,#0x11
+        0x8000aaa2:    db09        ..      BLT      0x8000aab8 ; autonomous_drive_tick + 1712
+        0x8000aaa4:    e7ff        ..      B        0x8000aaa6 ; autonomous_drive_tick + 1694
+        0x8000aaa6:    ed9d0a1a    ....    VLDR     s0,[sp,#0x68]
+        0x8000aaaa:    eddf0a81    ....    VLDR     s1,[pc,#516] ; [0x8000acb0] = 0x44960000
+        0x8000aaae:    f005fccb    ....    BL       minimum ; 0x80010448
+        0x8000aab2:    ed8d0a1a    ....    VSTR     s0,[sp,#0x68]
+        0x8000aab6:    e7ff        ..      B        0x8000aab8 ; autonomous_drive_tick + 1712
+        0x8000aab8:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000aaba:    f8900021    ..!.    LDRB     r0,[r0,#0x21]
+        0x8000aabe:    b928        (.      CBNZ     r0,0x8000aacc ; autonomous_drive_tick + 1732
+        0x8000aac0:    e7ff        ..      B        0x8000aac2 ; autonomous_drive_tick + 1722
+        0x8000aac2:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000aac4:    7f80        ..      LDRB     r0,[r0,#0x1e]
+        0x8000aac6:    2840        @(      CMP      r0,#0x40
+        0x8000aac8:    dc09        ..      BGT      0x8000aade ; autonomous_drive_tick + 1750
+        0x8000aaca:    e7ff        ..      B        0x8000aacc ; autonomous_drive_tick + 1732
+        0x8000aacc:    ed9d0a1a    ....    VLDR     s0,[sp,#0x68]
+        0x8000aad0:    eddf0a77    ..w.    VLDR     s1,[pc,#476] ; [0x8000acb0] = 0x44960000
+        0x8000aad4:    f005fcb8    ....    BL       minimum ; 0x80010448
+        0x8000aad8:    ed8d0a1a    ....    VSTR     s0,[sp,#0x68]
+        0x8000aadc:    e7ff        ..      B        0x8000aade ; autonomous_drive_tick + 1750
+        0x8000aade:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000aae0:    991c        ..      LDR      r1,[sp,#0x70]
+        0x8000aae2:    f001ff0d    ....    BL       curve_outer_mode ; 0x8000c900
+        0x8000aae6:    b148        H.      CBZ      r0,0x8000aafc ; autonomous_drive_tick + 1780
+        0x8000aae8:    e7ff        ..      B        0x8000aaea ; autonomous_drive_tick + 1762
+        0x8000aaea:    ed9d0a1a    ....    VLDR     s0,[sp,#0x68]
+        0x8000aaee:    eddf0a70    ..p.    VLDR     s1,[pc,#448] ; [0x8000acb0] = 0x44960000
+        0x8000aaf2:    f005fca9    ....    BL       minimum ; 0x80010448
+        0x8000aaf6:    ed8d0a1a    ....    VSTR     s0,[sp,#0x68]
+        0x8000aafa:    e7ff        ..      B        0x8000aafc ; autonomous_drive_tick + 1780
+        0x8000aafc:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000aafe:    7800        .x      LDRB     r0,[r0,#0]
+        0x8000ab00:    2803        .(      CMP      r0,#3
+        0x8000ab02:    d109        ..      BNE      0x8000ab18 ; autonomous_drive_tick + 1808
+        0x8000ab04:    e7ff        ..      B        0x8000ab06 ; autonomous_drive_tick + 1790
+        0x8000ab06:    ed9d0a1a    ....    VLDR     s0,[sp,#0x68]
+        0x8000ab0a:    eddf0a6a    ..j.    VLDR     s1,[pc,#424] ; [0x8000acb4] = 0x42c80000
+        0x8000ab0e:    f005fc9b    ....    BL       minimum ; 0x80010448
+        0x8000ab12:    ed8d0a1a    ....    VSTR     s0,[sp,#0x68]
+        0x8000ab16:    e7ff        ..      B        0x8000ab18 ; autonomous_drive_tick + 1808
+        0x8000ab18:    ed9d0a1a    ....    VLDR     s0,[sp,#0x68]
+        0x8000ab1c:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ab1e:    ed901a0a    ....    VLDR     s2,[r0,#0x28]
+        0x8000ab22:    eeb02a00    ...*    VMOV.F32 s4,#2.00000000
+        0x8000ab26:    ee710a02    q...    VADD.F32 s1,s2,s4
+        0x8000ab2a:    f005fc8d    ....    BL       minimum ; 0x80010448
+        0x8000ab2e:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ab30:    ed800a0a    ....    VSTR     s0,[r0,#0x28]
+        0x8000ab34:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000ab36:    ed900a12    ....    VLDR     s0,[r0,#0x48]
+        0x8000ab3a:    eeb81ac0    ....    VCVT.F32.S32 s2,s0
+        0x8000ab3e:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ab40:    ed900a3b    ..;.    VLDR     s0,[r0,#0xec]
+        0x8000ab44:    ee311a40    1.@.    VSUB.F32 s2,s2,s0
+        0x8000ab48:    ed9f2a5b    ..[*    VLDR     s4,[pc,#364] ; [0x8000acb8] = 0x3e99999a
+        0x8000ab4c:    eea10a02    ....    VFMA.F32 s0,s2,s4
+        0x8000ab50:    ed800a3b    ..;.    VSTR     s0,[r0,#0xec]
+        0x8000ab54:    981c        ..      LDR      r0,[sp,#0x70]
+        0x8000ab56:    ed900a13    ....    VLDR     s0,[r0,#0x4c]
+        0x8000ab5a:    eeb81ac0    ....    VCVT.F32.S32 s2,s0
+        0x8000ab5e:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ab60:    ed900a3c    ..<.    VLDR     s0,[r0,#0xf0]
+        0x8000ab64:    ee311a40    1.@.    VSUB.F32 s2,s2,s0
+        0x8000ab68:    eea10a02    ....    VFMA.F32 s0,s2,s4
+        0x8000ab6c:    ed800a3c    ..<.    VSTR     s0,[r0,#0xf0]
+        0x8000ab70:    ed9f0a52    ..R.    VLDR     s0,[pc,#328] ; [0x8000acbc] = 0x3efa35dd
+        0x8000ab74:    ed8d0a02    ....    VSTR     s0,[sp,#8]
+        0x8000ab78:    f015fcec    ....    BL       __hardfp_tanf ; 0x80020554
+        0x8000ab7c:    ed9d1a02    ....    VLDR     s2,[sp,#8]
+        0x8000ab80:    ed9f2a4f    ..O*    VLDR     s4,[pc,#316] ; [0x8000acc0] = 0x42990000
+        0x8000ab84:    ee200a02     ...    VMUL.F32 s0,s0,s4
+        0x8000ab88:    ed9f2a4e    ..N*    VLDR     s4,[pc,#312] ; [0x8000acc4] = 0x433e0000
+        0x8000ab8c:    ee800a02    ....    VDIV.F32 s0,s0,s4
+        0x8000ab90:    ed8d0a01    ....    VSTR     s0,[sp,#4]
+        0x8000ab94:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ab96:    f9b0001c    ....    LDRSH    r0,[r0,#0x1c]
+        0x8000ab9a:    ee000a10    ....    VMOV     s0,r0
+        0x8000ab9e:    eeb80ac0    ....    VCVT.F32.S32 s0,s0
+        0x8000aba2:    ee200a01     ...    VMUL.F32 s0,s0,s2
+        0x8000aba6:    ed9f1a3d    ..=.    VLDR     s2,[pc,#244] ; [0x8000ac9c] = 0x447a0000
+        0x8000abaa:    ee800a01    ....    VDIV.F32 s0,s0,s2
+        0x8000abae:    f015fcd1    ....    BL       __hardfp_tanf ; 0x80020554
+        0x8000abb2:    ed9d1a01    ....    VLDR     s2,[sp,#4]
+        0x8000abb6:    eeb02a40    ..@*    VMOV.F32 s4,s0
+        0x8000abba:    ed9d0a02    ....    VLDR     s0,[sp,#8]
+        0x8000abbe:    ee211a02    !...    VMUL.F32 s2,s2,s4
+        0x8000abc2:    ed8d1a03    ....    VSTR     s2,[sp,#0xc]
+        0x8000abc6:    f015fcc5    ....    BL       __hardfp_tanf ; 0x80020554
+        0x8000abca:    eeb01a40    ..@.    VMOV.F32 s2,s0
+        0x8000abce:    ed9d0a03    ....    VLDR     s0,[sp,#0xc]
+        0x8000abd2:    ee800a01    ....    VDIV.F32 s0,s0,s2
+        0x8000abd6:    ed8d0a13    ....    VSTR     s0,[sp,#0x4c]
+        0x8000abda:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000abdc:    ed900a0a    ....    VLDR     s0,[r0,#0x28]
+        0x8000abe0:    ed9d1a13    ....    VLDR     s2,[sp,#0x4c]
+        0x8000abe4:    eeb72a00    ...*    VMOV.F32 s4,#1.00000000
+        0x8000abe8:    ee321a41    2.A.    VSUB.F32 s2,s4,s2
+        0x8000abec:    ee200a01     ...    VMUL.F32 s0,s0,s2
+        0x8000abf0:    ed8d0a15    ....    VSTR     s0,[sp,#0x54]
+        0x8000abf4:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000abf6:    ed900a0a    ....    VLDR     s0,[r0,#0x28]
+        0x8000abfa:    ed9d1a13    ....    VLDR     s2,[sp,#0x4c]
+        0x8000abfe:    ee311a02    1...    VADD.F32 s2,s2,s4
+        0x8000ac02:    ee200a01     ...    VMUL.F32 s0,s0,s2
+        0x8000ac06:    ed8d0a14    ....    VSTR     s0,[sp,#0x50]
+        0x8000ac0a:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000ac0c:    f101002c    ..,.    ADD      r0,r1,#0x2c
+        0x8000ac10:    ed9d0a15    ....    VLDR     s0,[sp,#0x54]
+        0x8000ac14:    edd10a3b    ..;.    VLDR     s1,[r1,#0xec]
+        0x8000ac18:    ed9f1a2b    ..+.    VLDR     s2,[pc,#172] ; [0x8000acc8] = 0x3f4ccccd
+        0x8000ac1c:    ed8d1a04    ....    VSTR     s2,[sp,#0x10]
+        0x8000ac20:    ee201a01     ...    VMUL.F32 s2,s0,s2
+        0x8000ac24:    eddf1a29    ..).    VLDR     s3,[pc,#164] ; [0x8000accc] = 0x3c23d70a
+        0x8000ac28:    edcd1a05    ....    VSTR     s3,[sp,#0x14]
+        0x8000ac2c:    f001f924    ..$.    BL       control_pid_step ; 0x8000be78
+        0x8000ac30:    ed9d1a04    ....    VLDR     s2,[sp,#0x10]
+        0x8000ac34:    eddd1a05    ....    VLDR     s3,[sp,#0x14]
+        0x8000ac38:    ed8d0a17    ....    VSTR     s0,[sp,#0x5c]
+        0x8000ac3c:    991d        ..      LDR      r1,[sp,#0x74]
+        0x8000ac3e:    f1010058    ..X.    ADD      r0,r1,#0x58
+        0x8000ac42:    ed9d0a14    ....    VLDR     s0,[sp,#0x50]
+        0x8000ac46:    edd10a3c    ..<.    VLDR     s1,[r1,#0xf0]
+        0x8000ac4a:    ee201a01     ...    VMUL.F32 s2,s0,s2
+        0x8000ac4e:    f001f913    ....    BL       control_pid_step ; 0x8000be78
+        0x8000ac52:    ed8d0a16    ....    VSTR     s0,[sp,#0x58]
+        0x8000ac56:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ac58:    f8900056    ..V.    LDRB     r0,[r0,#0x56]
+        0x8000ac5c:    b150        P.      CBZ      r0,0x8000ac74 ; autonomous_drive_tick + 2156
+        0x8000ac5e:    e7ff        ..      B        0x8000ac60 ; autonomous_drive_tick + 2136
+        0x8000ac60:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ac62:    f8900082    ....    LDRB     r0,[r0,#0x82]
+        0x8000ac66:    b128        (.      CBZ      r0,0x8000ac74 ; autonomous_drive_tick + 2156
+        0x8000ac68:    e7ff        ..      B        0x8000ac6a ; autonomous_drive_tick + 2146
+        0x8000ac6a:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ac6c:    f89000ae    ....    LDRB     r0,[r0,#0xae]
+        0x8000ac70:    b940        @.      CBNZ     r0,0x8000ac84 ; 0x8000ac84
+        0x8000ac72:    e7ff        ..      B        0x8000ac74 ; autonomous_drive_tick + 2156
+        0x8000ac74:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ac76:    2106        .!      MOVS     r1,#6
+        0x8000ac78:    2201        ."      MOVS     r2,#1
+        0x8000ac7a:    f00bf881    ....    BL       stop_drive ; 0x80015d80
+        0x8000ac7e:    e009        ..      B        0x8000ac94 ; 0x8000ac94
+    $d.3
+    __arm_cp.2_15
+        0x8000ac80:    43be0000    ...C    DCD    1136525312
+    $t.4
+        0x8000ac84:    981d        ..      LDR      r0,[sp,#0x74]
+        0x8000ac86:    ed9d0a17    ....    VLDR     s0,[sp,#0x5c]
+        0x8000ac8a:    eddd0a16    ....    VLDR     s1,[sp,#0x58]
+        0x8000ac8e:    f001fb0f    ....    BL       coordinated_duty_slew ; 0x8000c2b0
+        0x8000ac92:    e7ff        ..      B        0x8000ac94 ; 0x8000ac94
+        0x8000ac94:    b01e        ..      ADD      sp,sp,#0x78
+        0x8000ac96:    bd80        ..      POP      {r7,pc}
+    $d.5
+        0x8000ac98:    3ca3d70a    ...<    DCD    1017370378
+        0x8000ac9c:    447a0000    ..zD    DCD    1148846080
+        0x8000aca0:    3a83126f    o..:    DCD    981668463
+        0x8000aca4:    00000000    ....    DCD    0
+        0x8000aca8:    befa35dd    .5..    DCD    3204068829
+        0x8000acac:    c47a0000    ..z.    DCD    3296329728
+        0x8000acb0:    44960000    ...D    DCD    1150681088
+        0x8000acb4:    42c80000    ...B    DCD    1120403456
+        0x8000acb8:    3e99999a    ...>    DCD    1050253722
+        0x8000acbc:    3efa35dd    .5.>    DCD    1056585181
+        0x8000acc0:    42990000    ...B    DCD    1117323264
+        0x8000acc4:    433e0000    ..>C    DCD    1128136704

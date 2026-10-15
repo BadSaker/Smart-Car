@@ -2,7 +2,7 @@
 
 多设备配置：[本地环境](local-environment.md)；仿真功能、共享算法和当前验收：[simulation](../simulation/README.md)。原始SeekFree位于仓库外的同级资料目录，例程链接只在完整工作区中可用。
 
-当前进展：2026-10-12已修正元素状态机并完成中低速分档仿真，默认300/200/140mm/s，PWM300‰，95项工程行为回归通过、Keil0错误0警告。中央环道身份与实车高速能力仍有限制，见[自动驾驶指南](autonomous-driving.md)及[最终验收](../outputs/reports/control-tuning-final-2026-10-12.md)。
+当前软件基线为2026-10-14运动稳定性交付；参数、双向分档验收和实测边界以[最新报告](../outputs/reports/motion-stability-2026-10-14.md)及[自动驾驶指南](autonomous-driving.md)为准。历史800档旧模型结果不作为当前默认配置。协作与目录整理见[规范整理报告](../outputs/reports/project-normalization-2026-10-14.md)。
 
 
 本项目把逐飞 RT1064 资料、竞赛要求和智能车应用工程整理在同一工作区。日常开发入口是 [car/autocar.uvprojx](../car/autocar.uvprojx)。参考资料中的器件型号、例程的默认引脚和推荐参数不代表当前实车配置。
@@ -28,7 +28,7 @@
 | 摄像头可视化调试 | [seekfree-assistant-debugging.md](seekfree-assistant-debugging.md) | IPS200 SPI显示、Wi-Fi SPI图传与逐飞助手1.2.7配置 |
 | S-U400舵机校准与测试 | [servo-debugging.md](servo-debugging.md) | 已确认1480µs中值，正式按键摆动1420–1540µs及校准历史 |
 | 当前虚拟手柄遥控 | [virtual-remote-control.md](virtual-remote-control.md) | Wi-Fi文本手柄、C12本地允许、Down确认及有限时驱动 |
-| 电机与编码器测试 | [motor-encoder-debugging.md](motor-encoder-debugging.md) | C12有限测试、STEP×1、4352计数/轮圈及64mm轮速换算 |
+| 电机与编码器测试 | [motor-encoder-debugging.md](motor-encoder-debugging.md) | C12有限测试、STEP×1、1024×68/30≈2321.067计数/轮圈及64mm轮速换算 |
 | PowerShell 执行与清理 | [commands.md](standards/commands.md) | 检索、构建、验证、清理 |
 | 审核与交付 | [workflow.md](standards/workflow.md) | 开始新任务、变更范围、交付 |
 | 原始竞赛与硬件资料 | [参考](../参考/) | 核对规则、宣讲、原理图 |

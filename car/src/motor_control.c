@@ -1,5 +1,6 @@
 #include "motor_control.h"
 #include "motor_test_config.h"
+#include "autonomous_config.h"
 #include "remote_control_config.h"
 #include "encoder_feedback.h"
 #include "zf_driver_gpio.h"
@@ -600,10 +601,10 @@ void motor_control_autonomous_set(uint8_t active, uint16_t m1_permille, uint16_t
 {
     motor_autonomous_requested = active ? 1U : 0U;
     if (!active) motor_autonomous_blocked = 0U;
-    motor_autonomous_channel1 = m1_permille <= MOTOR_TEST_MAX_DUTY_PERMILLE ?
-        m1_permille : MOTOR_TEST_MAX_DUTY_PERMILLE;
-    motor_autonomous_channel2 = m2_permille <= MOTOR_TEST_MAX_DUTY_PERMILLE ?
-        m2_permille : MOTOR_TEST_MAX_DUTY_PERMILLE;
+    motor_autonomous_channel1 = m1_permille <= AUTO_MAX_DUTY_PERMILLE ?
+        m1_permille : AUTO_MAX_DUTY_PERMILLE;
+    motor_autonomous_channel2 = m2_permille <= AUTO_MAX_DUTY_PERMILLE ?
+        m2_permille : AUTO_MAX_DUTY_PERMILLE;
 }
 
 void motor_control_remote_set_link(uint8_t available)

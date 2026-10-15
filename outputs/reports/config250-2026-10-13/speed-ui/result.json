@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "scenario": "full",
+  "rates": [
+    {
+      "requested": 0.5,
+      "wall_s": 12.000822400000004,
+      "sim_s": 6,
+      "actual": 0.4999657356815811
+    },
+    {
+      "requested": 1.0,
+      "wall_s": 6.003947100000005,
+      "sim_s": 6,
+      "actual": 0.9993425824821134
+    },
+    {
+      "requested": 2.0,
+      "wall_s": 3.0095186000000353,
+      "sim_s": 6,
+      "actual": 1.99367433715144
+    },
+    {
+      "requested": 4.0,
+      "wall_s": 1.5211778999999979,
+      "sim_s": 6,
+      "actual": 3.9443118388717116
+    },
+    {
+      "requested": 8.0,
+      "wall_s": 1.1305139999999483,
+      "sim_s": 6,
+      "actual": 5.307320387010045
+    }
+  ],
+  "same_trajectory_and_frames": true,
+  "heartbeat_max_ms": 461.2963999999238,
+  "pause_switch_reset_replay": true,
+  "minimize_restore": true
+}

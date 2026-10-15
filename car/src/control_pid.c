@@ -127,3 +127,16 @@ float control_pid_step(control_pid_t *pid, float setpoint, float measurement,
     pid->valid = 1U;
     return clamp_output(output, config->output_min, config->output_max);
 }
+
+void control_pid_track_output(control_pid_t *pid, float applied, float requested,
+                              float gain, float dt_s)
+{
+    float blend,value;
+    if(pid==NULL)return;
+    if(!pid->valid || !isfinite(applied) || !isfinite(requested) ||
+       !isfinite(gain) || gain<0 || !isfinite(dt_s) || dt_s<=0){clear_state(pid);return;}
+    blend=gain*dt_s;if(blend>1)blend=1;
+    value=pid->integral+(applied-requested)*blend;
+    if(!isfinite(value)){clear_state(pid);return;}
+    pid->integral=clamp_output(value,-pid->config.integral_limit,pid->config.integral_limit);
+}

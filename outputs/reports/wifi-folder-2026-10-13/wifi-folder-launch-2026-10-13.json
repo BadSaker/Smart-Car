@@ -1,0 +1,15 @@
+{
+  "moved_entry_exit": 0,
+  "chinese_space_entry_exit": 0,
+  "normal_menu_exit": 0,
+  "unrelated_cwd_passed": true,
+  "real_config_hash_unchanged": true,
+  "real_config_timestamp_unchanged": true,
+  "firmware_hashes_unchanged": true,
+  "copied_entry_created_config": false,
+  "hotspot_readable": true,
+  "hotspot_state": "On",
+  "band": "TwoPointFourGigahertz",
+  "candidate_count": 1,
+  "listener_count": 0
+}

@@ -35,9 +35,9 @@ int main(int argc, char **argv) {
     for (i = 1; i + 1 < argc; ++i)
         if (strcmp(argv[i], "-o") == 0)
             put(argv[i+1], "autocar.axf - 0 Error(s), 0 Warning(s).\n");
-    put("..\\tmp\\build-autocar\\objects\\autocar.axf", "new-axf");
-    put("..\\tmp\\build-autocar\\objects\\autocar.hex", "new-hex");
-    put("..\\tmp\\build-autocar\\listings\\autocar.map", "test-linker-map");
+    put(".\\build\\objects\\autocar.axf", "new-axf");
+    put(".\\build\\objects\\autocar.hex", "new-hex");
+    put(".\\build\\listings\\autocar.map", "test-linker-map");
     return 0;
 }
 '''
@@ -57,6 +57,12 @@ class BuildExportTests(unittest.TestCase):
         self.script = self.work / 'car/scripts/build.ps1'
         self.script.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / 'car/scripts/build.ps1', self.script)
+        config = self.work / 'car/config'
+        config.mkdir()
+        shutil.copy2(ROOT / 'car/config/camera_debug_config.h', config)
+        (self.work / 'wifi').mkdir()
+        shutil.copy2(ROOT / 'wifi/camera_debug_local.example.h',
+                     self.work / 'wifi/camera_debug_local.h')
         (self.work / 'car/autocar.uvprojx').write_text('test fixture', encoding='ascii')
         self.keil = self.work / 'tools/UV4/UV4.exe'
         self.keil.parent.mkdir(parents=True, exist_ok=True)
@@ -89,6 +95,14 @@ class BuildExportTests(unittest.TestCase):
         self.assertNotEqual(self.run_build().returncode, 0)
         self.assert_artifacts('old')
 
+    def test_missing_wifi_config_fails_without_publishing(self):
+        (self.work / 'wifi/camera_debug_local.h').unlink()
+        self.add_exporter()
+        result = self.run_build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('wifi/camera_debug_local.h', result.stdout + result.stderr)
+        self.assert_artifacts('old')
+
     def test_export_failure_preserves_previous_complete_set(self):
         self.add_exporter()
         self.assertNotEqual(self.run_build(export_failure=True).returncode, 0)
@@ -108,7 +122,7 @@ class BuildExportTests(unittest.TestCase):
         important.write_text('reviewed report', encoding='utf-8')
         result = self.run_build()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertEqual((self.work / 'tmp/build-autocar/listings/autocar.map').read_text(),
+        self.assertEqual((self.work / 'car/build/listings/autocar.map').read_text(),
                          'test-linker-map')
         self.assertEqual({p.name for p in reports.iterdir()}, {important.name})
         self.assertEqual(important.read_text(), 'reviewed report')

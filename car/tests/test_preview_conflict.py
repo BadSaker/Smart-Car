@@ -46,7 +46,8 @@ __declspec(dllexport) int preview(int near_error,int far_error) {
 
     def test_small_near_error_keeps_preview_and_straight_response(self):
         self.assertGreater(self.lib.preview(2,-20),200)
-        self.assertAlmostEqual(self.lib.preview(20,20),-560,delta=2)
+        # 两个预瞄误差相同时为20px；按实测转角归一化Kp29，输出应为-580‰。
+        self.assertAlmostEqual(self.lib.preview(20,20),-580,delta=2)
         self.assertEqual(self.lib.preview(0,0),0)
 
 

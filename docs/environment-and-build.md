@@ -1,14 +1,44 @@
 # 环境、构建与调试
 
+## 2026-10-14当前运动稳定性固件
+
+2026-10-14运动稳定性交付采用Keil6.21全量构建，0错误0警告；发布及实际下载路径AXF/HEX/BIN已同步，未烧录。参数、资源占用、固件哈希与当轮验证见[交付报告](../outputs/reports/motion-stability-2026-10-14.md)。后续规范整理使用隔离工程验证，不覆盖现有发布与下载缓存，见[规范整理报告](../outputs/reports/project-normalization-2026-10-14.md)。
+
+## 历史：2026-10-13旧模型800–1200mm/s验收
+
+历史记录（2026-10-13旧模型，已由10月14日交付替代）：当时默认四档800mm/s，新增800/1000/1200完整验证预设；编码器采用1024×68/30，PWM1000‰、单轮保护2500mm/s、舵机40µs/20ms、速度Ki1.0。三档双向及选定扰动/延迟工况通过，130项工程、47项仿真回归通过，Keil0错误0警告。未刷写或实车验证；1200档弯中实际约1091–1103mm/s，模型和实物标定边界见[本轮报告](../outputs/reports/field-robustness-2026-10-13.md)。
+
 ## 多设备入口
 
 工具查找、热点本地头文件和编辑器变量见[本地环境](local-environment.md)。当前构建脚本支持显式路径、环境变量、本地配置和有限自动发现。以下各历史环境表属于当时机器记录，不作为当前电脑安装路径的确认。
 
-## 当前：控制优化构建（2026-10-12）
+2026-10-13热点专用入口、脚本和本机头文件集中到`wifi/`，维护入口见[wifi/README](../wifi/README.md)。固件的`car/config/camera_debug_config.h`通过相对引用读取`../../wifi/camera_debug_local.h`；构建脚本检查该新路径。本机头文件被Git忽略，首次使用需生成配置；此次仅迁移路径，未重新运行Keil构建或刷写。
+
+## 历史：250档正式发布构建与配置验证（2026-10-13）
+
+正式源码、仿真默认和新增实测基线均为350/350/350/250mm/s；元素与Q<65限250，终点100，既有控制、视觉及保护参数保持。107项工程测试跨批通过、仿真38/38、双向基准及扰动整圈零车轮出界无故障；GUI加载/重置、宏映射和实际倍速通过。Keil全量0错误0警告，Code117088/RO13208/RW300/ZI105836字节，发布AXF/HEX/BIN与构建缓存一致。HEX SHA-256为72a5655baac1e2c3172ae8b78fbf4a4551c6327d83297237748e7b6e2fafe253。用户此前250档烧录与实测通过按反馈记录；本轮只重建发布和软件验收，未烧录或操作车辆。详情与回退见[完整配置报告](../outputs/reports/config250-2026-10-13.md)。
+
+## 历史：用户手动元素250档编译、烧录与实测（2026-10-13）
+
+已读取正式源码，确认AUTO_ELEMENT_SPEED_MM_S=250.0f，四档为350/350/350/250mm/s。用户反馈250档已重新编译、烧录并通过实测；本次仅登记说明，未重新编译、烧录或操作车辆，也未独立核验用户烧录产物。下述元素180档历史固件SHA-256不作为用户已烧录250档的固件身份。历史测试数量、构建体积与校验和保留原始含义，详见[实测补充](../outputs/reports/element-fault-2026-10-13.md)。
+
+## 历史：连续弯道元素诊断构建（2026-10-13）
+
+正式速度升级为350/350/350/180mm/s，扩充元素上下文/状态历史、ELEMENT诊断冻结，并修正出环接弯道的退出条件。真实Keil全量0错误0警告，Code117088/RO13208/RW300/ZI105836字节。发布AXF/HEX/BIN与构建缓存逐字节一致；260/200对照及350/350最终源码仿真、校验和回退见[本轮报告](../outputs/reports/element-fault-2026-10-13.md)。未烧录或操作车辆。
+
+## 历史：元素诊断与弯道260/200构建（2026-10-13）
+
+主工程350/260/200/180mm/s，入口确认/十字来向及控制诊断已更新；真实Keil全量0错误0警告，Code116728/RO13208/RW300/ZI105040字节。AXF/HEX/BIN与实际构建缓存逐字节一致，HEX SHA-256为cd8037d75427a452b29a43d611ff91c250b1953d2226f7352b60514f571520f9。双向闭环与扰动结果、GUI实际倍率及回归证据见[本轮报告](../outputs/reports/element-speed-2026-10-13.md)。未烧录、未操作车辆。
+
+## 历史：场测提速构建（2026-10-13）
+
+用户批准350/220/160/180mm/s速度档，主工程仅改变autonomous_config.h四个速度宏。真实Keil全量构建0错误0警告，Code115128/RO13208/RW300/ZI104872字节；AXF/HEX/BIN已发布并与car/build/objects逐字节核对。HEX SHA-256为ca6002ab48922b2130e4789cec7a4b2750ab7c37377b4917107704fbbd18eeaa。本轮未烧录或操作车辆；相关测试的固定等待时间失败、临时副本验证和备份详见[交付报告](../outputs/reports/field-speed-2026-10-13.md)。
+
+## 历史：控制优化构建（2026-10-12）
 
 元素识别与提速修改已全量构建：Keil5.39 / Armclang6.21，0错误0警告，Code115120/RO13200/RW300/ZI104872字节。在本任务临时副本执行现有build.ps1，src/include/config/library与主工程逐文件一致，AXF/HEX/BIN已交付outputs/firmware，未烧录。95项工程行为回归与25项仿真回归通过，历史15项PWM测试预期不符已修正。
 
-构建脚本4项外部工具替身测试另列：本机Windows拒绝启动临时假UV4.exe，未纳入上述95项；真实已安装Keil构建和导出成功。见[构建日志](../logs/control-tuning-build-2026-10-12.log)与[最终报告](../outputs/reports/control-tuning-final-2026-10-12.md)。重新在主工程调试时按下文构建入口生成本机调试缓存。
+构建脚本4项外部工具替身测试另列：本机Windows拒绝启动临时假UV4.exe，未纳入上述95项；真实已安装Keil构建和导出成功。见[构建日志](../outputs/reports/historical-logs/control-tuning-build-2026-10-12.log)与[最终报告](../outputs/reports/control-tuning-final-2026-10-12.md)。重新在主工程调试时按下文构建入口生成本机调试缓存。
 
 ## 历史：外部核心进展同步（2026-10-11）
 
@@ -17,14 +47,14 @@
 
 ## 历史基线：曾回退17:25版本（2026-10-08）
 
-用户于本日后续明确要求回退，恢复car_before-remote-speed_20261008_193758.zip所保存的17:25交付状态：C15自动驾驶保留，手柄恢复10%开环，撤销后来的手柄闭环与提速。71项回归通过，Keil0错误0警告，三种固件哈希均与当时记录完全一致。下载前重新加载主工程，避免Keil内存中的后续工程状态覆盖已恢复文件。日志：[回退测试](../logs/rollback-1725-tests.log)、[回退构建](../logs/rollback-1725-build.log)。本次未自动烧录。
+用户于本日后续明确要求回退，恢复car_before-remote-speed_20261008_193758.zip所保存的17:25交付状态：C15自动驾驶保留，手柄恢复10%开环，撤销后来的手柄闭环与提速。71项回归通过，Keil0错误0警告，三种固件哈希均与当时记录完全一致。下载前重新加载主工程，避免Keil内存中的后续工程状态覆盖已恢复文件。日志：[回退测试](../outputs/reports/historical-logs/rollback-1725-tests.log)、[回退构建](../outputs/reports/historical-logs/rollback-1725-build.log)。本次未自动烧录。
 
 
 ## 历史构建阶段：自动驾驶（2026-10-08）
 
 主工程car/autocar.uvprojx新增10个引用，共364个，重新加载工程后Rebuild。当前C15自动驾驶，C12遥控允许/自动取消，S3停车；操作和调参看[自动驾驶指南](autonomous-driving.md)，旧舵机S2测试说明仅供历史追溯。
 
-71项完整unittest与19项旧算法通过。默认模式实际Keil全量0错误0警告（Code105320/RO13172/RW300/ZI104684），关闭遥控隔离构建也0/0。实际下载缓存与outputs/firmware三种固件一致。入口仍为car/scripts/build.ps1；完整回归使用python -B -m unittest discover -s car/tests -p 'test_*.py'，旧test.ps1不能代替全套测试。日志见[本轮构建](../logs/autonomous-build.log)和[完整回归](../logs/autonomous-suite.log)。
+71项完整unittest与19项旧算法通过。默认模式实际Keil全量0错误0警告（Code105320/RO13172/RW300/ZI104684），关闭遥控隔离构建也0/0。实际下载缓存与outputs/firmware三种固件一致。入口仍为car/scripts/build.ps1；完整回归使用python -B -m unittest discover -s car/tests -p 'test_*.py'，旧test.ps1不能代替全套测试。日志见[本轮构建](../outputs/reports/historical-logs/autonomous-build.log)和[完整回归](../outputs/reports/historical-logs/autonomous-suite.log)。
 
 
 工程入口：[car/autocar.uvprojx](../car/autocar.uvprojx)，目标名 `autocar`。本次构建对象是整理后的应用工程，不是逐一构建84个供应商例程。
@@ -92,27 +122,27 @@ car/
 
 | 文件位置 | 内容 |
 | --- | --- |
-| `tmp/build-autocar/objects/` | 编译对象、依赖、中间AXF/HEX及构建辅助文件 |
-| `tmp/build-autocar/listings/` | 汇编/链接中间清单 |
+| `car/build/objects/` | 编译对象、依赖、中间AXF/HEX及构建辅助文件（持久缓存，不提交） |
+| `car/build/listings/` | 汇编/链接中间清单 |
 | `outputs/firmware/autocar.axf` | 带调试信息的最终ELF镜像 |
 | `outputs/firmware/autocar.hex` | Intel HEX镜像，包含Flash地址信息 |
 | `outputs/firmware/autocar.bin` | 原始二进制，Flash加载基址为0x70000000 |
-| `tmp/build-autocar/listings/autocar.map` | 临时链接映射与内存占用，不自动导出到reports |
-| `logs/keil-build.log` | 最近一次构建日志；重建前存档已有日志 |
+| `car/build/listings/autocar.map` | 临时链接映射与内存占用，不自动导出到reports |
+| `car/build/keil-build.log` | 最近一次构建日志；重建前存档已有日志 |
 
-最终产物代表最近一次成功导出的构建。修改源文件后必须重新构建并检查成功结果；构建失败时不能把旧产物当成本轮成功结果。任务结束清理中间目录后，需要重新构建才能使用 uVision 默认的调试输出路径。
+最终产物代表最近一次成功导出的构建。修改源文件后必须重新构建并检查成功结果；构建失败时不能把旧产物当成本轮成功结果。`car/build/`为持久构建缓存（不提交），可长期保留；若清理该缓存，需重新构建才能使用 Keil 的调试输出路径。
 
-也可以在 uVision 中打开工程选择 `autocar` 并执行 Rebuild，但GUI编译仅生成 `tmp/` 下的中间产物；交付归档应使用上述脚本。源码目录与工程位置必须保持相对结构，迁移后先关闭旧源文件页签并重新构建。
+也可以在 uVision 中打开工程选择 `autocar` 并执行 Rebuild，但GUI编译仅生成 `car/build/` 下的中间产物；交付归档应使用上述脚本。源码目录与工程位置必须保持相对结构，迁移后先关闭旧源文件页签并重新构建。
 
 ## AXF文件无法加载
 
-若下载提示`Flash Download failed - Could not load file '..\tmp\build-autocar\objects\autocar.axf'`，先核对最近一次Build Output和实际文件，不能只看`outputs/firmware/`已有固件。当前Keil下载读取的是工程OutputDirectory中的AXF。
+若下载提示`Flash Download failed - Could not load file '.\build\objects\autocar.axf'`，先核对最近一次Build Output和实际文件，不能只看`outputs/firmware/`已有固件。当前Keil下载读取的是工程OutputDirectory中的AXF。
 
 2026-10-03本次实例：20:37构建因`main.c`第60行函数名误写为`get_hist_g-0ram`产生两个编译错误，日志为`Target not created`，下载路径没有AXF，而旧HEX仍残留。已将其恢复为`get_hist_gram`，直接运行主工程`car/scripts/build.ps1`，全量编译0错误0警告；AXF已在Keil实际路径生成并通过fromelf解析，与发布目录同名文件哈希一致。
 
 处理顺序：先修复编译错误，再Rebuild，确认AXF生成后下载。构建失败后的旧HEX或发布文件不代表本轮主工程构建成功。本例未改输出路径、Flash算法、DAP参数或图传/舵机功能。
 
-交付检查同时覆盖Keil实际下载目录和`outputs/firmware/`，不能仅用隔离构建副本的成功结果代替主工程下载文件检查。原有`tmp/build-autocar/`是主工程下载缓存，本次保留；若之后清理此缓存，下载前必须重新构建。临时目录清理仍遵循任务边界，不删除其他任务的目录。
+交付检查同时覆盖Keil实际下载目录和`outputs/firmware/`，不能仅用隔离构建副本的成功结果代替主工程下载文件检查。`car/build/`是主工程下载缓存；若清理此缓存，下载前必须重新构建。临时目录清理仍遵循任务边界，不删除其他任务的目录。
 
 ## 历史兼容处理与新版验证
 
@@ -129,7 +159,7 @@ car/
 .\car\scripts\test.ps1 -Compiler 'C:\mingw64\bin\gcc.exe'
 ```
 
-测试编译实际 `src/img_process.c` 和 `src/pid.c`，不使用另写的算法仿制品。19项检查覆盖跨帧直方图、高灰度区、二值化、Otsu常量/双色/空输入、黑帧/窄图边界、PID积分限幅与误差反转、输出饱和、非法采样周期。运行日志为 [algorithm-tests.log](../logs/algorithm-tests.log)。
+测试编译实际 `src/img_process.c` 和 `src/pid.c`，不使用另写的算法仿制品。19项检查覆盖跨帧直方图、高灰度区、二值化、Otsu常量/双色/空输入、黑帧/窄图边界、PID积分限幅与误差反转、输出饱和、非法采样周期。运行日志为 [algorithm-tests.log](../car/build/algorithm-tests.log)。
 
 完整工程还必须通过 Keil 编译；原生算法测试不覆盖 MCU 外设寄存器、中断时序、DMA、实际摄像头帧和电机控制效果。
 
@@ -139,7 +169,7 @@ car/
 python -B .\car\tests\test_build_script.py
 ```
 
-该检查需要 Python 3、PowerShell 和原生 Windows GCC；其他机器通过环境变量 `AUTOCAR_HOST_CC` 指定 GCC 可执行文件。最近的四项检查记录见 [folder-cleanup-tests.log](../logs/folder-cleanup-tests.log)；初始化阶段的三项记录仍保留在 [build-script-tests.log](../logs/build-script-tests.log)。测试临时目录在 `tmp/build-script-tests/`，任务结束统一清理。
+该检查需要 Python 3、PowerShell 和原生 Windows GCC；其他机器通过环境变量 `AUTOCAR_HOST_CC` 指定 GCC 可执行文件。最近的四项检查记录见 [folder-cleanup-tests.log](../outputs/reports/historical-logs/folder-cleanup-tests.log)；初始化阶段的三项记录仍保留在 [build-script-tests.log](../outputs/reports/historical-logs/build-script-tests.log)。测试临时目录在 `tmp/build-script-tests/`，任务结束统一清理。
 
 ## 首次上板
 
@@ -183,16 +213,16 @@ Keil若保持打开，可能仍使用内存中的旧工程设置。重新加载�
 
 2026-10-03当前交付：按用户要求，屏幕/Wi-Fi恢复14:32:41同步版本并冻结，舵机模块及PIT1的1ms计时保留。异步模块的3个工程引用已移除，工程现有343个文件引用，下载器/Flash设置不变。关闭并重新打开工程后Rebuild，避免Keil内存中的旧设置或旧AXF被再次使用。
 
-本轮全量构建0错误0警告；Code=85208、RO=14004、RW=312、ZI=104216字节。日志见 [回退构建](../logs/display-wifi-rollback-build.log)、[回退回归](../logs/display-wifi-rollback-tests.log)、[算法测试](../logs/display-wifi-rollback-algorithms.log)。冻结范围与旧版同步等待行为统一见 [图传指南](seekfree-assistant-debugging.md#屏幕与wi-fi冻结约束)。舵机操作见 [舵机指南](servo-debugging.md)。
+本轮全量构建0错误0警告；Code=85208、RO=14004、RW=312、ZI=104216字节。日志见 [回退构建](../outputs/reports/historical-logs/display-wifi-rollback-build.log)、[回退回归](../outputs/reports/historical-logs/display-wifi-rollback-tests.log)、[算法测试](../outputs/reports/historical-logs/display-wifi-rollback-algorithms.log)。冻结范围与旧版同步等待行为统一见 [图传指南](seekfree-assistant-debugging.md#屏幕与wi-fi冻结约束)。舵机操作见 [舵机指南](servo-debugging.md)。
 
-当前C13开关阶段：上电默认关闭Wi-Fi，C13/S4切换；复用已有源/头/配置，无新增工程引用。图传核心冻结不变，具体授权例外见 [开关说明](seekfree-assistant-debugging.md#c13-wi-fi开关)。本轮全量构建0错误0警告，Code=85776、RO=14040、RW=312、ZI=104224字节；日志 [wifi-key-switch-build.log](../logs/wifi-key-switch-build.log)。下载前Rebuild，实物按键/复位和帧率待验证。
+当前C13开关阶段：上电默认关闭Wi-Fi，C13/S4切换；复用已有源/头/配置，无新增工程引用。图传核心冻结不变，具体授权例外见 [开关说明](seekfree-assistant-debugging.md#c13-wi-fi开关)。本轮全量构建0错误0警告，Code=85776、RO=14040、RW=312、ZI=104224字节；日志 [wifi-key-switch-build.log](../outputs/reports/historical-logs/wifi-key-switch-build.log)。下载前Rebuild，实物按键/复位和帧率待验证。
 
-历史舵机校准阶段（已结束）：直接使用主工程build.ps1构建，0错误0警告；Code=85704、RO=12584、RW=312、ZI=104232字节，日志 [servo-calibration-build.log](../logs/servo-calibration-build.log)。既有工程引用不变，Keil实际下载目录和outputs/firmware均更新为手动校准版。用户现已确认1480µs并恢复±60µs摆动，见 [当前控制与校准记录](servo-debugging.md)。
+历史舵机校准阶段（已结束）：直接使用主工程build.ps1构建，0错误0警告；Code=85704、RO=12584、RW=312、ZI=104232字节，日志 [servo-calibration-build.log](../outputs/reports/historical-logs/servo-calibration-build.log)。既有工程引用不变，Keil实际下载目录和outputs/firmware均更新为手动校准版。用户现已确认1480µs并恢复±60µs摆动，见 [当前控制与校准记录](servo-debugging.md)。
 
-当前正式程序恢复阶段：用户确认中值1480µs后，已局部恢复原S2摆动/S3停止程序，摆幅±60µs（1420–1540µs），临时校准代码与测试撤回。实际主工程全量构建0错误0警告，Code=85776、RO=12620、RW=312、ZI=104224字节；日志 [servo-center-restore-build.log](../logs/servo-center-restore-build.log)。Keil实际AXF和发布固件同步更新，未自动烧录；扩大行程待用户上板观察。
+当前正式程序恢复阶段：用户确认中值1480µs后，已局部恢复原S2摆动/S3停止程序，摆幅±60µs（1420–1540µs），临时校准代码与测试撤回。实际主工程全量构建0错误0警告，Code=85776、RO=12620、RW=312、ZI=104224字节；日志 [servo-center-restore-build.log](../outputs/reports/historical-logs/servo-center-restore-build.log)。Keil实际AXF和发布固件同步更新，未自动烧录；扩大行程待用户上板观察。
 
-2026-10-04电机/编码器阶段：新增6个源/头/配置引用，总计349个引用；需重新加载Keil工程。实际主工程全量0错误0警告，Code=88992、RO=12736、RW=312、ZI=104312字节。日志 [motor-encoder-build.log](../logs/motor-encoder-build.log)，使用步骤见 [电机编码器指南](motor-encoder-debugging.md)。已同步实际下载AXF和outputs/firmware，未自动烧录。
+2026-10-04电机/编码器阶段：新增6个源/头/配置引用，总计349个引用；需重新加载Keil工程。实际主工程全量0错误0警告，Code=88992、RO=12736、RW=312、ZI=104312字节。日志 [motor-encoder-build.log](../outputs/reports/historical-logs/motor-encoder-build.log)，使用步骤见 [电机编码器指南](motor-encoder-debugging.md)。已同步实际下载AXF和outputs/firmware，未自动烧录。
 
-2026-10-07虚拟手柄阶段：新增remote_command、remote_control及配置，工程文件引用为354个，需要重新加载Keil工程。默认REMOTE_CONTROL_ENABLED=1，设0并重编译恢复原按键测试。原图传发送核心保留，接收及安全边界见 [遥控指南](virtual-remote-control.md)；最终全量回归/编译以 [virtual-remote-suite.log](../logs/virtual-remote-suite.log)、[virtual-remote-build.log](../logs/virtual-remote-build.log)为准。不会自动烧录或操作实车。
+2026-10-07虚拟手柄阶段：新增remote_command、remote_control及配置，工程文件引用为354个，需要重新加载Keil工程。默认REMOTE_CONTROL_ENABLED=1，设0并重编译恢复原按键测试。原图传发送核心保留，接收及安全边界见 [遥控指南](virtual-remote-control.md)；最终全量回归/编译以 [virtual-remote-suite.log](../outputs/reports/historical-logs/virtual-remote-suite.log)、[virtual-remote-build.log](../outputs/reports/historical-logs/virtual-remote-build.log)为准。不会自动烧录或操作实车。
 
 最终遥控构建：53项主机unittest通过，另19项算法检查通过；默认遥控模式Keil0错误0警告，Code=91864、RO=12952、RW=312、ZI=104412字节。独立测试模式REMOTE_CONTROL_ENABLED=0也完成隔离全量编译0错误0警告（未发布该测试镜像）。已同步实际Keil下载目录及outputs/firmware遥控固件，未进行硬件下载。详见上述日志和 [遥控操作指南](virtual-remote-control.md)。

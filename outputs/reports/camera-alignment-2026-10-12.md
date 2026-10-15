@@ -88,7 +88,7 @@
 - 当前配置：[我的参数.json](../../simulation/configs/我的参数.json)。
 - 修正前配置：[历史_297mm_53度.json](../../simulation/configs/历史_297mm_53度.json)。
 - 模型与使用说明：[camera-alignment.md](../../simulation/docs/camera-alignment.md)。
-- 完整备份：[simulation_before-camera-realignment_20261012_165857.zip](../backups/simulation_before-camera-realignment_20261012_165857.zip)。
+- 完整备份：simulation_before-camera-realignment_20261012_165857.zip（已于 2026-10-15 精简中删除）。
 - 在项目根目录执行 `D:\anaconda3\python.exe -B simulation/tools/check_camera_alignment.py --images tmp/figs --output tmp/camera-check/alignment` 可重做轮廓对照；其他机器替换解释器路径。
 - `tools/check_camera_ui.py --images tmp/figs --output tmp/camera-check/ui` 可重做界面检查；测试会短暂打开并关闭窗口。
 

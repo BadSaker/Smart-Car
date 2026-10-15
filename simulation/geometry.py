@@ -126,6 +126,12 @@ class Track:
             self._rays(p);self.ray_key=key
         longitudinal,right,ray_ok=self.rays
         c=math.cos(heading);s=math.sin(heading)
+        renderer=getattr(self,'camera_renderer',None)
+        if renderer is not None and p.get('camera_sampling','nearest')=='bilinear':
+            gray=renderer(self.raster,self.rays,x,y,c,s,p,self.minimum,self.cell)
+            if p['noise'] and rng is not None:gray=np.clip(gray.astype(float)+rng.normal(0,p['noise'],gray.shape),0,255).astype(np.uint8)
+            if p['blackout']:gray.fill(0)
+            return gray
         wx=x+p['camera_offset']*c+longitudinal*c+right*s-p['camera_lateral']*s
         wy=y+p['camera_offset']*s+longitudinal*s-right*c+p['camera_lateral']*c
         gx=(wx-self.minimum[0])/self.cell;gy=(wy-self.minimum[1])/self.cell

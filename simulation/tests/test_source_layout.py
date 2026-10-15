@@ -9,13 +9,13 @@ from source_layout import source_files
 
 class SourceLayoutTests(unittest.TestCase):
     def test_main_project_is_the_only_default_source(self):
-        self.assertEqual(len(source_files()),8)
+        self.assertEqual(len(source_files()),11)
         for path in source_files():self.assertIn('car',path.parts)
 
     def test_cached_dll_loads_without_compiler_and_records_inputs(self):
         p=defaults();instance=native.Native(p)
         info=json.loads((native.ROOT/'build'/instance.version/'source.json').read_text())
-        self.assertEqual(len(info),8)
+        self.assertEqual(len(info),11)
         with patch('native.candidates',return_value=iter(())),patch.dict('os.environ',{},clear=True):
             cached=native.Native(p)
         self.assertEqual(cached.version,instance.version)

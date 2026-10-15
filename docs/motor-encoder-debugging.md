@@ -5,7 +5,7 @@
 
 当前默认已切换虚拟手柄遥控，C12用于本地允许/解除，不执行本页8秒测试。下文适用于`REMOTE_CONTROL_ENABLED=0`的独立测试模式；当前操作见 [遥控指南](virtual-remote-control.md)。
 
-更新：2026-10-04。用户已安装逐飞官方DRV8701E双路模块至RT1064 V3.0主板的电机驱动1；左/右1024线带方向编码器接编码器1/2。最终确认：**车轮转1圈，啮合的编码器转4.25圈**，后轮直径64mm。早先“编码器直接装在轮轴、与轮同速”的说法已被用户纠正，不得用于换算。
+更新：2026-10-13（齿比纠正）。用户已安装逐飞官方DRV8701E双路模块至RT1064 V3.0主板的电机驱动1；左/右1024线带方向编码器接编码器1/2。最终确认：**车轮齿轮68齿、编码器齿轮30齿，轮转1圈编码器转68/30圈**，后轮直径64mm。此前4.25来自估算，已被本次实物齿数纠正；电机16齿与车轮68齿的减速比不用于编码器换算。STEP仍按上升沿×1，不能额外乘四。
 
 ## 程序入口与按键
 
@@ -59,13 +59,13 @@ S3在下一个正常10ms采样发出两路零PWM命令，库的整周期重载�
 
 参数与公式：
 
-- 编码器每圈1024脉冲，车轮每圈计数 `1024 × 4.25 = 4352`。
+- 编码器每圈1024脉冲，车轮每圈计数 `1024 × 68 / 30 ≈ 2321.067`（保留68/30精确分数）。
 - 64mm轮胎名义周长 `π × 64 ≈ 201.062mm`。
 - 10ms增量为ΔN时：`计数/秒 = ΔN × 100`。
-- `轮rpm = 计数/秒 × 60 / 4352`。
-- `名义线速度mm/s = 计数/秒 × 201.062 / 4352`。
+- `轮rpm = 计数/秒 × 60 × 30 / (1024 × 68)`。
+- `名义线速度mm/s = 计数/秒 × 201.062 × 30 / (1024 × 68)`。
 
-例如每秒4352计数对应60rpm和约201mm/s。这里4.25是**编码器与轮轴的转数比**，不是另行假定的电机减速比；不会重复乘除。实际PPR、啮合比和滚动周长仍可用手转一轮、滚动距离实测核对。
+例如15秒累计34816计数对应平均60rpm和约201mm/s。这里68/30是**编码器与轮轴的转数比**，不是另行假定的电机减速比；不会重复乘除。实际PPR、啮合比和滚动周长仍可用手转一轮、滚动距离实测核对。
 
 16位硬件计数器自由运行，软件求相邻采样的模差，避免每次“读后清零”漏掉中间边沿。有效采样前提是每10ms真实净变化绝对值小于32768；恰好半量程0x8000按−32768解释但方向有歧义，超范围不能可靠还原。累计计数按int32饱和并保留标志，换算中间量使用int64。主循环读取快照时短暂屏蔽并恢复原中断状态，不在临界区访问显示或网络。
 
@@ -94,4 +94,6 @@ S3在下一个正常10ms采样发出两路零PWM命令，库的整周期重载�
 - 本地 [逐飞DRV8701E双驱例程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E3_motor/E3_04_drv8701e_double_motor_contro_demo/user/src/main.c)与 [方向编码器例程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E2_encoder/E2_02_encoder_dir_demo/user/src/main.c)。
 - [逐飞官方技术说明](https://seekfree.cn/collaborations?articleName=%E7%91%9E%E8%90%A8%E8%AF%AD%E9%9F%B3%E5%B0%8F%E8%BD%A6%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB)§5.2.2介绍脉冲/方向、1024PPR及齿轮比换算。
 - [逐飞官方DRV8701E仓库](https://gitee.com/seekfree/DRV8701E_Brush_Driver_Project)给出模块6–26V供电、PH/EN接口和使能开关；[TI数据手册](https://www.ti.com/lit/ds/symlink/drv8701.pdf)第14页给出芯片EN/nSLEEP真值表。未将理论峰值电流作为实际连续额定值。
-- 电机9种配置、编码器8项、屏幕遥测以及原图传/C13/舵机回归通过；另19算法检查通过。主工程Keil全量0错误0警告，记录见 [完整回归](../logs/motor-encoder-suite.log)、[构建](../logs/motor-encoder-build.log)、[电机测试](../logs/motor-control-tests.log)、[编码器测试](../logs/encoder-feedback-tests.log)和 [显示测试](../logs/motor-telemetry-tests.log)。实物波形、左右映射、方向和轮速尚未测量。
+- 电机9种配置、编码器8项、屏幕遥测以及原图传/C13/舵机回归通过；另19算法检查通过。主工程Keil全量0错误0警告，记录见 [完整回归](../outputs/reports/historical-logs/motor-encoder-suite.log)、[构建](../outputs/reports/historical-logs/motor-encoder-build.log)、[电机测试](../outputs/reports/historical-logs/motor-control-tests.log)、[编码器测试](../outputs/reports/historical-logs/encoder-feedback-tests.log)和 [显示测试](../outputs/reports/historical-logs/motor-telemetry-tests.log)。实物波形、左右映射、方向和轮速尚未测量。
+
+2026-10-13修正影响：同一原始计数的名义速度和里程变为旧4352配置的1.875倍。旧视频300/200/140/160设置相当于562.5/375/262.5/300mm/s的名义实际速度（仍取决于闭环跟踪、轮径和打滑）。单轮圈计数不能截为2321；可手转15轮圈核对34816计数，齿数确认不替代实际滚动周长标定。旧测试记录和固件哈希保留历史含义。

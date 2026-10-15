@@ -1,8 +1,9 @@
-"""Locate a Windows x64 GCC without binding to a username or drive letter."""
+"""发现Windows x64 GCC，不绑定用户名或盘符；诊断写入本机运行目录。"""
 import os, shutil, subprocess, json
 from pathlib import Path
 from functools import lru_cache
 from parameters import ROOT
+from runtime_paths import RUNTIME, runtime_file
 
 def fixed_drives():
     if os.name!='nt':return []
@@ -19,12 +20,11 @@ def candidates():
         yield ROOT/relative
     found=shutil.which('gcc')
     if found:yield Path(found)
-    # Bounded checks of known toolchain layouts, never a recursive disk scan.
+    # 只检查已知工具链布局，不递归扫描整盘。
     for drive in fixed_drives():
         for relative in ('msys64/ucrt64/bin/gcc.exe','msys64/mingw64/bin/gcc.exe','mingw64/bin/gcc.exe','MinGW/bin/gcc.exe'):
             yield drive/relative
-    # Existing installations remain a last-resort source, without fixed drives
-    # or versions. A local independent compiler takes precedence.
+    # 已有工具安装作为最后候选，不绑定盘符或版本；项目独立工具链优先。
     for drive in fixed_drives():
         for pattern in ('Xilinx/Vivado/*/tps/mingw/*/win64.o/nt/bin/gcc.exe',
                         'AMD/Vivado/*/tps/mingw/*/win64.o/nt/bin/gcc.exe'):
@@ -47,13 +47,13 @@ def find_compiler():
             if result.returncode or 'x86_64' not in target or not any(x in target for x in ('mingw','windows','win32')):
                 raise RuntimeError(f'需要 Windows x64 GCC，当前目标为 {target or "未知"}')
             attempts.append({'path':str(candidate),'accepted':True,'target':target})
-            (ROOT/'reports').mkdir(exist_ok=True)
-            (ROOT/'reports/compiler-discovery.json').write_text(json.dumps(attempts,ensure_ascii=False,indent=2),encoding='utf-8')
+            RUNTIME.mkdir(parents=True,exist_ok=True)
+            (runtime_file('compiler-discovery.json')).write_text(json.dumps(attempts,ensure_ascii=False,indent=2),encoding='utf-8')
             return candidate.resolve()
         except (OSError,subprocess.SubprocessError,RuntimeError) as error:
             attempts.append({'path':str(candidate),'accepted':False,'reason':str(error)})
             if os.environ.get('SIMULATION_CC') and key==str(Path(os.path.expandvars(os.environ['SIMULATION_CC'].strip('"')))).casefold():
                 raise RuntimeError(f'指定的 SIMULATION_CC 无法使用：{error}') from error
-    (ROOT/'reports').mkdir(exist_ok=True)
-    (ROOT/'reports/compiler-discovery.json').write_text(json.dumps(attempts,ensure_ascii=False,indent=2),encoding='utf-8')
+    RUNTIME.mkdir(parents=True,exist_ok=True)
+    (runtime_file('compiler-discovery.json')).write_text(json.dumps(attempts,ensure_ascii=False,indent=2),encoding='utf-8')
     raise RuntimeError('未找到可用的64位GCC。请在 simulation/toolchain/mingw64 放置完整工具链，或设置 SIMULATION_CC。已有匹配DLL时无需编译器。')

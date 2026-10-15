@@ -1,5 +1,21 @@
 #ifndef AUTOCAR_VISION_CONFIG_H
 #define AUTOCAR_VISION_CONFIG_H
+#include "vehicle_geometry.h"
+
+/* 平地、方形像素、主点居中条件下的地面投影；297/80mm为当前安装记录。
+ * 俯角与畸变未实测。投影由44/167px两个标定宽度约束，不读取仿真地图。 */
+#define VISION_ROAD_WIDTH_MM           500.0f
+#define VISION_CAMERA_HEIGHT_MM        297.0f
+#define VISION_CAMERA_FORWARD_MM       80.0f
+#define VISION_PRINCIPAL_ROW           59.5f
+#define VISION_GEOMETRY_LOOKAHEAD_MM    380.0f
+#define VISION_GEOMETRY_MIN_TARGET_MM   TRACK_PATH_MIN_TARGET_MM
+#define VISION_GEOMETRY_MAX_TARGET_MM   TRACK_PATH_MAX_TARGET_MM
+#define VISION_GEOMETRY_FIT_RANGE_MM    750.0f
+#define VISION_GEOMETRY_FIT_ERROR_MM    20.0f
+#define VISION_GEOMETRY_EXTRAPOLATE_MM  150.0f
+#define VISION_GEOMETRY_SWEEP_STEP_MM   5.0f
+#define VISION_GEOMETRY_MIN_SPAN_MM     150.0f
 
 /* 用户确认直道30/116行宽44/167px为实测值，赛道总宽约50cm。
  * 行0在远处、行119在近处；宽度是道路两黑边内沿之间的像素数。 */
@@ -47,7 +63,7 @@
 #define VISION_OPENING_MARGIN_ROWS      4
 #define VISION_OPPOSITE_CONTINUITY_PERCENT 80U
 #define VISION_RING_CONFIRM_FRAMES      3U
-#define VISION_RING_ENTRY_ROW           80U
+#define VISION_RING_ENTRY_ROW           60U
 /* 单侧缺口还须有向前延续的分叉，普通弯道不能仅凭有界缺口入环。
  * 远场只用于元素证据，不改变30/116行的实测透视锚点。 */
 #define VISION_RING_BRANCH_TOP_ROW      12
@@ -61,9 +77,12 @@
 #define VISION_RING_APPROACH_MAX_MS     10000U
 #define VISION_RING_EXIT_NEAR_ROW       108
 #define VISION_RING_EXIT_WIDEN_ROWS     12U
-#define VISION_RING_EXIT_MEMORY_MAX_MM 700U
+#define VISION_RING_EXIT_MEMORY_MAX_MM 1000U
 /* 低速元素100mm/s通过700mm需7s，另留1s响应余量；距离限界始终有效。 */
 #define VISION_RING_EXIT_MEMORY_MAX_MS 8000U
+/* 图像路径只能短时补缺；出口曾出现的拓扑记忆不等于路径仍可重放。 */
+#define VISION_RING_PATH_MAX_MM        160U
+#define VISION_RING_PATH_MAX_MS        250U
 #define VISION_RING_CACHE_MAX_OPEN_ROWS 4U
 #define VISION_RING_CACHE_MIN_CONFIDENCE 40U
 #define VISION_RING_ENTRY_BIAS_PX       60
@@ -77,7 +96,10 @@
 #define VISION_RECOVERY_FRAMES          3U
 #define VISION_CROSS_CONFIRM_FRAMES     2U
 #define VISION_CROSS_WIDE_MIN_ROWS      6U
-#define VISION_CROSS_MAX_MM             1000U
+/* 总距离覆盖远场接近；近场开口另限距，不能放宽实际缺边通行。 */
+#define VISION_CROSS_MAX_MM             1500U
+#define VISION_CROSS_RECONSIDER_MAX_MM  600U
+#define VISION_CROSS_NEAR_MAX_MM        700U
 #define VISION_CROSS_TIMEOUT_MS         15000U
 #define VISION_CANDIDATE_MAX_GAP_MS      180U
 /* 已确认元素中的有限宽白区过渡；仍须有当前实测锚点和白色路径。

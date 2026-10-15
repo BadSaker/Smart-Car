@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "mapping": {
+    "cruise": {
+      "macro": "AUTO_CRUISE_SPEED_MM_S",
+      "value": 350.0
+    },
+    "curve_speed": {
+      "macro": "AUTO_CURVE_SPEED_MM_S",
+      "value": 350.0
+    },
+    "element_speed": {
+      "macro": "AUTO_ELEMENT_SPEED_MM_S",
+      "value": 250.0
+    },
+    "max_duty": {
+      "macro": "AUTO_MAX_DUTY_PERMILLE",
+      "value": 300
+    },
+    "outer_speed": {
+      "macro": "AUTO_CURVE_OUTER_SPEED_MM_S",
+      "value": 350.0
+    },
+    "kp": {
+      "macro": "AUTO_STEERING_KP",
+      "value": 28.0
+    },
+    "ki": {
+      "macro": "AUTO_STEERING_KI",
+      "value": 0.0
+    },
+    "kd": {
+      "macro": "AUTO_STEERING_KD",
+      "value": 0.5
+    },
+    "speed_kp": {
+      "macro": "AUTO_SPEED_KP",
+      "value": 0.5
+    },
+    "speed_ki": {
+      "macro": "AUTO_SPEED_KI",
+      "value": 0.15
+    },
+    "min_q": {
+      "macro": "AUTO_MIN_CONFIDENCE",
+      "value": 45
+    },
+    "outer_q": {
+      "macro": "AUTO_CURVE_OUTER_MIN_CONFIDENCE",
+      "value": 40
+    },
+    "width_top": {
+      "macro": "VISION_WIDTH_TOP_PX",
+      "value": 44
+    },
+    "width_bottom": {
+      "macro": "VISION_WIDTH_BOTTOM_PX",
+      "value": 167
+    },
+    "outer_enabled": {
+      "macro": "VISION_CURVE_OUTER_ENABLED",
+      "value": 1
+    }
+  },
+  "gui": [
+    {
+      "name": "默认参数",
+      "passed": true,
+      "build": "870633399dde8064",
+      "element_speed": 250.0
+    },
+    {
+      "name": "默认_完整赛道_C算法",
+      "passed": true,
+      "build": "870633399dde8064",
+      "element_speed": 250.0
+    },
+    {
+      "name": "实测基线_350_350_350_250",
+      "passed": true,
+      "build": "870633399dde8064",
+      "element_speed": 250.0
+    }
+  ]
+}

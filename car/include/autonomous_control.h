@@ -13,4 +13,27 @@ uint8_t autonomous_control_service(uint32_t now_ms);
 /* 短临界区快照；保存调用者PRIMASK，不在临界区等待硬件。 */
 void autonomous_control_get_status(autonomous_drive_status_t *out);
 uint8_t autonomous_control_is_active(void);
+typedef struct {
+    uint32_t now_ms,frame_ms,sequence;
+    uint8_t confidence,minimum_confidence,valid,element;
+    uint8_t ring_left_reject,ring_right_reject,left_island,right_island,entry_supported,fault_element;
+    uint8_t left_fork,right_fork,left_opening_rows,right_opening_rows;
+    int16_t near_error_px,far_error_px,steering_permille;
+    int16_t raw_near_error_px,raw_far_error_px;
+    track_element_diagnostic_t element_diagnostic;
+    /* 触发本拍的原始反馈，以及本拍控制前真正执行过的目标/输出/积分。 */
+    uint32_t feedback_sequence, servo_service_ms;
+    int16_t raw_left_delta_counts, raw_right_delta_counts;
+    int32_t left_speed_mm_s, right_speed_mm_s;
+    uint16_t servo_pulse_us;
+    autonomous_drive_status_t motion;
+} autonomous_trace_frame_t;
+typedef struct {
+    autonomous_trace_frame_t last_good,first_bad,fault_frame;
+    uint32_t run_generation;
+    autonomous_fault_t fault;
+    uint8_t has_last_good,has_first_bad,frozen;
+} autonomous_control_trace_t;
+/* 调试器/主循环只读；首次拒绝帧与故障帧分开，重新起跑清除。 */
+void autonomous_control_get_trace(autonomous_control_trace_t *out);
 #endif

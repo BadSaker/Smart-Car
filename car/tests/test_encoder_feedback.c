@@ -19,13 +19,24 @@ static uint8_t tick_before_disable;
 static uint8_t tick_after_restore;
 
 #ifdef TEST_RATIO_ONE_TO_ONE
-#define TEST_COUNTS_PER_WHEEL_REV 1024
+#define TEST_RATE_COUNTS 1024
+#define TEST_RATE_RPM_X10 60000
+#define TEST_RATE_SPEED_MM_S 20106
+#define TEST_COUNTS_15_TURNS 15360
 #define TEST_RATE_TIE_COUNTS 16
+#define TEST_RATE_TIE_RPM_X10 938
 #define TEST_SPEED_TIE_COUNTS 2560
+#define TEST_SPEED_TIE_MM_S 50266
 #else
-#define TEST_COUNTS_PER_WHEEL_REV 4352
-#define TEST_RATE_TIE_COUNTS 68
-#define TEST_SPEED_TIE_COUNTS 10880
+/* 68/30齿比：2176计数恰为15/16轮圈；15轮圈=34816计数，禁止取整单圈。 */
+#define TEST_RATE_COUNTS 2176
+#define TEST_RATE_RPM_X10 56250
+#define TEST_RATE_SPEED_MM_S 18850
+#define TEST_COUNTS_15_TURNS 34816
+#define TEST_RATE_TIE_COUNTS 544
+#define TEST_RATE_TIE_RPM_X10 14063
+#define TEST_SPEED_TIE_COUNTS 17408
+#define TEST_SPEED_TIE_MM_S 150797
 #endif
 
 static void check(int condition, const char *message)
@@ -180,37 +191,37 @@ static void test_rates(void)
     int32_t sum_speed_mm_s = 0;
     int tick;
     encoder_feedback_init();
-    snapshot = sample(TEST_COUNTS_PER_WHEEL_REV, -TEST_COUNTS_PER_WHEEL_REV);
-    check(snapshot.left.wheel_rpm_x10 == 60000 && snapshot.right.wheel_rpm_x10 == -60000,
-          "one wheel turn in 10ms is signed 6000 rpm");
-    check(snapshot.left.speed_mm_s == 20106 && snapshot.right.speed_mm_s == -20106,
+    snapshot = sample(TEST_RATE_COUNTS, -TEST_RATE_COUNTS);
+    check(snapshot.left.wheel_rpm_x10 == TEST_RATE_RPM_X10 && snapshot.right.wheel_rpm_x10 == -TEST_RATE_RPM_X10,
+          "exact rational gear ratio converts signed wheel rate");
+    check(snapshot.left.speed_mm_s == TEST_RATE_SPEED_MM_S && snapshot.right.speed_mm_s == -TEST_RATE_SPEED_MM_S,
           "64mm wheel circumference converts signed speed");
     snapshot = sample(TEST_RATE_TIE_COUNTS, -TEST_RATE_TIE_COUNTS);
-    check(snapshot.left.wheel_rpm_x10 == 938 && snapshot.right.wheel_rpm_x10 == -938,
+    check(snapshot.left.wheel_rpm_x10 == TEST_RATE_TIE_RPM_X10 && snapshot.right.wheel_rpm_x10 == -TEST_RATE_TIE_RPM_X10,
           "rpm ties round away from zero symmetrically");
     snapshot = sample(TEST_SPEED_TIE_COUNTS, -TEST_SPEED_TIE_COUNTS);
-    check(snapshot.left.speed_mm_s == 50266 && snapshot.right.speed_mm_s == -50266,
+    check(snapshot.left.speed_mm_s == TEST_SPEED_TIE_MM_S && snapshot.right.speed_mm_s == -TEST_SPEED_TIE_MM_S,
           "speed ties round away from zero symmetrically");
     encoder_feedback_reset_totals();
-    for (tick = 0; tick < 100; ++tick)
+    for (tick = 0; tick < 1500; ++tick)
     {
 #ifdef TEST_RATIO_ONE_TO_ONE
-        int counts = tick < 24 ? 11 : 10;
+        int counts = tick < 360 ? 11 : 10;
 #else
-        int counts = tick < 52 ? 44 : 43;
+        int counts = tick < 316 ? 24 : 23;
 #endif
         snapshot = sample(counts, -counts);
         sum_counts_per_second += snapshot.left.counts_per_second;
         sum_rpm_x10 += snapshot.left.wheel_rpm_x10;
         sum_speed_mm_s += snapshot.left.speed_mm_s;
     }
-    check(snapshot.left.total_counts == TEST_COUNTS_PER_WHEEL_REV &&
-          snapshot.right.total_counts == -TEST_COUNTS_PER_WHEEL_REV,
-          "one second contains one wheel revolution");
-    check(sum_counts_per_second / 100 == TEST_COUNTS_PER_WHEEL_REV,
-          "one-second mean count rate matches the wheel revolution fixture");
-    check((sum_rpm_x10 + 50) / 100 == 600, "one wheel revolution per second is 60 rpm");
-    check((sum_speed_mm_s + 50) / 100 == 201, "one wheel revolution per second is 201 mm/s");
+    check(snapshot.left.total_counts == TEST_COUNTS_15_TURNS &&
+          snapshot.right.total_counts == -TEST_COUNTS_15_TURNS,
+          "fifteen wheel turns retain fractional counts per revolution");
+    check(sum_counts_per_second == TEST_COUNTS_15_TURNS * 100,
+          "fifteen-second count rate accumulation is exact");
+    check((sum_rpm_x10 + 750) / 1500 == 600, "one wheel revolution per second is 60 rpm");
+    check((sum_speed_mm_s + 750) / 1500 == 201, "one wheel revolution per second is 201 mm/s");
 }
 
 static void test_reset(void)

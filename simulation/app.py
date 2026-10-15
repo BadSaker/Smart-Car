@@ -2,7 +2,7 @@ import json, math, os, time, traceback, re
 import copy
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-# This GUI uses small matrix batches; worker-pool overhead can stall repainting.
+# 界面使用小批量矩阵计算；额外线程池开销可能阻塞重绘。
 os.environ['OPENBLAS_NUM_THREADS']='1'
 os.environ['OMP_NUM_THREADS']='1'
 import tkinter as tk
@@ -10,6 +10,7 @@ from tkinter import ttk,messagebox,filedialog,simpledialog
 from PIL import Image,ImageTk
 import numpy as np
 from parameters import ROOT,defaults,validate,save,load
+from runtime_paths import runtime_file
 from engine import Simulation,STATES,FAULTS,ELEMENTS,REASONS
 from render import map_image,scene_image,camera_image,chart_image
 from comparison import Comparison
@@ -46,7 +47,7 @@ def disable_window_transitions(root):
 
 FIELDS={
  '车辆':[('length','整车总长 m〔记录〕'),('wheelbase','轴距 m'),('track','轮胎中心距 m'),('body_width','底板最大宽 m〔近似〕'),
- ('tire_width','轮胎宽 m'),('wheel_diameter','轮径 m'),('steer_max_deg','满幅前轮转角 °〔假设〕'),
+ ('tire_width','轮胎宽 m'),('wheel_diameter','轮径 m'),('steer_max_deg','满幅前轮转角 °〔实测端点〕'),
  ('servo_center','舵机中位 µs'),('servo_range','舵机摆幅 ±µs'),('servo_step','命令步进 µs'),
  ('servo_interval','步进间隔 s'),('servo_tau','机械响应 s〔假设〕'),('motor_gain','电机增益 mm/s/‰〔假设〕'),
  ('motor_deadzone','起转死区 ‰〔假设〕'),('motor_tau','电机响应 s〔假设〕'),('coast_tau','滑行响应 s〔假设〕')],
@@ -55,12 +56,19 @@ FIELDS={
  '相机':[('height','镜头高度 m'),('camera_offset','相机在后轴前 m'),('pitch','向下俯角 °'),
  ('hfov','有效水平视场 °'),('fy_ratio','fy/fx 缩放比〔假设〕'),('cx','主点列 px'),('cy','主点行 px'),('k1','角点径向比例〔模型〕'),
  ('fps','相机帧率 Hz'),('gray_road','道路灰度 0–255'),('gray_edge','边线灰度 0–255'),
+ ('camera_latency_ms','图像延迟 ms'),('camera_blur_px','模糊半径 px'),
  ('gray_background','背景灰度 0–255'),('camera_lateral','镜头左偏 m'),('camera_yaw','镜头左偏航 °'),('camera_roll','镜头横滚 °')],
  '控制':[('cruise','直道目标 mm/s'),('curve_speed','弯道目标 mm/s'),('outer_speed','外侧目标 mm/s'),
- ('element_speed','元素目标 mm/s'),('max_duty','PWM上限 ‰'),
+ ('element_speed','元素目标 mm/s'),('max_duty','PWM上限 ‰'),('speed_guard','单轮超速保护 mm/s'),
  ('kp','转向 Kp'),('ki','转向 Ki'),('kd','转向 Kd'),('speed_kp','速度 Kp'),('speed_ki','速度 Ki'),
  ('min_q','普通Q门限'),('outer_q','外侧Q门限'),('outer_enabled','外侧补线 0/1'),
  ('width_top','第30行标定宽 px'),('width_bottom','第116行标定宽 px')],
+ '运动':[('steering_rate','转向速度 ‰/s'),('steering_accel','转向加速度 ‰/s²'),
+ ('accel','单轮加速度 mm/s²'),('decel','单轮减速度 mm/s²'),('lateral_accel','横向加速度限 mm/s²'),
+ ('speed_ff','速度前馈 ‰/(mm/s)'),('speed_tracking','积分跟踪 1/s')],
+ '动力':[('wheel_inertia_ratio','轮惯性比'),('tire_stiffness','接地刚度 1/s'),
+ ('traction_left','左轮附着系数'),('traction_right','右轮附着系数'),
+ ('wheel_load_left','左轮附加阻力 mm/s²'),('wheel_load_right','右轮附加阻力 mm/s²'),('curve_load','转弯阻力系数')],
  '场景':[('road_width','道路内沿宽 m'),('edge_width','黑边宽 m〔假设〕'),('radius','圆弧中心半径 m'),
  ('offset','初始左偏 m'),('heading_error','初始左偏航 °')],
  '扰动':[('disturbance_level','扰动等级 0–4'),('seed','随机种子 整数'),('seed_auto','重置更换种子 0/1'),
@@ -134,6 +142,8 @@ class App:
             ttk.Button(bar,text=text,command=method).pack(side='left',padx=3,pady=5)
         self.speed=tk.StringVar(value='1×');ttk.Label(bar,text='速度').pack(side='left',padx=(12,3))
         ttk.Combobox(bar,textvariable=self.speed,values=['0.5×','1×','2×','4×','8×'],width=5,state='readonly').pack(side='left')
+        self.actual_speed=tk.StringVar(value='实际 —');ttk.Label(bar,textvariable=self.actual_speed).pack(side='left',padx=5)
+        self._rate_wall=0.;self._rate_sim=0.;self.actual_factor=0.
         ttk.Button(bar,text='导出实验',command=self.export).pack(side='right',padx=4)
         ttk.Button(bar,text='图像回放',command=self.replay).pack(side='right',padx=4)
         ttk.Button(bar,text='保存参数',command=self.save_params).pack(side='right',padx=4)
@@ -171,6 +181,11 @@ class App:
                 cell=ttk.Frame(pane);cells.append(cell);ttk.Label(cell,text='0关闭，1轻微，2中等\n3较强，4自定义',font=('Microsoft YaHei UI',8),foreground='#91a9c2').pack(anchor='w')
             if title=='车模':
                 cell=ttk.Frame(pane);cells.append(cell);ttk.Label(cell,text='安装间距为外形近似\n不改变镜头投影位置',font=('Microsoft YaHei UI',8),foreground='#91a9c2').pack(anchor='w')
+            if title=='动力':
+                cell=ttk.Frame(pane);cells.append(cell)
+                self.dynamics_choice=tk.StringVar(value='独立轮速与有限接地')
+                ttk.Combobox(cell,textvariable=self.dynamics_choice,values=['独立轮速与有限接地','历史理想模型（对照）'],state='readonly',width=24).pack(anchor='w')
+                ttk.Label(cell,text='惯性、附着和阻力参数待标定',font=('Microsoft YaHei UI',8),foreground='#91a9c2').pack(anchor='w')
             self.layout_parameters(pane,cells)
         root.bind('<MouseWheel>',self.parameter_scroll,add='+')
         self.vars['disturbance_level'].trace_add('write',self.level_changed)
@@ -356,6 +371,7 @@ class App:
             elif var.get()!=self.display_values.get(key):p[key]=float(var.get())/self.field_scales.get(key,1)
         p['scenario']={'完整赛道':'full','中期 A—B':'midterm','直道诊断':'straight','圆弧诊断':'circle'}[self.scenario.get()]
         p['direction']=self.direction.get();p['controller']='native' if self.controller.get()=='现有 C 算法' else 'reference'
+        if hasattr(self,'dynamics_choice'):p['dynamics_model']='independent' if self.dynamics_choice.get()=='独立轮速与有限接地' else 'legacy'
         p['reference_widths']=[float(v.get()) for v in self.reference_vars]
         if hasattr(self,'sampling_quality'):
             p['camera_samples'],p['camera_sampling']=SAMPLING_OPTIONS[self.sampling_quality.get()]
@@ -375,10 +391,12 @@ class App:
         finally:self._syncing=False
         self.scenario.set({'full':'完整赛道','midterm':'中期 A—B','straight':'直道诊断','circle':'圆弧诊断'}[p['scenario']])
         self.direction.set(p['direction']);self.controller.set('现有 C 算法' if p['controller']=='native' else '理想几何参考')
+        if hasattr(self,'dynamics_choice'):self.dynamics_choice.set('独立轮速与有限接地' if p['dynamics_model']=='independent' else '历史理想模型（对照）')
     def reset(self):
         self.running=False
         try:
             p=self.collect();new=Simulation(p);self.sim=new;self.set_fields(new.p);self.replay_frames=[];self.accumulator=0.
+            self.replay_clock=0.;self._rate_wall=0.;self._rate_sim=0.;self.actual_speed.set('实际 —')
             self.comparison.widths=references(new.p);self.comparison.version+=1
             self.message.set('参数已应用。点击启动开始仿真。');self.refresh()
         except Exception as e:messagebox.showerror('参数 / 编译错误',str(e))
@@ -390,7 +408,10 @@ class App:
                 self.running=True;self.last_clock=time.perf_counter();self.message.set('继续记录停车后图像。');return
             self.message.set('当前已结束、停车或故障；请「应用并重置」后重新启动。');return
         self.sim.started=True;self.running=True;self.last_clock=time.perf_counter()
-    def pause(self):self.running=False;self.message.set('已暂停，仿真时间冻结。')
+    def pause(self):
+        self.running=False;self.accumulator=0.;self.replay_clock=0.
+        self._rate_wall=0.;self._rate_sim=0.;self.actual_speed.set('实际 —')
+        self.message.set('已暂停，仿真时间冻结。')
     def stop(self):
         if self.sim.replay:self.pause();return
         self.sim.stop_requested=True;self.sim.tick();self.running=self.sim.p['controller']=='native';self.last_clock=time.perf_counter();self.refresh()
@@ -516,38 +537,46 @@ class App:
                 self.root.after(100,self.loop);return
             if self._window_hidden:
                 self.schedule_restore();self.root.after(8,self.loop);return
-            clock=time.perf_counter();elapsed=min(.2,clock-self.last_clock);self.last_clock=clock
+            clock=time.perf_counter();elapsed=max(0.,clock-self.last_clock);self.last_clock=clock
+            factor=float(self.speed.get().replace('×',''))
             if self.running:
-                factor=float(self.speed.get().replace('×',''))
+                before=self.sim.now
                 if self.sim.replay:
-                    self.replay_clock=min(.5,self.replay_clock+elapsed*factor)
-                    period=1/self.sim.p['fps'];budget=time.perf_counter()+.006
+                    self.replay_clock+=elapsed*factor
+                    period=1/self.sim.p['fps'];budget=time.perf_counter()+.012
                     while self.running and self.replay_clock>=period and time.perf_counter()<budget:
                         self.replay_clock-=period;self.replay_next()
                 else:
-                    self.accumulator=min(.5,self.accumulator+elapsed*factor)
+                    self.accumulator+=elapsed*factor
                     # Bound each simulation batch so Tk can service input between batches.
-                    budget=time.perf_counter()+.006
-                    while self.accumulator>=.01 and time.perf_counter()<budget:
-                        self.sim.tick();self.accumulator-=.01
+                    budget=time.perf_counter()+.012
+                    while self.running and self.accumulator>=.01 and time.perf_counter()<budget:
+                        self.sim.tick();self.accumulator=max(0.,self.accumulator-.01)
                         if self.sim.completed and self.sim.stop_event is None:
                             self.running=False;self.message.set('到达终点，已冻结仿真供检查；这不是控制器自动停车。');break
                         if self.sim.p['controller']=='native' and self.sim.stop_event is not None:
                             if self.sim.stop_capture_complete:
                                 self.running=False;self.message.set('停车证据与前后图像已记录，可导出实验。');break
                             self.message.set('控制器已停车，正在记录停车后2秒图像。')
+                self._rate_wall+=elapsed;self._rate_sim+=(self.sim.now-before)/1000.
+                if self._rate_wall>=.5:
+                    self.actual_factor=self._rate_sim/self._rate_wall
+                    self.actual_speed.set(f'实际 {self.actual_factor:.2f}×')
+                    self._rate_wall=0.;self._rate_sim=0.
             clock=time.perf_counter()
             pending=getattr(self,'_scene_future',None)
             if pending is not None and pending.done():
                 if self.running and self.view_tabs.tab(self.view_tabs.select(),'text')=='3D 场景':
                     self._visual_dirty=True
                 else:self._scene_future=None
-            if self._visual_dirty or clock-self._last_render>=1/30:
+            render_period=1/(30 if not self.running or factor<=1 else 15 if factor<=2 else 10)
+            if (self._visual_dirty and not self.running) or clock-self._last_render>=render_period:
                 self.refresh(force=False);self._last_render=clock;self._visual_dirty=False
         except Exception:
-            self.running=False;log=ROOT/'reports/ui_error.log';log.write_text(traceback.format_exc(),encoding='utf-8')
+            self.running=False;log=runtime_file('ui_error.log');log.write_text(traceback.format_exc(),encoding='utf-8')
             self.message.set('运行异常，已暂停。详情：'+str(log))
-        delay=1 if self.running and self.accumulator>=.01 else (8 if self.running else 25)
+        backlog=self.replay_clock>=1/self.sim.p['fps'] if self.sim.replay else self.accumulator>=.01
+        delay=0 if self.running and backlog else (2 if self.running else 25)
         self.root.after(delay,self.loop)
     def show(self,key,label,image):
         # Upload into an invisible back buffer, then swap the complete opaque frame.
@@ -626,11 +655,15 @@ class App:
         live=s.path_diagnostic(False)
         self.status.set(f"{evidence}：{path['reason']}（帧{path['frame_id']}）\n"
           f"最新图像：{live['confidence']}/{live['minimum']} {'有效' if live['accepted'] else '失效'}（帧{live['frame_id']}）\n"
+          f"原始边线Q：{live['observation_confidence']}；路径裕量：{live['confidence']-live['minimum']}\n"
+          f"几何目标：右{live['geometry_right_mm']:.0f} / 前{live['geometry_forward_mm']:.0f} mm；拒绝码{live['geometry_reject']}\n"
           f"{evidence}近 / 远误差：{path['near_px']:+d} / {path['far_px']:+d} px\n"
           f"外侧支持：{'有' if data[9] else '无'}；覆盖行：{int(data[18])} / {int(data[19])}\n"
           f"舵机脉宽：{s.pulse:.0f} µs\n"
           f"左 / 右轮速：{s.left_v*1000:.0f} / {s.right_v*1000:.0f} mm/s\n"
           f"左 / 右电机输出：{s.applied_duties[0]:.0f} / {s.applied_duties[1]:.0f} ‰\n"
+          f"左右轮目标：{s.native.motion['left_target_mm_s']:.0f} / {s.native.motion['right_target_mm_s']:.0f} mm/s\n"
+          f"转向目标 / 执行：{s.native.motion['requested_steering_permille']:.0f} / {data[11]:.0f} ‰\n"
           f"路径进度：{progress:.2f} m；出界轮数：{s.outside_wheels()}\n"
           f"C控制器诊断：{FAULTS[int(data[1])]}")
         self.mode_note.configure(text='理想几何参考' if p['controller']=='reference' else '现有 C 算法')
@@ -677,9 +710,9 @@ def main():
         app._window_hidden=False;app.last_clock=time.perf_counter()
         timing={'ui_prepare_ms':(time.perf_counter()-started)*1000}
         if os.environ.get('SIMULATION_START_CLOCK'):timing['entry_to_prepared_frame_ms']=(time.perf_counter()-float(os.environ['SIMULATION_START_CLOCK']))*1000
-        (ROOT/'reports/startup-timing.json').write_text(json.dumps(timing,indent=2),encoding='utf-8')
+        (runtime_file('startup-timing.json')).write_text(json.dumps(timing,indent=2),encoding='utf-8')
         root.geometry('+25+35');app.transitions_disabled=disable_window_transitions(root);root.mainloop()
     except Exception:
-        log=ROOT/'reports/startup_error.log';log.write_text(traceback.format_exc(),encoding='utf-8')
+        log=runtime_file('startup_error.log');log.write_text(traceback.format_exc(),encoding='utf-8')
         messagebox.showerror('启动失败','详情：'+str(log));root.destroy();raise
 if __name__=='__main__':main()

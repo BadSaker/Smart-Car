@@ -59,7 +59,7 @@
 - 构建脚本的4项模拟工具测试未计入上述95项。本机Windows拒绝启动临时假UV4.exe，早期两项成功路径报“操作已被用户取消”；未绕过该限制。已安装的真实Keil构建及三格式导出成功。
 - `main.c`、屏幕和Wi-Fi模块哈希保持不变。未刷写、通电或实车运行。
 
-[工程测试日志](../../logs/control-tuning-tests-2026-10-12.log) · [仿真测试日志](../../logs/control-tuning-simulator-2026-10-12.log) · [构建日志](../../logs/control-tuning-build-2026-10-12.log)
+[工程测试日志](../../logs/control-tuning-tests-2026-10-12.log) · [仿真测试日志](../../logs/control-tuning-simulator-2026-10-12.log) · [构建日志](../../outputs/reports/historical-logs/control-tuning-build-2026-10-12.log)
 
 ## 使用与复现
 
@@ -86,7 +86,7 @@
 
 ## 追溯
 
-修改前备份：[autocar_before-control-tuning_20261012_174205.zip](../backups/autocar_before-control-tuning_20261012_174205.zip)。初始49轮诊断：[control-tuning-diagnostics_20261012_175808.zip](../backups/control-tuning-diagnostics_20261012_175808.zip)。本轮逐版源码、失败/成功轨迹、最终遥测与校验清单归档为`outputs/backups/control-tuning-iterations_20261012.zip`。清理前核对ZIP完整性，用户`tmp/figs`原图保留。
+修改前备份：autocar_before-control-tuning_20261012_174205.zip（已于 2026-10-15 精简中删除）。初始49轮诊断：[control-tuning-diagnostics_20261012_175808.zip](../backups/control-tuning-diagnostics_20261012_175808.zip)。本轮逐版源码、失败/成功轨迹、最终遥测与校验清单归档为`control-tuning-iterations_20261012.zip（已于 2026-10-15 精简中删除）`。清理前核对ZIP完整性，用户`tmp/figs`原图保留。
 
 ### 交付校验
 

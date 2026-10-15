@@ -54,7 +54,7 @@ int main(void)
         v.near_path_supported=1;v.curve_outer_side=TRACK_SIDE_LEFT;v.curve_outer_supported=1;
         v.curve_outer_near_rows=17;v.curve_outer_far_rows=13;v.near_error_px=20;v.far_error_px=40;
         /* 提速后从起步目标到外侧目标仍须经过真实加速斜坡。 */
-        for(n=0;n<(unsigned)(AUTO_CURVE_OUTER_SPEED_MM_S/(AUTO_ACCEL_MM_S2*0.01f))+5U;++n) {
+        for(n=0;n<(unsigned)(AUTO_CURVE_OUTER_SPEED_MM_S*1.5f/(AUTO_ACCEL_MM_S2*0.01f))+10U;++n) {
             now+=10;++feedback.sample_sequence;
             autonomous_control_publish_vision(&v,++frame_sequence,now);
             autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
@@ -62,7 +62,8 @@ int main(void)
         autonomous_control_get_status(&s);
         CHECK(s.active && s.minimum_confidence==AUTO_CURVE_OUTER_MIN_CONFIDENCE);
         CHECK(s.curve_outer_near_rows==17 && s.curve_outer_far_rows==13 && s.curve_outer_supported);
-        CHECK(s.target_speed_mm_s==AUTO_CURVE_OUTER_SPEED_MM_S && s.steering_permille<0);
+        CHECK(s.target_speed_mm_s==(AUTO_CURVE_OUTER_SPEED_MM_S<AUTO_ELEMENT_SPEED_MM_S?
+              AUTO_CURVE_OUTER_SPEED_MM_S:AUTO_ELEMENT_SPEED_MM_S) && s.steering_permille<0);
     }
     motor_control_remote_set_link(0);step(3,1,1);CHECK(autonomous_control_is_active());
     step(20,0,0);autonomous_control_get_status(&s);CHECK(!s.active);
@@ -81,8 +82,30 @@ int main(void)
             autonomous_control_publish_vision(&v,++frame_sequence,now);
             autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
         }
-        CHECK(v.valid && v.confidence==39 && v.element==TRACK_ELEMENT_CROSS);
+        CHECK(v.valid && v.confidence>=AUTO_ELEMENT_MIN_CONFIDENCE+15 && v.element==TRACK_ELEMENT_CROSS);
         CHECK(autonomous_control_is_active());
+    }
+    {
+        track_vision_result_t v;memset(&v,0,sizeof v);
+        v.valid=1;v.confidence=95;v.near_path_supported=1;
+        v.near_error_px=v.far_error_px=-80;
+        v.geometry.valid=1;v.geometry.target_right_mm=50;v.geometry.target_forward_mm=400;
+        now+=10;++feedback.sample_sequence;autonomous_control_publish_vision(&v,++frame_sequence,now);
+        autonomous_control_tick_10ms(now);autonomous_control_service(now);autonomous_control_get_status(&s);
+        CHECK(s.active && s.requested_steering_permille<=-190 && s.requested_steering_permille>=-194);
+    }
+    {
+        autonomous_control_trace_t evidence;autonomous_drive_status_t before;
+        autonomous_control_get_status(&before);
+        feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*(AUTO_MAX_MEASURED_SPEED_MM_S+1);
+        feedback.left.delta_counts=AUTO_LEFT_ENCODER_SIGN*289;++feedback.sample_sequence;now+=10;
+        autonomous_control_tick_10ms(now);autonomous_control_get_trace(&evidence);autonomous_control_get_status(&s);
+        CHECK(evidence.frozen && evidence.fault==AUTO_FAULT_OVERSPEED);
+        CHECK(evidence.fault_frame.left_speed_mm_s==AUTO_MAX_MEASURED_SPEED_MM_S+1);
+        CHECK(evidence.fault_frame.raw_left_delta_counts==AUTO_LEFT_ENCODER_SIGN*289);
+        CHECK(evidence.fault_frame.motion.left_duty_permille==before.left_duty_permille);
+        CHECK(evidence.fault_frame.motion.left_target_mm_s==before.left_target_mm_s);
+        CHECK(s.left_duty_permille==0 && s.right_duty_permille==0);
     }
     keys[C14]=0;step(1,1,1);CHECK(!autonomous_control_is_active());
     CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);

@@ -1,0 +1,18 @@
+[
+  {
+    "path": "car/config/camera_debug_local.h",
+    "sha256_unchanged": true
+  },
+  {
+    "path": "outputs/firmware/autocar.axf",
+    "sha256_unchanged": true
+  },
+  {
+    "path": "outputs/firmware/autocar.bin",
+    "sha256_unchanged": true
+  },
+  {
+    "path": "outputs/firmware/autocar.hex",
+    "sha256_unchanged": true
+  }
+]

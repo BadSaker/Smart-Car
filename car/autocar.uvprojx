@@ -48,14 +48,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>..\tmp\build-autocar\objects\</OutputDirectory>
+          <OutputDirectory>.\build\objects\</OutputDirectory>
           <OutputName>autocar</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>..\tmp\build-autocar\listings\</ListingPath>
+          <ListingPath>.\build\listings\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -578,6 +578,11 @@
               <FileName>vision_config.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\config\vision_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>vehicle_geometry.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\config\vehicle_geometry.h</FilePath>
             </File>
             <File>
               <FileName>autonomous_config.h</FileName>

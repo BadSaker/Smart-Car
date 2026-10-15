@@ -3,17 +3,17 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $workspaceRoot = Split-Path -Parent $projectRoot
 $projectPath = Join-Path $projectRoot 'autocar.uvprojx'
-$buildPath = Join-Path $workspaceRoot 'tmp\build-autocar'
+$buildPath = Join-Path $workspaceRoot 'car\build'
 $outputPath = Join-Path $workspaceRoot 'outputs\firmware'
-$logPath = Join-Path $workspaceRoot 'logs\keil-build.log'
+$logPath = Join-Path $workspaceRoot 'car\build\keil-build.log'
 if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'find-tool.ps1')) {
     . (Join-Path $PSScriptRoot 'find-tool.ps1')
     $KeilPath = Find-AutocarTool 'Keil' $KeilPath
 }
 if (-not (Test-Path -LiteralPath $KeilPath)) { throw "Keil executable not found: $KeilPath" }
 if ((Test-Path -LiteralPath (Join-Path $projectRoot 'config/camera_debug_config.h')) -and
-    -not (Test-Path -LiteralPath (Join-Path $projectRoot 'config/camera_debug_local.h'))) {
-    throw 'Generate car/config/camera_debug_local.h using car/scripts/configure-wifi.ps1 first.'
+    -not (Test-Path -LiteralPath (Join-Path $workspaceRoot 'wifi/camera_debug_local.h'))) {
+    throw 'Generate wifi/camera_debug_local.h using wifi/configure-wifi.ps1 first.'
 }
 $fromElf = Join-Path (Split-Path -Parent (Split-Path -Parent $KeilPath)) 'ARM\ARMCLANG\bin\fromelf.exe'
 if (-not (Test-Path -LiteralPath $fromElf)) { throw "Required BIN exporter not found: $fromElf. Previous outputs were preserved." }

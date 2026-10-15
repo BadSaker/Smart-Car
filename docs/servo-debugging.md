@@ -1,5 +1,9 @@
 # S-U400舵机控制与校准记录
 
+## 2026-10-14实测补充
+
+用户确认自动驾驶可用范围1330–1630µs、中位1480µs；前轮相对直行方向tanθ=21.5/31，左右基本相同，端点为±34.7431801583°。已同步servo_config.h、vehicle_geometry.h及当前仿真预设。自动控制20µs/20ms为软件脉宽步进上限，之前另有共同转向速度/加速度约束；端点内线性映射和80ms机械响应仍为模型假设。遥控与独立摆动测试保持±60µs。以下早期测试记录不代表当前自动行程。
+
 > 2026-10-08当前入口：[自动驾驶指南](autonomous-driving.md)。C15/S2改为自动驾驶启停，不再触发舵机摆动；C12在自动运行时停车，非自动模式维持遥控允许；S3最高优先停车。下文早期测试步骤按历史阶段理解。
 
 
@@ -70,7 +74,7 @@ Wi-Fi默认OFF时不会等待网络；开启后的原同步连接/发送/重连�
 
 手动校准代码和固件保存在 [恢复前备份](../outputs/backups/car_before-servo-center-restore_20261003_213551.zip)，便于追溯；原临时测试文件已从活动工程移除。将来如需再次校准，应按新指令明确范围，不擅自恢复临时模式。
 
-原生测试覆盖6组配置：默认6.0V、欠压、过压、7.4V、不同PWM尺度和非整除步长。已按1480中值与1420/1540端点更新行为预期，覆盖一次完整往返、归中保持、限幅、停止优先、消抖、长按不重复和计时回绕。结果见 [舵机回归](../logs/servo-center-restore-tests.log)、[完整回归](../logs/servo-center-restore-suite.log)、[主工程构建](../logs/servo-center-restore-build.log)及 [当日日志](../logs/2026-10-03.log)。
+原生测试覆盖6组配置：默认6.0V、欠压、过压、7.4V、不同PWM尺度和非整除步长。已按1480中值与1420/1540端点更新行为预期，覆盖一次完整往返、归中保持、限幅、停止优先、消抖、长按不重复和计时回绕。结果见 [舵机回归](../outputs/reports/historical-logs/servo-center-restore-tests.log)、[完整回归](../outputs/reports/historical-logs/servo-center-restore-suite.log)、[主工程构建](../outputs/reports/historical-logs/servo-center-restore-build.log)及 [当日日志](../logs/2026-10-03.log)。
 
 软件验证不代替扩大行程的实物验收，本任务没有自动烧录或驱动舵机。
 

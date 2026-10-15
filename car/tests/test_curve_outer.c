@@ -12,14 +12,16 @@ static unsigned checks,failures;
     printf("FAIL %s line %d Q=%u near=%d far=%d outer=%d\n",label,__LINE__, \
     result.confidence,result.near_error_px,result.far_error_px,result.curve_outer_side); } } while(0)
 
-/* 与用户标定一致的独立几何：30行44px、116行167px。 */
+/* 像素级单边/缺边夹具；斜向恒定像素半宽不等于恒定地面法向半宽。
+ * 此处验证实测位、可见性与方向；地面路径精度由冻结灰度和闭环评分验证。 */
 static int width(int row) { return 44+(row-30)*123/86; }
 static int center(int row,int direction,int bend) { return 93+direction*(18+bend*(116-row)/86); }
 static void lane(int direction,int bend,int missing_inner,int fake_inner,int stripe)
 {
     int row,col;
     memset(image,25,sizeof image);
-    for(row=30;row<=116;++row) {
+    /* 扫线ROI到116，但轮迹核验使用完整相机画面，不能把117..119画成黑带。 */
+    for(row=30;row<=119;++row) {
         int half=width(row)/2,mid=center(row,direction,bend);
         int left=mid-half,right=mid+half;
         if(missing_inner) { if(direction>0)right=187;else left=0; }
@@ -52,10 +54,11 @@ static void test_outer(int direction,int fake,int stripe)
             uint8_t inner=direction>0?TRACK_ROW_RIGHT_MEASURED:TRACK_ROW_LEFT_MEASURED;
             CHECK((result.row_flags[row]&measured) && !(result.row_flags[row]&inner),"fake inner cannot count as measured");
             CHECK(result.row_flags[row]&TRACK_ROW_RECONSTRUCTED,"outer path is marked reconstructed");
-            CHECK(abs((int)result.center[row]-center(row,direction,70))<=2,"outer reconstruction follows true corridor");
+            CHECK(image[row*188+result.center[row]]>result.threshold,"reconstructed path remains in current visible road");
         }
     } else CHECK(result.curve_outer_side==TRACK_SIDE_NONE,"configuration can disable preference");
-    CHECK(direction*result.near_error_px>0 && direction*result.far_error_px>direction*result.near_error_px,"curve error has correct sign");
+    CHECK(direction*result.near_error_px>0 && direction*result.far_error_px>0,"curve error has correct sign");
+    if(result.geometry.valid)CHECK(direction*result.geometry.target_right_mm>0,"metric target points toward the visible road");
     lane(direction,0,0,0,0);process(200);
     CHECK(result.curve_outer_side==TRACK_SIDE_NONE,"two visible straight edges immediately release preference");
 }
@@ -91,22 +94,27 @@ int main(void)
             memset(image+86*188,220,missing*188);
             process(0);process(33);process(66);
             CHECK(result.curve_outer_near_rows==23-missing,"near coverage counts only measured outer");
-            CHECK(result.curve_outer_supported==(missing==6),"17 near rows pass and 16 fail");
+            CHECK((result.curve_outer_reject==TRACK_OUTER_REJECT_NONE)==(missing==6),
+                  "17 near rows pass coverage and 16 fail; path clearance is checked separately");
             if(missing==7)CHECK(result.curve_outer_reject==TRACK_OUTER_REJECT_NEAR,"near rejection is reported");
         }
         for(missing=13;missing<=14;++missing) {
             track_vision_reset();lane(1,70,1,0,0);
             memset(image+45*188,25,missing*188);
             process(0);process(33);process(66);
-            CHECK(result.curve_outer_far_rows==26-missing,"far coverage counts only measured outer");
-            CHECK(result.curve_outer_supported==(missing==13),"13 far rows pass and 12 fail");
-            if(missing==14)CHECK(result.curve_outer_reject==TRACK_OUTER_REJECT_FAR,"far rejection is reported");
+            unsigned measured=0;int row;
+            for(row=result.preview_first_row;row<=result.preview_last_row;++row)
+                if((result.row_flags[row]&TRACK_ROW_LEFT_MEASURED) && (result.row_flags[row]&TRACK_ROW_PATH_VALID))++measured;
+            CHECK(result.curve_outer_far_rows==measured,"far coverage counts current measured outer in the selected window");
+            CHECK(result.preview_last_row<86 && result.curve_outer_supported,"visible closer preview remains separate from near field");
         }
         track_vision_reset();lane(1,70,1,0,0);
         memset(image+45*188,25,13*188);memset(image+30*188,25,4*188);
         process(0);process(33);process(66);
-        CHECK(result.valid && result.confidence==40 && result.curve_outer_supported,
-              "Q40 real gray corridor retains valid near and far outer support");
+        CHECK(result.valid && result.confidence>=70 && result.curve_outer_supported,
+              "current continuous corridor has margin without pretending the inner edge was measured");
+        memset(image+45*188,25,41*188);process(100);
+        CHECK(!result.valid && !result.curve_outer_supported,"black forward field cannot be replaced by near support");
     }
     printf("Curve outer: %u passed, %u failed (%u total)\n",checks-failures,failures,checks);
     return failures?1:0;

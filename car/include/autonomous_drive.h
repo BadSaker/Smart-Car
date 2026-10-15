@@ -23,6 +23,7 @@ typedef struct {
     uint8_t curve_outer_near_rows, curve_outer_far_rows, element;
     autonomous_path_reason_t curve_outer_reject_reason;
     int16_t near_error_px, far_error_px;
+    track_path_geometry_t geometry;
     int32_t left_speed_mm_s, right_speed_mm_s;
     int32_t forward_step_um; /* 左右编码器原始增量按方向和传动比换算后的平均微米。 */
 } autonomous_drive_input_t;
@@ -39,6 +40,11 @@ typedef struct {
     int16_t diagnostic_steering_permille; /* 路径拒绝时保留首次撤输出前的命令。 */
     int32_t left_speed_mm_s, right_speed_mm_s;
     float target_speed_mm_s;
+    int16_t requested_steering_permille; /* 视觉目标；steering_permille为连续化后的执行命令。 */
+    float steering_rate_permille_s, speed_limit_mm_s;
+    float left_target_mm_s, right_target_mm_s;
+    float left_filtered_mm_s, right_filtered_mm_s;
+    float left_pid_request, right_pid_request, left_integral, right_integral;
 } autonomous_drive_status_t;
 /* 状态仅由一个10ms执行上下文写入；硬件适配层提供快照，不在此读写GPIO。 */
 typedef struct {
@@ -49,8 +55,11 @@ typedef struct {
     uint32_t key_time_ms, wrong_left_ms, wrong_right_ms, stall_left_ms, stall_right_ms;
     uint32_t steering_frame_ms;
     float left_filtered, right_filtered;
+    float steering_position, steering_velocity;
+    uint8_t path_suspended;
     uint8_t config_valid, key_sample, key_stable, key_armed, good_frames, bad_frames;
     uint8_t marker_present, marker_armed, zebra_frames, clear_frames, steering_initialized;
+    uint8_t steering_geometry;
 } autonomous_drive_t;
 void autonomous_drive_init(autonomous_drive_t *drive);
 void autonomous_drive_tick(autonomous_drive_t *drive, const autonomous_drive_input_t *input);

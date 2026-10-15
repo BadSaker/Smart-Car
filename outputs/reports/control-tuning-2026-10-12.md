@@ -90,7 +90,7 @@
 
 ## 追溯与收尾
 
-- [修改前工程备份](../backups/autocar_before-control-tuning_20261012_174205.zip)：705个源文件/文档/固件，核对无变化。
+- 修改前工程备份 autocar_before-control-tuning_20261012_174205.zip（已于 2026-10-15 精简中删除）：705个源文件/文档/固件，核对无变化。
 - [可复现实验包](../backups/control-tuning-diagnostics_20261012_175808.zip)：包含脚本、独立源码、参数矩阵、6005帧缓存和诊断结果，ZIP完整性检查通过。仪器化代码仅增加输出观察值，未写回主工程。
 - [诊断汇总](control-tuning-2026-10-12/diagnostic-summary.json)。
 - 未修改主工程，因此本阶段不重建或替换固件；尚未完成后续算法优化目标。

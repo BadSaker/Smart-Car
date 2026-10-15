@@ -182,7 +182,11 @@ static void test_ring(int side)
     CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_INSIDE, "far outer opening only arms exit");
     lane(side,0,20,220); opening(-side,46,110); frames(4,1000,1860);
     CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_EXIT, "near outer opening after ring travel permits exit");
-    CHECK(side*result.far_error_px<4, "exit path guides toward the confirmed outer branch");
+    /* 此图仍是同向弯曲走廊，刷白外侧并未定义出口切线。
+     * EXIT不能凭阶段名称制造固定反向偏置；实际出支路由明确拓扑序列验收。 */
+    CHECK(result.geometry.valid && result.geometry.target_forward_mm>0 &&
+          side*result.geometry.target_right_mm>0 && result.geometry.visible_samples>0,
+          "exit geometry remains supported by the current curved white corridor");
     lane(0,0,20,220); frames(4,1100,2130);
     CHECK(result.element==TRACK_ELEMENT_STRAIGHT && result.side==TRACK_SIDE_NONE,
           "exit recovers both stable boundaries");

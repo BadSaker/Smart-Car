@@ -8,8 +8,8 @@ $workspaceRoot = Split-Path -Parent $projectRoot
 . (Join-Path $PSScriptRoot 'find-tool.ps1')
 $Compiler = Find-AutocarTool 'Gcc' $Compiler
 if ([IO.Path]::GetFileName($LogName) -ne $LogName) { throw 'LogName must be a filename.' }
-$buildPath = Join-Path $workspaceRoot 'tmp\algorithm-tests'
-$logPath = Join-Path $workspaceRoot ('logs\' + $LogName)
+$buildPath = Join-Path $workspaceRoot 'car\build\algorithm-tests'
+$logPath = Join-Path $workspaceRoot ('car\build\' + $LogName)
 New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
 New-Item -ItemType Directory -Path (Split-Path -Parent $logPath) -Force | Out-Null
 $testExe = Join-Path $buildPath 'test-algorithms.exe'

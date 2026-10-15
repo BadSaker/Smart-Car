@@ -17,7 +17,7 @@ def main():
         app.fit('maximum');assert app.fit_candidate['height']==.297
         app.apply_fit();assert app.collect()['height']==.297
         for path in (ROOT/'configs').glob('*.json'):load(path)
-        assert len(list((ROOT/'configs').glob('*.json')))==7
+        assert len(list((ROOT/'configs').glob('*.json')))==11
         assert all(path.stem not in app.preset_paths for path in (ROOT/'configs/archive').glob('*.json'))
         target=output/'roundtrip.json';save(target,app.collect());assert load(target)==app.collect()
         for size in ('1100x720','1480x930'):

@@ -2,11 +2,13 @@ import csv, json, math, time
 from collections import deque
 from pathlib import Path
 import numpy as np
-from PIL import Image
+from PIL import Image,ImageFilter
 from parameters import ROOT,validate
 from geometry import Track,integrate_pose,predicted_width
 from native import Native
+from encoder import EncoderScale
 from perturbation import Perturbation
+from dynamics import WheelDynamics
 
 STATES=['待启动','中位等待','运行','终点推进','已结束','已停止','故障']
 FAULTS=['无','配置错误','摄像头超时','路径丢失','编码器超时','编码器反向','超速','堵转','舵机服务超时','元素故障','运行超时','终点超时','启动未就绪']
@@ -17,14 +19,18 @@ class Simulation:
     dt=.01
     def __init__(self,p):
         self.p=validate(p.copy());p=self.p;self.perturbation=Perturbation(p);self.brightness_offset=0.
-        self.track=Track(p);self.native=Native(p)
+        self.track=Track(p);self.native=Native(p);self.encoder=EncoderScale()
+        if self.encoder.period_ms != round(self.dt*1000):raise ValueError('仿真与固件编码器周期不一致')
+        self.track.camera_renderer=self.native.camera
         actual_offset=p['offset']+self.perturbation.offset
         a=self.track.start;self.h=a[2]+math.radians(p['heading_error']+self.perturbation.heading)
         # Pose is referenced to the rear axle; place the front axle midpoint on the start line.
         self.x=a[0]-math.sin(a[2])*actual_offset-p['wheelbase']*math.cos(self.h)
         self.y=a[1]+math.cos(a[2])*actual_offset-p['wheelbase']*math.sin(self.h)
-        self.now=0;self.next_frame=0.0
+        self.now=0;self.next_frame=10.0
+        self.pose_history=deque([(0,self.x,self.y,self.h)],maxlen=102)
         self.pulse=p['servo_center'];self.steer=0.;self.last_servo=0.;self.v=0.;self.left_v=self.right_v=0.
+        self.dynamics=WheelDynamics(self.p)
         self.count_total=np.zeros(2);self.last_counts=np.zeros(2,dtype=int);self.measured=np.zeros(2)
         self.rng=np.random.default_rng(int(p['seed']));self.distance=0.;self.started=False;self.stop_requested=False
         self.data=np.zeros(22);self.rows=np.zeros((4,120),dtype=np.uint8);self.image=np.zeros((120,188),dtype=np.uint8)
@@ -32,16 +38,29 @@ class Simulation:
         self.frame_id=0;self.frame_time_ms=0;self.frame_pose=(self.x,self.y,self.h);self._new_frame=False
         self.frame_buffer=deque(maxlen=500);self.stop_event=None;self.event_frames=[]
         self.history=[];self.trajectory=[(self.x,self.y)];self.completed=False;self.max_error=0.;self.max_outside=0
+        self.min_tire_margin=float('inf');self.running_ticks=0;self.path_ticks=0;self.zero_pwm_ticks=0
+        self.min_running_speed=float('inf');self.min_path_margin=100;self.low_speed_ticks=0
+        self.max_route_deviation=0.
+        self.motion_limits={k:0. for k in ('max_command_step','max_target_rise','max_target_fall','max_pwm_rise',
+            'max_wheel_speed_mm_s','max_wheel_accel_mm_s2','max_wheel_overshoot_mm_s')}
         self.replay=False;self._frame();self.data,self.rows=self.native.data();self.capture_frame();self.record()
         self.route_progress=0.
     def _frame(self):
         camera_p=self.p if self.perturbation.enabled else {**self.p,'noise':0.}
-        self.image=self.track.camera(self.x,self.y,self.h,camera_p,self.rng)
+        delay=self.p['camera_latency_ms'];pose=(self.x,self.y,self.h)
+        if delay:
+            target=max(0,self.now-10-delay)
+            pose=next((q[1:] for q in reversed(self.pose_history) if q[0]<=target),self.pose_history[0][1:])
+        self.image=self.track.camera(*pose,camera_p,self.rng)
+        if self.p['camera_blur_px']:
+            self.image=np.asarray(Image.fromarray(self.image).filter(ImageFilter.GaussianBlur(self.p['camera_blur_px']))).copy()
         self.brightness_offset=self.perturbation.brightness(self.now)
         if self.brightness_offset and not self.p['blackout']:
             self.image=np.clip(self.image.astype(float)+self.brightness_offset,0,255).astype(np.uint8)
-        self.native.vision(self.image,self.now,round(self.distance*1000))
-        self.frame_id+=1;self.frame_time_ms=self.now;self.frame_pose=(self.x,self.y,self.h);self._new_frame=True
+        self.vision_distance_mm=int(self.data[15])
+        self.native.vision(self.image,self.now,self.vision_distance_mm)
+        self.capture_time_ms=max(0,self.now-delay)
+        self.frame_id+=1;self.frame_time_ms=self.now;self.frame_pose=pose;self._new_frame=True
     def path_diagnostic(self,locked=True):
         if locked and self.stop_event is not None:return self.stop_event['path'].copy()
         q=int(self.data[3]);minimum=int(self.data[16]) or int(self.p['min_q'])
@@ -62,6 +81,7 @@ class Simulation:
     def capture_frame(self):
         if not self._new_frame:return
         meta={'frame_id':self.frame_id,'frame_time_ms':self.frame_time_ms,'control_time_ms':self.now,
+              'capture_time_ms':self.capture_time_ms,'vision_distance_mm':self.vision_distance_mm,
               'pose':list(self.frame_pose),'path':self.path_diagnostic(False),
               'state':int(self.data[0]),'fault':int(self.data[1]),
               'left_pwm':float(self.data[12]),'right_pwm':float(self.data[13]),'replay':self.replay}
@@ -92,17 +112,31 @@ class Simulation:
         # A full tire footprint must lie outside inner road plus edge; conservative approximate disk radius.
         return sum(self.track.road_distance(x,y)>self.p['road_width']/2+self.p['edge_width']+
                    max(self.p['tire_width']/2,self.p['wheel_diameter']/2) for x,y in self.wheels())
+    def tire_margin(self):
+        """地图独立评分：四个轮胎矩形角点的最小道路内沿余量，前轮随舵角旋转。"""
+        p=self.p;best=float('inf')
+        for index,(x,y) in enumerate(self.wheels()):
+            angle=self.h+(self.steer if index>=2 else 0);c=math.cos(angle);s=math.sin(angle)
+            for forward in (-p['wheel_diameter']/2,p['wheel_diameter']/2):
+                for side in (-p['tire_width']/2,p['tire_width']/2):
+                    distance=self.track.road_distance(x+forward*c-side*s,y+forward*s+side*c)
+                    best=min(best,p['road_width']/2-distance)
+        return best
     def tick(self):
         if self.replay:return
+        previous_motion=self.native.motion.copy();previous_command=self.applied_command
+        previous_pwm=self.applied_duties.copy();previous_wheels=(self.left_v,self.right_v)
+        previous_good=int(self.data[0])==2 and bool(self.data[4]) and int(self.data[10])==0
         p=self.p;self.now+=10
         if self.now+1e-6>=self.next_frame:
             if not p['drop_camera']:self._frame()
-            self.next_frame=self.now+1000/p['fps']
+            # 保留采样相位，避免30Hz被10ms控制周期累积量化成25Hz。
+            while self.next_frame<=self.now+1e-6:self.next_frame+=1000/p['fps']
         step=np.array([self.left_v,self.right_v])*self.dt
-        self.count_total+=step/(math.pi*p['wheel_diameter'])*4352
+        self.count_total+=step/(math.pi*p['wheel_diameter'])*float(self.encoder.counts_per_turn)
         counts=np.trunc(self.count_total).astype(int);delta=counts-self.last_counts;self.last_counts=counts
-        self.measured=delta*math.pi*p['wheel_diameter']/4352/self.dt*1000
-        forward_um=int(np.sum(delta)*math.pi*p['wheel_diameter']/4352/2*1e6)
+        self.measured=np.array([self.encoder.speed_mm_s(d) for d in delta])
+        forward_um=self.encoder.forward_step_um(delta[0],delta[1])
         # Release then press C15 after >=3 camera frames; a slow FPS still observes real startup gating.
         start=self.started and 160<=self.now<240
         self.native.tick(self.now,not p['drop_feedback'],start,self.stop_requested,
@@ -126,24 +160,51 @@ class Simulation:
             self.pulse+=float(np.clip(target-self.pulse,-p['servo_step'],p['servo_step']));self.last_servo=self.now/1000
         angle=math.radians((self.pulse-p['servo_center'])/p['servo_range']*p['steer_max_deg'])
         self.steer+=(angle-self.steer)*(1-math.exp(-self.dt/p['servo_tau']))
-        desired_speed=np.maximum(0,duties-p['motor_deadzone'])*p['motor_gain']/1000
-        target_v=float(np.mean(desired_speed));tau=p['motor_tau'] if target_v>0 else p['coast_tau']
-        self.v+=(target_v-self.v)*(1-math.exp(-self.dt/tau))
-        # Ackermann no-slip constraints: average rear speed drives chassis; wheel mismatch becomes scrub.
-        # Separate free motor speeds are not allowed to produce impossible independent yaw.
-        omega=self.v*math.tan(self.steer)/p['wheelbase']
-        self.left_v=self.v-omega*p['track']/2;self.right_v=self.v+omega*p['track']/2
+        if p['dynamics_model']=='independent':
+            self.dynamics.step(duties,self.steer,self.dt)
+            self.v=self.dynamics.speed;self.left_v,self.right_v=self.dynamics.wheel
+        else:
+            # 历史理想模型仅作明确标记的对照，不能验证单轮空转。
+            desired_speed=np.maximum(0,duties-p['motor_deadzone'])*p['motor_gain']/1000
+            target_v=float(np.mean(desired_speed));tau=p['motor_tau'] if target_v>0 else p['coast_tau']
+            self.v+=(target_v-self.v)*(1-math.exp(-self.dt/tau))
+            omega=self.v*math.tan(self.steer)/p['wheelbase']
+            self.left_v=self.v-omega*p['track']/2;self.right_v=self.v+omega*p['track']/2
         self.x,self.y,self.h=integrate_pose(self.x,self.y,self.h,self.v,self.steer,p['wheelbase'],self.dt)
+        self.pose_history.append((self.now,self.x,self.y,self.h))
         self.distance+=max(0,self.v)*self.dt
         i,error,progress=self.track.nearest(self.x,self.y,self.route_progress);self.route_progress=max(self.route_progress,progress)
         self.max_error=max(self.max_error,abs(error))
+        self.max_route_deviation=max(self.max_route_deviation,math.hypot(self.x-self.track.samples[i,0],self.y-self.track.samples[i,1]))
         outside=self.outside_wheels();self.max_outside=max(self.max_outside,outside)
+        self.min_tire_margin=min(self.min_tire_margin,self.tire_margin())
+        metrics=self.motion_limits
+        metrics['max_wheel_speed_mm_s']=max(metrics['max_wheel_speed_mm_s'],abs(self.left_v)*1000,abs(self.right_v)*1000)
+        if previous_good and int(self.data[0])==2 and bool(self.data[4]) and int(self.data[10])==0:
+            metrics['max_command_step']=max(metrics['max_command_step'],abs(self.applied_command-previous_command))
+            for index,(key,speed) in enumerate(zip(('left_target_mm_s','right_target_mm_s'),(self.left_v,self.right_v))):
+                change=self.native.motion[key]-previous_motion[key]
+                metrics['max_target_rise']=max(metrics['max_target_rise'],change)
+                metrics['max_target_fall']=max(metrics['max_target_fall'],-change)
+                metrics['max_pwm_rise']=max(metrics['max_pwm_rise'],float(self.applied_duties[index]-previous_pwm[index]))
+                metrics['max_wheel_accel_mm_s2']=max(metrics['max_wheel_accel_mm_s2'],(speed-previous_wheels[index])*1000/self.dt)
+                metrics['max_wheel_overshoot_mm_s']=max(metrics['max_wheel_overshoot_mm_s'],speed*1000-self.native.motion[key])
+        nominal=min(p[k] for k in ('cruise','curve_speed','outer_speed','element_speed'))
+        # 单轮独立限速后，起步预算必须包含最外轮目标，而非仍按整车斜坡计时。
+        startup_ms=1000+max(p[k] for k in ('cruise','curve_speed','outer_speed','element_speed'))*(1+self.native.motion['maximum_turn_ratio'])/p['accel']*1000
+        if int(self.data[0])==2:
+            self.path_ticks+=1;self.zero_pwm_ticks+=bool(min(self.applied_duties)<=0)
+            self.min_path_margin=min(self.min_path_margin,int(self.data[3])-int(self.data[16]))
+        if self.now>=startup_ms and int(self.data[0])==2:
+            self.running_ticks+=1
+            self.min_running_speed=min(self.min_running_speed,self.v*1000)
+            self.low_speed_ticks+=bool(self.v*1000<nominal*.98)
         end=self.track.end;cross=(self.x-end[0])*math.cos(end[2])+(self.y-end[1])*math.sin(end[2])
         if self.p['scenario'] in ('circle','full'):
             reached=progress>=self.track.length-.05 and cross>=0 and self.distance>=.8*self.track.length and math.hypot(self.x-end[0],self.y-end[1])<self.track.width/2
         else:reached=progress>=self.track.length-.05 and cross>=0 and abs(error)<self.track.width/2
         # Completion is a virtual position marker; invalid two-tire departure rejects the run.
-        if reached and self.max_outside<2:self.completed=True
+        if reached and self.max_outside<2 and self.max_route_deviation<=self.track.width/2+.02 and self.distance<=1.1*self.track.length:self.completed=True
         if self.now%50==0:self.trajectory.append((self.x,self.y));self.record()
     def record(self):
         _,error,progress=self.track.nearest(self.x,self.y,getattr(self,'route_progress',0))
@@ -160,11 +221,18 @@ class Simulation:
           'outside_wheels':self.outside_wheels(),'completed':self.completed,'mode':self.p['controller'],
           'minimum_confidence':path['minimum'],'path_accepted':path['accepted'],
           'camera_frame_id':self.frame_id,'camera_frame_time_ms':self.frame_time_ms,
-          'brightness_offset':self.brightness_offset,**self.native.features})
+          'brightness_offset':self.brightness_offset,**self.native.features,**self.native.motion})
     def result(self):
-        return {'perturbation':self.perturbation.record(),'mode':'replay' if self.replay else self.p['controller'],'completed':self.completed,'time_s':self.now/1000,
+        return {'perturbation':self.perturbation.record(),'dynamics_model':self.p['dynamics_model'],'mode':'replay' if self.replay else self.p['controller'],'completed':self.completed,'time_s':self.now/1000,
          'distance_m':self.distance,'route_length_m':self.track.length,'max_error_m':self.max_error,
          'max_outside_wheels':self.max_outside,
+         'max_route_deviation_m':self.max_route_deviation,
+         'motion_limits':self.motion_limits.copy(),
+         'min_tire_corner_margin_mm':self.min_tire_margin*1000 if math.isfinite(self.min_tire_margin) else None,
+         'stability_10ms':{'running_ticks':self.running_ticks,'path_ticks':self.path_ticks,'zero_pwm_ticks':self.zero_pwm_ticks,
+            'min_speed_mm_s':self.min_running_speed if math.isfinite(self.min_running_speed) else None,
+            'min_path_margin':self.min_path_margin if self.path_ticks else None,
+            'ticks_below_98pct_nominal':self.low_speed_ticks},
          'state':('图像回放' if self.replay else ('参考完成' if self.completed else '参考运行')) if self.replay or self.p['controller']=='reference' else STATES[int(self.data[0])],
          'fault':None if self.replay or self.p['controller']=='reference' else FAULTS[int(self.data[1])],
          'shadow_c_state':STATES[int(self.data[0])],'shadow_c_fault':FAULTS[int(self.data[1])],

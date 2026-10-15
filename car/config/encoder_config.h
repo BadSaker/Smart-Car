@@ -15,14 +15,14 @@
 #define ENCODER_PULSES_PER_REV       1024U
 #define ENCODER_STEP_EDGE_FACTOR     1U
 
-/* 用户确认：车轮转1圈，啮合齿轮驱动编码器转4.25圈。
+/* 2026-10-13用户核实齿数：车轮齿轮68齿、编码器齿轮30齿。
  * 此处为编码器:车轮转数比，不是电机:车轮减速比；两者不能相互代用。
- * 默认每轮圈计数=1024*1*425/100=4352。允许主机测试以1:1覆盖该比例。 */
+ * 每轮圈计数=1024*1*68/30，保留有理数，不能截成2321。允许主机测试覆盖。 */
 #ifndef ENCODER_TO_WHEEL_RATIO_NUM
-#define ENCODER_TO_WHEEL_RATIO_NUM   425U
+#define ENCODER_TO_WHEEL_RATIO_NUM   68U
 #endif
 #ifndef ENCODER_TO_WHEEL_RATIO_DEN
-#define ENCODER_TO_WHEEL_RATIO_DEN   100U
+#define ENCODER_TO_WHEEL_RATIO_DEN   30U
 #endif
 
 /* 用户确认轮直径64mm；周长为pi*64mm取整到微米，仍需实车滚动标定。 */

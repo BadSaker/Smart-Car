@@ -1,0 +1,7 @@
+test_old_locations_are_absent (test_wifi_layout.WifiLayoutTests.test_old_locations_are_absent) ... ok
+test_relative_include_finds_wifi_template (test_wifi_layout.WifiLayoutTests.test_relative_include_finds_wifi_template) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.129s
+
+OK

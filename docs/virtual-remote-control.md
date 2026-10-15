@@ -66,4 +66,4 @@ Down停车后本地允许可保持，下一条新W/S能够再次点动；S3、�
 - [remote_control.c](../car/src/remote_control.c)：接收分流、旧数据排空、状态同步和主循环舵机服务。
 - motor_control新增遥控邮箱、允许状态、租约和换向；servo_control新增主循环遥控目标接口，保留测试接口互斥。
 - camera_debug仅增加接收包装函数与必要头文件引用，原连接/图传发送/重试核心保留；图像绘制不变。
-- 测试使用真实解析、适配、电机和舵机模块，硬件I/O为桩。结果见 [完整回归](../logs/virtual-remote-suite.log)、[Keil构建](../logs/virtual-remote-build.log)、[四模块联调](../logs/remote-integration-tests.log)。测试通过不代表已测实车网络延迟、PWM波形或助手长按行为。
+- 测试使用真实解析、适配、电机和舵机模块，硬件I/O为桩。结果见 [完整回归](../outputs/reports/historical-logs/virtual-remote-suite.log)、[Keil构建](../outputs/reports/historical-logs/virtual-remote-build.log)、[四模块联调](../outputs/reports/historical-logs/remote-integration-tests.log)。测试通过不代表已测实车网络延迟、PWM波形或助手长按行为。

@@ -1,0 +1,37 @@
+{
+  "runs": [
+    {
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 127.94,
+      "distance_m": 28.951447259396055,
+      "max_error_m": 0.1225880647248033,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "c9f77d6e9ed884b5"
+    },
+    {
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 127.52,
+      "distance_m": 28.859973678636965,
+      "max_error_m": 0.11101591773720605,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "c9f77d6e9ed884b5"
+    }
+  ],
+  "source_sha256": {
+    "src\\track_vision.c": "f6f31feb4c272506289c90b84c9a87a40eb4ea0f9a0453dc9cc55ca32744b1d8",
+    "src\\autonomous_drive.c": "75a3b057d3f402874f5c95ce13a81ba1be606993507b9f4876eb9a907c752a0d",
+    "src\\control_pid.c": "16fc4b8a9aa4155b1710c2195cc5081038fa9ef33d06d597a9acb8bcb8b8fe7d",
+    "include\\track_vision.h": "3f299c8f1b0b3db6aef08c66e8b256ded46561d2ba10287831d8d85b0497d7a8",
+    "include\\autonomous_drive.h": "1a0e6f9f03abedc0120fa2105ee8ccddad6f563a7ba21a09106258bfc3732fee",
+    "include\\control_pid.h": "b46b3b1ac879c29229f9f6c69498e798320147c4d3508ff87e9ac15711d203e6",
+    "config\\autonomous_config.h": "7742afa047c1c658a86c2d03311add2200f9c75bfa708ebbb66028f4ec4f614a",
+    "config\\vision_config.h": "4be9eeb004cdfbcf709e9be0aa2162cbbba681a28a60ea248ab06fb80493ff37",
+    "native_bridge.c": "1b9eedf22182b9f9a44194b7a0ee28ce757a0fe88c443b25d545fd5e32d5bf25"
+  }
+}

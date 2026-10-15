@@ -1,0 +1,219 @@
+{
+  "backup": {
+    "path": "E:\\AA\\car\\Autodrive\\outputs\\backups\\car_before-config250_20261013_124244.zip",
+    "files": 918,
+    "sha256": "2691dc76e456fc29c51aca1371a2574cc1df7e1a4687ffc7b2582963ab4625cc"
+  },
+  "firmware": {
+    "axf": {
+      "bytes": 1019220,
+      "sha256": "055a6f835aa4b26e5eff57ef6d6547dbb9e9fed9a44964d7c41aef91d7d1d1f3"
+    },
+    "hex": {
+      "bytes": 385645,
+      "sha256": "72a5655baac1e2c3172ae8b78fbf4a4551c6327d83297237748e7b6e2fafe253"
+    },
+    "bin": {
+      "bytes": 137088,
+      "sha256": "3c2d45c1958ffe40d1523e1bca4a110095cdb3c0938be882c7bf700fd640306f"
+    }
+  },
+  "protected_files": 635,
+  "changed_files": [
+    "simulation/parameters.py",
+    "simulation/README.md",
+    "simulation/configs/默认_完整赛道_C算法.json",
+    "simulation/docs/parameters-and-ui.md",
+    "simulation/reports/launcher-pid.txt",
+    "simulation/reports/launcher.log",
+    "simulation/reports/startup-timing.json",
+    "simulation/tests/test_config_presets.py",
+    "simulation/tools/check_current_ui.py",
+    "docs/autonomous-driving.md",
+    "docs/environment-and-build.md",
+    "docs/project-overview.md",
+    "outputs/firmware/autocar.axf",
+    "outputs/firmware/autocar.bin",
+    "outputs/firmware/autocar.hex"
+  ],
+  "new_preset": "simulation/configs/实测基线_350_350_350_250.json",
+  "runs": [
+    {
+      "case": "baseline",
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 103.13,
+      "distance_m": 28.968272943350435,
+      "max_error_m": 0.12200766742536774,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "870633399dde8064",
+      "r50a45_frames": 503
+    },
+    {
+      "case": "baseline",
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 102.57,
+      "distance_m": 28.857325422544918,
+      "max_error_m": 0.11194429487995786,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "870633399dde8064",
+      "r50a45_frames": 489
+    },
+    {
+      "case": "disturbed",
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 103.13,
+      "distance_m": 28.969262674831924,
+      "max_error_m": 0.12226589918027626,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "870633399dde8064",
+      "r50a45_frames": 503
+    },
+    {
+      "case": "disturbed",
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 102.6,
+      "distance_m": 28.863466399861327,
+      "max_error_m": 0.11108956658353968,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "870633399dde8064",
+      "r50a45_frames": 489
+    }
+  ],
+  "speed_ui": {
+    "passed": true,
+    "scenario": "full",
+    "rates": [
+      {
+        "requested": 0.5,
+        "wall_s": 12.000822400000004,
+        "sim_s": 6,
+        "actual": 0.4999657356815811
+      },
+      {
+        "requested": 1.0,
+        "wall_s": 6.003947100000005,
+        "sim_s": 6,
+        "actual": 0.9993425824821134
+      },
+      {
+        "requested": 2.0,
+        "wall_s": 3.0095186000000353,
+        "sim_s": 6,
+        "actual": 1.99367433715144
+      },
+      {
+        "requested": 4.0,
+        "wall_s": 1.5211778999999979,
+        "sim_s": 6,
+        "actual": 3.9443118388717116
+      },
+      {
+        "requested": 8.0,
+        "wall_s": 1.1305139999999483,
+        "sim_s": 6,
+        "actual": 5.307320387010045
+      }
+    ],
+    "same_trajectory_and_frames": true,
+    "heartbeat_max_ms": 461.2963999999238,
+    "pause_switch_reset_replay": true,
+    "minimize_restore": true
+  },
+  "mapping": {
+    "passed": true,
+    "mapping": {
+      "cruise": {
+        "macro": "AUTO_CRUISE_SPEED_MM_S",
+        "value": 350.0
+      },
+      "curve_speed": {
+        "macro": "AUTO_CURVE_SPEED_MM_S",
+        "value": 350.0
+      },
+      "element_speed": {
+        "macro": "AUTO_ELEMENT_SPEED_MM_S",
+        "value": 250.0
+      },
+      "max_duty": {
+        "macro": "AUTO_MAX_DUTY_PERMILLE",
+        "value": 300
+      },
+      "outer_speed": {
+        "macro": "AUTO_CURVE_OUTER_SPEED_MM_S",
+        "value": 350.0
+      },
+      "kp": {
+        "macro": "AUTO_STEERING_KP",
+        "value": 28.0
+      },
+      "ki": {
+        "macro": "AUTO_STEERING_KI",
+        "value": 0.0
+      },
+      "kd": {
+        "macro": "AUTO_STEERING_KD",
+        "value": 0.5
+      },
+      "speed_kp": {
+        "macro": "AUTO_SPEED_KP",
+        "value": 0.5
+      },
+      "speed_ki": {
+        "macro": "AUTO_SPEED_KI",
+        "value": 0.15
+      },
+      "min_q": {
+        "macro": "AUTO_MIN_CONFIDENCE",
+        "value": 45
+      },
+      "outer_q": {
+        "macro": "AUTO_CURVE_OUTER_MIN_CONFIDENCE",
+        "value": 40
+      },
+      "width_top": {
+        "macro": "VISION_WIDTH_TOP_PX",
+        "value": 44
+      },
+      "width_bottom": {
+        "macro": "VISION_WIDTH_BOTTOM_PX",
+        "value": 167
+      },
+      "outer_enabled": {
+        "macro": "VISION_CURVE_OUTER_ENABLED",
+        "value": 1
+      }
+    },
+    "gui": [
+      {
+        "name": "默认参数",
+        "passed": true,
+        "build": "870633399dde8064",
+        "element_speed": 250.0
+      },
+      {
+        "name": "默认_完整赛道_C算法",
+        "passed": true,
+        "build": "870633399dde8064",
+        "element_speed": 250.0
+      },
+      {
+        "name": "实测基线_350_350_350_250",
+        "passed": true,
+        "build": "870633399dde8064",
+        "element_speed": 250.0
+      }
+    ]
+  }
+}

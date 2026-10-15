@@ -1,0 +1,53 @@
+[2026-10-15 12:00:00 +08:00] 任务：工程精简与 AGENTS.md 重构
+范围：AGENTS.md、docs/standards/{files,workflow}.md、docs/{project-overview,environment-and-build,autonomous-driving}.md、car/scripts/{build,test}.ps1、car/autocar.uvprojx、car/autocar.uvoptx、car/tests/test_build_script.py、.gitignore、logs/、tmp/、car/library 未编译依赖、outputs 大备份。
+变更：
+  - AGENTS.md 由 58 行精简为约 22 行：保留工作方式与目录约定，导航只留必读入口（docs/README.md、autonomous-driving.md、standards/{workflow,commands}.md），其余交 docs 分发；删除与 standards 重复的条文、带日期的进展句，修正"不建根目录 Git 仓库"与"simulation/vendor 算法副本"两处与实际不符的表述。
+  - 构建缓存迁出 tmp：build.ps1 的 buildPath 与日志路径改为 car/build；test.ps1 的日志改为 car/build；uvprojx/uvoptx 的 OutputDirectory/ListingPath 由 ..\tmp\build-autocar 改为 .\build；.gitignore 增加 /car/build/；test_build_script.py 的替身输出与断言同步。tmp/ 恢复"任务结束清空、仅留 .gitkeep"。
+  - logs/ 收敛为每日一份：11 个 YYYY-MM-DD.log 保留；33 个被文档引用的单次日志移入 outputs/reports/historical-logs/ 并更新 8 处文档引用；140 个无引用过程日志删除。
+  - 删除未使用文件：car/library/components/usb/host（整块，21 个未编译 .c）与 car/library/sdk/CMSIS/Driver/DriverTemplates（12 个模板，整块）保留 usb/templates 中已编译的 cdc_acm/class/ch9；simulation/cli.py；car/tests/__pycache__、simulation/__pycache__；car/.vscode/{uv4.log.lock,keil-assistant.log}；car/*.uvguix.*；car/library/版本文件在doc文件夹下.txt（空文件）。
+  - 删除 >5MB 大备份共 10 个 zip（含 outputs/backups 9 个与 outputs/reports 的 226MB 现场证据包），合计约 512 MB。
+验证：Linux 沙箱以 AUTOCAR_HOST_CC=/usr/bin/gcc 复跑 car/tests（79 项）与 simulation/tests（49 项），与改前基线逐条对比，除两项因沙箱删除权限（改前 tempfile 清理报 Operation not permitted）由 ERROR 转 PASS 外，其余结果一致；无新增失败。文档日志链接复查无新增断链（curve-tuning-*/outer-edge-* 等为既有外部历史指针）。工作树盘面由 1.9 GB 降至约 1.3 GB。桌面 PowerShell/Keil 未在本环境运行，build.ps1 真实构建须在 Windows 复核。
+产物：AGENTS.md（重构版）、outputs/reports/historical-logs/README.md、logs/2026-10-15.log。
+未解决：Keil 实际构建与 check_project_layout.ps1 未在本沙箱运行（需 Windows PowerShell/Keil）；car/build 路径迁移须在 Windows 实机跑一次 build.ps1 确认。git 暂存/提交/推送由用户本人执行。
+
+[2026-10-15 11:15:17 +08:00] 任务：项目可运行性检测（文件夹扫描 + Windows 实机验证）
+范围：只读扫描全工作区；运行 check_project_layout.ps1、car/tests（Python 与 PowerShell）、simulation/tests、car/scripts/test.ps1、car/scripts/build.ps1。未修改任何源码、配置、文档或工程文件。
+变更：
+  - 无源码改动。写入仅为构建产物：car/build/（Keil 全量重建缓存）与 outputs/firmware/autocar.{axf,hex,bin}（build.ps1 按设计覆盖）。
+  - 过程日志归档 car/build/project-run-check/（不提交）；任务临时区 tmp/project-run-check、tmp/wifi-entry 已清理。
+验证：
+  - check_project_layout.ps1：通过，工程引用 365 个全部存在，11 份仿真共享源码齐全，CLAUDE.md 导入 AGENTS.md，当前目录为项目根。
+  - 环境：PATH 上 python/python3 为 WindowsApps 商店占位符，执行报 "Python was not found"；实际使用 D:\anaconda3\python.exe 3.14.6（tkinter、NumPy 2.4.6、Pillow 12.3.0 可用）。GCC 不在 PATH，使用仓库自带 simulation/toolchain/mingw64/bin/gcc.exe 14.3.0（x86_64-w64-mingw32），find-tool.ps1 可自动发现。Keil D:\Keil_v5\UV4\UV4.exe 与 ARM\ARMCLANG\bin\fromelf.exe 存在，build.ps1 默认入口自动发现成功。
+  - car/tests：python -B -m unittest discover -s car/tests -p 'test_*.py' → Ran 146 tests，OK，exit 0。
+  - car/tests/test_wifi_configuration.ps1 → 8 boundaries 通过，exit 0；test_wifi_menu.ps1 → 47 checks 通过，exit 0。
+  - car/scripts/test.ps1 → Algorithm checks: 19 passed, 0 failed，exit 0。
+  - simulation/tests：python -B -m unittest discover -s simulation/tests -p 'test_*.py' → Ran 55 tests，OK，exit 0。
+  - car/scripts/build.ps1（默认入口，未传参）：Keil 全量重建 169 个编译单元 + 1 个汇编，0 Error(s), 0 Warning(s)，exit 0；Code=138936 RO-data=13296 RW-data=300 ZI-data=110260。
+  - 交付一致性：重建后 outputs/firmware/autocar.hex SHA-256 = 147566201a6314e832d6258d034f71f062734952a833b88dc0eb158caf375373、autocar.bin = d6b4a3098ac216fcd91aba681f2fb95e9302fbcc8f9bffad21dda52661a5d6cf，与 motion-stability-2026-10-14 报告逐字节一致；Code/RO/RW/ZI 亦与报告相同。
+  - autocar.axf 由 2c358439bd02c50ea97100b61ffaa1efad664add34e3f56d58c5fa9898ef8f1c 变为 c1db36f8fc7f0af90a2916620ea1cc5298be4b9c513d48185f6d34a71366d959（1075192→1072656 字节），差异来自 AXF 内嵌构建路径与调试信息；同代码的 HEX/BIN 未变。原交付 AXF 完整保存在 outputs/backups/car_before-project-normalization_20261014_183451.zip，已重新核对哈希。
+产物：car/build/project-run-check/{car-tests,sim-tests,algorithm-tests,algorithm-tests.ps1,build}.log；outputs/firmware/autocar.{axf,hex,bin}（重建后）。
+未解决：
+  - 本次只证明主机测试、辅助脚本与 Keil 编译在当前机器可运行；未烧录、未通电、未操作车辆，实车行为仍需场测。
+  - 文档中的 `python -B ...` 依赖 PATH 上的 python，本机 PATH 指向 WindowsApps 占位符，需调整环境变量或改用绝对解释器；requirements.txt 钉 NumPy 2.5.0 与本机 2.4.6 不一致。
+  - simulation/runtime 下解释器与编译器缓存来自其他机器身份（C:\Users\橙叶、Linux 沙箱路径），当前机器首次启动会重新探测，不影响运行但属陈旧缓存。
+  - 本条同时关闭 2026-10-15 精简任务遗留的“Windows 复核 Keil 构建与 check_project_layout.ps1”待办。
+
+[2026-10-15 13:30:00 +08:00] 任务：备份与临时目录二次清理（第 1 次遗漏的补齐）
+范围：outputs/backups、tmp、相关文档引用。未改源码/配置/工程文件。
+变更：
+  - tmp/ 清空测试残留（car/tests、simulation/tests 在本机运行写入的 autodrive*、camera-debug-tests、motor-control-tests、remote-*、servo-control-tests、wifi-spi-tests 等），仅留 .gitkeep。
+  - outputs/backups 由 28 zip + 8 目录（92 MB）清理为 14 项（21 MB）：删除 21 个无文档引用、已被 git 覆盖的改动前快照（autocar_before-control-tuning、autocar_before-motion-stability、autocar_firmware_before-motion-stability、before-portability、before-simulation-cleanup、before-wifi-entry、before-wifi-folder、car_before-{axf-load-fix,camera-debug,camera-diagnostics,flash-config-fix,motor-encoder,project-normalization,rollback-1725,virtual-remote,wifi-key-switch,wifi-recovery,wifi-spi-display,wifi-throughput}、geometry-before-integration、simulation_before-camera-realignment）。
+  - 保留：8 个被文档作为追溯来源引用的改动前快照 + 证据类（control-tuning-diagnostics、portability-evidence、element-speed-validation、field-speed-validation、simulation-history、wifi-config）。命名统一到 naming.md 的备份规范 <来源>_<用途>_YYYYMMDD_HHmmss：为 element/field-speed-validation、portability-evidence、simulation-history 补时间戳；wifi-config 由 configure-wifi.ps1 运行期生成，命名不动。
+验证：outputs/backups 引用链接全部可解析（curve-tuning_/outer-edge_/outer-curve_ 三项为既有外部历史指针，非本次引入）；无文档再引用已删除备份。
+产物：清理后的 outputs/backups/、tmp/。
+未解决：本机 PowerShell/Keil 未在本沙箱运行；git 暂存/提交/推送由用户本人执行。
+
+[2026-10-15 14:00:00 +08:00] 任务：outputs/reports 命名统一与结构整理
+范围：outputs/reports 目录/文件命名、松散证据文件归置、受影响的文档与报告引用。未改源码/配置/工程文件。
+变更：
+  - 日期格式统一为 <主题>-YYYY-MM-DD：重命名 6 个目录（config250-、element-fault-、element-speed-、field-robustness-、simulation-history-、steering-overspeed-）与 2 个 zip（motion-stability-evidence-、steering-overspeed-diagnosis-）。
+  - 松散证据文件归入同名证据目录：wifi-entry-*、wifi-folder-*、wifi-menu-tests-*、wifi-configuration-tests-*、simulation-cleanup-* 共 18 个 json/log 移入 wifi-entry-2026-10-13/、wifi-folder-2026-10-13/、simulation-cleanup-2026-10-13/；删除 3 个无引用的 simulation-cleanup 过程日志。
+  - 修复悬空引用：把报告中对已删除备份的链接改为纯文本并注明“已于 2026-10-15 精简中删除”（config250、element-fault、element-speed、field-speed、control-tuning、motion-stability、portability、simulation-cleanup、wifi-entry、wifi-folder、camera-alignment、project-normalization 等报告）；更新被重命名证据 zip 的链接；修正 project-normalization 中 simulation-history 备份目录路径。
+验证：docs/ 与 outputs/reports/*.md 的 logs/、backups/、reports/ 引用全量扫描，除既有外部历史指针（curve-tuning/outer-edge/outer-quality 等）外无悬空引用。
+产物：整理后的 outputs/reports/。
+未解决：本机 PowerShell/Keil 未运行；git 暂存/提交/推送由用户本人执行。

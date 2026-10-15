@@ -72,7 +72,9 @@
 
 ## 参数入口
 
-2026-10-12多设备配置入口已获批准：真实热点凭据改为被Git忽略的`car/config/camera_debug_local.h`，共享camera_debug_config.h只负责接入。生成和只读检查见[本地环境](local-environment.md)。这次只调整配置来源，原同步连接、发送、重试、重连和C13逻辑保持冻结。
+2026-10-12多设备配置入口获批准，2026-10-13迁移完成：真实热点凭据保存在被Git忽略的`wifi/camera_debug_local.h`，共享`car/config/camera_debug_config.h`只负责接入。生成和只读检查见[本地环境](local-environment.md)。这两次历史任务只调整配置来源，原同步连接、发送、重试、重连和C13逻辑保持冻结，不授权后续改造。
+
+2026-10-13目录迁移：上段为历史实施位置，当前头文件为`wifi/camera_debug_local.h`，入口为`wifi/热点配置.cmd`，脚本及模板也集中到`wifi/`。本轮仅调整路径及引用，真实凭据值和已生成固件不变，未刷写；当前用法见[wifi说明](../wifi/README.md)。
 
 [camera_debug_config.h](../car/config/camera_debug_config.h)含本机热点密码，不得将密码写入日志、共享报告或聊天输出。网络凭据及目标地址与回退前一致。
 
@@ -124,7 +126,7 @@
 
 - 原连接、数据发送和后缀重试保持14:33版实现，外层已有获准的C13开关。舵机状态行已恢复原显示内容；屏幕图像刷新、网络显示流程及相关供应商驱动不变。
 - 历史图传24个场景与新增8个开关场景通过，包括默认关闭下1000次预览零网络调用、上电长按/消抖/单次切换、关闭取消恢复、重新开启清旧帧、时间回绕及阻塞连接后的回退计时。舵机6种配置、真实Wi-Fi SPI边界、4项构建脚本及19项算法检查也通过。硬件I/O为主机桩。
-- Keil MDK5.39 / Arm Compiler6.21全量构建0错误0警告。记录见 [开关回归](../logs/wifi-key-switch-suite.log)、[算法测试](../logs/wifi-key-switch-algorithms.log)、[开关构建](../logs/wifi-key-switch-build.log) 和 [当日日志](../logs/2026-10-03.log)。
+- Keil MDK5.39 / Arm Compiler6.21全量构建0错误0警告。记录见 [开关回归](../outputs/reports/historical-logs/wifi-key-switch-suite.log)、[算法测试](../outputs/reports/historical-logs/wifi-key-switch-algorithms.log)、[开关构建](../outputs/reports/historical-logs/wifi-key-switch-build.log) 和 [当日日志](../logs/2026-10-03.log)。
 - 当前舵机控制与已完成的校准记录另见 [舵机指南](servo-debugging.md)；ISR、板级配置及519个供应商文件保持不变。未测量实际FPS、SPI/PWM波形或DMA撕裂情况，不把主机测试当作实车验收。
 - 接口依据 [RT1064 V3.0主板硬件说明](<../参考/RT1064 V3.0主板硬件说明 V1.0.pdf>)、[逐飞助手说明书V1.4](<../../downloads/SeekFreeAssistant/V1.2.7/official-release/【文档】说明书/逐飞助手说明书 V1.4.pdf>)、[Wi-Fi SPI总钻风例程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E6_wireless/E6_09_wifi_spi_mt9v03x_demo/user/src/main.c) 和 [IPS200总钻风例程](../../SeekFree/RT1064_Library/Example/Motherboard_Demo/E8_camera/E8_14_mt9v03x_ips200_display_demo/user/src/main.c)。
 

@@ -31,7 +31,7 @@
 
 /* 本机凭据由configure-wifi.ps1生成；测试可显式覆盖全部网络宏。 */
 #if CAMERA_DEBUG_ENABLED && !defined(CAMERA_DEBUG_WIFI_SSID)
-#include "camera_debug_local.h"
+#include "../../wifi/camera_debug_local.h"
 #endif
 #ifndef CAMERA_DEBUG_WIFI_SSID
 #define CAMERA_DEBUG_WIFI_SSID ""

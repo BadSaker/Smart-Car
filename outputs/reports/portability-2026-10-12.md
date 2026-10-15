@@ -39,6 +39,6 @@
 
 取消跟踪的对象为工具链二进制、构建缓存、运行数据、临时目录、Python缓存、本地路径登记及编辑器/启动器运行记录。本机文件保留，Git历史没有改写，也没有创建提交。正式报告、固件、模型素材、工具链版本、下载脚本和许可证保留。取消跟踪已暂存，其他新增/修改/归档文件仍需正常git add后审阅提交。
 
-修改前备份：outputs/backups/before-portability_20261012_232252，含应用、资料说明、仿真源码和原固件。主要验证证据在[资源目录](portability-2026-10-12/)；过程复现脚本和基线数组归档为portability-evidence_20261012.zip，14条目ZIP完整性通过，SHA-256为7f1d921a6b0eb30e06b4b4eddd4bb80e8d587b053fc90ceb678fed4aa7d041e8。可再生成缓存不归档。本任务tmp/collaboration-portability已清理，既有其他任务材料保留。
+修改前备份：before-portability_20261012_232252（已于 2026-10-15 精简中删除），含应用、资料说明、仿真源码和原固件。主要验证证据在[资源目录](portability-2026-10-12/)；过程复现脚本和基线数组归档为portability-evidence_20261012.zip，14条目ZIP完整性通过，SHA-256为7f1d921a6b0eb30e06b4b4eddd4bb80e8d587b053fc90ceb678fed4aa7d041e8。可再生成缓存不归档。本任务tmp/collaboration-portability已清理，既有其他任务材料保留。
 
 当前中央270度环道身份、光学内参、轮胎/执行器模型和实车高速能力仍有原限制；本任务不证明实车完赛、3.6m/s能力或助手实时收图。源码与配置模板使用者仍需在其电脑确认可用解释器、GCC、Keil和2.4GHz热点。

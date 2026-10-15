@@ -13,9 +13,9 @@
 
 | 检查 | 结果 | 证据 |
 | --- | --- | --- |
-| Keil全量编译 | 0错误、0警告，生成AXF/HEX/BIN | [keil-build.log](../../logs/keil-build.log) |
-| 图像/PID原生C回归 | 19项通过、0失败；修复前7通过12失败 | [algorithm-tests.log](../../logs/algorithm-tests.log)、[修复前记录](../../logs/algorithm-tests-20260930-185011.log) |
-| 构建导出行为回归 | 3项通过；修复前1通过2失败 | [build-script-tests.log](../../logs/build-script-tests.log)、[修复前记录](../../logs/build-script-tests-20260930-190216.log) |
+| Keil全量编译 | 0错误、0警告，生成AXF/HEX/BIN | [keil-build.log](../../car/build/keil-build.log) |
+| 图像/PID原生C回归 | 19项通过、0失败；修复前7通过12失败 | [algorithm-tests.log](../../car/build/algorithm-tests.log)、[修复前记录](../../outputs/reports/historical-logs/algorithm-tests-20260930-185011.log) |
+| 构建导出行为回归 | 3项通过；修复前1通过2失败 | [build-script-tests.log](../../outputs/reports/historical-logs/build-script-tests.log)、[修复前记录](../../logs/build-script-tests-20260930-190216.log) |
 | 工程引用、文档链接、例程覆盖、来源校验 | 初始化验收记录与来源摘要保留在本报告 | [验收与来源记录](#依赖来源与验收记录) |
 
 使用本机MDK5.24a、ARM Compiler6.7、NXP设备包19.0.0。首次编译因新旧IDE汇编器选项不同失败，添加旧版选项后通过。程序大小为 Code 70592、RO-data 5452、RW-data 292、ZI-data 80152 字节。详细方法见 [环境与构建](../../docs/environment-and-build.md)。

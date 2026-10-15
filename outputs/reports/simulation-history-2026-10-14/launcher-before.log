@@ -1,0 +1,19 @@
+At E:\AA\car\simulation\launch.ps1:11 char:113
++ ... pp.py') + '"')) -WorkingDirectory $simulationRoot -WindowStyle Hidden ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The string is missing the terminator: '.
+At E:\AA\car\simulation\launch.ps1:9 char:20
++ $env:PYTHONUTF8 = '1'
++                    ~~
+Unexpected token '1'
+$env:PYTHONDONTWRITEBYTECODE = '1'
+Start-Process -FilePath $simulationPython -ArgumentList @('-B', ('"' + (Join-Path $simulationRoot 'app.py') + '"')) -Wo
+rkingDirectory $simulationRoot -WindowStyle Hidden
+' in expression or statement.
+At E:\AA\car\simulation\launch.ps1:8 char:29
++ if (-not $simulationPython) { throw '鏈壘鍒版湰鏈哄凡楠岃瘉鐨凱ython銆傝淇敼simulat ...
++                             ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : TerminatorExpectedAtEndOfString
+ 

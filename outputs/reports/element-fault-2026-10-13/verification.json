@@ -1,0 +1,148 @@
+{
+  "firmware": {
+    "axf": {
+      "size": 1019220,
+      "sha256": "0f1d606cb0495d80efe9467110d0e9703eff1612dad005955d98ab1b441f7583"
+    },
+    "hex": {
+      "size": 385645,
+      "sha256": "0e0e0d181714fdcf59752072b40bdf9e11e22111b833f5a595d297ddd5f5f48a"
+    },
+    "bin": {
+      "size": 137088,
+      "sha256": "2a9ad33f2fe458798cc7775e6579a76f7cc61955fa291cdff1bfbd97edc7e135"
+    }
+  },
+  "backup": {
+    "path": "E:\\AA\\car\\Autodrive\\outputs\\backups\\car_before-element-fault_20261013_111734.zip",
+    "sha256": "3e3f273fb4fbff072660a238a1e4d433850a98b9ad41d1582d5f3efa30901a8c",
+    "files": 755
+  },
+  "protected_files": 532,
+  "changed_files": [
+    "car/config/autonomous_config.h",
+    "car/include/autonomous_control.h",
+    "car/include/track_vision.h",
+    "car/src/autonomous_control.c",
+    "car/src/autonomous_drive.c",
+    "car/src/track_vision.c",
+    "car/tests/test_element_sequences.py",
+    "car/tests/test_outer_control.c",
+    "docs/autonomous-driving.md",
+    "docs/environment-and-build.md",
+    "outputs/firmware/autocar.axf",
+    "outputs/firmware/autocar.bin",
+    "outputs/firmware/autocar.hex",
+    "simulation/configs/默认_完整赛道_C算法.json",
+    "simulation/native.py",
+    "simulation/native_bridge.c",
+    "simulation/parameters.py",
+    "simulation/tools/validate_control.py"
+  ],
+  "runs": [
+    {
+      "case": "base",
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 139.6,
+      "distance_m": 28.938555460449585,
+      "max_error_m": 0.12266501484253456,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "685729081a594b9f",
+      "wave_frames": 736
+    },
+    {
+      "case": "base",
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 140.23,
+      "distance_m": 28.840999301513566,
+      "max_error_m": 0.11187845393855252,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "685729081a594b9f",
+      "wave_frames": 766
+    },
+    {
+      "case": "base-disturbed",
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 140.47,
+      "distance_m": 28.948112127023567,
+      "max_error_m": 0.12263255743662413,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "685729081a594b9f",
+      "wave_frames": 738
+    },
+    {
+      "case": "base-disturbed",
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 140.24,
+      "distance_m": 28.84415436405887,
+      "max_error_m": 0.11011429216772453,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "685729081a594b9f",
+      "wave_frames": 766
+    },
+    {
+      "case": "formal350",
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 127.91,
+      "distance_m": 28.9463564624533,
+      "max_error_m": 0.12264117956383921,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "c9f77d6e9ed884b5",
+      "wave_frames": 519
+    },
+    {
+      "case": "formal350",
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 127.44,
+      "distance_m": 28.853829001361465,
+      "max_error_m": 0.11034455327742276,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "c9f77d6e9ed884b5",
+      "wave_frames": 505
+    },
+    {
+      "case": "formal350-disturbed",
+      "direction": "AB",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 127.94,
+      "distance_m": 28.951447259396055,
+      "max_error_m": 0.1225880647248033,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "c9f77d6e9ed884b5",
+      "wave_frames": 520
+    },
+    {
+      "case": "formal350-disturbed",
+      "direction": "BA",
+      "pass_run": true,
+      "completed": true,
+      "time_s": 127.52,
+      "distance_m": 28.859973678636965,
+      "max_error_m": 0.11101591773720605,
+      "max_outside_wheels": 0,
+      "fault": "无",
+      "algorithm_build": "c9f77d6e9ed884b5",
+      "wave_frames": 505
+    }
+  ]
+}
