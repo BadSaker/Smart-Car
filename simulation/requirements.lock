@@ -1,0 +1,3 @@
+# Windows x64 / CPython 3.13. See python-runtime.json for upstream artifacts.
+numpy==2.5.0 --hash=sha256:44353e2878930039db472b99dc353d749826e4010bd4d2a7f835e94a97a5c748
+Pillow==12.3.0 --hash=sha256:1cca606cd25738df4ed873d5ad46bbdb3d83b5cbca291f6b4ff13a4df6b0bbe8

@@ -1,0 +1,14 @@
+
+[2026-10-29 14:54:34 +08:00] 任务：队友 Git 项目同步菜单
+范围：用户批准五项菜单、脚本、使用说明与临时仓库验证；真实仓库版本控制由用户执行。
+变更：新增项目同步.cmd、car/scripts/project-sync.ps1、car/tests/test_project_sync.ps1、docs/git-collaboration.md；docs/README.md增加导航；计划与验收见outputs/reports/project-sync-plan-2026-10-29.md。
+行为：提交/上传/对齐前fetch；仅本地提交可确认离线保存；提交说明由用户输入，作者仅仓库配置；对齐前保留分支和stash，忽略内容冲突与保存失败停止，不强推、不clean。
+验证：Windows PowerShell5.1集成测试44项断言通过、退出0；真实CMD启动退出通过；结构检查通过；diff --check无空白错误。独立审查的默认路径与引号问题已复现并修复，复审54组转义往返通过。测试临时仓库已清理。
+保护：未add/commit/push/fetch/reset真实仓库；保留已有修改；未改算法、参考资料、固件或仿真；未编译、烧录。
+限制：未测试真实GitHub认证/网络和队友设备；中途异常按提示保留和恢复分支/stash；忽略文件不备份。
+
+[2026-10-29 15:27:48 +08:00] 任务：恢复独立 Fetch 菜单
+范围：用户要求新增独立获取云端状态入口。
+变更：新增菜单6，复用Update-SyncRemote后显示状态；2/4/5自动fetch保持；更新使用说明与菜单集成测试。
+验证：先复现旧菜单不能刷新远端；最终结果见project-sync-plan-2026-10-29.md。实际仓库未fetch/commit/push/reset。
+验证结果：Windows PowerShell 5.1专项45项断言通过，退出0；独立Fetch经菜单验证，HEAD与未提交文件保持。

@@ -1,0 +1,33 @@
+[2026-10-28 19:37:27 +08:00] 任务：src 代码精简与可读性只读分析
+范围：用户批准读取 car/src、相关 include/config/tests、构建和仿真入口，并对照 GitHub 智能车源码；交付分析报告及日志，不实施重构。
+变更：
+  - 新增 outputs/reports/src-readability-review-2026-10-28.md；统计15个C文件共5179行，重点分析视觉1648行、电机665行、自动驾驶312行。
+  - 对照 FredBill1/RT1064_Smartcar@d0c6a78、bigandstone/SmartCar-Line-Following-RT1064@9f7cb07、Blackerrr/16th-smart-car@37aa433、0clock/smartcar2022@fd7b468 的具体源码，报告保留完整提交链接。
+  - 建议原文件内分阶段、同义计算复用、台架阶段整理；明确旧PID/图像接口退役与保留全部功能的区别，保留屏幕和Wi-Fi冻结边界。
+验证：
+  - car/scripts/check_project_layout.ps1 exit 0：365个工程引用及11份仿真共享输入存在，当前路径匹配。
+  - 代码统计/符号检索及现存 car/build/listings/autocar.map 交叉核对；旧PID和三个旧图像函数被现存链接产物剔除，不能据源码删除量承诺BIN缩减。
+  - 报告初次校验exit 0：15个文件行数一致、13个Markdown链接中的本地目标均存在；新增日志链接在交付前复核。
+  - car/src、car/include、car/config、outputs/firmware共45个文件分析前后SHA-256完全相同；排序路径/哈希映射JSON摘要bc00e2fa0156d7fafd7bdef1e48571164044a00e0dd8b46b2f4e01639b0044e6。
+  - 未运行主机行为回归、Keil构建、仿真或实车；未写入算法、配置、工程文件或固件；未执行git add/commit/push。
+  - PowerShell公共GitHub读取遇到TLS认证异常，改用Python urllib正常读取；一次检索使用不兼容的花括号语法，已改显式路径重查，无最终阻塞。
+产物：outputs/reports/src-readability-review-2026-10-28.md；本日志。
+未解决：建议尚未实施，净减少量为工程估计；完整行为等价性需后续逐帧/逐拍差分、配置回归、板端时序与实车验证。任务临时目录tmp/src-readability-2026-10-28已按绝对路径和登记文件清单核验后清理；tmp根目录保留。
+
+[2026-10-28 19:50:00 +08:00] 任务：simulation 项目内独立 Python
+范围：simulation 启动、初始化、依赖清单和验证脚本；.gitignore、环境文档、交付报告。用户批准执行推荐方案。
+变更：部署CPython 3.13.18 x64/Tk/Tcl、NumPy2.5.0、Pillow12.3.0到simulation/python；固定发行包/wheel SHA-256；启动器取消外部解释器发现及旧缓存读取；隔离Python/Tcl/Conda、用户包与PATH；初始化禁用外部pip配置/缓存。未改car算法、系统设置或Anaconda，未提交Git。
+验证：完整仿真59/59通过；真实GUI/参数/渲染检查通过；pythonw、Tk/Tcl及NumPy/Pillow实际模块全部来自项目内，加载模块无Anaconda；中文空格路径迁移、重复初始化、污染变量和缺失环境回归通过；项目内GCC新编译DLL并加载通过。代码审查发现pip配置注入后已复现、修复、回归通过。git diff --check通过。
+产物：simulation/python（Git忽略）、setup_python.ps1、run_python.ps1、锁定清单；outputs/reports/simulation-python-2026-10-28.md及同名证据目录。
+未解决：受限沙箱Tcl初始化受限，正常桌面权限下全部验证通过；软件验证不代表实车验收。其他任务的文件与日志记录保留。
+
+[2026-10-28 21:01:23 +08:00] 任务：当前代码仿真与实车执行差异诊断
+范围：用户批准当前car只读核对、仿真基线、针对性故障复现、诊断支持及报告；car修正另行明确范围。
+变更：新增simulation/tools/probe_reality_gap.py，编译真实servo_control.c与控制/视觉，仅替换GPIO/PWM硬件边界；10ms导出消费帧/渲染帧及控制因果数据。更新tools/README、仿真README和known-issues导航。
+发现：800原模型AB/BA40.68/40.62s通过；真实舵机C、10ms服务40.65s通过；图像25fps+舵机10ms通过；只将舵机服务改40ms则33.09sLOST。两者40ms虽到终点，4拍撤PWM、最低159.29mm/s，不合格。两者60ms则18.97sLOST；低速300/250/220/220的60ms AB128.78s通过，未扩展BA扰动。
+时标：原bridge每10ms人为更新服务时间；150ms暂停对照真实服务在110ms龄触发超时，原桥接12s窗无fault。160ms若表示CSI完成后的积压，按main拒收后触发camera stale；原延迟模型未表达该语义。周期/增益均为假设，未实测。
+电机：默认满PWM空载设定1231.25<2500guard；增益3.75的条件模型3693.75，800档闭环仍通过，不能当作现场overspeed根因。
+验证：当前低速双向128.66/129.14s通过。59项仿真中57在受限环境通过；2项Tcl检查因沙箱受限失败，子进程PSModulePath限定Windows模块后普通桌面权限4项runtime全过，合计59项不同用例覆盖。新工具短窗smoke通过（观察窗非整圈）；独立评审消费帧导出P2已修正并复现关闭，控制/物理记录不变。git diff --check无空白错误。
+保护：car/src/include/config及发布固件45文件SHA256均不变，未改用户已有Python环境部署代码、未操作硬件、未构建固件、未add/commit/push、不生成整包备份。
+产物：outputs/reports/reality-gap-2026-10-28.md与同名证据目录；220项证据文件SHA256校验通过，报告本地链接有效。
+剩余：主工程执行能力反馈/服务时序修正和正式仿真时标改造尚未实施；需先核对实车有效帧/舵机服务间隔及PWM—轮速。软件对照不证明真实故障唯一原因。任务结束仅清理tmp/reality-gap-20261028。

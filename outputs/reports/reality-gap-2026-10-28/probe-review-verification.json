@@ -1,0 +1,7 @@
+{
+  "review_regression_passed": true,
+  "before_frame_fresh": true,
+  "after_frame_fresh": false,
+  "after_c_frame_time_ms": 9990,
+  "same_failure_time_and_distance": true
+}

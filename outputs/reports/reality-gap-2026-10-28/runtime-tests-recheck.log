@@ -1,0 +1,32 @@
+test_command_wrapper_preserves_python_switches_and_exit_code (test_python_runtime.PythonRuntimeTests.test_command_wrapper_preserves_python_switches_and_exit_code) ... ok
+test_local_runtime_ignores_cached_path_and_environment_injection (test_python_runtime.PythonRuntimeTests.test_local_runtime_ignores_cached_path_and_environment_injection) ... FAIL
+test_missing_local_python_does_not_use_cached_external_interpreter (test_python_runtime.PythonRuntimeTests.test_missing_local_python_does_not_use_cached_external_interpreter) ... ok
+test_setup_ignores_external_pip_configuration (test_python_runtime.PythonRuntimeTests.test_setup_ignores_external_pip_configuration) ... FAIL
+
+======================================================================
+FAIL: test_local_runtime_ignores_cached_path_and_environment_injection (test_python_runtime.PythonRuntimeTests.test_local_runtime_ignores_cached_path_and_environment_injection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\tests\test_python_runtime.py", line 48, in test_local_runtime_ignores_cached_path_and_environment_injection
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : C:\Users\Lynn\Desktop\Files\Autodrive\simulation\launch.ps1 : Startup failed. Traceback (most recent call last): See C:
+\Users\Lynn\Desktop\Files\Autodrive\tmp\reality-gap-20261028\test-temp\simulation-isolation-0gs63ta2\launcher.log
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,launch.ps1
+ 
+
+
+======================================================================
+FAIL: test_setup_ignores_external_pip_configuration (test_python_runtime.PythonRuntimeTests.test_setup_ignores_external_pip_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\tests\test_python_runtime.py", line 69, in test_setup_ignores_external_pip_configuration
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : b"Looking in links: c:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\runtime\\downloads\r\nRequirement already satisfied: numpy==2.5.0 in .\\simulation\\python\\Lib\\site-packages (from -r C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\requirements.lock (line 2)) (2.5.0)\r\nRequirement already satisfied: Pillow==12.3.0 in .\\simulation\\python\\Lib\\site-packages (from -r C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\requirements.lock (line 3)) (12.3.0)\r\nNo broken requirements found.\r\nC:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\launch.ps1 : Startup failed. Traceback (most recent call last): See C:\r\n\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\reality-gap-20261028\\test-temp\\simulation-pip-j74e8y4w\\launcher.log\r\nAt C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\setup_python.ps1:43 char:1\r\n+ & (Join-Path $root 'launch.ps1') -CheckOnly\r\n+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException\r\n    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,launch.ps1\r\n \r\n"
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.295s
+
+FAILED (failures=2)

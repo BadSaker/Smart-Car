@@ -1,0 +1,87 @@
+test_completion_does_not_hide_steering_or_wheel_target_jumps (test_acceptance.AcceptanceTests.test_completion_does_not_hide_steering_or_wheel_target_jumps) ... ok
+test_legacy_model_is_not_accepted_as_independent_wheel_validation (test_acceptance.AcceptanceTests.test_legacy_model_is_not_accepted_as_independent_wheel_validation) ... ok
+test_reaching_finish_does_not_hide_a_failed_run (test_acceptance.AcceptanceTests.test_reaching_finish_does_not_hide_a_failed_run) ... ok
+test_small_speed_quantization_is_accepted (test_acceptance.AcceptanceTests.test_small_speed_quantization_is_accepted) ... ok
+test_wrong_branch_or_an_extra_loop_is_not_a_valid_lap (test_acceptance.AcceptanceTests.test_wrong_branch_or_an_extra_loop_is_not_a_valid_lap) ... ok
+test_noise_and_blackout_keep_the_same_rng_sequence (test_camera_acceleration.CameraAccelerationTests.test_noise_and_blackout_keep_the_same_rng_sequence) ... ok
+test_pixels_match_numpy_reference_at_varied_poses_and_optics (test_camera_acceleration.CameraAccelerationTests.test_pixels_match_numpy_reference_at_varied_poses_and_optics) ... ok
+test_distorted_width_agrees_with_projected_road_edges (test_camera_calibration.CameraCalibrationTests.test_distorted_width_agrees_with_projected_road_edges) ... ok
+test_fit_preserves_measured_height_and_input (test_camera_calibration.CameraCalibrationTests.test_fit_preserves_measured_height_and_input) ... ok
+test_fixed_height_fit_recovers_known_camera (test_camera_calibration.CameraCalibrationTests.test_fixed_height_fit_recovers_known_camera) ... ok
+test_folded_distortion_branch_is_not_a_road_boundary (test_camera_calibration.CameraCalibrationTests.test_folded_distortion_branch_is_not_a_road_boundary) ... ok
+test_incompatible_widths_do_not_change_height_to_hide_error (test_camera_calibration.CameraCalibrationTests.test_incompatible_widths_do_not_change_height_to_hide_error) ... ok
+test_pixel_ground_roundtrip_with_distortion_and_pose (test_camera_calibration.CameraCalibrationTests.test_pixel_ground_roundtrip_with_distortion_and_pose) ... ok
+test_seekfree_screenshot_keeps_overlay_mask (test_camera_calibration.CameraCalibrationTests.test_seekfree_screenshot_keeps_overlay_mask) ... ok
+test_subpixel_sampling_produces_partial_edge_coverage (test_camera_calibration.CameraCalibrationTests.test_subpixel_sampling_produces_partial_edge_coverage) ... ok
+test_zero_black_edge_is_a_valid_renderable_scene (test_camera_calibration.CameraCalibrationTests.test_zero_black_edge_is_a_valid_renderable_scene) ... ok
+test_30hz_does_not_quantize_to_25hz (test_camera_timing.CameraTimingTests.test_30hz_does_not_quantize_to_25hz) ... ok
+test_latency_uses_past_pose_but_current_encoder_input (test_camera_timing.CameraTimingTests.test_latency_uses_past_pose_but_current_encoder_input) ... ok
+test_startup_ramp_does_not_hide_a_brief_lost_frame (test_camera_timing.CameraTimingTests.test_startup_ramp_does_not_hide_a_brief_lost_frame) ... ok
+test_tire_corner_margin_on_known_straight (test_camera_timing.CameraTimingTests.test_tire_corner_margin_on_known_straight) ... ok
+test_all_active_presets_load (test_config_presets.ConfigPresetTests.test_all_active_presets_load) ... ok
+test_archive_is_not_in_builtin_selector (test_config_presets.ConfigPresetTests.test_archive_is_not_in_builtin_selector) ... ok
+test_camera_comparison_defaults_load (test_config_presets.ConfigPresetTests.test_camera_comparison_defaults_load) ... ok
+test_historical_presets_remain_loadable (test_config_presets.ConfigPresetTests.test_historical_presets_remain_loadable) ... ok
+test_1200_target_can_drive_above_300_pwm (test_control_parameters.ControlParameterTests.test_1200_target_can_drive_above_300_pwm) ... ok
+test_configured_pwm_ceiling_limits_actual_c_outputs (test_control_parameters.ControlParameterTests.test_configured_pwm_ceiling_limits_actual_c_outputs) ... ok
+test_element_speed_changes_the_c_target (test_control_parameters.ControlParameterTests.test_element_speed_changes_the_c_target) ... ok
+test_invalid_limits_are_rejected (test_control_parameters.ControlParameterTests.test_invalid_limits_are_rejected) ... ok
+test_speed_inputs_are_not_capped_at_competition_or_low_speed (test_control_parameters.ControlParameterTests.test_speed_inputs_are_not_capped_at_competition_or_low_speed) ... ok
+test_element_distance_uses_encoder_odometry (test_encoder_scale.EncoderScaleTests.test_element_distance_uses_encoder_odometry) ... ok
+test_physical_fifteen_turns_produce_34816_counts (test_encoder_scale.EncoderScaleTests.test_physical_fifteen_turns_produce_34816_counts) ... ok
+test_signed_feedback_matches_firmware_integer_rounding (test_encoder_scale.EncoderScaleTests.test_signed_feedback_matches_firmware_integer_rounding) ... ok
+test_external_same_name_does_not_replace_builtin (test_parameter_registry.RegistryTests.test_external_same_name_does_not_replace_builtin) ... ok
+test_save_cannot_write_into_car_source (test_parameter_registry.RegistryTests.test_save_cannot_write_into_car_source) ... ok
+test_save_external_keeps_source_label_and_relative_registry (test_parameter_registry.RegistryTests.test_save_external_keeps_source_label_and_relative_registry) ... ok
+test_stale_registry_is_safe_before_message_widget_exists (test_parameter_registry.RegistryTests.test_stale_registry_is_safe_before_message_widget_exists) ... ok
+test_command_wrapper_preserves_python_switches_and_exit_code (test_python_runtime.PythonRuntimeTests.test_command_wrapper_preserves_python_switches_and_exit_code) ... ok
+test_local_runtime_ignores_cached_path_and_environment_injection (test_python_runtime.PythonRuntimeTests.test_local_runtime_ignores_cached_path_and_environment_injection) ... FAIL
+test_missing_local_python_does_not_use_cached_external_interpreter (test_python_runtime.PythonRuntimeTests.test_missing_local_python_does_not_use_cached_external_interpreter) ... ok
+test_setup_ignores_external_pip_configuration (test_python_runtime.PythonRuntimeTests.test_setup_ignores_external_pip_configuration) ... FAIL
+test_ab_markers_do_not_enter_camera_image (test_simulation.ModelTests.test_ab_markers_do_not_enter_camera_image) ... ok
+test_bad_parameters_rejected (test_simulation.ModelTests.test_bad_parameters_rejected) ... ok
+test_black_image_and_start_gate (test_simulation.ModelTests.test_black_image_and_start_gate) ... ok
+test_constant_turn_exact_circle (test_simulation.ModelTests.test_constant_turn_exact_circle) ... ok
+test_fit_constraints_and_nominal_conflict (test_simulation.ModelTests.test_fit_constraints_and_nominal_conflict) ... ok
+test_full_finish_uses_progress_not_nominal_distance (test_simulation.ModelTests.test_full_finish_uses_progress_not_nominal_distance) ... ok
+test_full_track_closes_and_keeps_midterm_markers (test_simulation.ModelTests.test_full_track_closes_and_keeps_midterm_markers) ... ok
+test_native_feedback_loss (test_simulation.ModelTests.test_native_feedback_loss) ... ok
+test_native_steering_corrects_offset (test_simulation.ModelTests.test_native_steering_corrects_offset) ... ok
+test_native_visual_start_and_camera_loss (test_simulation.ModelTests.test_native_visual_start_and_camera_loss) ... ok
+test_projected_straight_image_width (test_simulation.ModelTests.test_projected_straight_image_width) ... ok
+test_route_geometry_and_reverse (test_simulation.ModelTests.test_route_geometry_and_reverse) ... ok
+test_cached_dll_loads_without_compiler_and_records_inputs (test_source_layout.SourceLayoutTests.test_cached_dll_loads_without_compiler_and_records_inputs) ... ok
+test_main_project_is_the_only_default_source (test_source_layout.SourceLayoutTests.test_main_project_is_the_only_default_source) ... ok
+test_parameter_change_changes_dll_identity (test_source_layout.SourceLayoutTests.test_parameter_change_changes_dll_identity) ... ok
+test_asymmetric_motor_output_does_not_produce_identical_encoder_speeds (test_wheel_dynamics.WheelDynamicsTests.test_asymmetric_motor_output_does_not_produce_identical_encoder_speeds) ... ok
+test_equal_outputs_settle_to_the_configured_motor_curve (test_wheel_dynamics.WheelDynamicsTests.test_equal_outputs_settle_to_the_configured_motor_curve) ... ok
+test_load_release_changes_speed_without_resetting_wheel_state (test_wheel_dynamics.WheelDynamicsTests.test_load_release_changes_speed_without_resetting_wheel_state) ... ok
+test_unloaded_wheel_can_overspeed_while_chassis_is_slow (test_wheel_dynamics.WheelDynamicsTests.test_unloaded_wheel_can_overspeed_while_chassis_is_slow) ... ok
+
+======================================================================
+FAIL: test_local_runtime_ignores_cached_path_and_environment_injection (test_python_runtime.PythonRuntimeTests.test_local_runtime_ignores_cached_path_and_environment_injection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\tests\test_python_runtime.py", line 48, in test_local_runtime_ignores_cached_path_and_environment_injection
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : C:\Users\Lynn\Desktop\Files\Autodrive\simulation\launch.ps1 : Startup failed. Traceback (most recent call last): See C:
+\Users\Lynn\AppData\Local\Temp\simulation-isolation-33ku1znw\launcher.log
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,launch.ps1
+ 
+
+
+======================================================================
+FAIL: test_setup_ignores_external_pip_configuration (test_python_runtime.PythonRuntimeTests.test_setup_ignores_external_pip_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\tests\test_python_runtime.py", line 69, in test_setup_ignores_external_pip_configuration
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : b"Get-FileHash : The term 'Get-FileHash' is not recognized as the name of a cmdlet, function, script file, or operable pr\r\nogram. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\r\nAt C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\setup_python.ps1:20 char:10\r\n+     if ((Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash -n ...\r\n+          ~~~~~~~~~~~~\r\n    + CategoryInfo          : ObjectNotFound: (Get-FileHash:String) [], ParentContainsErrorRecordException\r\n    + FullyQualifiedErrorId : CommandNotFoundException\r\n \r\n"
+
+----------------------------------------------------------------------
+Ran 59 tests in 4.548s
+
+FAILED (failures=2)

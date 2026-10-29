@@ -1,0 +1,9 @@
+test_command_wrapper_preserves_python_switches_and_exit_code (test_python_runtime.PythonRuntimeTests.test_command_wrapper_preserves_python_switches_and_exit_code) ... ok
+test_local_runtime_ignores_cached_path_and_environment_injection (test_python_runtime.PythonRuntimeTests.test_local_runtime_ignores_cached_path_and_environment_injection) ... ok
+test_missing_local_python_does_not_use_cached_external_interpreter (test_python_runtime.PythonRuntimeTests.test_missing_local_python_does_not_use_cached_external_interpreter) ... ok
+test_setup_ignores_external_pip_configuration (test_python_runtime.PythonRuntimeTests.test_setup_ignores_external_pip_configuration) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.683s
+
+OK

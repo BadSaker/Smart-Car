@@ -1,0 +1,282 @@
+[
+  {
+    "case": "ideal800",
+    "completed": true,
+    "pass_run": true,
+    "time_s": 40.68,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 3457,
+      "path_ticks": 4000,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7651059114968,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 11.231304152403386,
+      "wheel_target_vs_steer_mismatch_mm_s": 226.73609526635153
+    }
+  },
+  {
+    "case": "ideal800-ba",
+    "completed": true,
+    "pass_run": true,
+    "time_s": 40.62,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 3451,
+      "path_ticks": 3994,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 790.2127990326381,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 11.047419652612756,
+      "wheel_target_vs_steer_mismatch_mm_s": 207.4831056170143
+    }
+  },
+  {
+    "case": "hardware10",
+    "completed": true,
+    "pass_run": true,
+    "time_s": 40.65,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 3454,
+      "path_ticks": 3997,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7990624905439,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 11.120970568548412,
+      "wheel_target_vs_steer_mismatch_mm_s": 220.44738368890052
+    }
+  },
+  {
+    "case": "frame40",
+    "completed": true,
+    "pass_run": true,
+    "time_s": 40.8,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 3469,
+      "path_ticks": 4012,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7960384353049,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 11.101755817723262,
+      "wheel_target_vs_steer_mismatch_mm_s": 221.79576521854557
+    }
+  },
+  {
+    "case": "servo40",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 33.09,
+    "fault": "路径丢失",
+    "first_bad_ms": 33050,
+    "stability_10ms": {
+      "running_ticks": 2697,
+      "path_ticks": 3240,
+      "zero_pwm_ticks": 4,
+      "min_speed_mm_s": 688.5453266617641,
+      "min_path_margin": -45,
+      "ticks_below_98pct_nominal": 4
+    },
+    "peak": {
+      "command_minus_actual_deg": 16.055159566439773,
+      "wheel_target_vs_steer_mismatch_mm_s": 186.3784167468672
+    }
+  },
+  {
+    "case": "hardware60",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 33.17,
+    "fault": "路径丢失",
+    "first_bad_ms": 33130,
+    "stability_10ms": {
+      "running_ticks": 2705,
+      "path_ticks": 3248,
+      "zero_pwm_ticks": 4,
+      "min_speed_mm_s": 688.5544073133092,
+      "min_path_margin": -45,
+      "ticks_below_98pct_nominal": 4
+    },
+    "peak": {
+      "command_minus_actual_deg": 20.583349957452377,
+      "wheel_target_vs_steer_mismatch_mm_s": 219.31636487059927
+    }
+  },
+  {
+    "case": "main40",
+    "completed": true,
+    "pass_run": false,
+    "time_s": 42.35,
+    "fault": "无",
+    "first_bad_ms": 33170,
+    "stability_10ms": {
+      "running_ticks": 3624,
+      "path_ticks": 4167,
+      "zero_pwm_ticks": 4,
+      "min_speed_mm_s": 159.28880904201864,
+      "min_path_margin": -45,
+      "ticks_below_98pct_nominal": 512
+    },
+    "peak": {
+      "command_minus_actual_deg": 16.134490154754637,
+      "wheel_target_vs_steer_mismatch_mm_s": 215.77126106064395
+    }
+  },
+  {
+    "case": "main60",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 18.97,
+    "fault": "路径丢失",
+    "first_bad_ms": 18850,
+    "stability_10ms": {
+      "running_ticks": 1285,
+      "path_ticks": 1828,
+      "zero_pwm_ticks": 12,
+      "min_speed_mm_s": 507.6932494661103,
+      "min_path_margin": -45,
+      "ticks_below_98pct_nominal": 12
+    },
+    "peak": {
+      "command_minus_actual_deg": 11.505798613140957,
+      "wheel_target_vs_steer_mismatch_mm_s": 216.50483322771896
+    }
+  },
+  {
+    "case": "main60-low",
+    "completed": true,
+    "pass_run": true,
+    "time_s": 128.78,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 12587,
+      "path_ticks": 12810,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 219.69937303614225,
+      "min_path_margin": 53,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 15.487560153037482,
+      "wheel_target_vs_steer_mismatch_mm_s": 49.85570926492051
+    }
+  },
+  {
+    "case": "pause-ideal",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 12.0,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 589,
+      "path_ticks": 1132,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7651059114968,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 7.4794835817670755,
+      "wheel_target_vs_steer_mismatch_mm_s": 166.262426464996
+    }
+  },
+  {
+    "case": "pause-hardware",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 10.1,
+    "fault": "舵机服务超时",
+    "first_bad_ms": 10100,
+    "stability_10ms": {
+      "running_ticks": 398,
+      "path_ticks": 941,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7990624905439,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 7.244162243824717,
+      "wheel_target_vs_steer_mismatch_mm_s": 151.2107627591756
+    }
+  },
+  {
+    "case": "delay-ideal",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 12.0,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 589,
+      "path_ticks": 1132,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7651059114968,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 7.4794835817670755,
+      "wheel_target_vs_steer_mismatch_mm_s": 150.7298264734871
+    }
+  },
+  {
+    "case": "delay-aware-reviewed",
+    "completed": false,
+    "pass_run": false,
+    "time_s": 10.15,
+    "fault": "摄像头超时",
+    "first_bad_ms": 10150,
+    "stability_10ms": {
+      "running_ticks": 403,
+      "path_ticks": 946,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 788.7651059114968,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 7.4794835817670755,
+      "wheel_target_vs_steer_mismatch_mm_s": 150.7298264734871
+    }
+  },
+  {
+    "case": "gain375",
+    "completed": true,
+    "pass_run": true,
+    "time_s": 40.13,
+    "fault": "无",
+    "first_bad_ms": null,
+    "stability_10ms": {
+      "running_ticks": 3402,
+      "path_ticks": 3945,
+      "zero_pwm_ticks": 0,
+      "min_speed_mm_s": 799.5583555301604,
+      "min_path_margin": 55,
+      "ticks_below_98pct_nominal": 0
+    },
+    "peak": {
+      "command_minus_actual_deg": 10.7092643120492,
+      "wheel_target_vs_steer_mismatch_mm_s": 209.17985184768798
+    }
+  }
+]

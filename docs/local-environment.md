@@ -40,9 +40,9 @@
 
 Keil：显式`build.ps1 -KeilPath`优先，其次`AUTOCAR_KEIL`、`car/scripts/tool_paths.local.json`中的`Keil`、PATH、固定盘Keil_v5布局。该JSON也可用`Gcc`键指定测试编译器。
 
-主机测试：`AUTOCAR_HOST_CC`优先，随后独立GCC、PATH和有限已知安装布局。`test.ps1 -Compiler`支持显式路径。仿真用`SIMULATION_CC`；启动解释器用`SIMULATION_PYTHON`。编辑器用`AUTOCAR_ARM_CC`指定armclang，项目内include路径使用工作区变量。
+主机测试：`AUTOCAR_HOST_CC`优先，随后独立GCC、PATH和有限已知安装布局。`test.ps1 -Compiler`支持显式路径。仿真用`SIMULATION_CC`；Python固定为`simulation/python/`，`SIMULATION_PYTHON`已停用，启动时不再发现外部解释器。编辑器用`AUTOCAR_ARM_CC`指定armclang，项目内include路径使用工作区变量。
 
-当前机器验证解释器Python3.13.0，NumPy2.5.0、Pillow12.3.0，与requirements.txt一致；Tk由Python安装提供。依赖不自动安装。其他机器须先检查64位解释器、Tk和Windows x64 GCC。
+2026-10-28仿真改用项目内完整CPython 3.13.18 x64、NumPy 2.5.0、Pillow 12.3.0及Tk/Tcl，脱离D盘Anaconda。首次部署执行`powershell -NoProfile -ExecutionPolicy Bypass -File simulation/setup_python.ps1`；版本、来源及哈希由`simulation/python-runtime.json`和`requirements.lock`锁定。日常测试通过`simulation/run_python.ps1`运行，详见[仿真说明](../simulation/README.md)。运行时二进制与下载缓存不提交Git；初始化不修改系统Python、PATH或注册表。启动环境缺失会报错，不自动下载或回退。Windows x64 GCC仍按原仿真工具链配置处理。
 
 ## Git与交付
 

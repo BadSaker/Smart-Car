@@ -1,5 +1,7 @@
 # 文档导航
 
+队友协作：[Git 同步使用说明](git-collaboration.md)；双击根目录 `项目同步.cmd`，配置提交作者、保存进展、上传或对齐云端版本。
+
 多设备配置：[本地环境](local-environment.md)；仿真功能、共享算法和当前验收：[simulation](../simulation/README.md)。原始SeekFree位于仓库外的同级资料目录，例程链接只在完整工作区中可用。
 
 当前软件基线为2026-10-14运动稳定性交付；参数、双向分档验收和实测边界以[最新报告](../outputs/reports/motion-stability-2026-10-14.md)及[自动驾驶指南](autonomous-driving.md)为准。历史800档旧模型结果不作为当前默认配置。协作与目录整理见[规范整理报告](../outputs/reports/project-normalization-2026-10-14.md)。

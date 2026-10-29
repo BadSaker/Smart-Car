@@ -1,0 +1,74 @@
+{
+  "perturbation": {
+    "seed": 42,
+    "enabled": false,
+    "start_offset_m": 0.0,
+    "start_heading_deg": 0.0
+  },
+  "dynamics_model": "independent",
+  "mode": "native",
+  "completed": true,
+  "time_s": 40.68,
+  "distance_m": 30.134501450999764,
+  "route_length_m": 30.021128796792553,
+  "max_error_m": 0.12761210448384513,
+  "max_outside_wheels": 0,
+  "max_route_deviation_m": 0.19000000000000017,
+  "motion_limits": {
+    "max_command_step": 50.0,
+    "max_target_rise": 2.0,
+    "max_target_fall": 2.00006103515625,
+    "max_pwm_rise": 3.0,
+    "max_wheel_speed_mm_s": 1002.4036887539789,
+    "max_wheel_accel_mm_s2": 858.0935071468509,
+    "max_wheel_overshoot_mm_s": 99.4698606988793
+  },
+  "min_tire_corner_margin_mm": 45.346209889551155,
+  "stability_10ms": {
+    "running_ticks": 3457,
+    "path_ticks": 4000,
+    "zero_pwm_ticks": 0,
+    "min_speed_mm_s": 788.7651059114968,
+    "min_path_margin": 55,
+    "ticks_below_98pct_nominal": 0
+  },
+  "state": "运行",
+  "fault": "无",
+  "shadow_c_state": "运行",
+  "shadow_c_fault": "无",
+  "algorithm_build": "c7ac134a4a69d712",
+  "stop_evidence": null,
+  "stop_capture_complete": false,
+  "closure_connector_m": 0.22157287525380576,
+  "predicted_width_row30": 40.730769230769226,
+  "predicted_width_row116": 164.2179487179487,
+  "vehicle_geometry": {
+    "model": "C1 03-361-1",
+    "overall_length_m": 0.28,
+    "plate_length_m": 0.245,
+    "wheelbase_m": 0.19,
+    "outer_width_straight_m": 0.18,
+    "camera_from_rear_axle_m": 0.08
+  },
+  "model_status": "C1产品图外形近似、实测轴线定位；相机条件拟合、执行机构未标定",
+  "pass_run": true,
+  "first_bad": null,
+  "peak": {
+    "command_minus_actual_deg": 11.231304152403386,
+    "wheel_target_vs_steer_mismatch_mm_s": 226.73609526635153
+  },
+  "experiment": {
+    "config": "simulation\\configs\\完整验证_800.json",
+    "output": "tmp\\reality-gap-20261028\\ideal800",
+    "direction": "AB",
+    "seconds": 60.0,
+    "hardware_servo": false,
+    "service_ms": 10,
+    "pause_ms": 0,
+    "inject_ms": 10000,
+    "image_delay_ms": 0,
+    "frame_age_aware": false,
+    "motor_gain": null
+  },
+  "physical_assumptions": "服务周期/延迟/电机增益为受控假设；无板上时序测量；停止后机械角保持是假设"
+}

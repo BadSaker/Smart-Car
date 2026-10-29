@@ -1,0 +1,24 @@
+[
+  {
+    "gain_assumption": 1.25,
+    "traction": 0,
+    "pwm_permille": 1000,
+    "speed_guard_mm_s": 2500,
+    "free_wheel_mm_s": [
+      1231.2499999999998,
+      1231.2499999999998
+    ],
+    "chassis_mm_s": 0
+  },
+  {
+    "gain_assumption": 3.75,
+    "traction": 0,
+    "pwm_permille": 1000,
+    "speed_guard_mm_s": 2500,
+    "free_wheel_mm_s": [
+      3693.7500000000005,
+      3693.7500000000005
+    ],
+    "chassis_mm_s": 0
+  }
+]

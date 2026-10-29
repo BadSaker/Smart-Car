@@ -1,0 +1,7 @@
+{
+  "git_head": "07a562b47cf1c188c8ec86698921ff46752a7411",
+  "protected_files_unchanged": 45,
+  "python": "3.13.18 project-local",
+  "algorithm_source": "car only; no edits",
+  "experiment_semantics": "All periods/gains are assumed sensitivity inputs, not measured hardware. Early pwm_effective_pulse_us column means driver-interface nominal pulse, not actual pin waveform. service_age_ms sampled after optional service. Early frame_id means rendered frame; reviewed case splits consumed/rendered. Fault cases do not include a complete post-event window."
+}

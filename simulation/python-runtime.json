@@ -1,0 +1,21 @@
+{
+  "version": "3.13.18",
+  "architecture": "x86_64-pc-windows-msvc",
+  "source": "https://github.com/astral-sh/python-build-standalone/releases/tag/20261026",
+  "archive": "cpython-3.13.18+20261026-x86_64-pc-windows-msvc-install_only.tar.gz",
+  "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.13.18%2B20261026-x86_64-pc-windows-msvc-install_only.tar.gz",
+  "sha256": "ebe90cc1dce2dd2d7afa1f0aa9b6c269c7c0174aeabdc6a801381602b7283424",
+  "packages": {"numpy": "2.5.0", "Pillow": "12.3.0"},
+  "wheels": [
+    {
+      "filename": "numpy-2.5.0-cp313-cp313-win_amd64.whl",
+      "url": "https://files.pythonhosted.org/packages/30/53/491e1c47c55b62ccc6a63c1c5b8635c73fc2258dddeb9bda27cae4a0ae96/numpy-2.5.0-cp313-cp313-win_amd64.whl",
+      "sha256": "44353e2878930039db472b99dc353d749826e4010bd4d2a7f835e94a97a5c748"
+    },
+    {
+      "filename": "pillow-12.3.0-cp313-cp313-win_amd64.whl",
+      "url": "https://files.pythonhosted.org/packages/a6/9b/7a58e61d62be561da3a356fe2384d4059a6345fc130e23ef1c36a5b81d24/pillow-12.3.0-cp313-cp313-win_amd64.whl",
+      "sha256": "1cca606cd25738df4ed873d5ad46bbdb3d83b5cbca291f6b4ff13a4df6b0bbe8"
+    }
+  ]
+}

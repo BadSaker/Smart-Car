@@ -6,6 +6,7 @@
 /simulation/runs/
 /simulation/runtime/
 /simulation/.venv/
+/simulation/python/
 /simulation/parameter_locations.json
 /simulation/parameter_locations.local.json
 /simulation/toolchain/mingw64/

@@ -1,0 +1,31 @@
+{
+    "executable":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\python.exe",
+    "version":  "3.13.18",
+    "bits":  64,
+    "versions":  {
+                     "numpy":  "2.5.0",
+                     "Pillow":  "12.3.0"
+                 },
+    "modules":  {
+                    "encodings":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\encodings\\__init__.py",
+                    "ctypes":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\ctypes\\__init__.py",
+                    "tkinter":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\tkinter\\__init__.py",
+                    "_tkinter":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\DLLs\\_tkinter.pyd",
+                    "numpy":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\site-packages\\numpy\\__init__.py",
+                    "numpy._core._multiarray_umath":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\site-packages\\numpy\\_core\\_multiarray_umath.cp313-win_amd64.pyd",
+                    "PIL":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\site-packages\\PIL\\__init__.py",
+                    "PIL._imaging":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\site-packages\\PIL\\_imaging.cp313-win_amd64.pyd",
+                    "PIL.ImageTk":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\site-packages\\PIL\\ImageTk.py"
+                },
+    "tcl_library":  "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\tcl\\tcl8.6",
+    "tcl_version":  "8.6.15",
+    "user_site_enabled":  false,
+    "sys_path":  [
+                     "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格",
+                     "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\python313.zip",
+                     "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\DLLs",
+                     "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib",
+                     "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python",
+                     "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\tmp\\simulation-python\\中文 空格\\python\\Lib\\site-packages"
+                 ]
+}

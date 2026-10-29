@@ -1,0 +1,14 @@
+{
+  "path": "C:\\Users\\Lynn\\Desktop\\Files\\Autodrive\\simulation\\toolchain\\mingw64\\bin\\gcc.exe",
+  "sha256": "5bf1ae0327828703795fb5ac19bcfb29fa371f4f69b69eca0dfa7358250d7429",
+  "options": [
+    "-std=c99",
+    "-shared",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-static-libgcc",
+    "-I../.."
+  ]
+}
