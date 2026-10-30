@@ -82,6 +82,7 @@ char wifi_spi_version[12];                      // 保存模块固件版本信息
 char wifi_spi_mac_addr[20];                     // 保存模块MAC地址信息
 char wifi_spi_ip_addr_port[25];                 // 保存模块IP地址与端口信息
 
+static uint8 wifi_spi_rx_empty_confirmed;
 static fifo_struct  wifi_spi_fifo;
 static uint8        wifi_spi_buffer[WIFI_SPI_RECVIVE_FIFO_SIZE];
 static volatile     wifi_spi_state_enum wifi_spi_mutex;
@@ -573,6 +574,44 @@ uint8 wifi_spi_udp_send_now (void)
 // 使用示例     wifi_spi_send_buffer(buffer, 100);
 // 备注信息     
 //-------------------------------------------------------------------------------------------------------------------
+/* Autodrive V3.11.2 extension: one ready transaction, no wait/retry/drain loop.
+ * Main-loop only. Existing blocking APIs and module protocol are unchanged. */
+uint32 wifi_spi_try_send_buffer (const uint8 *buffer, uint32 length)
+{
+    wifi_spi_packets_struct packet = {0};
+    uint16 count;
+    wifi_spi_rx_empty_confirmed = 0;
+    if ((length && buffer == NULL) || wifi_spi_mutex != WIFI_SPI_IDLE ||
+        !gpio_get_level(WIFI_SPI_INT_PIN)) return length;
+    wifi_spi_mutex = WIFI_SPI_BUSY;
+    count = length > WIFI_SPI_TRANSFER_SIZE ? WIFI_SPI_TRANSFER_SIZE : (uint16)length;
+    if (count) wifi_spi_transfer_data(buffer, &packet, count);
+    else {
+        packet.head.command = WIFI_SPI_DATA;
+        wifi_spi_transfer_command(&packet, WIFI_SPI_RECVIVE_SIZE);
+    }
+    if ((packet.head.command == WIFI_SPI_REPLY_DATA_START ||
+         packet.head.command == WIFI_SPI_REPLY_DATA_END) &&
+        packet.head.length && packet.head.length <= WIFI_SPI_RECVIVE_SIZE)
+        fifo_write_buffer(&wifi_spi_fifo, packet.buffer, packet.head.length);
+    wifi_spi_mutex = WIFI_SPI_IDLE;
+    wifi_spi_rx_empty_confirmed = packet.head.command == WIFI_SPI_REPLY_DATA_END && packet.head.length == 0;
+    return length-count;
+}
+
+/* Read only bytes already received by the bounded main-loop transaction. */
+int32 wifi_spi_read_buffer_cached (uint8 *buffer, uint32 length)
+{
+    uint8 empty_confirmed = wifi_spi_rx_empty_confirmed;
+    wifi_spi_rx_empty_confirmed = 0;
+    if (buffer == NULL || length == 0) return -1;
+    fifo_read_buffer(&wifi_spi_fifo, buffer, &length, FIFO_READ_AND_CLEAN);
+    /* Cache empty is not proof that old commands have left the module.
+     * Consume a fresh END/0 observation once, never on a payload read. */
+    if (length) return (int32)length;
+    return empty_confirmed ? 0 : -1;
+}
+
 uint32 wifi_spi_send_buffer (const uint8 *buffer, uint32 length)
 {
     uint16 send_length;
@@ -734,6 +773,7 @@ uint8 wifi_spi_init (char *wifi_ssid, char *pass_word)
 {
     uint8 return_state = 0;
     
+    wifi_spi_rx_empty_confirmed = 0;
     fifo_init(&wifi_spi_fifo, FIFO_DATA_8BIT, wifi_spi_buffer, WIFI_SPI_RECVIVE_FIFO_SIZE);
     spi_init(WIFI_SPI_INDEX, SPI_MODE3, WIFI_SPI_SPEED, WIFI_SPI_SCK_PIN, WIFI_SPI_MOSI_PIN, WIFI_SPI_MISO_PIN, SPI_CS_NULL);//硬件SPI初始化
     gpio_init(WIFI_SPI_CS_PIN,  GPO, 1, GPO_PUSH_PULL);

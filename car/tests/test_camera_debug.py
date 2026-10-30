@@ -58,6 +58,8 @@ void gpio_init(int,int,uint8,uint32);
 uint8 gpio_get_level(int);
 uint8 wifi_spi_init(char*,char*);
 uint8 wifi_spi_socket_disconnect(void);
+uint32 wifi_spi_try_send_buffer(const uint8*,uint32);
+int32 wifi_spi_read_buffer_cached(uint8*,uint32);
 void system_delay_ms(uint32);
 uint8 wifi_spi_socket_connect(char*,char*,char*,char*);
 void ips200_init(int);
@@ -104,6 +106,7 @@ PROFILES['motor-telemetry'] = WIFI + ['TEST_MOTOR_TELEMETRY=1', 'REMOTE_CONTROL_
 PROFILES['control-rx'] = WIFI + ['TEST_WIFI_CONTROL_RX=1', 'CAMERA_DEBUG_WIFI_BOOT_ENABLED=1']
 PROFILES['remote-display'] = WIFI + ['TEST_REMOTE_DISPLAY=1']
 PROFILES['autonomous-display'] = WIFI + ['TEST_AUTONOMOUS_DISPLAY=1']
+PROFILES['scheduled'] = WIFI + ['TEST_SCHEDULED=1','CAMERA_DEBUG_WIFI_BOOT_ENABLED=1','REMOTE_CONTROL_ENABLED=1']
 
 
 class CameraDebugTests(unittest.TestCase):
@@ -134,6 +137,8 @@ class CameraDebugTests(unittest.TestCase):
                              'car/library/zf_components/seekfree_assistant_interface.c']]
                 if (ROOT/'car/src/camera_display.c').exists():
                     command.append(str(ROOT/'car/src/camera_display.c'))
+                if name == 'scheduled':
+                    command += [str(ROOT/'car/src/autonomous_drive.c'),str(ROOT/'car/src/control_pid.c'),'-lm']
                 command += [str(fifo_source),'-o',str(exe)]
                 build = subprocess.run(command,capture_output=True,text=True,encoding='utf-8',errors='replace')
                 self.assertEqual(build.returncode,0,build.stdout+build.stderr)

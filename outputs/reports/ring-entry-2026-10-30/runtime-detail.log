@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\runtime_check.py", line 45, in <module>
+    print(json.dumps(check(), ensure_ascii=True, indent=2))
+                     ~~~~~^^
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\runtime_check.py", line 36, in check
+    tcl = tkinter.Tcl()
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\python\Lib\tkinter\__init__.py", line 2604, in Tcl
+    return Tk(screenName, baseName, className, useTk)
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\simulation\python\Lib\tkinter\__init__.py", line 2491, in __init__
+    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)
+              ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: Can't find a usable init.tcl in the following directories: 
+    {C:\Users\Lynn\Desktop\Files\Autodrive\simulation\python\tcl\tcl8.6} C:/Users/Lynn/Desktop/Files/Autodrive/simulation/python/lib/tcl8.6 C:/Users/Lynn/Desktop/Files/Autodrive/simulation/lib/tcl8.6 C:/Users/Lynn/Desktop/Files/Autodrive/lib/tcl8.6 C:/Users/Lynn/Desktop/Files/Autodrive/simulation/library C:/Users/Lynn/Desktop/Files/Autodrive/library C:/Users/Lynn/Desktop/Files/Autodrive/tcl8.6.15/library C:/Users/Lynn/Desktop/Files/tcl8.6.15/library
+
+
+
+This probably means that Tcl wasn't installed properly.
+

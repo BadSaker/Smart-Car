@@ -1,0 +1,2 @@
+{"direction": "AB", "pass_run": true, "completed": true, "time_s": 39.2, "distance_m": 30.179055701549363, "max_error_m": 0.1217302702312552, "max_outside_wheels": 0, "fault": "\u65e0", "algorithm_build": "57e54f1fca8a7ff3"}
+{"direction": "BA", "pass_run": true, "completed": true, "time_s": 39.72, "distance_m": 30.18875494991359, "max_error_m": 0.11312073151649246, "max_outside_wheels": 0, "fault": "\u65e0", "algorithm_build": "57e54f1fca8a7ff3"}

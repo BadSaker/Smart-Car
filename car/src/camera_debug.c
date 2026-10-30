@@ -17,6 +17,15 @@ volatile camera_debug_stage_t camera_debug_last_error_stage = CAMERA_DEBUG_STAGE
 volatile uint32_t camera_debug_last_remaining = 0;
 static uint8_t display_timer_armed;
 static uint32_t display_updated_ms;
+static uint32_t (*scheduler_clock)(void);
+static uint8_t (*scheduler_driving)(void);
+static void (*scheduler_network_busy)(uint8_t);
+
+void camera_debug_configure_scheduler(uint32_t (*clock_ms)(void), uint8_t (*driving)(void),
+                                      void (*network_busy)(uint8_t))
+{
+    scheduler_clock=clock_ms;scheduler_driving=driving;scheduler_network_busy=network_busy;
+}
 
 #if CAMERA_DEBUG_ENABLED
 #if MT9V03X_W > 255 || MT9V03X_H > 255
@@ -30,6 +39,10 @@ static uint8_t frame_available;
 static uint8_t block_index;
 static uint8_t retry_timer_armed;
 static uint32_t retry_started_ms;
+/* 保存完整逐飞协议帧，发送期间不引用下一幅图或可变边线。 */
+static uint8_t queued_frame[MT9V03X_W*MT9V03X_H+3*MT9V03X_H+128];
+static uint32_t queued_size,queued_offset,queue_progress_ms,queue_poll_ms;
+static uint8_t queue_building;
 static uint8_t *boundary_left, *boundary_middle, *boundary_right;
 static uint8_t wifi_enabled;
 static uint8_t wifi_key_sample, wifi_key_stable, wifi_key_armed, wifi_key_timer_armed;
@@ -115,6 +128,13 @@ static uint32 camera_debug_transfer(const uint8 *data, uint32 length)
 {
     uint32 pending = length, retries = 0;
     camera_debug_stage_t stage = transfer_stage(block_index++);
+    if(scheduler_clock) {
+        if(!queue_building || camera_debug_status!=CAMERA_DEBUG_READY ||
+           length>sizeof queued_frame-queued_size) {
+            record_error(CAMERA_DEBUG_SEND_ERROR,stage,length);return length;
+        }
+        memcpy(queued_frame+queued_size,data,length);queued_size+=length;return 0;
+    }
     if (camera_debug_status != CAMERA_DEBUG_READY || transport_write == NULL)
         return length;
     while (pending != 0U)
@@ -138,13 +158,14 @@ static uint32 camera_debug_transfer(const uint8 *data, uint32 length)
     return pending;
 }
 
-static uint8_t connect_transport(void)
+static uint8_t connect_transport_sync(void)
 {
     char ssid[] = CAMERA_DEBUG_WIFI_SSID;
     char password[] = CAMERA_DEBUG_WIFI_PASSWORD;
     char server_ip[] = CAMERA_DEBUG_WIFI_SERVER_IP;
     char server_port[] = CAMERA_DEBUG_WIFI_SERVER_PORT;
     char local_port[] = CAMERA_DEBUG_WIFI_LOCAL_PORT;
+    queued_size=queued_offset=0;queue_building=0;
     frame_available = 0;
     transport_write = NULL;
     frame_sequence = 0;
@@ -185,6 +206,21 @@ static uint8_t connect_transport(void)
     return 0;
 }
 
+static uint8_t connect_transport(void)
+{
+    uint8_t result;
+    /* 先阻止新起跑，再核对已有运行；PIT在两次操作之间也不能穿过交接。 */
+    if(scheduler_network_busy)scheduler_network_busy(1);
+    if(scheduler_driving && scheduler_driving()) {
+        camera_debug_status=CAMERA_DEBUG_INITIALIZING;
+        if(scheduler_network_busy)scheduler_network_busy(0);
+        return 0;
+    }
+    result=connect_transport_sync();
+    if(scheduler_network_busy)scheduler_network_busy(0);
+    return result;
+}
+
 /* 只在主循环切换；不能在中断中复位正在发送的模块。 */
 static uint8_t camera_debug_set_wifi_enabled(uint8_t enabled)
 {
@@ -192,6 +228,7 @@ static uint8_t camera_debug_set_wifi_enabled(uint8_t enabled)
     frame_available = 0;
     transport_write = NULL;
     retry_timer_armed = 0;
+    queued_size=queued_offset=0;
     if (!enabled)
     {
         /* 本地GPIO保持复位，避免关闭时还调用阻塞式网络断开/查询。
@@ -205,6 +242,10 @@ static uint8_t camera_debug_set_wifi_enabled(uint8_t enabled)
     {
         record_error(CAMERA_DEBUG_CONFIG_ERROR, CAMERA_DEBUG_STAGE_CONFIG, 0);
         return 1;
+    }
+    /* 建链包含100ms复位等待及秒级命令，不能在行驶中调用。 */
+    if(scheduler_driving && scheduler_driving()) {
+        camera_debug_status=CAMERA_DEBUG_INITIALIZING;return 0;
     }
     return connect_transport();
 }
@@ -286,6 +327,29 @@ void camera_debug_poll(uint32_t now_ms)
 #if CAMERA_DEBUG_ENABLED
     /* 按键触发的连接可能阻塞；返回后不能用调用前时间锚定失败回退。 */
     if (camera_debug_poll_key(now_ms)) return;
+    if(scheduler_clock && wifi_enabled && camera_debug_status==CAMERA_DEBUG_READY &&
+       (uint32_t)(now_ms-queue_poll_ms)>=1U) {
+        uint32_t pending,remaining=queued_size-queued_offset;
+        queue_poll_ms=now_ms;
+        /* 底层只检查一次INT并执行一次至多4088字节的事务，绝不等模块。 */
+        pending=wifi_spi_try_send_buffer(remaining?queued_frame+queued_offset:NULL,remaining);
+        if(pending>remaining) {
+            record_error(CAMERA_DEBUG_SEND_ERROR,CAMERA_DEBUG_STAGE_IMAGE,pending);
+        } else if(remaining) {
+            if(pending<remaining)queue_progress_ms=now_ms;
+            queued_offset+=remaining-pending;
+            if(queued_offset==queued_size) {
+                queued_size=queued_offset=0;++camera_debug_frames_sent;
+            } else if((uint32_t)(now_ms-queue_progress_ms)>=1000U) {
+                record_error(CAMERA_DEBUG_SEND_ERROR,CAMERA_DEBUG_STAGE_IMAGE,pending);
+            }
+        }
+        if(camera_debug_status==CAMERA_DEBUG_SEND_ERROR) {
+            /* 已发半帧不得与新帧拼接；先复位隔离旧TCP，再等停车后建链。 */
+            gpio_init(WIFI_SPI_RST_PIN,GPO,GPIO_LOW,GPO_PUSH_PULL);
+            queued_size=queued_offset=0;
+        }
+    }
 #endif
     if (!display_timer_armed || (uint32_t)(now_ms - display_updated_ms) >= 250U)
     {
@@ -295,6 +359,10 @@ void camera_debug_poll(uint32_t now_ms)
     }
 #if CAMERA_DEBUG_ENABLED
     if (!wifi_enabled) return; // 关闭时只处理本地按键和统计，不查询或重连网络。
+    if(scheduler_driving && scheduler_driving())return;
+    if(scheduler_clock && camera_debug_status==CAMERA_DEBUG_INITIALIZING) {
+        (void)connect_transport();return;
+    }
     if (camera_debug_status == CAMERA_DEBUG_INIT_ERROR ||
         camera_debug_status == CAMERA_DEBUG_CONNECT_ERROR ||
         camera_debug_status == CAMERA_DEBUG_SEND_ERROR)
@@ -314,7 +382,7 @@ void camera_debug_poll(uint32_t now_ms)
             camera_display_network_status(camera_debug_status);
             camera_display_statistics();
             /* 先尝试正常关闭；即使关闭失败，也继续执行硬件复位。 */
-            if (close_old_socket) (void)wifi_spi_socket_disconnect();
+            if (close_old_socket && !scheduler_clock) (void)wifi_spi_socket_disconnect();
             (void)connect_transport();
             display_timer_armed = 0;
         }
@@ -342,6 +410,8 @@ void camera_debug_send_frame(const uint8_t *binary_image)
 #if CAMERA_DEBUG_ENABLED
     if (camera_debug_status != CAMERA_DEBUG_READY || !frame_available) return;
     frame_available = 0;
+    /* 正在发送的快照保持不动；跳过尚未发送的新帧，不排队旧画面。 */
+    if(scheduler_clock && queued_size)return;
     if (frame_sequence++ % CAMERA_DEBUG_FRAME_DIVIDER != 0U) return;
 #if CAMERA_DEBUG_IMAGE_MODE == CAMERA_DEBUG_BINARY
     if (binary_image == NULL) return;
@@ -350,8 +420,12 @@ void camera_debug_send_frame(const uint8_t *binary_image)
     (void)binary_image;
 #endif
     block_index = 0;
+    if(scheduler_clock) {
+        queued_offset=queued_size=0;queue_building=1;queue_progress_ms=scheduler_clock();
+    }
     seekfree_assistant_camera_send();
-    if (camera_debug_status == CAMERA_DEBUG_READY) ++camera_debug_frames_sent;
+    queue_building=0;
+    if (!scheduler_clock && camera_debug_status == CAMERA_DEBUG_READY) ++camera_debug_frames_sent;
 #else
     (void)binary_image;
 #endif
@@ -361,8 +435,9 @@ int32_t camera_debug_read_control(uint8_t *buffer, uint32_t capacity)
 {
 #if CAMERA_DEBUG_ENABLED && REMOTE_CONTROL_ENABLED
     if (buffer == NULL || capacity == 0U || camera_debug_status != CAMERA_DEBUG_READY) return -1;
-    if (!gpio_get_level(WIFI_SPI_INT_PIN)) return -1;
     if (capacity > REMOTE_CONTROL_RX_CHUNK_SIZE) capacity = REMOTE_CONTROL_RX_CHUNK_SIZE;
+    if(scheduler_clock)return (int32_t)wifi_spi_read_buffer_cached(buffer,capacity);
+    if (!gpio_get_level(WIFI_SPI_INT_PIN)) return -1;
     return (int32_t)wifi_spi_read_buffer(buffer, capacity);
 #else
     (void)buffer; (void)capacity;

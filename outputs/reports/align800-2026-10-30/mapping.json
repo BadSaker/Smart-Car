@@ -1,0 +1,132 @@
+[
+  {
+    "parameter": "cruise",
+    "macro": "AUTO_CRUISE_SPEED_MM_S",
+    "value": 800.0
+  },
+  {
+    "parameter": "curve_speed",
+    "macro": "AUTO_CURVE_SPEED_MM_S",
+    "value": 800.0
+  },
+  {
+    "parameter": "element_speed",
+    "macro": "AUTO_ELEMENT_SPEED_MM_S",
+    "value": 800.0
+  },
+  {
+    "parameter": "max_duty",
+    "macro": "AUTO_MAX_DUTY_PERMILLE",
+    "value": 1000.0
+  },
+  {
+    "parameter": "speed_guard",
+    "macro": "AUTO_MAX_MEASURED_SPEED_MM_S",
+    "value": 2500.0
+  },
+  {
+    "parameter": "outer_speed",
+    "macro": "AUTO_CURVE_OUTER_SPEED_MM_S",
+    "value": 800.0
+  },
+  {
+    "parameter": "kp",
+    "macro": "AUTO_STEERING_KP",
+    "value": 29.0
+  },
+  {
+    "parameter": "ki",
+    "macro": "AUTO_STEERING_KI",
+    "value": 0.0
+  },
+  {
+    "parameter": "kd",
+    "macro": "AUTO_STEERING_KD",
+    "value": 0.0
+  },
+  {
+    "parameter": "speed_kp",
+    "macro": "AUTO_SPEED_KP",
+    "value": 0.5
+  },
+  {
+    "parameter": "speed_ki",
+    "macro": "AUTO_SPEED_KI",
+    "value": 1.0
+  },
+  {
+    "parameter": "min_q",
+    "macro": "AUTO_MIN_CONFIDENCE",
+    "value": 45.0
+  },
+  {
+    "parameter": "outer_q",
+    "macro": "AUTO_CURVE_OUTER_MIN_CONFIDENCE",
+    "value": 40.0
+  },
+  {
+    "parameter": "width_top",
+    "macro": "VISION_WIDTH_TOP_PX",
+    "value": 44.0
+  },
+  {
+    "parameter": "width_bottom",
+    "macro": "VISION_WIDTH_BOTTOM_PX",
+    "value": 167.0
+  },
+  {
+    "parameter": "outer_enabled",
+    "macro": "VISION_CURVE_OUTER_ENABLED",
+    "value": 1.0
+  },
+  {
+    "parameter": "servo_step",
+    "macro": "AUTO_SERVO_STEP_US",
+    "value": 20.0
+  },
+  {
+    "parameter": "servo_center",
+    "macro": "SERVO_REFERENCE_CENTER_US",
+    "value": 1480.0
+  },
+  {
+    "parameter": "servo_range",
+    "macro": "SERVO_AUTONOMOUS_EXCURSION_US",
+    "value": 150.0
+  },
+  {
+    "parameter": "speed_ff",
+    "macro": "AUTO_SPEED_FEEDFORWARD",
+    "value": 0.5
+  },
+  {
+    "parameter": "speed_tracking",
+    "macro": "AUTO_SPEED_TRACKING_GAIN",
+    "value": 10.0
+  },
+  {
+    "parameter": "accel",
+    "macro": "AUTO_ACCEL_MM_S2",
+    "value": 200.0
+  },
+  {
+    "parameter": "decel",
+    "macro": "AUTO_DECEL_MM_S2",
+    "value": 800.0
+  },
+  {
+    "parameter": "steering_rate",
+    "macro": "AUTO_STEERING_RATE_PERMILLE_S",
+    "value": 5000.0
+  },
+  {
+    "parameter": "steering_accel",
+    "macro": "AUTO_STEERING_ACCEL_PERMILLE_S2",
+    "value": 50000.0
+  },
+  {
+    "parameter": "lateral_accel",
+    "macro": "AUTO_LATERAL_ACCEL_MM_S2",
+    "value": 2400.0
+  }
+]

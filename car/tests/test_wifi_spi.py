@@ -55,10 +55,17 @@ class WifiSpiTests(unittest.TestCase):
         shutil.copy2(ROOT/'car/library/zf_common/zf_common_fifo.h',stub/'zf_common_fifo.h')
         shutil.copy2(ROOT/'car/library/zf_common/zf_common_fifo.c',SCRATCH/'zf_common_fifo.c')
         exe=SCRATCH/'test_wifi_spi.exe'
+        # Include the real driver in a test-only translation unit to initialize
+        # its FIFO without running module reset/AT setup on host hardware stubs.
+        driver = SCRATCH/'driver_fixture.c'
+        driver.write_text('#include "'+(ROOT/'car/library/zf_device/zf_device_wifi_spi.c').as_posix()+'"\n'
+                          'void test_wifi_spi_fifo_init(void) {\n'
+                          'fifo_init(&wifi_spi_fifo,FIFO_DATA_8BIT,wifi_spi_buffer,WIFI_SPI_RECVIVE_FIFO_SIZE);\n'
+                          'wifi_spi_rx_empty_confirmed=0; }\n', encoding='utf-8')
         cmd=[COMPILER,'-std=c99','-Wall','-Wextra','-Werror','-Wno-unused-parameter',
              '-ffunction-sections','-fdata-sections','-Wl,--gc-sections',
              '-I'+str(stub),'-I'+str(ROOT/'car/library/zf_device'),
-             str(ROOT/'car/tests/test_wifi_spi.c'),str(ROOT/'car/library/zf_device/zf_device_wifi_spi.c'),
+             str(ROOT/'car/tests/test_wifi_spi.c'),str(driver),
              str(SCRATCH/'zf_common_fifo.c'),'-o',str(exe)]
         built=subprocess.run(cmd,capture_output=True,text=True,encoding='utf-8',errors='replace')
         self.assertEqual(built.returncode,0,built.stdout+built.stderr)

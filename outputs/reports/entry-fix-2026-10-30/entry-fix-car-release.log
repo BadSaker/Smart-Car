@@ -1,0 +1,158 @@
+355 autonomous integration checks passed
+stop: active=0 service_return=0 servo_enabled=0 pulse=0 positive_writes_after_stop=1
+start: active=1 service_return=1 servo_enabled=0 generation=1
+remote: PASS: 4250 autonomous motor checks
+bench: PASS: 3862 autonomous motor checks
+scaled: PASS: 4250 autonomous motor checks
+high-auto-limit: PASS: 4250 autonomous motor checks
+invalid-remote: PASS: 253 autonomous motor checks
+invalid-bench: PASS: 253 autonomous motor checks
+624 autonomous servo checks passed
+spi-gray/5: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/6: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-gray/7: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/8: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/0: PASS: packet bytes, image snapshot, real boundaries and transport
+======================================================================
+FAIL: test_real_gray_outer_quality (test_autonomous_control.AutonomousControlTests.test_real_gray_outer_quality)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_autonomous_control.py", line 47, in test_real_gray_outer_quality
+    self.assertEqual(run.returncode,0,run.stdout+run.stderr);print(run.stdout.strip())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : line 85
+
+
+======================================================================
+FAIL: test_controller (test_autonomous_drive.AutonomousDriveTests.test_controller)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_autonomous_drive.py", line 23, in test_controller
+    self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : line 115
+
+
+======================================================================
+FAIL: test_sharp_turn_caps_speed_even_if_all_four_settings_match (test_motion_limits.MotionLimitsTests.test_sharp_turn_caps_speed_even_if_all_four_settings_match)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Lynn\Desktop\Files\Autodrive\car\tests\test_motion_limits.py", line 103, in test_sharp_turn_caps_speed_even_if_all_four_settings_match
+    self.assertLessEqual(v[5],850,'转向大时不能因四档相等失去速度约束')
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 924.662109375 not less than or equal to 850 : 转向大时不能因四档相等失去速度约束
+
+----------------------------------------------------------------------
+Ran 159 tests in 86.194s
+
+FAILED (failures=3)
+spi-gray/1: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/2: PASS: init/connect failure recovers with completion-based backoff; preview survives
+spi-gray/3: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/4: PASS: bounded suffix retries, failure metadata, wrap-safe reconnect and clean new frame
+spi-gray/9: PASS: 1000 transient partial sends keep complete frames flowing
+spi-gray/10: PASS: failed graceful close still resets connection; cumulative success count survives
+spi-gray/11: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/12: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/13: PASS: failure stage identifies the boundary block without sending later blocks
+spi-gray/14: PASS: failure stage identifies the boundary block without sending later blocks
+spi-binary/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-boundaries/0: PASS: packet bytes, image snapshot, real boundaries and transport
+spi-decimated/0: PASS: packet bytes, image snapshot, real boundaries and transport
+wifi-missing-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-long-config/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-ip/0: PASS: invalid network configuration rejected; preview still works
+wifi-bad-port/0: PASS: invalid network configuration rejected; preview still works
+wifi-open/0: PASS: packet bytes, image snapshot, real boundaries and transport
+disabled/0: PASS: local preview works with network disabled
+wifi-switch/0: PASS: boot OFF keeps 1000 previews with zero network calls
+wifi-switch/1: PASS: boot-held key, bounce, stable release and long-press single toggle
+wifi-switch/2: PASS: OFF clears pending/failed frame and ON starts fresh complete stream
+wifi-switch/3: PASS: failed key connection arms backoff after return; OFF cancels recovery
+wifi-switch/4: PASS: key debounce works across uint32 timestamp wrap
+wifi-switch/5: PASS: OFF clears pending/failed frame and ON starts fresh complete stream
+wifi-switch/6: PASS: invalid boundary configuration cannot start network from key
+wifi-switch-invalid/0: PASS: invalid credentials remain offline until requested and never reach hardware
+motor-telemetry/0: PASS: encoder telemetry bounds, signed speed, phase, image and original status restoration
+control-rx/0: PASS: RX only when link and module ready, correct bytes and invalid arguments
+remote-display/0: PASS: remote arm/neutral/drive and steering display
+autonomous-display/0: PASS: autonomous status and remote display arbitration
+scheduled/0: PASS: stalled module yields, exact immutable frame, wrap timeout, no partial splice, parked reconnect
+outer-enabled=1: Curve outer: 670 passed, 0 failed (670 total)
+
+outer-enabled=0: Curve outer: 63 passed, 0 failed (63 total)
+
+nominal: PASS: encoder read-edge
+nominal: PASS: encoder init
+one-to-one: PASS: encoder rates
+nominal: PASS: encoder raw
+nominal: PASS: encoder reset
+nominal: PASS: encoder saturation
+nominal: PASS: encoder snapshot
+nominal: PASS: encoder rates
+nominal: PASS: 21420 motor checks
+maximum-duty: PASS: 21420 motor checks
+minimum-duty: PASS: 21420 motor checks
+duty-scale: PASS: 21420 motor checks
+over-duty: PASS: 1174 motor checks
+zero-duty: PASS: 1174 motor checks
+negative-duty: PASS: 1174 motor checks
+incorrect-period: PASS: 1174 motor checks
+zero-period: PASS: 1174 motor checks
+PASS: remote command mapping
+PASS: remote command saturation
+PASS: remote command chunks
+PASS: remote command contexts
+PASS: remote command malformed
+PASS: remote command incomplete
+PASS: remote command binary
+PASS: remote command null
+PASS: remote command null-handler
+PASS: remote command long
+PASS: remote command reset
+PASS: remote command unknown
+enabled: PASS: remote control counters
+disabled: PASS: remote control disabled
+enabled: PASS: remote control stop
+enabled: PASS: remote control mapping
+enabled: PASS: remote control gap
+enabled: PASS: remote control initial
+enabled: PASS: remote control invalid-read
+enabled: PASS: remote control arm
+enabled: PASS: remote control read-arm
+enabled: PASS: remote control main-boundary
+enabled: PASS: remote control main-poll-gap
+enabled: PASS: remote control main-service-gap
+enabled: PASS: remote control link
+enabled: PASS: remote control null-clock
+enabled: PASS: remote control main-post-read
+enabled: PASS: remote control latency
+enabled: PASS: remote control disarm
+enabled: PASS: remote control read-session
+enabled: PASS: remote control main-silent
+enabled: PASS: remote control parser
+enabled: PASS: remote control steering
+enabled: PASS: remote control wrap
+PASS: 1594 integration checks
+nominal: PASS: 3608 remote motor checks
+pwm-scale: PASS: 3608 remote motor checks
+lease-during-gap: PASS: 739 remote motor checks
+invalid-period: PASS: 172 remote motor checks
+nominal: PASS: 1984 checks
+undervoltage: PASS: 20 checks
+overvoltage: PASS: 20 checks
+upper-voltage: PASS: 1984 checks
+duty-scale: PASS: 1984 checks
+bench-step-independent: PASS: 1984 checks
+nominal: PASS: 1936 checks
+undervoltage: PASS: 24 checks
+overvoltage: PASS: 24 checks
+upper-voltage: PASS: 1936 checks
+duty-scale: PASS: 1936 checks
+uneven-step: PASS: 1075 checks
+Track vision: 183 passed, 0 failed (183 total)
+
+PASS: zero length, first timeout, partial timeout, chunk bytes and recovery
+PASS: nonblocking not-ready, one transaction per call, exact suffix and null input
+PASS: module backlog/busy is not empty, empty proof is fresh and single-use
+PASS: START/END payload drain and queued payload consume empty proof

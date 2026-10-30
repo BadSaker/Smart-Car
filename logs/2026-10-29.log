@@ -12,3 +12,11 @@
 变更：新增菜单6，复用Update-SyncRemote后显示状态；2/4/5自动fetch保持；更新使用说明与菜单集成测试。
 验证：先复现旧菜单不能刷新远端；最终结果见project-sync-plan-2026-10-29.md。实际仓库未fetch/commit/push/reset。
 验证结果：Windows PowerShell 5.1专项45项断言通过，退出0；独立Fetch经菜单验证，HEAD与未提交文件保持。
+
+[2026-10-29 19:21:34 +08:00] 任务：压缩包主循环优化整合
+范围：用户明确批准11个差异文件、测试及Keil全量构建，实车图传帧率后测。
+变更：导入主循环分段图传、自动运行时延迟建链/重连、建链起跑门控、缓存接收和测试。独立审查发现旧指令提前结束排空问题，先失败复现再修正有符号缓存读取和单次END/0凭据；配套调整test_wifi_spi.py，源码/头文件/测试共12文件。更新说明和验证报告。
+验证：整合前146项92.568s通过；最终146项90.152s通过，均退出0；新增驱动排空回归通过；独立复审无阻塞项。Keil0错误0警告，Code140512/RO13296/RW300/ZI133344；BIN160640字节。三种发布固件和构建缓存SHA256一致。16保护文件哈希不变，365工程引用和11共享文件检查通过，diff --check通过。
+产物：outputs/firmware/autocar.axf、autocar.hex、autocar.bin；outputs/reports/main-loop-integration-2026-10-29.md；过程日志car/build/loop-*.log及keil-build.log。
+保护：本机配置、舵机参数、屏幕绘制、Git同步脚本、原始资料保持；未add/commit/push、未烧录。
+未解决：板端FPS/服务间隔与断网恢复待测；保守排空要求模块回复DATA_END/0，若仅REPLY_OK则遥控可能持续等待，需实车验证。屏幕/停车建链仍同步。测试临时区收尾清理。

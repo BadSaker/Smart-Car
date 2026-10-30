@@ -158,6 +158,8 @@ uint8   wifi_spi_wifi_connect       (char *wifi_ssid, char *pass_word);
 uint8   wifi_spi_socket_connect     (char *transport_type, char *ip_addr, char *port, char *local_port);
 uint8   wifi_spi_socket_disconnect  (void);
 uint8   wifi_spi_udp_send_now       (void);
+uint32  wifi_spi_try_send_buffer (const uint8 *buffer, uint32 length);
+int32   wifi_spi_read_buffer_cached (uint8 *buffer, uint32 length);
 uint32  wifi_spi_send_buffer        (const uint8 *buff, uint32 length);
 void    wifi_spi_send_string        (const char *string);
 uint32  wifi_spi_read_buffer        (uint8 *buffer, uint32 length);

@@ -22,6 +22,7 @@ static volatile autonomous_drive_status_t published_status;
 static volatile autonomous_vision_mailbox_t vision_mailbox;
 static volatile uint32_t servo_generation,servo_service_ms;
 static uint8_t servo_owned;
+static volatile uint8_t network_busy;
 static volatile autonomous_control_trace_t trace;
 
 void autonomous_control_init(void)
@@ -30,6 +31,7 @@ void autonomous_control_init(void)
     published_status=drive.status;
     memset((void *)&vision_mailbox,0,sizeof vision_mailbox);
     servo_generation=0;servo_service_ms=0;servo_owned=0;
+    network_busy=0;
     memset((void *)&trace,0,sizeof trace);
     gpio_init(AUTO_START_KEY_PIN,GPI,GPIO_HIGH,GPI_PULL_UP);
 }
@@ -79,7 +81,7 @@ void autonomous_control_tick_10ms(uint32_t now_ms)
     int64_t counts;
     encoder_feedback_get_snapshot(&feedback);motor_control_get_status(&motor);
     memset(&i,0,sizeof i);i.now_ms=now_ms;
-    i.ready=motor.ready && motor.state!=MOTOR_TEST_CONFIG_ERROR;
+    i.ready=motor.ready && motor.state!=MOTOR_TEST_CONFIG_ERROR && !network_busy;
     i.remote_busy=motor.remote_armed || (!motor.autonomous_active &&
         (motor.channel1_duty_permille!=0 || motor.channel2_duty_permille!=0));
     i.start_pressed=gpio_get_level(AUTO_START_KEY_PIN)==GPIO_LOW;
@@ -149,6 +151,10 @@ void autonomous_control_get_trace(autonomous_control_trace_t *out)
 uint8_t autonomous_control_is_active(void)
 {
     return published_status.active;
+}
+void autonomous_control_set_network_busy(uint8_t busy)
+{
+    network_busy=busy?1U:0U;
 }
 uint8_t autonomous_control_service(uint32_t now_ms)
 {

@@ -13,6 +13,8 @@ uint8_t autonomous_control_service(uint32_t now_ms);
 /* 短临界区快照；保存调用者PRIMASK，不在临界区等待硬件。 */
 void autonomous_control_get_status(autonomous_drive_status_t *out);
 uint8_t autonomous_control_is_active(void);
+/* 主循环同步建链期间禁止新起跑；不替代运行期视觉和舵机保护。 */
+void autonomous_control_set_network_busy(uint8_t busy);
 typedef struct {
     uint32_t now_ms,frame_ms,sequence;
     uint8_t confidence,minimum_confidence,valid,element;

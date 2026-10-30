@@ -38,7 +38,7 @@ static uint8 left[MT9V03X_H], middle[MT9V03X_H], right[MT9V03X_H];
 #define CHECK(x) do { if (!(x)) { printf("FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
 
 static uint8 key_level = GPIO_HIGH, reset_level = GPIO_HIGH, module_ready = GPIO_HIGH;
-static unsigned control_read_calls;
+static unsigned control_read_calls,cached_read_calls;
 static unsigned key_initializations, reset_assertions;
 static char network_text[40];
 void gpio_init(int pin, int direction, uint8 level, uint32 mode)
@@ -84,6 +84,13 @@ uint32 wifi_uart_send_buffer(const uint8 *p, uint32 n) { return capture(1, p, n)
 UNUSED_WRITER(wireless_uart_send_buffer)
 UNUSED_WRITER(bluetooth_ch9141_send_buffer)
 uint32 wifi_spi_send_buffer(const uint8 *p, uint32 n) { return capture(2,p,n); }
+uint32 wifi_spi_try_send_buffer(const uint8 *p, uint32 n)
+{
+    uint32 count=n>4088?4088:n;
+    if(!module_ready || !n)return n;
+    assert(capture(2,p,count)==0);return n-count;
+}
+int32 wifi_spi_read_buffer_cached(uint8 *p, uint32 n) { (void)p;(void)n;++cached_read_calls;return -1; }
 UNUSED_WRITER(ble6a20_send_buffer)
 #define EMPTY_READER(name) uint32 name(uint8 *p, uint32 n) { (void)p; (void)n; return 0; }
 EMPTY_READER(debug_read_ring_buffer)
@@ -272,6 +279,28 @@ static int test_wifi_switch(int scenario)
 }
 #endif
 
+#ifdef TEST_SCHEDULED
+#include "autonomous_config.h"
+static uint32 scheduled_now;
+static uint8 scheduled_driving=1,scheduled_busy;
+static autonomous_drive_t scheduled_drive;
+static autonomous_drive_input_t scheduled_input;
+static uint32 scheduled_clock(void) { return scheduled_now; }
+static uint8 scheduled_active(void) { return scheduled_driving; }
+static void scheduled_lock(uint8 busy) { scheduled_busy=busy; }
+static void scheduled_control_tick(void)
+{
+    if(scheduled_now%10U)return;
+    scheduled_input.now_ms=scheduled_input.servo_service_ms=scheduled_now;
+    scheduled_input.servo_generation=scheduled_drive.status.run_generation;
+    ++scheduled_input.feedback_sequence;
+    if(scheduled_now%20U==0){++scheduled_input.frame_sequence;scheduled_input.frame_ms=scheduled_now;}
+    scheduled_input.start_pressed=scheduled_now>=100U && scheduled_now<150U;
+    autonomous_drive_tick(&scheduled_drive,&scheduled_input);
+    assert(scheduled_drive.status.state!=AUTO_DRIVE_FAULT);
+}
+#endif
+
 int main(int argc, char **argv)
 {
     uint32 i, payload_size, dot_offset;
@@ -415,6 +444,60 @@ int main(int argc, char **argv)
         CHECK(spi_initializations == 1 && socket_connections == 1);
 #endif
     }
+#ifdef TEST_SCHEDULED
+    autonomous_drive_init(&scheduled_drive);memset(&scheduled_input,0,sizeof scheduled_input);
+    scheduled_input.ready=scheduled_input.vision_valid=scheduled_input.vision_near_supported=1;
+    scheduled_input.confidence=95;scheduled_input.left_speed_mm_s=scheduled_input.right_speed_mm_s=100;
+    scheduled_input.forward_step_um=1000;
+    camera_debug_configure_scheduler(scheduled_clock,scheduled_active,scheduled_lock);
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    CHECK(wire_length==0 && camera_debug_frames_sent==0);
+    module_ready=0;
+    { uint8 rx[8];CHECK(camera_debug_read_control(rx,sizeof rx)==-1);
+      CHECK(cached_read_calls==1 && control_read_calls==0); }
+    for(scheduled_now=1;scheduled_now<=750;++scheduled_now) {
+        camera_debug_poll(scheduled_now);scheduled_control_tick();
+    }
+    CHECK(write_calls==0 && delay_calls==0 && camera_debug_status==CAMERA_DEBUG_READY);
+    CHECK(scheduled_drive.status.active && scheduled_drive.status.state==AUTO_DRIVE_RUNNING);
+    module_ready=1;camera_debug_poll(++scheduled_now);
+    CHECK(write_calls==1 && wire_length==4088);
+    /* 新帧不能覆盖已发送一部分的灰度和边线快照。 */
+    memset(gray,0xee,sizeof gray);memset(left,0xee,sizeof left);
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    for(i=0;i<8;++i)camera_debug_poll(++scheduled_now);
+    CHECK(camera_debug_frames_sent==1 && wire_length==22936U);
+    CHECK(memcmp(wire,camera_header,8)==0 && memcmp(wire+22568,dot_header,8)==0);
+    for(i=0;i<22560U;++i)CHECK(wire[8+i]==i%251U);
+    for(i=0;i<120U;++i)CHECK(wire[22576+i]==3+i%17);
+    /* 回绕后继续分段，随后模块永久停顿；仅隔离网络，不在行驶中重连。 */
+    scheduled_now=UINT32_MAX-100U;
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    camera_debug_poll(scheduled_now);module_ready=0;
+    for(i=0;i<1100;++i)camera_debug_poll(++scheduled_now);
+    CHECK(camera_debug_status==CAMERA_DEBUG_SEND_ERROR && reset_level==GPIO_LOW);
+    CHECK(camera_debug_frames_sent==1 && spi_initializations==1 && delay_calls==0);
+    { uint32 partial=wire_length;
+      camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+      camera_debug_poll(scheduled_now+6000U);CHECK(wire_length==partial && spi_initializations==1);
+    }
+    scheduled_driving=0;camera_debug_poll(scheduled_now+6001U);
+    module_ready=1;camera_debug_poll(scheduled_now+11001U);
+    CHECK(spi_initializations==2 && !scheduled_busy && disconnect_calls==0);
+    CHECK(camera_debug_status==CAMERA_DEBUG_READY);
+    /* 行驶中重新开启仅登记请求；停车后才执行同步建链。 */
+    scheduled_now+=11002U;scheduled_driving=1;
+    key_level=GPIO_LOW;camera_debug_poll(scheduled_now);camera_debug_poll(scheduled_now+=31U);
+    CHECK(camera_debug_status==CAMERA_DEBUG_DISABLED);
+    key_level=GPIO_HIGH;camera_debug_poll(++scheduled_now);camera_debug_poll(scheduled_now+=31U);
+    key_level=GPIO_LOW;camera_debug_poll(++scheduled_now);camera_debug_poll(scheduled_now+=31U);
+    CHECK(camera_debug_status==CAMERA_DEBUG_INITIALIZING && spi_initializations==2);
+    camera_debug_poll(++scheduled_now);CHECK(spi_initializations==2);
+    scheduled_driving=0;camera_debug_poll(++scheduled_now);
+    CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==3 && !scheduled_busy);
+    puts("PASS: stalled module yields, exact immutable frame, wrap timeout, no partial splice, parked reconnect");
+    return 0;
+#endif
     camera_debug_send_frame(binary_image[0]);
     CHECK(wire_length == 0); /* 不得发送未准备好的帧或过期帧。 */
     camera_debug_capture_frame(gray[0]);

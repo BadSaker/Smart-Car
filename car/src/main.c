@@ -1,7 +1,7 @@
 #include "main.h"
 
 /* C15自动驾驶、C14停车、C12遥控允许；两种驱动模式互斥。
- * 屏幕/Wi-Fi保留冻结的同步驱动，网络阻塞时PIT按视觉/舵机新鲜度停车。
+ * 屏幕保留原显示；Wi-Fi按就绪状态分段传输，PIT保留视觉/舵机新鲜度保护。
  * 图像处理优先于本帧显示与传输；舵机仅由主循环写入，电机仅由PIT写入。 */
 uint8_t image[MT9V03X_H][MT9V03X_W];
 static track_vision_result_t vision;
@@ -75,6 +75,8 @@ static void app_init(void)
     camera_display_message("Camera ready");
     /* 默认Wi-Fi关闭，仅初始化本地按键；按C13后才走原版同步建链。 */
     (void)camera_debug_init(left_line, mid_line, right_line);
+    camera_debug_configure_scheduler(app_clock_ms,autonomous_control_is_active,
+                                     autonomous_control_set_network_busy);
     camera_display_message("PC " CAMERA_DEBUG_WIFI_SERVER_IP ":" CAMERA_DEBUG_WIFI_SERVER_PORT);
     /* 初始化过程中C12不允许启动电机；此后仍需稳定释放再新按下。 */
     motor_control_enable_test();
@@ -119,7 +121,7 @@ int main(void)
             camera_debug_capture_frame(image[0]);
             app_service_controls();
             binaryzation_process(image[0],MT9V03X_H,MT9V03X_W,vision.threshold);
-            camera_debug_send_frame(image[0]); // 保留历史版同步图传及有限重试。
+            camera_debug_send_frame(image[0]); // 固化完整协议快照，由poll逐块发送。
 
         }
         /* 发送返回后再次检查按键；没有新图像时也逐圈处理按键和网络恢复。 */

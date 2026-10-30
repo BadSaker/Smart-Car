@@ -40,6 +40,15 @@ static void step(unsigned n,int camera,int service)
 int main(void)
 {
     autonomous_drive_status_t s;
+    /* 同步建链时按启动只能拒绝；解除门控并重新按下后正常起跑。 */
+    memset(keys,1,sizeof keys);motor_control_init();servo_control_init(0);autonomous_control_init();
+    motor_control_enable_test();step(10,1,1);
+    autonomous_control_set_network_busy(1);keys[C15]=0;step(4,1,1);
+    autonomous_control_get_status(&s);CHECK(!s.active && s.fault==AUTO_FAULT_NOT_READY);
+    autonomous_control_set_network_busy(0);keys[C15]=1;step(4,1,1);
+    keys[C15]=0;step(4,1,1);keys[C15]=1;step(60,1,1);
+    CHECK(autonomous_control_is_active());
+    keys[C14]=0;step(1,1,1);keys[C14]=1;step(4,1,1);
     memset(keys,1,sizeof keys);motor_control_init();servo_control_init(0);autonomous_control_init();
     keys[C15]=0;step(8,1,1);CHECK(!autonomous_control_is_active());
     motor_control_enable_test();step(10,1,1);CHECK(!autonomous_control_is_active());

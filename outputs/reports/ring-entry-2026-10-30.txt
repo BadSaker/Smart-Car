@@ -1,0 +1,57 @@
+环岛入口改造交付记录 — 2026-10-30
+
+范围与实现
+用户批准按AuTop代码对比方案执行，维护位置仅car/。保留既有未提交修改，不改屏幕、Wi-Fi、主循环、控制器、行驶参数，不执行Git提交或烧录。
+正式速度仍为直道1200、普通弯900、可靠外侧800、元素800mm/s；PWM1000‰、横向加速度2400mm/s²。
+
+1. 原始实测边界八邻域跟踪，每侧最多400步、64个地面等距采样点，20mm间隔；独立提取L拐点和对侧直线，不用重建中线证明元素。
+2. 单侧L角、对侧直线和开放区可提前建立有界E3候选，允许远端闭合边出视野；保留来向保护。普通扫描路径valid不再阻止候选更新。
+3. 双侧配对L角、当前前向分支连续确认后才锁定十字身份。近端白区仅记录接近程度；临时十字在原有600mm限界内允许当前环岛证据纠错。
+4. E3接入已有实测外边轮廓/地面法向半宽路径，统一经过车身扫掠；E4使用内边、后续环内逻辑保留。
+5. 内侧消失记忆与当前岛边、分支共同形成入环证据；E3到E4在本帧最终路径有效后连续三帧提交。空帧、低对比度、当前黑带都会中断确认，700mm/10s候选上限不变。
+6. 新增topology_flags、cross_confirmed、ring_inner_lost诊断字段。既有Q/失线阈值、停车保护与舵机速度/加速度限制保持。
+
+实现取舍
+复用现有十字来向和远端出口路径、现有转向限速，没有复制AuTop的相机映射、1m门槛或固定圆周距离。当前轮廓阈值为本工程初始选择，仍需实车验证。
+单侧拐点无法独自区分T口/反向汇入口，因此允许短时E3候选，但无当前岛边不能进E4。旧测试改为约束禁止正式入环。
+合成fork夹具原来在117行截成全黑，无法证明完整车身通行；已把道路延伸到图像边缘，同时保留并增加显式黑带拒绝测试，没有放宽生产安全检查。
+
+测试与审查
+先复现RED：E3无几何目标、近场白区锁死纠错、非配对有界开口锁死、早期候选受岛边/valid/远端闭合约束。修改后相应回归通过。
+独立只读审查发现低对比度提前返回未清除入环计数；新增“两帧有效→纯灰→一帧有效”回归，确认原实现错误进入E4后修复，审查复核关闭。
+入口定向回归47项通过：元素序列32、几何路径13、状态证据2。
+工程全套153项：150通过，3失败，名称及断言位置与修改前1200档一致：
+  test_real_gray_outer_quality：C line85，旧速度期望与曲率限速结果不一致。
+  test_controller：C line115，启动速度斜坡阶段的差速断言。
+  test_sharp_turn_caps_speed_even_if_all_four_settings_match：924.662109375 > 850，旧固定速度期望与2400横向加速度配置不一致。
+未修改这些控制测试或控制器来获得全绿，不宣称工程全套通过。
+仿真全套59项：57通过，2项运行环境失败：
+  test_local_runtime_ignores_cached_path_and_environment_injection
+  test_setup_ignores_external_pip_configuration
+Windows PowerShell模块路径隔离后，安装测试的Get-FileHash问题消失；两项仍被缺少可用init.tcl阻断。runtime-detail.log保留直接诊断。未修改仿真运行环境或绕过校验。
+
+1200档双向完整闭环（最终源码构建标识a33dfe7bcf1b8e4b）
+  AB：39.37s，30.11505m，最大横向误差0.124872m；0车轮出界，无故障。
+  BA：39.59s，30.08706m，最大横向误差0.114955m；0车轮出界，无故障。
+两方向均通过现有完整验收规则，额外检查events确实按顺序经过E3→E4→E5→E6，详见verification.json。
+
+构建与交付
+car/scripts/build.ps1全量Keil构建：0错误0警告；Code143224、RO13360、RW300、ZI133352字节。
+布局检查365引用、11共享源文件通过；git diff --check通过。
+outputs/firmware/autocar.axf、autocar.hex、autocar.bin均已更新，逐字节与car/build/objects中的下载缓存一致。
+
+固件SHA-256
+autocar.axf: 2D096E6AD2E759488F448CA43DB78FEA8979F5B7C46CCE00EB9200D625175CB4
+autocar.hex: F67CEFD6C4B87C22E0535C5C1E09A2A58012D7DDB24044777F6F641A6EE94CD9
+autocar.bin: D35B9E0BA3D1264FB5B989F3A0E0BDECFD727AD3819B44238A700B3272437D22
+
+复现命令（工作区根目录PowerShell）
+  simulation/run_python.ps1 -m unittest discover -s car/tests -p 'test_*.py' -v
+  simulation/run_python.ps1 -m unittest discover -s simulation/tests -p 'test_*.py' -v
+  simulation/run_python.ps1 simulation/tools/validate_control.py --config simulation/configs/完整验证_1200.json --output tmp/ring-entry-recheck --directions AB BA
+  car/scripts/build.ps1
+
+验证边界
+没有故障时的实车灰度图，因此软件回归修复了明确的入口处理缺口，但不能宣称真实环岛问题已经解决。新增轮廓处理的板端耗时、相机角度/畸变和入口边界能否稳定提取仍需实测。
+首次实测应观察环岛入口能否从E3推进到E4，随后E5/E6；若仍停在E2或Q0，应记录状态及原始图像/调试数据。屏幕没有加入新字段显示，本轮诊断字段可由调试器或后续采集读取。
+本任务临时目录清理；完整证据与测试日志保留在同名报告目录。没有烧录、没有实车验证。

@@ -7,6 +7,9 @@ static uint8 payload[5000], transmitted[5000];
 static uint32 transmitted_length, packet_count, polls, phase;
 static uint16 packet_lengths[4];
 static int fault;
+static uint8 reply_command = WIFI_SPI_REPLY_DATA_END;
+static uint16 reply_length;
+void test_wifi_spi_fifo_init(void);
 
 int gpio_get_level(int pin)
 {
@@ -40,12 +43,14 @@ void spi_transfer_8bit(int bus,const uint8 *out,uint8 *in,uint32 length)
         assert(length == 4 && head->command == WIFI_SPI_DATA && packet_count < 4);
         packet_lengths[packet_count++] = head->length;
         memset(in, 0, length);
-        in[0] = WIFI_SPI_REPLY_DATA_END;
+        in[0] = reply_command;
+        ((wifi_spi_head_struct *)in)->length=reply_length;
     }
     else
     {
         capture(out, length);
         memset(in, 0, length);
+        if(reply_length)memcpy(in,"Down\r\nW\r\n",reply_length);
     }
 }
 void spi_write_8bit_array(int bus,const uint8 *data,uint32 length) { (void)bus; capture(data,length); }
@@ -73,5 +78,52 @@ int main(void)
     assert(packet_count == 2 && packet_lengths[0] == 4088 && packet_lengths[1] == 912);
     assert(transmitted_length == 5000 && memcmp(transmitted,payload,5000) == 0);
     puts("PASS: zero length, first timeout, partial timeout, chunk bytes and recovery");
+    reset_fixture(1);
+    assert(wifi_spi_try_send_buffer(payload,5000)==5000);
+    assert(polls==1 && packet_count==0);
+    reset_fixture(0);
+    assert(wifi_spi_try_send_buffer(payload,5000)==912);
+    assert(packet_count==1 && polls==1 && transmitted_length==4088);
+    assert(wifi_spi_try_send_buffer(payload+4088,912)==0);
+    assert(packet_count==2 && memcmp(transmitted,payload,5000)==0);
+    reset_fixture(0);
+    assert(wifi_spi_try_send_buffer(NULL,1)==1 && polls==0);
+    puts("PASS: nonblocking not-ready, one transaction per call, exact suffix and null input");
+    /* A temporary empty MCU cache must not end remote-control session drain. */
+    {
+        uint8 rx[8];
+        test_wifi_spi_fifo_init();
+        reset_fixture(1);
+        wifi_spi_try_send_buffer(NULL,0);
+        assert((int32)wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        reset_fixture(0);reply_command=WIFI_SPI_REPLY_DATA_START;
+        wifi_spi_try_send_buffer(NULL,0);
+        assert((int32)wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        assert((int32)wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        reply_command=WIFI_SPI_REPLY_DATA_END;
+        wifi_spi_try_send_buffer(NULL,0);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==0);
+        assert((int32)wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        wifi_spi_try_send_buffer(NULL,0);fault=1;
+        wifi_spi_try_send_buffer(NULL,0);
+        assert((int32)wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        puts("PASS: module backlog/busy is not empty, empty proof is fresh and single-use");
+        reset_fixture(0);reply_command=WIFI_SPI_REPLY_DATA_START;reply_length=6;
+        wifi_spi_try_send_buffer(NULL,0);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==6 && memcmp(rx,"Down\r\n",6)==0);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        reply_command=WIFI_SPI_REPLY_DATA_END;reply_length=6;
+        wifi_spi_try_send_buffer(NULL,0);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==6);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        /* END/0 while unread payload remains must not leak an empty proof. */
+        wifi_spi_try_send_buffer(NULL,0);reply_length=0;
+        wifi_spi_try_send_buffer(NULL,0);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==6);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==-1);
+        reset_fixture(0);wifi_spi_try_send_buffer(NULL,0);
+        assert(wifi_spi_read_buffer_cached(rx,sizeof rx)==0);
+        puts("PASS: START/END payload drain and queued payload consume empty proof");
+    }
     return 0;
 }
