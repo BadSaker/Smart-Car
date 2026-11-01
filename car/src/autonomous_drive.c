@@ -21,7 +21,7 @@ static uint8_t curve_outer_mode(const autonomous_drive_t *d,const autonomous_dri
         i->curve && i->element==TRACK_ELEMENT_CURVE && !i->element_supported &&
         (i->curve_outer_side==TRACK_SIDE_LEFT || i->curve_outer_side==TRACK_SIDE_RIGHT) &&
         i->curve_outer_supported && i->vision_valid &&
-        !i->element_fault && (uint32_t)(i->now_ms-i->frame_ms)<=AUTO_FRAME_MAX_AGE_MS;
+        !i->element_fault;
 }
 static uint8_t minimum_confidence(const autonomous_drive_t *d,const autonomous_drive_input_t *i)
 {
@@ -196,7 +196,6 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
         if(!d->config_valid){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_CONFIG);return;}
         if(!i->ready || i->remote_busy || i->cancel_pressed || d->good_frames<AUTO_START_GOOD_FRAMES ||
            !i->vision_valid || !geometry_input_valid(i) || i->confidence<minimum_confidence(d,i) || i->element_fault ||
-           (uint32_t)(i->now_ms-i->frame_ms)>AUTO_FRAME_MAX_AGE_MS ||
            (uint32_t)(i->now_ms-d->feedback_ms)>AUTO_FEEDBACK_MAX_AGE_MS){
             stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_NOT_READY);return;
         }
@@ -204,11 +203,7 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     }
     if(!d->status.active)return;
     d->status.left_speed_mm_s=i->left_speed_mm_s;d->status.right_speed_mm_s=i->right_speed_mm_s;
-    if((uint32_t)(i->now_ms-i->frame_ms)>AUTO_FRAME_MAX_AGE_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_CAMERA_STALE);return;}
     if((uint32_t)(i->now_ms-d->feedback_ms)>AUTO_FEEDBACK_MAX_AGE_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_ENCODER_STALE);return;}
-    if((uint32_t)(i->now_ms-d->started_ms)>AUTO_SERVO_MAX_AGE_MS &&
-       (i->servo_generation!=d->status.run_generation || (uint32_t)(i->now_ms-i->servo_service_ms)>AUTO_SERVO_MAX_AGE_MS))
-    {stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_SERVO_STALE);return;}
     if(i->element_fault){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_ELEMENT);return;}
     if(d->bad_frames>=AUTO_BAD_FRAMES_TO_STOP){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_PATH_LOST);return;}
     if((uint32_t)(i->now_ms-d->started_ms)>AUTO_MAX_RUN_TIME_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_RUN_TIMEOUT);return;}

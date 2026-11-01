@@ -42,14 +42,15 @@ extern volatile uint32_t camera_debug_last_remaining;
  * 默认只初始化C13按键并保持Wi-Fi模块复位，不联网。
  * 边线数组必须持续有效，每行保存一个X坐标。 */
 uint8_t camera_debug_init(uint8_t *left, uint8_t *middle, uint8_t *right);
-/* 主工程安装真实时钟和自动驾驶状态查询后启用分段图传。
- * 每次poll最多一次SPI事务；运行中推迟同步建链，不扩大控制超时门限。 */
+/* clock_ms非空启用可选分段路径，每次poll最多一次SPI事务。
+ * 当前主工程传NULL，使用冻结版同步整帧发送；两种路径均保留行驶状态
+ * 与建链门控回调，运行中推迟同步建链。 */
 void camera_debug_configure_scheduler(uint32_t (*clock_ms)(void), uint8_t (*driving)(void),
                                       void (*network_busy)(uint8_t));
 /* 每圈主循环调用，没有相机新帧时也必须调用。
  * now_ms为单调递增的uint32毫秒时钟，允许自然回绕。
  * C13稳定释放后新按下切换Wi-Fi，关闭时跳过网络工作。
- * 主工程安装调度器后逐块发送；开启和恢复仅在停车状态执行同步接口。
+ * 可选分段路径在此逐块发送；开启和恢复仅在停车状态执行同步接口。
  * 出错后等待回退间隔，再关闭并复位模块，重新建立TCP连接。 */
 void camera_debug_poll(uint32_t now_ms);
 /* 仅主循环调用：图像修改前显示原始灰度并保存图传副本。
@@ -59,7 +60,7 @@ void camera_debug_capture_frame(const uint8_t *gray_image);
  * 二值视图每像素仍用一个灰度字节（0或255），不打包成单比特。
  * 安装调度器后仅固化协议快照，poll发送后才计入完整帧数量；
  * 忙时跳过新帧。半帧超时复位模块，停车重连后才发送新帧。
- * 未安装调度器的兼容调用仍保留历史同步发送。 */
+ * 时钟为空时（当前主工程）立即按历史路径同步发送完整协议帧。 */
 void camera_debug_send_frame(const uint8_t *binary_image);
 
 /* 主循环唯一遥控接收入口：负值表示链路不可用或模块忙，0表示本次未读到数据。

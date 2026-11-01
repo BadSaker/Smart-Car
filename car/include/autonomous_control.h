@@ -10,10 +10,13 @@ void autonomous_control_publish_vision(const track_vision_result_t *vision,uint3
 void autonomous_control_tick_10ms(uint32_t now_ms);
 /* 仅主循环：更新舵机并确认服务时刻；不联网、不刷屏。 */
 uint8_t autonomous_control_service(uint32_t now_ms);
+/* 仅主循环：本帧已由PIT消费，舵机已向其目标步进或已在目标，或自动驾驶停止。
+ * 等待时必须继续调用service且保持中断开启；不伪造时间戳。 */
+uint8_t autonomous_control_frame_is_serviced(uint32_t sequence);
 /* 短临界区快照；保存调用者PRIMASK，不在临界区等待硬件。 */
 void autonomous_control_get_status(autonomous_drive_status_t *out);
 uint8_t autonomous_control_is_active(void);
-/* 主循环同步建链期间禁止新起跑；不替代运行期视觉和舵机保护。 */
+/* 主循环同步建链期间禁止新起跑。 */
 void autonomous_control_set_network_busy(uint8_t busy);
 typedef struct {
     uint32_t now_ms,frame_ms,sequence;

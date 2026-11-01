@@ -47,7 +47,6 @@ void gpio_init(gpio_pin_enum p,gpio_dir_enum d,uint8_t v,uint32_t c){(void)p;(vo
 uint8_t gpio_get_level(gpio_pin_enum p){(void)p;return GPIO_HIGH;}
 void pwm_init(pwm_channel_enum p,uint32_t h,uint32_t d){(void)p;(void)h;if(d)probe_last_pulse=(float)d*1000000/(SERVO_PWM_FREQUENCY_HZ*PWM_DUTY_MAX);}
 void pwm_set_duty(pwm_channel_enum p,uint32_t d){(void)p;if(d)probe_last_pulse=(float)d*1000000/(SERVO_PWM_FREQUENCY_HZ*PWM_DUTY_MAX);}
-API unsigned probe_frame_age_limit(void){return AUTO_FRAME_MAX_AGE_MS;}
 API void probe_setup(int hardware,unsigned period,unsigned begin,unsigned end){
  probe_hardware=hardware;probe_period=period;probe_pause_start=begin;probe_pause_end=end;
  probe_ms=probe_generation=probe_next=0;probe_last_pulse=SERVO_REFERENCE_CENTER_US;
@@ -123,7 +122,8 @@ def main():
     parser.add_argument('--pause-ms', type=int, default=0)
     parser.add_argument('--inject-ms', type=int, default=10000)
     parser.add_argument('--image-delay-ms', type=int, default=0)
-    parser.add_argument('--frame-age-aware', action='store_true')
+    parser.add_argument('--frame-age-aware', action='store_true',
+                        help='Preserve capture timestamps; no age-based frame rejection')
     parser.add_argument('--motor-gain', type=float)
     args = parser.parse_args()
     if args.main_loop_ms is not None:
@@ -164,17 +164,13 @@ def main():
     lib.probe_setup(args.hardware_servo, args.service_ms, args.inject_ms,
                     args.inject_ms + args.pause_ms)
     lib.probe_values.argtypes = [C.POINTER(C.c_float)]
-    lib.probe_frame_age_limit.restype = C.c_uint
-    frame_age_limit = lib.probe_frame_age_limit()
     values = (C.c_float * 6)()
     original_vision = sim.native.vision
     consumed = dict(sequence=1, stamp=0, image=sim.image.copy())
 
     def vision(image, now, distance):
         age = args.image_delay_ms if now >= args.inject_ms else 0
-        # Real main.c drops a copied frame already older than AUTO_FRAME_MAX_AGE_MS.
-        if args.frame_age_aware and age > frame_age_limit:
-            return
+        # Main keeps the real capture timestamp without rejecting an old frame.
         stamp = max(0, now-age) if args.frame_age_aware else now
         original_vision(image, stamp, distance)
         consumed.update(sequence=consumed['sequence']+1,stamp=stamp,image=image.copy())
@@ -243,10 +239,8 @@ def main():
         evidence.update(frame_id=consumed['sequence'],frame_time_ms=consumed['stamp'],
                         rendered_frame_id=sim.frame_id,rendered_frame_time_ms=sim.frame_time_ms)
         path = evidence['path']
-        fresh = sim.now-consumed['stamp'] <= frame_age_limit
-        path.update(frame_id=consumed['sequence'],frame_time_ms=consumed['stamp'],frame_fresh=fresh)
-        if not fresh:
-            path.update(accepted=False,reason='摄像头超时')
+        path.update(frame_id=consumed['sequence'],frame_time_ms=consumed['stamp'],
+                    frame_age_ms=sim.now-consumed['stamp'],frame_age_checked=False)
         evidence['note']='仅导出故障时刻；未采集完整前5秒/后2秒窗口'
     result.update(pass_run=run_is_acceptable(result, p), first_bad=first_bad, peak=peak,
                   experiment={k: str(v) if isinstance(v, Path) else v for k,v in vars(args).items()},

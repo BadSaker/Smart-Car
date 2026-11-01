@@ -59,7 +59,17 @@ int main(int argc,char **argv)
     autonomous_drive_status_t state;
     uint8_t returned;
     CHECK(argc==2);review_prepare();
-    if(strcmp(argv[1],"stop")==0){
+    if(strcmp(argv[1],"frame")==0){
+        track_vision_result_t v;
+        keys[C15]=0;step(4,1,1);keys[C15]=1;step(85,1,1);
+        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;v.near_error_px=v.far_error_px=-80;
+        autonomous_control_publish_vision(&v,++frame_sequence,now);
+        /* 恢复中断时PIT刚消费本帧，当前service快照仍属旧控制，不能确认。 */
+        review_event=2;autonomous_control_service(now);
+        CHECK(!autonomous_control_frame_is_serviced(frame_sequence));
+        step(2,0,1);CHECK(autonomous_control_frame_is_serviced(frame_sequence));
+        puts("frame: PIT consumption during service cannot acknowledge an older output");
+    }else if(strcmp(argv[1],"stop")==0){
         keys[C15]=0;step(4,1,1);keys[C15]=1;step(85,1,1);
         CHECK(autonomous_control_is_active());
         CHECK(servo_control_get_status()->current_pulse_us<1480);

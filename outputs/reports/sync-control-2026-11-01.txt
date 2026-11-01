@@ -1,0 +1,58 @@
+同步整帧图传与本帧控制优先交付记录（2026-11-01）
+
+实施结果
+用户批准在当前工程执行；不烧录，不Git add/commit/push。
+主循环：相机复制和视觉处理 → 发布真实采集时间戳/序号 → PIT消费本帧 → 主循环使舵机向本帧目标实际步进一步或确认已在目标 → 显示 → 二值化 → 同步整帧发送 → 服务控制/网络维护/遥控 → 下一圈。无新图像仍执行维护。
+camera_debug_configure_scheduler(NULL, driving, network_busy)复用冻结版同步路径，保留C13、停车建链和建链时禁止新起跑；不启用现有可选分段路径，没有新增丢包、UDP或异步机制。未整体覆盖旧文件。
+删除AUTO_FRAME_MAX_AGE_MS/AUTO_SERVO_MAX_AGE_MS及其主循环过滤、运行停车、起跑、可靠外侧资格和trace记录判断。probe_reality_gap也取消年龄丢帧和虚假“摄像头超时”，保留真实年龄记录。
+保持复制时换帧一致性、新帧证据计数、舵机代次/起跑中位等待、图像无效/低Q/路径丢失、元素超时、编码器时效/方向/堵转/超速及停车/遥控授权。
+CAMERA_STALE/SERVO_STALE历史枚举编号和显示文字为兼容保留，没有当前生产触发路径。
+
+执行边界
+同步发送仍推迟下一帧处理；期间PIT使用最近视觉结果更新轮速控制并处理停车。删除年龄停车并不消除网络等待。
+发送前保留真实10ms PIT和20ms舵机步进节拍，不提前PWM、不跳到最终目标；确认可能增加等待。旧版约30FPS不作为本次实测结果。
+C13采样和舵机撤输出需主循环返回，C14电机停车由PIT执行。Wi-Fi默认关闭和本机热点配置保持。
+
+测试与审查
+基线：146项，143通过、3失败。最终：148项，145通过、3相同失败，退出码1，不能称全套通过。
+原有失败：
+- test_real_gray_outer_quality：test_outer_control.c:85。
+- test_controller：test_autonomous_drive.c原115行、新140行，左右占空比大小断言。
+- test_sharp_turn_caps_speed_even_if_all_four_settings_match：924.662109375 > 850。
+未改PID/速度参数或调整这些旧断言以消除失败。
+新增时效策略7778项C断言：100/300/1000ms没有新图像或舵机服务仍运行；真实时间/序号不刷新，恢复继续；旧帧起跑允许，但舵机未确认新代次仍不出动力；编码器超时和停车保留。
+真实适配/PID/电机/舵机联合444项C断言通过，停止/启动及service快照后PIT消费新帧的竞态测试通过。
+真实main.c单圈测试通过：视觉、发布、PIT消费、舵机应用、显示、二值化、发送、网络维护依次执行；覆盖100/300/1000ms发送等待、旧采集时间及无新帧维护。
+真实camera_debug与逐飞协议sync-gated测试：单次返回前完整22936字节（22560灰度、两个8字节头、三条120字节边线）逐字节核验；同步RX、停车重连和起跑门控通过。其他已有协议场景随全套回归执行。
+独立只读审查发现一次重要问题：apply仅更新目标、未到PWM步进时刻即被确认。真实PWM回归先失败于line102，修复为实际脉宽进展或已达目标后通过；舵机模块、步长及间隔未改。无遗留审查问题。
+probe_reality_gap使用真实C源码、hardware-servo和frame-age-aware，1000ms图像延迟、1.2s烟测正常退出，无故障；到达时间上限未完成赛道，pass_run=false，不作为赛道通过证据。
+结构检查：365工程引用、11共享源码；git diff --check通过。
+对比HEAD确认10项源/配置保持不变：track_vision、servo_control、motor_control、control_pid、vision/servo/camera_debug配置、camera_debug、camera_display及供应商WiFi SPI源码。autonomous_config仅删除两个年龄宏、补充说明；1200/900/800/800与PID参数保持。
+
+构建
+car/scripts/build.ps1 -KeilPath D:/Keil_v5/UV4/UV4.exe
+ARM Compiler6.21，全量重建，0错误0警告。
+Code140760，RO13296，RW300，ZI133348字节。
+outputs/firmware的AXF/HEX/BIN与car/build/objects逐字节一致。
+
+证据
+car/build/sync-control-baseline.log：修改前测试。
+car/build/sync-control-red.log、sync-control-main-red.log、sync-control-pwm-red.log：失败回归。
+car/build/sync-control-pwm-green.log、sync-control-final.log：最终通过项及原有失败。
+car/build/sync-control-probe.log、keil-build.log：烟测与全量构建。
+未验证：板端时序、逐飞助手实时画面、实车FPS和连续赛道运行。未烧录、未操作车辆、未修改参考目录或热点配置。
+
+记录时间：2026-11-01 18:39:58 +08:00
+基线：0f1c03516c06d0eeff2da94fb049321eba95da4e
+SHA256身份
+outputs/firmware/autocar.axf 96b8c7da93b2399987e374df80bc976a663dc0fba9e701fd214a7e18c33fcf69
+outputs/firmware/autocar.hex 2da8f52e74fa1a66b8a0749f3e522311a6d9d22792ba1f2e96d8595d4af4b832
+outputs/firmware/autocar.bin ebafb0f25954d95d136fcb2b35d8a838a5199698b49a186b61ca7785c90f27c8
+car/src/main.c 54b8ad537950b41c539b528d6717306409112714ffaf6af5b9a82f8b5d404774
+car/src/autonomous_control.c 8c9c17dc06fa310fd375da86a760c3b03a643a766545dd8f96f8f62b55ea94d0
+car/src/autonomous_drive.c 5d91786b394dce0fc968f9019f487c7b8d37411f6263e995ed54ed56c4c202e9
+car/config/autonomous_config.h 68441fa0a0c8c51d23eb630657b80535d910a1c42530cf3dee48e2c227e8ecc0
+car/include/autonomous_control.h 830ff99e366d640efaba227bd29b829717833d5820c1e57957daa731956f15f7
+car/include/autonomous_drive.h 57fa29f4a60ec6af123c7cca2d9213d23cbd1fb0ec8528e811f20e47a5835f7e
+car/include/camera_debug.h c9bb76a2e67e277b175f9769cae868c8382a4abfdfab7864cf25cf1510c151d6
+simulation/tools/probe_reality_gap.py 0e045cbfc074d62a1f6db88188076b1b818b03220b936c66f8b047101c771884

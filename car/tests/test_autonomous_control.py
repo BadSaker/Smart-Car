@@ -62,6 +62,6 @@ class AutonomousControlTests(unittest.TestCase):
         r=subprocess.run([str(exe)],capture_output=True,text=True,encoding="utf8",errors="replace");self.assertEqual(r.returncode,0,r.stdout+r.stderr);print(r.stdout.strip())
         cmd[cmd.index(str(ROOT/"car/tests/test_autonomous_control.c"))]=str(ROOT/"car/tests/test_servo_service_race.c")
         r=subprocess.run(cmd,capture_output=True,text=True,encoding="utf8",errors="replace");self.assertEqual(r.returncode,0,r.stdout+r.stderr)
-        for scenario in ("stop","start"):
+        for scenario in ("stop","start","frame"):
             r=subprocess.run([str(exe),scenario],capture_output=True,text=True,encoding="utf8",errors="replace");self.assertEqual(r.returncode,0,r.stdout+r.stderr);print(r.stdout.strip())
 if __name__=="__main__":unittest.main(verbosity=2)

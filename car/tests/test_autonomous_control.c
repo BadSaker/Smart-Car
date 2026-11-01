@@ -9,13 +9,13 @@
 #include "autonomous_config.h"
 static uint8_t keys[32];static uint32_t duties[3],mask,now,frame_sequence;
 static encoder_feedback_snapshot_t feedback;
-static unsigned checks;
+static unsigned checks,servo_writes;
 #define CHECK(c) do {++checks;if(!(c)){printf("line %d\n",__LINE__);fflush(stdout);exit(1);}}while(0)
 void gpio_init(gpio_pin_enum p,gpio_dir_enum d,uint8_t v,uint32_t m){(void)p;(void)d;(void)v;(void)m;}
 uint8_t gpio_get_level(gpio_pin_enum p){return keys[p];}
 void gpio_set_level(gpio_pin_enum p,uint8_t v){(void)p;(void)v;}
 void pwm_init(pwm_channel_enum p,uint32_t f,uint32_t d){(void)f;duties[p]=d;}
-void pwm_set_duty(pwm_channel_enum p,uint32_t d){duties[p]=d;}
+void pwm_set_duty(pwm_channel_enum p,uint32_t d){duties[p]=d;if(p==PWM4_MODULE2_CHA_C30)++servo_writes;}
 uint32_t __get_PRIMASK(void){return mask;}
 void __disable_irq(void){mask=1;}
 void __set_PRIMASK(uint32_t m){mask=m;}
@@ -75,10 +75,52 @@ int main(void)
               AUTO_CURVE_OUTER_SPEED_MM_S:AUTO_ELEMENT_SPEED_MM_S) && s.steering_permille<0);
     }
     motor_control_remote_set_link(0);step(3,1,1);CHECK(autonomous_control_is_active());
-    step(20,0,0);autonomous_control_get_status(&s);CHECK(!s.active);
-    CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);
-    step(30,1,1);CHECK(!autonomous_control_is_active());
-    keys[C15]=0;step(4,1,1);keys[C15]=1;step(70,1,1);CHECK(autonomous_control_is_active());
+    {
+        const unsigned pauses[]={10,30,100};unsigned k;
+        for(k=0;k<sizeof pauses/sizeof pauses[0];++k){
+            autonomous_control_trace_t evidence;uint32_t stamp=now,sequence=frame_sequence;
+            step(pauses[k],0,0);autonomous_control_get_status(&s);
+            CHECK(s.active && s.fault==AUTO_FAULT_NONE);
+            autonomous_control_get_trace(&evidence);
+            CHECK(!evidence.frozen && evidence.has_last_good);
+            CHECK(evidence.last_good.frame_ms==stamp && evidence.last_good.sequence==sequence);
+            step(1,1,1);CHECK(autonomous_control_is_active());
+        }
+    }
+    {
+        track_vision_result_t v;uint16_t pulse;unsigned writes;
+        step(40,1,1);
+        now+=AUTO_SERVO_INTERVAL_MS;++feedback.sample_sequence;
+        autonomous_control_tick_10ms(now);autonomous_control_service(now);
+        pulse=servo_control_get_status()->current_pulse_us;writes=servo_writes;
+        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;
+        v.near_error_px=v.far_error_px=-80;
+        autonomous_control_publish_vision(&v,++frame_sequence,now);
+        step(1,0,1);
+        CHECK(servo_control_get_status()->target_pulse_us!=pulse);
+        CHECK(servo_control_get_status()->current_pulse_us==pulse && servo_writes==writes);
+        CHECK(!autonomous_control_frame_is_serviced(frame_sequence));
+        step(1,0,1);
+        CHECK(servo_writes>writes && servo_control_get_status()->current_pulse_us!=pulse);
+        CHECK(autonomous_control_frame_is_serviced(frame_sequence));
+    }
+    {
+        track_vision_result_t v;unsigned k;
+        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;
+        /* 包括序号回绕：旧舵机服务和仅PIT计算均不能冒充本帧已应用。 */
+        for(k=0;k<2;++k){
+            uint32_t sequence=k?0:UINT32_MAX;
+            autonomous_control_publish_vision(&v,sequence,now-1000);
+            CHECK(!autonomous_control_frame_is_serviced(sequence));
+            autonomous_control_service(now);
+            CHECK(!autonomous_control_frame_is_serviced(sequence));
+            step(1,0,0);CHECK(!autonomous_control_frame_is_serviced(sequence));
+            autonomous_control_service(now);
+            if(!autonomous_control_frame_is_serviced(sequence))step(1,0,1);
+            CHECK(autonomous_control_frame_is_serviced(sequence));
+            CHECK(!autonomous_control_frame_is_serviced(sequence+1));
+        }
+    }
     {
         uint8_t gray[188*120];track_vision_result_t v;unsigned y,x,k;
         track_vision_reset();
@@ -119,6 +161,7 @@ int main(void)
     keys[C14]=0;step(1,1,1);CHECK(!autonomous_control_is_active());
     CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);
     CHECK(!servo_control_get_status()->output_enabled);
+    CHECK(autonomous_control_frame_is_serviced(frame_sequence+1)); /* 停车解除等待。 */
     mask=1;autonomous_control_get_status(&s);CHECK(mask==1);
     printf("%u autonomous integration checks passed\n",checks);return 0;
 }

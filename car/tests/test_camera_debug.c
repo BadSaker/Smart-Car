@@ -279,6 +279,11 @@ static int test_wifi_switch(int scenario)
 }
 #endif
 
+#ifdef TEST_SYNC_GATED
+static uint8 sync_driving=1,sync_busy,sync_lock_count;
+static uint8 sync_active(void){return sync_driving;}
+static void sync_lock(uint8 busy){sync_busy=busy;if(busy)++sync_lock_count;}
+#endif
 #ifdef TEST_SCHEDULED
 #include "autonomous_config.h"
 static uint32 scheduled_now;
@@ -497,6 +502,24 @@ int main(int argc, char **argv)
     CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==3 && !scheduled_busy);
     puts("PASS: stalled module yields, exact immutable frame, wrap timeout, no partial splice, parked reconnect");
     return 0;
+#endif
+#ifdef TEST_SYNC_GATED
+    camera_debug_configure_scheduler(NULL,sync_active,sync_lock);
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    CHECK(camera_debug_frames_sent==1 && wire_length==22936U);
+    CHECK(memcmp(wire,camera_header,8)==0 && memcmp(wire+22568,dot_header,8)==0);
+    CHECK(memcmp(wire+8,gray,sizeof gray)==0);
+    CHECK(memcmp(wire+22576,left,120)==0 && memcmp(wire+22696,middle,120)==0 && memcmp(wire+22816,right,120)==0);
+    {uint8 rx[8];CHECK(camera_debug_read_control(rx,sizeof rx)==3 && control_read_calls==1 && cached_read_calls==0);}
+    failure=3;camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    CHECK(camera_debug_status==CAMERA_DEBUG_SEND_ERROR && camera_debug_frames_sent==1);
+    camera_debug_poll(6000);CHECK(spi_initializations==1 && !sync_busy && !sync_lock_count);
+    sync_driving=0;failure=0;camera_debug_poll(6001);camera_debug_poll(12001);
+    CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==2 && sync_lock_count==1 && !sync_busy);
+    wire_length=write_calls=0;
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    CHECK(camera_debug_frames_sent==2 && wire_length==22936U && memcmp(wire+8,gray,sizeof gray)==0);
+    puts("PASS: synchronous complete 22936-byte frame and boundaries, legacy RX, parked reconnect and startup gate");return 0;
 #endif
     camera_debug_send_frame(binary_image[0]);
     CHECK(wire_length == 0); /* 不得发送未准备好的帧或过期帧。 */

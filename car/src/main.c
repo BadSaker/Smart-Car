@@ -1,8 +1,8 @@
 #include "main.h"
 
 /* C15自动驾驶、C14停车、C12遥控允许；两种驱动模式互斥。
- * 屏幕保留原显示；Wi-Fi按就绪状态分段传输，PIT保留视觉/舵机新鲜度保护。
- * 图像处理优先于本帧显示与传输；舵机仅由主循环写入，电机仅由PIT写入。 */
+ * 本帧视觉及控制先完成，再显示和同步整帧图传，不按视觉/舵机年龄停车。
+ * 舵机仅由主循环写入，电机仅由PIT写入；图传期间PIT继续处理反馈和停车。 */
 uint8_t image[MT9V03X_H][MT9V03X_W];
 static track_vision_result_t vision;
 static volatile uint32_t camera_frame_sequence;
@@ -75,11 +75,51 @@ static void app_init(void)
     camera_display_message("Camera ready");
     /* 默认Wi-Fi关闭，仅初始化本地按键；按C13后才走原版同步建链。 */
     (void)camera_debug_init(left_line, mid_line, right_line);
-    camera_debug_configure_scheduler(app_clock_ms,autonomous_control_is_active,
+    /* 空时钟选择冻结版同步发送路径；保留停车建链和起跑门控。 */
+    camera_debug_configure_scheduler(NULL,autonomous_control_is_active,
                                      autonomous_control_set_network_busy);
     camera_display_message("PC " CAMERA_DEBUG_WIFI_SERVER_IP ":" CAMERA_DEBUG_WIFI_SERVER_PORT);
     /* 初始化过程中C12不允许启动电机；此后仍需稳定释放再新按下。 */
     motor_control_enable_test();
+}
+
+static void app_run_once(void)
+{
+    app_service_controls();
+    if (mt9v03x_finish_flag)
+    {
+        uint32_t mask,sequence,completed_ms;
+        const uint8_t *completed_image;
+        autonomous_drive_status_t state;
+        /* 临界区只取缓冲地址与元数据，不在关中断期间复制或处理整幅图。 */
+        mask=__get_PRIMASK();__disable_irq();
+        sequence=camera_frame_sequence;completed_ms=camera_frame_completed_ms;
+        completed_image=mt9v03x_image[0];mt9v03x_finish_flag=0;
+        __set_PRIMASK(mask);
+        memcpy(image[0],completed_image,sizeof image);
+        /* 仅丢弃复制期间换帧的混合缓冲；不按帧年龄丢弃。 */
+        if(sequence!=camera_frame_sequence)return;
+        autonomous_control_get_status(&state);
+        if(!state.active)track_vision_reset();
+        track_vision_process(image[0],completed_ms,state.distance_mm,&vision);
+        autonomous_control_publish_vision(&vision,sequence,completed_ms);
+        memcpy(left_line,vision.left,sizeof left_line);
+        memcpy(mid_line,vision.center,sizeof mid_line);
+        memcpy(right_line,vision.right,sizeof right_line);
+        /* PIT仍负责控制计算；等它消费本帧并由主循环实际更新舵机后再图传。
+         * 不关中断、不重复计算PID；停车立即解除等待。 */
+        do { app_service_controls(); }
+        while(!autonomous_control_frame_is_serviced(sequence));
+        camera_debug_capture_frame(image[0]);
+        app_service_controls();
+        binaryzation_process(image[0],MT9V03X_H,MT9V03X_W,vision.threshold);
+        camera_debug_send_frame(image[0]); // 同步发送整帧；返回后才进入后续操作。
+    }
+    app_service_controls();
+    /* 网络维护、遥控接收放在本帧控制和图传之后；无新图像时同样服务。 */
+    camera_debug_poll(app_uptime_ms);
+    if(!autonomous_control_is_active())remote_control_poll(app_clock_ms);
+    app_service_controls();
 }
 
 int main(void)
@@ -89,42 +129,5 @@ int main(void)
     debug_init();
     system_delay_ms(300); // 启动时等待板上外设供电稳定，不用于运行期Wi-Fi等待。
     app_init();
-
-    while (1)
-    {
-        app_service_controls();
-        camera_debug_poll(app_uptime_ms);
-        if(!autonomous_control_is_active())remote_control_poll(app_clock_ms);
-        app_service_controls();
-        if (mt9v03x_finish_flag)
-        {
-            uint32_t mask,sequence,completed_ms;
-            const uint8_t *completed_image;
-            autonomous_drive_status_t state;
-            /* 临界区只取缓冲地址与元数据，不在关中断期间复制或处理整幅图。 */
-            mask=__get_PRIMASK();__disable_irq();
-            sequence=camera_frame_sequence;completed_ms=camera_frame_completed_ms;
-            completed_image=mt9v03x_image[0];mt9v03x_finish_flag=0;
-            __set_PRIMASK(mask);
-            memcpy(image[0],completed_image,sizeof image);
-            /* 复制期间换帧则丢弃，不能把混合或久存缓冲伪装成新鲜图像。 */
-            if(sequence!=camera_frame_sequence ||
-               (uint32_t)(app_uptime_ms-completed_ms)>AUTO_FRAME_MAX_AGE_MS)continue;
-            autonomous_control_get_status(&state);
-            if(!state.active)track_vision_reset();
-            track_vision_process(image[0],completed_ms,state.distance_mm,&vision);
-            autonomous_control_publish_vision(&vision,sequence,completed_ms);
-            memcpy(left_line,vision.left,sizeof left_line);
-            memcpy(mid_line,vision.center,sizeof mid_line);
-            memcpy(right_line,vision.right,sizeof right_line);
-            app_service_controls();
-            camera_debug_capture_frame(image[0]);
-            app_service_controls();
-            binaryzation_process(image[0],MT9V03X_H,MT9V03X_W,vision.threshold);
-            camera_debug_send_frame(image[0]); // 固化完整协议快照，由poll逐块发送。
-
-        }
-        /* 发送返回后再次检查按键；没有新图像时也逐圈处理按键和网络恢复。 */
-        app_service_controls();
-    }
+    while (1)app_run_once();
 }

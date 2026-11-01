@@ -86,12 +86,37 @@ static void test_outer_quality(void)
     tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.path_reason==AUTO_PATH_NEAR);
     reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
     in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=40;
-    tick(20,0,1,1);fault(AUTO_FAULT_CAMERA_STALE);
+    tick(20,0,1,1);CHECK(car.status.active && car.status.minimum_confidence==40);
     reset();start();in.confidence=45;tick(8,1,1,1);CHECK(car.status.active);
     in.confidence=44;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
 }
+static void test_blocked_main_loop(void)
+{
+    const unsigned pauses[]={10,30,100};unsigned k;
+    for(k=0;k<sizeof pauses/sizeof pauses[0];++k){
+        uint32_t sequence,stamp,service;
+        reset();start();sequence=in.frame_sequence;stamp=in.frame_ms;service=in.servo_service_ms;
+        tick(pauses[k],0,1,0);
+        CHECK(car.status.state==AUTO_DRIVE_RUNNING && car.status.fault==AUTO_FAULT_NONE);
+        CHECK(in.frame_sequence==sequence && in.frame_ms==stamp && in.servo_service_ms==service);
+        tick(2,1,1,1);CHECK(car.status.active && in.frame_sequence!=sequence);
+        /* 真实编码器超时和停车仍生效。 */
+        tick(5,0,0,0);fault(AUTO_FAULT_ENCODER_STALE);
+    }
+    reset();tick(2,1,1,1);tick(100,0,1,0);in.start_pressed=1;tick(4,0,1,0);
+    CHECK(car.status.state==AUTO_DRIVE_STARTING);
+    tick(60,0,1,0);CHECK(car.status.state==AUTO_DRIVE_STARTING);
+    CHECK(car.status.left_duty_permille==0 && car.status.right_duty_permille==0);
+    tick(1,0,1,1);CHECK(car.status.state==AUTO_DRIVE_RUNNING);
+    in.stop_pressed=1;tick(1,0,1,0);CHECK(!car.status.active);
+}
 int main(void)
 {
+    test_blocked_main_loop();
+#ifdef TEST_TIMING_POLICY
+    test_outer_quality();
+    printf("%u timing policy checks passed\n",checks);return 0;
+#endif
     test_outer_quality();
     CHECK(VISION_RING_PHASE_TIMEOUT_MS > (uint32_t)(1000.0f*VISION_RING_INSIDE_MIN_MM/AUTO_ELEMENT_SPEED_MM_S));
     reset(); CHECK(!car.status.active);in.start_pressed=1;in.stop_pressed=1;tick(8,1,1,1);
@@ -100,10 +125,10 @@ int main(void)
     in.stop_pressed=1;tick(1,1,1,1);CHECK(!car.status.active);CHECK(car.status.left_duty_permille==0);
     reset();start();in.cancel_pressed=1;tick(1,1,1,1);CHECK(!car.status.active);
     reset();in.remote_busy=1;in.start_pressed=1;tick(5,1,1,1);CHECK(!car.status.active);
-    reset();start();tick(20,0,1,1);fault(AUTO_FAULT_CAMERA_STALE);
-    tick(50,1,1,1);CHECK(!car.status.active);
+    reset();start();tick(20,0,1,1);CHECK(car.status.active);
+    tick(50,1,1,1);CHECK(car.status.active);
     reset();start();tick(20,1,0,1);fault(AUTO_FAULT_ENCODER_STALE);
-    reset();start();tick(20,1,1,0);fault(AUTO_FAULT_SERVO_STALE);
+    reset();start();tick(20,1,1,0);CHECK(car.status.active);
     reset();start();in.vision_valid=0;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
     reset();start();in.left_speed_mm_s=-100;in.forward_step_um=0;tick(20,1,1,1);fault(AUTO_FAULT_ENCODER_DIRECTION);
     reset();start();in.left_speed_mm_s=AUTO_MAX_MEASURED_SPEED_MM_S+1;tick(1,1,1,1);fault(AUTO_FAULT_OVERSPEED);

@@ -8,7 +8,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRATCH = ROOT / "tmp/autodrive/controller-tests"
 COMPILER = find_compiler()
 class AutonomousDriveTests(unittest.TestCase):
-    def test_controller(self):
+    def test_timing_policy(self):
+        self.test_controller(timing_only=True)
+
+    def test_controller(self, timing_only=False):
         source = ROOT / "car/src/autonomous_drive.c"
         self.assertTrue(source.exists(), "自动驾驶状态机尚未实现")
         SCRATCH.mkdir(parents=True, exist_ok=True)
@@ -17,6 +20,8 @@ class AutonomousDriveTests(unittest.TestCase):
                "-I"+str(ROOT/"car/include"), "-I"+str(ROOT/"car/config"),
                str(ROOT/"car/tests/test_autonomous_drive.c"), str(source),
                str(ROOT/"car/src/control_pid.c"), "-lm", "-o", str(exe)]
+        if timing_only:
+            cmd.insert(1, "-DTEST_TIMING_POLICY")
         result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf8", errors="replace")
         self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
         result = subprocess.run([str(exe)], capture_output=True, text=True, encoding="utf8", errors="replace")
