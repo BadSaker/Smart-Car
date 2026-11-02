@@ -79,11 +79,21 @@
 #define AUTO_ZEBRA_CONFIRM_FRAMES 3U
 #define AUTO_ZEBRA_CLEAR_FRAMES 5U
 #define AUTO_ZEBRA_CLEAR_DISTANCE_MM 500U
+/* 接近/通过阶段即使用终点低速；有界标记过程不覆盖一般失路保护。 */
+#define AUTO_ZEBRA_PASS_MAX_MS 15000U
+#define AUTO_ZEBRA_PASS_MAX_MM 1500U
+#define AUTO_ZEBRA_FRAME_MAX_AGE_MS 250U
 #define AUTO_MIN_LAP_DISTANCE_MM 5000U
 #define AUTO_MIN_LAP_TIME_MS 8000U
 /* 从近场标记确认位置继续前进的参考距离；须实测相机视野、车长、制动余量。 */
 #define AUTO_FINISH_ADVANCE_MM 500U
 #define AUTO_FINISH_MAX_TIME_MS 10000U
+#if AUTO_ZEBRA_CONFIRM_FRAMES < 1U || AUTO_ZEBRA_CONFIRM_FRAMES > 255U || AUTO_ZEBRA_CLEAR_FRAMES < 1U || AUTO_ZEBRA_CLEAR_FRAMES > 255U || AUTO_ZEBRA_MIN_ROW > 117U
+#error "斑马线控制确认配置无效"
+#endif
+#if AUTO_ZEBRA_PASS_MAX_MS == 0U || AUTO_ZEBRA_PASS_MAX_MM == 0U || AUTO_ZEBRA_FRAME_MAX_AGE_MS == 0U
+#error "斑马线过程必须具有有限距离、时间与图像时效"
+#endif
 #if AUTO_TICK_MS != 10U
 #error "自动驾驶控制周期必须为10ms"
 #endif

@@ -70,6 +70,8 @@ typedef struct {
     uint8_t zebra;
     uint8_t zebra_near_row; /* 最靠近车辆的斑马线证据行；无证据时255。 */
     uint8_t zebra_rows;
+    uint8_t zebra_far_row, zebra_clipped, zebra_reject;
+    /* reject:0无拒绝，1零散条纹，2区域路径无效；255行号表示未识别。 */
     uint8_t fault; /* 元素故障锁存到reset；普通路径丢失随当前帧更新。 */
     uint8_t threshold;
     int16_t near_error_px; /* 原点左上、列向右、行向下；相对93列右正。 */

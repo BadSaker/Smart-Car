@@ -11,6 +11,7 @@
 typedef struct {
     uint32_t sequence,time_ms;
     uint8_t valid,confidence,zebra,element_fault,element_slow,element_supported,curve;
+    uint8_t zebra_visible,zebra_far_row,zebra_near_row,zebra_reject,zebra_clipped,geometry_reject;
     uint8_t near_supported,outer_supported,outer_side,outer_near_rows,outer_far_rows,element;
     autonomous_path_reason_t outer_reject_reason;
     int16_t near_error_px,far_error_px;
@@ -46,6 +47,8 @@ void autonomous_control_publish_vision(const track_vision_result_t *v,uint32_t s
     if(!v)return;
     m.sequence=sequence;m.time_ms=frame_ms;m.valid=v->valid;m.confidence=v->confidence;
     m.zebra=v->zebra && v->zebra_near_row!=255 && v->zebra_near_row>=AUTO_ZEBRA_MIN_ROW;
+    m.zebra_visible=v->zebra;m.zebra_far_row=v->zebra_far_row;m.zebra_near_row=v->zebra_near_row;
+    m.zebra_reject=v->zebra_reject;m.zebra_clipped=v->zebra_clipped;m.geometry_reject=v->geometry.reject_reason;
     m.element_fault=(v->fault & TRACK_FAULT_ELEMENT_TIMEOUT)!=0;
     m.element_slow=v->element>=TRACK_ELEMENT_CROSS;
     m.curve=v->element==TRACK_ELEMENT_CURVE;
@@ -67,6 +70,9 @@ void autonomous_control_publish_vision(const track_vision_result_t *v,uint32_t s
     m.near_error_px=v->near_error_px;m.far_error_px=v->far_error_px;
     memset(&m.diagnostic,0,sizeof m.diagnostic);
     m.diagnostic.frame_ms=frame_ms;m.diagnostic.sequence=sequence;
+    m.diagnostic.zebra=v->zebra;m.diagnostic.zebra_far_row=v->zebra_far_row;m.diagnostic.zebra_near_row=v->zebra_near_row;
+    m.diagnostic.zebra_rows=v->zebra_rows;m.diagnostic.zebra_reject=v->zebra_reject;
+    m.diagnostic.zebra_clipped=v->zebra_clipped;m.diagnostic.geometry_reject=v->geometry.reject_reason;
     m.diagnostic.ring_left_reject=v->ring_left_reject;m.diagnostic.ring_right_reject=v->ring_right_reject;
     m.diagnostic.left_island=v->left_island;m.diagnostic.right_island=v->right_island;
     m.diagnostic.entry_supported=v->ring_entry_supported;m.diagnostic.fault_element=(uint8_t)v->fault_element;
@@ -103,6 +109,8 @@ void autonomous_control_tick_10ms(uint32_t now_ms)
         (2LL*ENCODER_PULSES_PER_REV*ENCODER_STEP_EDGE_FACTOR*ENCODER_TO_WHEEL_RATIO_NUM));
     i.frame_sequence=v.sequence;i.frame_ms=v.time_ms;i.vision_valid=v.valid;i.confidence=v.confidence;
     i.zebra=v.zebra;i.element_fault=v.element_fault;i.element_slow=v.element_slow;i.element_supported=v.element_supported;i.curve=v.curve;
+    i.zebra_visible=v.zebra_visible;i.zebra_far_row=v.zebra_far_row;i.zebra_near_row=v.zebra_near_row;
+    i.zebra_reject=v.zebra_reject;i.zebra_clipped=v.zebra_clipped;i.geometry_reject=v.geometry_reject;
     i.vision_near_supported=v.near_supported;i.curve_outer_supported=v.outer_supported;
     i.curve_outer_side=v.outer_side;i.curve_outer_near_rows=v.outer_near_rows;
     i.curve_outer_far_rows=v.outer_far_rows;i.element=v.element;i.curve_outer_reject_reason=v.outer_reject_reason;

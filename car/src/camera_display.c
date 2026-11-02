@@ -47,6 +47,7 @@ static uint8_t display_autonomous_status(void)
                 case AUTO_FAULT_RUN_TIMEOUT:state="TIMEOUT";break;
                 case AUTO_FAULT_FINISH_TIMEOUT:state="FIN TIME";break;
                 case AUTO_FAULT_NOT_READY:state="NOT READY";break;
+                case AUTO_FAULT_MARKER_LIMIT:state="Z LIMIT";break;
                 default:state="CONFIG";break;
             }break;
         default:state="IDLE";break;
@@ -69,6 +70,11 @@ static uint8_t display_autonomous_status(void)
              automatic.curve_outer_far_rows,reason,
              automatic.path_reason==AUTO_PATH_ACCEPTED?automatic.steering_permille:automatic.diagnostic_steering_permille,
              servo->target_pulse_us,servo->current_pulse_us);
+    if(automatic.marker_phase || automatic.zebra_visible || automatic.zebra_reject ||
+       automatic.state==AUTO_DRIVE_FINISHED)
+        snprintf(text,sizeof text,"Z%u %u-%u R%uG%u M%u D%lu",automatic.marker_phase,
+                 automatic.zebra_far_row,automatic.zebra_near_row,automatic.zebra_reject,
+                 automatic.geometry_reject,automatic.start_marker_seen,(unsigned long)automatic.finish_advance_mm);
     display_line(16,text);return 1;
 }
 

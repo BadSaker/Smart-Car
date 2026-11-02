@@ -21,6 +21,7 @@ void autonomous_control_set_network_busy(uint8_t busy);
 typedef struct {
     uint32_t now_ms,frame_ms,sequence;
     uint8_t confidence,minimum_confidence,valid,element;
+    uint8_t zebra,zebra_far_row,zebra_near_row,zebra_rows,zebra_reject,zebra_clipped,geometry_reject;
     uint8_t ring_left_reject,ring_right_reject,left_island,right_island,entry_supported,fault_element;
     uint8_t left_fork,right_fork,left_opening_rows,right_opening_rows;
     int16_t near_error_px,far_error_px,steering_permille;

@@ -33,11 +33,16 @@ static void update_path_status(autonomous_drive_t *d,const autonomous_drive_inpu
     autonomous_path_reason_t previous_reason=d->status.path_reason;
     /* 路径及元素故障锁存触发帧；停车后新图像不能改写Q/V/E与拒绝原因。 */
     if(d->status.state==AUTO_DRIVE_FAULT &&
-       (d->status.fault==AUTO_FAULT_PATH_LOST || d->status.fault==AUTO_FAULT_ELEMENT)) return;
+       (d->status.fault==AUTO_FAULT_PATH_LOST || d->status.fault==AUTO_FAULT_ELEMENT ||
+        d->status.fault==AUTO_FAULT_MARKER_LIMIT)) return;
     d->status.confidence=i->confidence;d->status.minimum_confidence=minimum_confidence(d,i);
     d->status.vision_valid=i->vision_valid;d->status.element=i->element;
     d->status.curve_outer_side=i->curve_outer_side;d->status.curve_outer_supported=i->curve_outer_supported;
     d->status.curve_outer_near_rows=i->curve_outer_near_rows;d->status.curve_outer_far_rows=i->curve_outer_far_rows;
+    d->status.zebra_visible=i->zebra_visible || i->zebra;
+    d->status.zebra_far_row=i->zebra_far_row;d->status.zebra_near_row=i->zebra_near_row;
+    d->status.zebra_reject=i->zebra_reject;d->status.zebra_clipped=i->zebra_clipped;
+    d->status.geometry_reject=i->geometry_reject;
     d->status.path_reason=AUTO_PATH_ACCEPTED;
     if(!geometry_input_valid(i)) d->status.path_reason=AUTO_PATH_INVALID;
     else if(!i->vision_valid) d->status.path_reason=i->vision_near_supported?AUTO_PATH_INVALID:AUTO_PATH_NEAR;
@@ -137,6 +142,7 @@ static void begin_drive(autonomous_drive_t *d,const autonomous_drive_input_t *i)
     zero_output(d);d->status.run_generation=generation;d->status.active=1;
     d->status.state=AUTO_DRIVE_STARTING;d->status.fault=AUTO_FAULT_NONE;
     d->status.distance_mm=0;d->distance_remainder_um=0;d->status.start_marker_seen=0;
+    d->status.marker_phase=AUTO_MARKER_NONE;d->status.finish_advance_mm=0;
     d->started_ms=i->now_ms;d->marker_present=0;d->marker_armed=1;
     d->zebra_frames=0;d->clear_frames=0;d->wrong_left_ms=0;d->wrong_right_ms=0;
     d->stall_left_ms=0;d->stall_right_ms=0;d->bad_frames=0;
@@ -144,12 +150,27 @@ static void begin_drive(autonomous_drive_t *d,const autonomous_drive_input_t *i)
 }
 static void update_marker(autonomous_drive_t *d,const autonomous_drive_input_t *i)
 {
-    if(i->zebra){d->clear_frames=0;if(d->zebra_frames<255)++d->zebra_frames;}
-    else {d->zebra_frames=0;if(d->clear_frames<255)++d->clear_frames;}
-    if(!i->zebra && d->clear_frames>=AUTO_ZEBRA_CLEAR_FRAMES &&
+    uint8_t visible=i->zebra_visible || i->zebra;
+    uint8_t path_ok=i->vision_valid && geometry_input_valid(i) &&
+        i->confidence>=minimum_confidence(d,i) && !i->element_fault;
+    /* 观测计数独立于路径评分；记录起终点及确认离开仍须合格路径。 */
+    if(i->zebra){if(d->zebra_frames<255)++d->zebra_frames;}else d->zebra_frames=0;
+    if(visible) {
+        d->clear_frames=0;
+        if(d->status.marker_phase==AUTO_MARKER_NONE || d->status.marker_phase==AUTO_MARKER_CLEAR) {
+            d->marker_pass_ms=i->now_ms;d->marker_pass_mm=d->status.distance_mm;
+            d->status.marker_phase=AUTO_MARKER_APPROACH;
+        }
+        if(i->zebra)d->status.marker_phase=AUTO_MARKER_CROSSING;
+    } else if(path_ok) {
+        if(d->clear_frames<255)++d->clear_frames;
+        if(d->clear_frames>=AUTO_ZEBRA_CLEAR_FRAMES && d->status.marker_phase)
+            d->status.marker_phase=AUTO_MARKER_CLEAR;
+    } else d->clear_frames=0;
+    if(!visible && d->clear_frames>=AUTO_ZEBRA_CLEAR_FRAMES &&
        (!d->status.start_marker_seen || d->status.distance_mm-d->marker_distance_mm>=AUTO_ZEBRA_CLEAR_DISTANCE_MM))
-    {d->marker_present=0;d->marker_armed=1;}
-    if(d->zebra_frames<AUTO_ZEBRA_CONFIRM_FRAMES || !d->marker_armed || d->marker_present)return;
+    {d->marker_present=0;d->marker_armed=1;d->status.marker_phase=AUTO_MARKER_NONE;}
+    if(!path_ok || d->zebra_frames<AUTO_ZEBRA_CONFIRM_FRAMES || !d->marker_armed || d->marker_present)return;
     if(!d->status.start_marker_seen){d->marker_present=1;d->marker_armed=0;d->status.start_marker_seen=1;d->marker_ms=i->now_ms;d->marker_distance_mm=d->status.distance_mm;}
     else if(d->status.state==AUTO_DRIVE_RUNNING &&
             (uint32_t)(i->now_ms-d->marker_ms)>=AUTO_MIN_LAP_TIME_MS &&
@@ -184,7 +205,7 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
         d->frame_sequence=i->frame_sequence;
         if(i->vision_valid && geometry_input_valid(i) && i->confidence>=minimum_confidence(d,i) && !i->element_fault){
             d->bad_frames=0;if(d->good_frames<255)++d->good_frames;
-        }else{d->good_frames=0;d->zebra_frames=0;d->clear_frames=0;if(d->bad_frames<255)++d->bad_frames;}
+        }else{d->good_frames=0;d->clear_frames=0;if(d->bad_frames<255)++d->bad_frames;}
     }
     /* 原始停车键优先，停止后必须释放并重新按启动键。 */
     if(i->stop_pressed || (d->status.active && i->cancel_pressed)){
@@ -212,9 +233,21 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
         uint32_t sum=d->distance_remainder_um+(uint32_t)i->forward_step_um;
         d->status.distance_mm+=sum/1000U;d->distance_remainder_um=sum%1000U;
     }
-    if(fresh_frame && i->vision_valid && geometry_input_valid(i) && i->confidence>=minimum_confidence(d,i))update_marker(d,i);
+    if(fresh_frame)update_marker(d,i);
+    if(((d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING) &&
+        ((uint32_t)(i->now_ms-d->marker_pass_ms)>AUTO_ZEBRA_PASS_MAX_MS ||
+         d->status.distance_mm-d->marker_pass_mm>AUTO_ZEBRA_PASS_MAX_MM)) ||
+       ((d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING || d->status.state==AUTO_DRIVE_FINISHING) &&
+        (uint32_t)(i->now_ms-i->frame_ms)>AUTO_ZEBRA_FRAME_MAX_AGE_MS)) {
+        stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_MARKER_LIMIT);return;
+    }
     if(d->status.state==AUTO_DRIVE_FINISHING){
-        if(d->status.distance_mm-d->finish_distance_mm>=AUTO_FINISH_ADVANCE_MM){stop_drive(d,AUTO_DRIVE_FINISHED,AUTO_FAULT_NONE);return;}
+        d->status.finish_advance_mm=d->status.distance_mm-d->finish_distance_mm;
+        if(fresh_frame && d->status.finish_advance_mm>=AUTO_FINISH_ADVANCE_MM &&
+           d->clear_frames>=AUTO_ZEBRA_CLEAR_FRAMES && !i->zebra && !i->zebra_visible &&
+           i->vision_valid && geometry_input_valid(i) && i->confidence>=minimum_confidence(d,i)) {
+            stop_drive(d,AUTO_DRIVE_FINISHED,AUTO_FAULT_NONE);return;
+        }
         if((uint32_t)(i->now_ms-d->finish_ms)>AUTO_FINISH_MAX_TIME_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_FINISH_TIMEOUT);return;}
     }
     if(d->status.state==AUTO_DRIVE_STARTING){
@@ -267,7 +300,8 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     if(i->curve || abs(i->near_error_px)>12 || abs(i->far_error_px)>16)target=minimum(target,AUTO_CURVE_SPEED_MM_S);
     if(i->element_slow || i->confidence<65)target=minimum(target,AUTO_ELEMENT_SPEED_MM_S);
     if(curve_outer_mode(d,i))target=minimum(target,AUTO_CURVE_OUTER_SPEED_MM_S);
-    if(d->status.state==AUTO_DRIVE_FINISHING)target=minimum(target,AUTO_FINISH_SPEED_MM_S);
+    if(d->status.state==AUTO_DRIVE_FINISHING || d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING)
+        target=minimum(target,AUTO_FINISH_SPEED_MM_S);
     {
         float turn=fmaxf(fabsf((float)d->status.requested_steering_permille),fabsf(d->steering_position));
         float curvature=tanf(VEHICLE_MAX_STEER_RAD*turn/1000.0f)/VEHICLE_WHEELBASE_MM;

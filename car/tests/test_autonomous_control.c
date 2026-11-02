@@ -163,5 +163,29 @@ int main(void)
     CHECK(!servo_control_get_status()->output_enabled);
     CHECK(autonomous_control_frame_is_serviced(frame_sequence+1)); /* 停车解除等待。 */
     mask=1;autonomous_control_get_status(&s);CHECK(mask==1);
+    /* 标记的远场证据、诊断必须跨真实mailbox传递；不伪造近场确认。 */
+    {
+        track_vision_result_t v;autonomous_control_trace_t t;
+        memset(keys,1,sizeof keys);mask=0;motor_control_init();servo_control_init(now);autonomous_control_init();
+        motor_control_enable_test();step(10,1,1);keys[C15]=0;step(4,1,1);keys[C15]=1;step(60,1,1);
+        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;v.zebra=1;
+        v.zebra_far_row=35;v.zebra_near_row=60;v.zebra_rows=26;
+        now+=10;++feedback.sample_sequence;
+        autonomous_control_publish_vision(&v,++frame_sequence,now);
+        autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
+        autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
+        CHECK(s.active && s.marker_phase==1 && !s.start_marker_seen);
+        CHECK(s.speed_limit_mm_s==AUTO_FINISH_SPEED_MM_S && s.zebra_far_row==35 && s.zebra_near_row==60);
+        CHECK(t.last_good.zebra && t.last_good.zebra_rows==26 && t.last_good.zebra_near_row==60);
+        v.valid=0;v.confidence=0;v.zebra_reject=2;v.geometry.reject_reason=3;
+        for(unsigned n=0;n<3;++n){
+            now+=10;++feedback.sample_sequence;autonomous_control_publish_vision(&v,++frame_sequence,now);
+            autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
+        }
+        autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
+        CHECK(s.fault==AUTO_FAULT_PATH_LOST && s.zebra_reject==2 && s.geometry_reject==3);
+        CHECK(t.frozen && t.first_bad.zebra && t.first_bad.zebra_reject==2 && t.fault_frame.geometry_reject==3);
+        CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);
+    }
     printf("%u autonomous integration checks passed\n",checks);return 0;
 }
