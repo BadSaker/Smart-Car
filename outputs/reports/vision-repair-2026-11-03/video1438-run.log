@@ -1,0 +1,62 @@
+{
+  "video_sha256": "8127e90092bd7993686edd56170770d230920b1dfbd91aed62fed62210c55ab2",
+  "frames": 5718,
+  "unique_groups": 2298,
+  "duplicates": 3420,
+  "duration_s": 114.36,
+  "sources": {
+    "car\\src\\track_vision.c": "70a5b8eb775a7ff61d0587faf97a17a5e4740e29fbcfeb88deeac8f96c7d5928",
+    "car\\config\\vision_config.h": "228a1d06d996859593b02fac5b4c75933a76c38b66b3911d18ace16ae5465a44",
+    "car\\src\\autonomous_drive.c": "a2bb1924d3a4c09bb8261c6e8503843306785c73048ef6226786a3e1120bfc9c"
+  },
+  "cases": [
+    {
+      "case": "full_unique_0",
+      "processed": 2298,
+      "valid": 321,
+      "elements": {
+        "0": 256,
+        "1": 782,
+        "2": 31,
+        "3": 2,
+        "4": 1227
+      },
+      "circle_models": 759,
+      "valid_circle_models": 138,
+      "reconstructed_frames": 2296
+    },
+    {
+      "case": "full_unique_800",
+      "processed": 2298,
+      "valid": 1557,
+      "elements": {
+        "0": 498,
+        "1": 1392,
+        "2": 181,
+        "3": 18,
+        "4": 13,
+        "5": 180,
+        "6": 16
+      },
+      "circle_models": 669,
+      "valid_circle_models": 581,
+      "reconstructed_frames": 2296
+    },
+    {
+      "case": "full_all_0",
+      "processed": 5718,
+      "valid": 898,
+      "elements": {
+        "0": 700,
+        "1": 1898,
+        "3": 67,
+        "2": 52,
+        "4": 3001
+      },
+      "circle_models": 1794,
+      "valid_circle_models": 383,
+      "reconstructed_frames": 5714
+    }
+  ],
+  "limitations": "Overlay interpolation; exact adjacent duplicates excluded in unique cases; assumed distance is not measured odometry; no closed-loop vehicle validation."
+}

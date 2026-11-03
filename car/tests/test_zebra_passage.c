@@ -99,6 +99,7 @@ static void control_frame(int zebra,int valid,int step)
 {
     input.now_ms+=20;input.frame_ms=input.now_ms;++input.frame_sequence;++input.feedback_sequence;
     input.zebra=(uint8_t)zebra;input.vision_valid=(uint8_t)valid;input.confidence=valid?95:0;
+    input.zebra_near_row=zebra?117:255;
     input.forward_step_um=step;input.servo_generation=drive.status.run_generation;
     autonomous_drive_tick(&drive,&input);
 }
@@ -126,23 +127,26 @@ static void test_marker_control(void)
     for(n=0;n<6;++n)control_frame(1,1,100000);
     CHECK(drive.status.state==AUTO_DRIVE_FINISHING,"visible stripe cannot be reported as completed crossing");
     for(n=0;n<5;++n)control_frame(0,1,1000);
+    CHECK(drive.status.state==AUTO_DRIVE_FINISHING && drive.status.finish_advance_mm<10,
+          "visible travel never counts toward clear-tail distance");
+    for(n=0;n<AUTO_FINISH_ADVANCE_MM/10+1 && drive.status.active;++n)control_frame(0,1,10000);
     CHECK(drive.status.state==AUTO_DRIVE_FINISHED && !drive.status.active,"clear stripe and sufficient advance finish");
     CHECK(!drive.status.left_duty_permille && !drive.status.right_duty_permille,"finish removes both outputs");
     control_start();
     for(n=0;n<3;++n)control_frame(1,0,1000);
-    CHECK(drive.status.state==AUTO_DRIVE_FAULT && drive.status.fault==AUTO_FAULT_PATH_LOST,"stripe alone never authorizes invalid path");
+    CHECK(drive.status.active && drive.status.recovering_path && !drive.status.start_marker_seen,"stripe alone cannot authorize lap confirmation");
     control_start();input.zebra_visible=1;input.zebra_near_row=60;
     control_frame(0,1,1000);
     CHECK(drive.status.marker_phase==1 && !drive.status.start_marker_seen,"far candidate slows without counting start");
     CHECK(drive.status.speed_limit_mm_s==AUTO_FINISH_SPEED_MM_S,"far candidate already limits speed");
     input.now_ms+=AUTO_ZEBRA_FRAME_MAX_AGE_MS+1;++input.feedback_sequence;
     autonomous_drive_tick(&drive,&input);
-    CHECK(drive.status.fault==AUTO_FAULT_MARKER_LIMIT && !drive.status.active,"frozen marker image cannot authorize endless crossing");
+    CHECK(drive.status.active && drive.status.fault==AUTO_FAULT_NONE,"frozen marker does not lock recognition stop");
     control_start();control_frame(1,1,1000);
     for(n=0;n<5;++n){input.now_ms+=10;++input.feedback_sequence;autonomous_drive_tick(&drive,&input);}
     CHECK(!drive.status.start_marker_seen,"repeated frame does not accumulate marker confirmation");
     for(n=0;n<160;++n)control_frame(1,1,10000);
-    CHECK(drive.status.fault==AUTO_FAULT_MARKER_LIMIT,"persistent marker distance is bounded");
+    CHECK(drive.status.active && drive.status.fault==AUTO_FAULT_NONE,"persistent recognition does not lock stop");
     control_start();
     for(n=0;n<3;++n)control_frame(1,1,1000);
     for(n=0;n<500;++n)control_frame(0,1,12000);
@@ -153,7 +157,7 @@ static void test_marker_control(void)
     CHECK(drive.status.state==AUTO_DRIVE_FINISHING,"distance alone on reused clear frame cannot trigger DONE");
     input.now_ms+=AUTO_ZEBRA_FRAME_MAX_AGE_MS+1;++input.feedback_sequence;input.forward_step_um=0;
     autonomous_drive_tick(&drive,&input);
-    CHECK(drive.status.fault==AUTO_FAULT_MARKER_LIMIT && !drive.status.active,"finish tail rejects frozen clear image");
+    CHECK(drive.status.active && drive.status.state==AUTO_DRIVE_FINISHING,"frozen image cannot fake DONE or lock a recognition stop");
 }
 
 static void gray_control(unsigned step)
@@ -189,7 +193,7 @@ static void test_gray_control(void)
             CHECK(drive.status.active,"return crosses stripe before stopping");
         }
         scene(150,180,0,0,0);
-        for(n=0;n<150 && drive.status.active;++n)gray_control(3000);
+        for(n=0;n<(int)(AUTO_FINISH_ADVANCE_MM/3+10) && drive.status.active;++n)gray_control(3000);
         CHECK(drive.status.state==AUTO_DRIVE_FINISHED,"gray sequence reaches DONE after clear and advance");
     }
     /* 启动时已覆盖近场，没有可依赖的行驶历史。 */

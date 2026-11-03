@@ -1,0 +1,13 @@
+{
+  "unchanged_hashes": {
+    "E:\\AA\\car\\Autodrive\\car\\src\\track_vision.c": true,
+    "E:\\AA\\car\\Autodrive\\car\\config\\vision_config.h": true,
+    "E:\\AA\\car\\Autodrive\\car\\src\\autonomous_drive.c": true,
+    "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.hex": true,
+    "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.bin": true
+  },
+  "tmp_remaining": [
+    ".gitkeep"
+  ],
+  "all_contact_pages_reviewed": 8
+}

@@ -1,0 +1,54 @@
+test_angled_cross_preserves_the_incoming_corridor (test_element_sequences.ElementSequenceTests.test_angled_cross_preserves_the_incoming_corridor) ... ok
+test_approach_limit_precedes_entry_commit (test_element_sequences.ElementSequenceTests.test_approach_limit_precedes_entry_commit) ... 
+  test_approach_limit_precedes_entry_commit (test_element_sequences.ElementSequenceTests.test_approach_limit_precedes_entry_commit) (boundary='distance') ... ERROR
+test_black_forward_branch_cannot_commit_entry (test_element_sequences.ElementSequenceTests.test_black_forward_branch_cannot_commit_entry) ... ok
+test_confirmed_cross_can_bridge_a_visible_wide_opening (test_element_sequences.ElementSequenceTests.test_confirmed_cross_can_bridge_a_visible_wide_opening) ... ok
+test_confirmed_entry_keeps_visible_branch_when_edges_spread (test_element_sequences.ElementSequenceTests.test_confirmed_entry_keeps_visible_branch_when_edges_spread) ... ok
+test_cross_direction_is_not_replaced_by_a_side_arm_edge (test_element_sequences.ElementSequenceTests.test_cross_direction_is_not_replaced_by_a_side_arm_edge) ... ok
+test_cross_releases_when_near_exit_closes_before_a_curve (test_element_sequences.ElementSequenceTests.test_cross_releases_when_near_exit_closes_before_a_curve) ... ok
+test_current_turn_is_not_promoted_to_a_distant_ring (test_element_sequences.ElementSequenceTests.test_current_turn_is_not_promoted_to_a_distant_ring) ... ok
+test_element_limit_records_original_phase_and_context_after_recovery (test_element_sequences.ElementSequenceTests.test_element_limit_records_original_phase_and_context_after_recovery) ... ok
+test_enclosed_island_can_enter_without_a_two_ended_scan_gap (test_element_sequences.ElementSequenceTests.test_enclosed_island_can_enter_without_a_two_ended_scan_gap) ... ok
+test_exit_memory_does_not_replace_a_current_measured_inner_edge (test_element_sequences.ElementSequenceTests.test_exit_memory_does_not_replace_a_current_measured_inner_edge) ... ok
+test_far_branch_does_not_switch_to_an_unsupported_outer_side (test_element_sequences.ElementSequenceTests.test_far_branch_does_not_switch_to_an_unsupported_outer_side) ... ok
+test_inside_requires_a_visible_turn_toward_the_island (test_element_sequences.ElementSequenceTests.test_inside_requires_a_visible_turn_toward_the_island) ... ok
+test_inside_visible_outer_curve_keeps_original_coverage_contract (test_element_sequences.ElementSequenceTests.test_inside_visible_outer_curve_keeps_original_coverage_contract) ... ok
+test_island_memory_is_bounded_before_entry (test_element_sequences.ElementSequenceTests.test_island_memory_is_bounded_before_entry) ... ok
+test_left_ring_follows_the_island_when_outer_far_closure_is_hidden (test_element_sequences.ElementSequenceTests.test_left_ring_follows_the_island_when_outer_far_closure_is_hidden) ... ok
+test_lower_reverse_merging_branch_is_not_a_ring_entry (test_element_sequences.ElementSequenceTests.test_lower_reverse_merging_branch_is_not_a_ring_entry) ... ok
+test_missing_frame_breaks_continuous_candidate_confirmation (test_element_sequences.ElementSequenceTests.test_missing_frame_breaks_continuous_candidate_confirmation) ... ok
+test_old_exit_hint_cannot_authorize_a_later_opening (test_element_sequences.ElementSequenceTests.test_old_exit_hint_cannot_authorize_a_later_opening) ... ok
+test_ordinary_curves_do_not_latch_roundabout (test_element_sequences.ElementSequenceTests.test_ordinary_curves_do_not_latch_roundabout) ... ok
+test_quality_uses_measured_support_in_control_windows (test_element_sequences.ElementSequenceTests.test_quality_uses_measured_support_in_control_windows) ... ok
+test_r50a45_frozen_two_direction_sequences_do_not_confirm_elements (test_element_sequences.ElementSequenceTests.test_r50a45_frozen_two_direction_sequences_do_not_confirm_elements) ... ok
+test_recorded_cross_exit_association_and_island_entry (test_element_sequences.ElementSequenceTests.test_recorded_cross_exit_association_and_island_entry) ... ok
+test_rectangular_dark_block_does_not_supply_enclosed_island_evidence (test_element_sequences.ElementSequenceTests.test_rectangular_dark_block_does_not_supply_enclosed_island_evidence) ... ok
+test_reverse_s_bend_is_not_a_roundabout_entry (test_element_sequences.ElementSequenceTests.test_reverse_s_bend_is_not_a_roundabout_entry) ... ok
+test_ring_exit_can_close_into_a_curve_without_a_full_straight_frame (test_element_sequences.ElementSequenceTests.test_ring_exit_can_close_into_a_curve_without_a_full_straight_frame) ... ok
+test_ring_exit_completes_after_the_opening_reaches_near_field (test_element_sequences.ElementSequenceTests.test_ring_exit_completes_after_the_opening_reaches_near_field) ... ok
+test_ring_exit_uses_the_new_outer_gap_before_it_leaves_view (test_element_sequences.ElementSequenceTests.test_ring_exit_uses_the_new_outer_gap_before_it_leaves_view) ... ok
+test_single_mode_reset_clears_candidate_votes (test_element_sequences.ElementSequenceTests.test_single_mode_reset_clears_candidate_votes) ... ok
+test_topology_accumulates_before_the_near_island_becomes_visible (test_element_sequences.ElementSequenceTests.test_topology_accumulates_before_the_near_island_becomes_visible) ... ok
+test_visible_outer_edge_supports_curved_corridor (test_element_sequences.ElementSequenceTests.test_visible_outer_edge_supports_curved_corridor) ... ok
+test_visible_roundabout_fork_advances_to_inside (test_element_sequences.ElementSequenceTests.test_visible_roundabout_fork_advances_to_inside) ... ok
+test_wide_opening_bridge_has_distance_and_time_limits (test_element_sequences.ElementSequenceTests.test_wide_opening_bridge_has_distance_and_time_limits) ... ok
+
+======================================================================
+ERROR: test_approach_limit_precedes_entry_commit (test_element_sequences.ElementSequenceTests.test_approach_limit_precedes_entry_commit) (boundary='distance')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\AA\car\Autodrive\car\tests\test_element_sequences.py", line 144, in test_approach_limit_precedes_entry_commit
+    (ROOT/'car/config/vision_config.h').read_text()).group(1))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\��Ҷ\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\��Ҷ\AppData\Local\Programs\Python\Python313\Lib\pathlib\_abc.py", line 633, in read_text
+    return f.read()
+           ~~~~~~^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x80 in position 124: illegal multibyte sequence
+
+----------------------------------------------------------------------
+Ran 33 tests in 7.672s
+
+FAILED (errors=1)

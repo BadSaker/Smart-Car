@@ -1,0 +1,12 @@
+{
+  "path": "C:\\Users\\Sumi\\Desktop\\2026_11_03_12_23_17_Video.avi",
+  "size": 310019072,
+  "sha256": "00b043b9589a78ba18c1b6e71a66248093fbb8ffb1d6cb0e095c228393333d5c",
+  "fps": 50.0,
+  "frames": 4579,
+  "header_frames": 4579,
+  "width": 188,
+  "height": 120,
+  "duration_s": 91.58,
+  "codec": "DIB uncompressed 24-bit BGR bottom-up"
+}

@@ -1,4 +1,5 @@
 """复现控制模式跳变、差速绕过加速度限制及短时丢路回中。"""
+import math
 import ctypes as C
 import os,re,subprocess,unittest
 from pathlib import Path
@@ -11,6 +12,7 @@ class MotionLimitsTests(unittest.TestCase):
     def setUpClass(cls):
         SCRATCH.mkdir(parents=True,exist_ok=True)
         config=(ROOT/'car/config/autonomous_config.h').read_text(encoding='utf-8')
+        cls.overspeed_limit=int(re.search(r'^#define\s+AUTO_MAX_MEASURED_SPEED_MM_S\s+(\d+)',config,re.M)[1])
         for macro in ('AUTO_CRUISE_SPEED_MM_S','AUTO_CURVE_SPEED_MM_S','AUTO_CURVE_OUTER_SPEED_MM_S','AUTO_ELEMENT_SPEED_MM_S'):
             config=re.sub(r'(^#define\s+'+macro+r'\s+)[^\r\n]+',lambda m:m[1]+'1200.0f',config,flags=re.M)
         config=re.sub(r'(^#define\s+AUTO_MAX_DUTY_PERMILLE\s+)[^\r\n]+',lambda m:m[1]+'1000U',config,flags=re.M)
@@ -90,12 +92,14 @@ __declspec(dllexport) void tick(unsigned ms,int mode,int valid,int stop,int left
             for motor in (3,4):self.assertLessEqual(v[motor]-prev[motor],3)
             prev=v
 
-    def test_one_bad_frame_cuts_power_without_a_centering_kick(self):
+    def test_one_bad_frame_recovers_without_a_centering_kick(self):
         self.start()
         for ms in range(8000,8500,10):prev=self.tick(ms,mode=1)
         self.assertNotEqual(prev[0],0)
         bad=self.tick(8500,mode=1,valid=0)
-        self.assertEqual(bad[3:5],(0,0));self.assertEqual(bad[0],prev[0]);self.assertEqual(bad[7],1)
+        self.assertGreater(bad[3],0);self.assertGreater(bad[4],0)
+        self.assertLessEqual(abs(bad[0]-prev[0]),51);self.assertEqual(bad[7],1)
+        for motor in (3,4):self.assertLessEqual(abs(bad[motor]-prev[motor]),12)
 
     def test_sharp_turn_caps_speed_even_if_all_four_settings_match(self):
         self.start()
@@ -106,12 +110,14 @@ __declspec(dllexport) void tick(unsigned ms,int mode,int valid,int stop,int left
         for stop in (0,1):
             previous=self.start();self.assertNotEqual(previous[9],0)
             v=self.tick(8000,valid=0,stop=stop)
-            self.assertEqual(v[9:13],(0,0,0,0))
+            if stop:self.assertEqual(v[9:13],(0,0,0,0))
+            else:
+                self.assertEqual(v[7],1);self.assertTrue(all(math.isfinite(x) for x in v[9:13]))
 
     def test_stop_and_overspeed_bypass_output_ramps(self):
         self.start();v=self.tick(8000,stop=1)
         self.assertEqual(v[3:5],(0,0));self.assertEqual(v[7],0)
-        self.start();v=self.tick(8000,left=2501)
+        self.start();v=self.tick(8000,left=self.overspeed_limit+1)
         self.assertEqual(v[3:5],(0,0));self.assertEqual(v[6],6)
 
     def test_gentle_turn_allocation_does_not_introduce_a_center_speed_dip(self):

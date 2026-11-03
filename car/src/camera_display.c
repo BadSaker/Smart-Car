@@ -66,14 +66,13 @@ static uint8_t display_autonomous_status(void)
              automatic.curve_outer_side,automatic.curve_outer_supported?'+':'-');
     display_line(0,text);
     /* S在路径被拒绝时显示首次撤输出前命令；T/C为当前舵机目标/输出脉宽。 */
-    snprintf(text,sizeof text,"N%uF%u %s S%d T%u C%u",automatic.curve_outer_near_rows,
-             automatic.curve_outer_far_rows,reason,
-             automatic.path_reason==AUTO_PATH_ACCEPTED?automatic.steering_permille:automatic.diagnostic_steering_permille,
+    snprintf(text,sizeof text,"LQ%u RQ%u %s T%u C%u",automatic.live_confidence,
+             automatic.live_observation_confidence,reason,
              servo->target_pulse_us,servo->current_pulse_us);
     if(automatic.marker_phase || automatic.zebra_visible || automatic.zebra_reject ||
        automatic.state==AUTO_DRIVE_FINISHED)
-        snprintf(text,sizeof text,"Z%u %u-%u R%uG%u M%u D%lu",automatic.marker_phase,
-                 automatic.zebra_far_row,automatic.zebra_near_row,automatic.zebra_reject,
+        snprintf(text,sizeof text,"LQ%u RQ%u Z%u R%uG%u M%u D%lu",automatic.live_confidence,
+                 automatic.live_observation_confidence,automatic.marker_phase,automatic.zebra_reject,
                  automatic.geometry_reject,automatic.start_marker_seen,(unsigned long)automatic.finish_advance_mm);
     display_line(16,text);return 1;
 }

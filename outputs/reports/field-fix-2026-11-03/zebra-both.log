@@ -1,0 +1,8 @@
+P0: zebra passage: 2015 checks, 0 failures
+test_gray_passage (test_zebra_passage.ZebraPassageTests.test_gray_passage) ... ok
+P1: zebra passage: 2015 checks, 0 failures
+
+----------------------------------------------------------------------
+Ran 1 test in 13.715s
+
+OK

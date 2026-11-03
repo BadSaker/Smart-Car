@@ -16,7 +16,9 @@ class CameraTimingTests(unittest.TestCase):
         previous=s.zero_pwm_ticks
         s.p['blackout']=True;s.tick()
         self.assertEqual(int(s.data[0]),2)  # first bad frame, before latched fault
-        self.assertGreater(s.zero_pwm_ticks,previous)
+        self.assertEqual(s.zero_pwm_ticks,previous)
+        self.assertEqual(int(s.data[1]),0)
+        self.assertEqual(int(s.data[2]),1)
         self.assertLess(s.min_path_margin,0)
         self.assertEqual(s.running_ticks,0)  # speed floor still excludes acceleration
 

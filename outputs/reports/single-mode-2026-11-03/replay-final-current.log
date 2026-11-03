@@ -1,0 +1,153 @@
+{
+  "frames": 5718,
+  "fps": 50.0,
+  "duration": 114.36,
+  "distinct_runs": 2298,
+  "duplicates": 3420,
+  "sheets": 23,
+  "replay": {
+    "1": {
+      "valid": 914,
+      "elements": {
+        "0": 552,
+        "1": 1826,
+        "2": 332,
+        "3": 7,
+        "4": 3001,
+        "5": 0,
+        "6": 0
+      }
+    }
+  }
+}
+[
+  {
+    "start": 20,
+    "end": 32,
+    "assumed_speed": 0,
+    "valid": 556,
+    "elements": {
+      "1.0": 61,
+      "0.0": 64,
+      "2.0": 34,
+      "3.0": 2,
+      "4.0": 439
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 21,
+    "right_island": 12
+  },
+  {
+    "start": 20,
+    "end": 32,
+    "assumed_speed": 500,
+    "valid": 559,
+    "elements": {
+      "1.0": 73,
+      "0.0": 64,
+      "2.0": 34,
+      "3.0": 2,
+      "4.0": 26,
+      "5.0": 401
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 21,
+    "right_island": 12
+  },
+  {
+    "start": 35,
+    "end": 39,
+    "assumed_speed": 0,
+    "valid": 200,
+    "elements": {
+      "1.0": 49,
+      "2.0": 131,
+      "0.0": 20
+    },
+    "left_fork_open": 3,
+    "reject_on_left_fork_open": {
+      "24.0": 3
+    },
+    "left_island": 6,
+    "right_island": 0
+  },
+  {
+    "start": 35,
+    "end": 39,
+    "assumed_speed": 500,
+    "valid": 200,
+    "elements": {
+      "1.0": 49,
+      "2.0": 131,
+      "0.0": 20
+    },
+    "left_fork_open": 3,
+    "reject_on_left_fork_open": {
+      "24.0": 3
+    },
+    "left_island": 6,
+    "right_island": 0
+  },
+  {
+    "start": 40,
+    "end": 44,
+    "assumed_speed": 0,
+    "valid": 200,
+    "elements": {
+      "1.0": 69,
+      "2.0": 131
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 2
+  },
+  {
+    "start": 40,
+    "end": 44,
+    "assumed_speed": 500,
+    "valid": 178,
+    "elements": {
+      "1.0": 86,
+      "2.0": 114
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 2
+  },
+  {
+    "start": 67,
+    "end": 71,
+    "assumed_speed": 0,
+    "valid": 200,
+    "elements": {
+      "1.0": 97,
+      "0.0": 47,
+      "3.0": 22,
+      "2.0": 34
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 21,
+    "right_island": 0
+  },
+  {
+    "start": 67,
+    "end": 71,
+    "assumed_speed": 500,
+    "valid": 200,
+    "elements": {
+      "1.0": 97,
+      "0.0": 47,
+      "3.0": 22,
+      "2.0": 34
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 21,
+    "right_island": 0
+  }
+]

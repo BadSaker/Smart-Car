@@ -1,0 +1,9 @@
+{
+  "car\\src\\track_vision.c": true,
+  "car\\config\\vision_config.h": true,
+  "car\\src\\autonomous_drive.c": true,
+  "car\\src\\autonomous_control.c": true,
+  "car\\config\\autonomous_config.h": true,
+  "outputs/firmware/autocar.hex": true,
+  "outputs/firmware/autocar.bin": true
+}

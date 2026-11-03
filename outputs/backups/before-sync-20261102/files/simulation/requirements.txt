@@ -1,0 +1,4 @@
+numpy==2.5.0
+Pillow==12.3.0
+# Tk/Tcl ships in simulation/python; hashed Windows wheels are in requirements.lock.
+# GCC is supplied by simulation/toolchain or SIMULATION_CC.

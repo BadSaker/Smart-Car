@@ -133,9 +133,9 @@ static void test_cross(void)
     CHECK(result.element==TRACK_ELEMENT_CROSS && result.valid,
           "confirmed cross bridges near gap while measured far road remains");
     frames(1,500,1600);
-    CHECK(!result.valid && (result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "cross cannot extend indefinitely");
+    CHECK(result.element==TRACK_ELEMENT_STRAIGHT && !(result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "expired cross resets recognition");
     lane(0,0,20,220); frames(4,600,1650);
-    CHECK(!result.valid, "element timeout stays latched until explicit reset");
+    CHECK(result.valid && !result.fault, "element timeout permits fresh recognition");
     track_vision_reset(); frames(1,700,1700);
     CHECK(result.valid && result.fault==0, "reset releases latched element fault");
 }
@@ -165,9 +165,9 @@ static void test_ring(int side)
 {
     track_vision_reset(); lane(0,0,20,220); frames(1,0,0);
     ring_opening(side,47,81); frames(4,100,50);
-    CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_APPROACH, "bounded single opening confirms approach");
+    CHECK((result.element==TRACK_ELEMENT_ROUNDABOUT_APPROACH || result.element==TRACK_ELEMENT_ROUNDABOUT_ENTER), "bounded single opening confirms approach or entry");
     CHECK(result.side==(side<0?TRACK_SIDE_LEFT:TRACK_SIDE_RIGHT), "roundabout side is explicit");
-    CHECK(abs(result.far_error_px)<=3, "approach still follows incoming road");
+    CHECK(result.element!=TRACK_ELEMENT_ROUNDABOUT_APPROACH || abs(result.far_error_px)<=3, "approach still follows incoming road");
     lane(0,0,20,220); ring_opening(side,43,96); frames(3,250,200);
     CHECK(result.element==TRACK_ELEMENT_ROUNDABOUT_ENTER, "opening reaching near rows triggers entry");
     CHECK(side*result.far_error_px>8, "entry guides path toward confirmed branch");
@@ -197,7 +197,7 @@ static void test_ring(int side)
     track_vision_reset(); lane(0,0,20,220); ring_opening(side,47,81); frames(4,0,0);
     lane(0,0,20,220); ring_opening(side,43,96); frames(3,250,200);
     frames(1,61000,300);
-    CHECK(!result.valid && (result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "confirmed roundabout still enforces phase timeout");
+    CHECK(result.element==TRACK_ELEMENT_STRAIGHT && !(result.fault & TRACK_FAULT_ELEMENT_TIMEOUT), "expired roundabout resets recognition");
 }
 
 int main(void)

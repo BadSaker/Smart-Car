@@ -1,0 +1,127 @@
+[
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\autodrive",
+    "Name": "autodrive",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\autodrive-motor",
+    "Name": "autodrive-motor",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\autodrive-pid",
+    "Name": "autodrive-pid",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\autodrive-vision",
+    "Name": "autodrive-vision",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\build-script-tests",
+    "Name": "build-script-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\camera-debug-tests",
+    "Name": "camera-debug-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\control-tuning",
+    "Name": "control-tuning",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\curve-outer-tests",
+    "Name": "curve-outer-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\encoder-feedback-tests",
+    "Name": "encoder-feedback-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\field-fix-20261103",
+    "Name": "field-fix-20261103",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\field-robustness-2026-10-13",
+    "Name": "field-robustness-2026-10-13",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\motion-stability-20261014",
+    "Name": "motion-stability-20261014",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\motor-control-tests",
+    "Name": "motor-control-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\obstacle-20261102",
+    "Name": "obstacle-20261102",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\remote-command-tests",
+    "Name": "remote-command-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\remote-control-tests",
+    "Name": "remote-control-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\remote-integration-tests",
+    "Name": "remote-integration-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\remote-motor-tests",
+    "Name": "remote-motor-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\remote-servo-tests",
+    "Name": "remote-servo-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\servo-control-tests",
+    "Name": "servo-control-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\sync-control",
+    "Name": "sync-control",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\video1723-review",
+    "Name": "video1723-review",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\wifi-layout",
+    "Name": "wifi-layout",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\wifi-spi-tests",
+    "Name": "wifi-spi-tests",
+    "Attributes": 16
+  },
+  {
+    "FullName": "E:\\AA\\car\\Autodrive\\tmp\\zebra-20261102",
+    "Name": "zebra-20261102",
+    "Attributes": 16
+  }
+]

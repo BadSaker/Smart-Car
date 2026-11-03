@@ -32,6 +32,11 @@ API void sim_tick(unsigned now,int feedback_fresh,int start,int stop,
     i.frame_sequence=frame_sequence;i.frame_ms=frame_ms;i.feedback_sequence=feedback_sequence;
     i.servo_generation=drive.status.run_generation;i.servo_service_ms=now;
     i.vision_valid=vision.valid;i.confidence=vision.confidence;i.geometry=vision.geometry;
+    i.observation_confidence=vision.observation_confidence;
+    i.zebra_visible=vision.zebra || vision.zebra_candidate;
+    i.zebra_far_row=vision.zebra_far_row;i.zebra_near_row=vision.zebra_near_row;
+    i.zebra_reject=vision.zebra_reject;i.zebra_clipped=vision.zebra_clipped;
+    i.geometry_reject=vision.geometry.reject_reason;
     i.zebra=vision.zebra && vision.zebra_near_row!=255 && vision.zebra_near_row>=AUTO_ZEBRA_MIN_ROW;
     i.element_fault=(vision.fault & TRACK_FAULT_ELEMENT_TIMEOUT)!=0;
     i.element_slow=vision.element>=TRACK_ELEMENT_CROSS;i.curve=vision.element==TRACK_ELEMENT_CURVE;

@@ -28,25 +28,26 @@ class SideObstacleTests(unittest.TestCase):
     def setUpClass(cls):
         SCRATCH.mkdir(parents=True, exist_ok=True)
         wrapper = SCRATCH/'wrapper.c'
-        wrapper.write_text('''#include "track_vision.h"
+        wrapper.write_text('''#include "track_vision.c"
 __declspec(dllexport) void reset(void){track_vision_reset();}
 __declspec(dllexport) void frame(const unsigned char*p,unsigned ms,unsigned mm,float*v){
 track_vision_result_t o;track_vision_process(p,ms,mm,&o);
 v[0]=o.valid;v[1]=o.geometry.valid;v[2]=o.geometry.target_right_mm;
 v[3]=o.geometry.target_forward_mm;v[4]=o.confidence;v[5]=o.element;v[6]=o.zebra;
-for(int r=0;r<120;++r)v[7+r]=o.center[r];}
+for(int r=0;r<120;++r)v[7+r]=o.center[r];
+v[127]=obstacle.side;v[128]=obstacle.offset_mm;v[129]=obstacle_delta[86];v[130]=obstacle_velocity[86];}
 ''', encoding='utf-8')
         dll=SCRATCH/'side.dll'
         result=subprocess.run([find_compiler(),'-std=c99','-O2','-shared','-Wall','-Wextra','-Werror',
-            '-I'+str(ROOT/'car/include'),'-I'+str(ROOT/'car/config'),str(wrapper),
-            str(ROOT/'car/src/track_vision.c'),'-lm','-o',str(dll)],capture_output=True,text=True,errors='replace')
+            '-I'+str(ROOT/'car/include'),'-I'+str(ROOT/'car/config'),'-I'+str(ROOT/'car/src'),str(wrapper),
+            '-lm','-o',str(dll)],capture_output=True,text=True,errors='replace')
         if result.returncode: raise AssertionError(result.stderr)
         cls.lib=C.CDLL(str(dll));cls.lib.frame.argtypes=[C.POINTER(C.c_uint8),C.c_uint,C.c_uint,C.POINTER(C.c_float)]
 
     def setUp(self): self.lib.reset()
 
     def feed(self, pixels, ms, mm):
-        image=(C.c_uint8*22560).from_buffer_copy(pixels);out=(C.c_float*127)()
+        image=(C.c_uint8*22560).from_buffer_copy(pixels);out=(C.c_float*131)()
         self.lib.frame(image,ms,mm,out);return tuple(out)
 
     def acquire(self, pixels):
@@ -115,9 +116,28 @@ for(int r=0;r<120;++r)v[7+r]=o.center[r];}
         self.feed(pixels,100,0)
         for n in range(5):o=self.feed(pixels,100,0)
         self.assertEqual(o[0],0,'重复帧不能确认留缝砖并授予通行')
-        o=self.feed(pixels,120,20);self.assertEqual(o[:2],(1,1),o[:7])
+        o=self.feed(pixels,120,20);self.assertEqual(o[127],1,'第二个新帧确认障碍，不能瞬移偏移量')
+        held=o[129]
+        for n in range(5):
+            o=self.feed(pixels,120,20)
+            self.assertAlmostEqual(o[129],held,msg='相同时间戳不能推进偏移')
+        for n in range(1,7):o=self.feed(pixels,120+n*20,20+n*20)
+        self.assertEqual(o[:2],(1,1),o[:7])
         self.lib.reset();o=self.feed(scene(),140,40)
         self.assertEqual(o[:2],(1,1));self.assertLess(abs(o[2]),6)
+
+    def test_confirmed_offset_changes_continuously_and_holds_through_a_dropout(self):
+        for side in (-1,1):
+            self.lib.reset();previous=0.0;nonzero=[]
+            for n in range(18):
+                o=self.feed(scene(side) if n>=4 else scene(),n*20,n*20)
+                self.assertLessEqual(abs(o[129]-previous),16.01,'20ms不能横向瞬移超过16mm')
+                if o[127]:nonzero.append(o[129])
+                previous=o[129]
+            self.assertGreater(len({round(x,1) for x in nonzero}),3,'偏移必须经过多个中间值')
+            after=self.feed(scene(),360,360)
+            self.assertEqual(after[127],o[127],'短时丢检不能立刻回中')
+            self.assertGreater(abs(after[129]),10)
 
     def test_tracking_timeout_does_not_reauthorize_an_old_path(self):
         self.acquire(scene(-1));o=self.feed(scene(),6000,220)

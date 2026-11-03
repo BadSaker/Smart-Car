@@ -89,14 +89,14 @@ int main(void)
     CHECK(result.curve_outer_side==TRACK_SIDE_NONE,"fragmented outer cannot enable preference");
     if(VISION_CURVE_OUTER_ENABLED) {
         int missing;
-        for(missing=6;missing<=7;++missing) {
+        for(missing=9;missing<=10;++missing) {
             track_vision_reset();lane(1,70,1,0,0);
             memset(image+86*188,220,missing*188);
             process(0);process(33);process(66);
             CHECK(result.curve_outer_near_rows==23-missing,"near coverage counts only measured outer");
-            CHECK((result.curve_outer_reject==TRACK_OUTER_REJECT_NONE)==(missing==6),
-                  "17 near rows pass coverage and 16 fail; path clearance is checked separately");
-            if(missing==7)CHECK(result.curve_outer_reject==TRACK_OUTER_REJECT_NEAR,"near rejection is reported");
+            CHECK((result.curve_outer_reject==TRACK_OUTER_REJECT_NONE)==(missing==9),
+                  "14 near rows pass coverage and 13 fail; path clearance is checked separately");
+            if(missing==10)CHECK(result.curve_outer_reject==TRACK_OUTER_REJECT_NEAR,"near rejection is reported");
         }
         for(missing=13;missing<=14;++missing) {
             track_vision_reset();lane(1,70,1,0,0);

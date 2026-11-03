@@ -1,0 +1,96 @@
+{
+  "video_sha256": "2b0def5617e8f4cce505845f2513bf031e1f712f39a8bc978f89dde15cda5df7",
+  "frames": 3763,
+  "unique_groups": 1297,
+  "duplicates": 2466,
+  "duration_s": 75.26,
+  "sources": {
+    "car\\src\\track_vision.c": "70a5b8eb775a7ff61d0587faf97a17a5e4740e29fbcfeb88deeac8f96c7d5928",
+    "car\\config\\vision_config.h": "228a1d06d996859593b02fac5b4c75933a76c38b66b3911d18ace16ae5465a44",
+    "car\\src\\autonomous_drive.c": "a2bb1924d3a4c09bb8261c6e8503843306785c73048ef6226786a3e1120bfc9c"
+  },
+  "cases": [
+    {
+      "case": "segment_17_21_0",
+      "processed": 66,
+      "valid": 65,
+      "elements": {
+        "1": 27,
+        "0": 39
+      },
+      "circle_models": 9,
+      "valid_circle_models": 9,
+      "reconstructed_frames": 66
+    },
+    {
+      "case": "segment_17_21_800",
+      "processed": 66,
+      "valid": 65,
+      "elements": {
+        "1": 27,
+        "0": 39
+      },
+      "circle_models": 9,
+      "valid_circle_models": 9,
+      "reconstructed_frames": 63
+    },
+    {
+      "case": "segment_33_43_0",
+      "processed": 178,
+      "valid": 122,
+      "elements": {
+        "1": 114,
+        "0": 6,
+        "2": 7,
+        "3": 18,
+        "4": 33
+      },
+      "circle_models": 101,
+      "valid_circle_models": 71,
+      "reconstructed_frames": 178
+    },
+    {
+      "case": "segment_33_43_800",
+      "processed": 178,
+      "valid": 122,
+      "elements": {
+        "1": 115,
+        "0": 6,
+        "2": 6,
+        "3": 18,
+        "4": 4,
+        "5": 29
+      },
+      "circle_models": 87,
+      "valid_circle_models": 58,
+      "reconstructed_frames": 178
+    },
+    {
+      "case": "segment_46_59_0",
+      "processed": 205,
+      "valid": 151,
+      "elements": {
+        "1": 152,
+        "0": 10,
+        "2": 43
+      },
+      "circle_models": 107,
+      "valid_circle_models": 89,
+      "reconstructed_frames": 205
+    },
+    {
+      "case": "segment_46_59_800",
+      "processed": 205,
+      "valid": 151,
+      "elements": {
+        "1": 154,
+        "0": 10,
+        "2": 41
+      },
+      "circle_models": 105,
+      "valid_circle_models": 89,
+      "reconstructed_frames": 205
+    }
+  ],
+  "limitations": "Overlay interpolation; exact adjacent duplicates excluded in unique cases; assumed distance is not measured odometry; no closed-loop vehicle validation."
+}

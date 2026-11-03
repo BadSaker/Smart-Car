@@ -83,6 +83,7 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         for i in range(3):self.feed(self.cross_image(48,70),i*20,i*5)
         self.feed(self.cross_image(60,112),60,100)
         result=self.feed(self.cross_image(60,112),80,801)
-        self.assertNotEqual(result[5]&1,0,'近场缺边通行仍需单独限距，不能随提前识别放宽盲区预算')
+        self.assertEqual(result[5]&1,0,'识别超距重置状态而不锁存故障')
+        self.assertLess(result[2],2)
 
 if __name__=='__main__':unittest.main(verbosity=2)

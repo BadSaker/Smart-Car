@@ -1,0 +1,16 @@
+{
+  "frames": 4579,
+  "zebra": 1185,
+  "valid": 3631,
+  "obstacle": 0,
+  "elements": {
+    "0": 1017,
+    "1": 3438,
+    "2": 124,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "note": "All AVI frames including duplicates; no vehicle distance; overlay interpolated; sensitivity probe only"
+}

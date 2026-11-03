@@ -1,0 +1,20 @@
+{
+  "Scope": "E:\\AA\\car\\Autodrive\\tmp",
+  "Authorized": "User explicitly requested clearing tmp contents including previous test caches",
+  "RemovedTargets": 23,
+  "Failures": [],
+  "Remaining": [
+    ".gitkeep"
+  ],
+  "InitialFailures": [
+    {
+      "Path": "E:\\AA\\car\\Autodrive\\tmp\\build-script-tests",
+      "Error": "Access to the path 'E:\\AA\\car\\Autodrive\\tmp\\build-script-tests\\test_export_failure_preserves_previous_complete_set-3d16xic_' is denied."
+    },
+    {
+      "Path": "E:\\AA\\car\\Autodrive\\tmp\\wifi-layout",
+      "Error": "Access to the path 'E:\\AA\\car\\Autodrive\\tmp\\wifi-layout\\tmpsbam9yoq' is denied."
+    }
+  ],
+  "FinalStatus": "Complete; two ACL-protected test directories removed with elevated execution, only .gitkeep retained"
+}

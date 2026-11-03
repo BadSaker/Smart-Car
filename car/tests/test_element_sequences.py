@@ -2,6 +2,7 @@
 import ctypes as C
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import unittest
@@ -118,28 +119,32 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         self.assertEqual(result[0],3,'拓扑已连续确认时当前岛边可提交候选')
         self.assertEqual(result[13],1)
 
-    def test_missing_island_cannot_commit_entry_but_does_not_erase_visible_topology(self):
+    def test_island_memory_is_bounded_before_entry(self):
         self.lib.reset();low=self.fork_image(79)
-        for ms in (0,20,40):self.feed(low,ms,ms//4)
+        for ms in (0,20):self.feed(low,ms,ms//4)
         plain=self.fork_image(96)
         for row in range(97,117):
             width=44+(row-30)*123//86;left=93-width//2
             plain[row*188+left:row*188+94]=bytes([220])*(94-left)
-        for ms in (60,80,100):result=self.feed(plain,ms,ms//4)
+        result=self.feed(plain,40,10)
         self.assertEqual(result[0],3)
-        self.assertEqual(result[13],0,'无当前岛边时候选不能取得元素通行许可')
+        self.assertEqual(result[13],1,'短时岛边缺口可由刚确认的证据支持')
+        for ms in (200,220,240):result=self.feed(plain,ms,ms//4)
+        self.assertNotEqual(result[0],4,'过期岛边不能提交入环')
 
     def test_approach_limit_precedes_entry_commit(self):
         low=self.fork_image(79);high=self.fork_image(96)
         for boundary in ('distance','time'):
             with self.subTest(boundary=boundary):
                 self.lib.reset()
-                for ms,mm in ((0,0),(20,5),(40,10)):result=self.feed(low,ms,mm)
+                for ms,mm in ((0,0),(20,5)):result=self.feed(low,ms,mm)
                 self.assertEqual(result[0],3)
                 if boundary=='distance':
-                    self.feed(low,60,690);samples=((80,700),(100,715),(120,720))
+                    limit=int(re.search(r'#define\s+VISION_RING_APPROACH_MAX_MM\s+(\d+)',
+                        (ROOT/'car/config/vision_config.h').read_text(encoding='utf-8')).group(1))
+                    samples=((40,limit+10),(60,limit+15),(80,limit+20))
                 else:
-                    self.feed(low,9940,20);samples=((9960,25),(10060,30),(10080,35))
+                    samples=((10040,25),(10060,30),(10080,35))
                 phases=[self.feed(high,ms,mm)[0] for ms,mm in samples]
                 self.assertNotIn(4,phases,'过期候选不能在确认提交时越过限界')
 
@@ -152,9 +157,55 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
 
     def test_missing_frame_breaks_continuous_candidate_confirmation(self):
         self.lib.reset();image=self.fork_image(79);values=(C.c_int*18)()
-        self.feed(image,0,0);self.feed(image,20,5)
-        self.lib.frame(None,40,10,values)
-        self.assertNotEqual(self.feed(image,60,15)[0],3,'缺失帧不能把不连续证据凑成三帧候选')
+        self.feed(image,0,0)
+        self.lib.frame(None,20,5,values)
+        self.assertNotEqual(self.feed(image,40,10)[0],3,'完全缺帧清除候选，不能借之前的一票')
+        self.assertEqual(self.feed(image,60,15)[0],3,'两张新有效帧可重新确认候选')
+
+    def test_single_mode_reset_clears_candidate_votes(self):
+        self.lib.reset();image=self.fork_image(79)
+        self.feed(image,0,0);self.lib.reset()
+        self.assertNotEqual(self.feed(image,20,5)[0],3)
+        self.assertEqual(self.feed(image,40,10)[0],3)
+
+    def test_enclosed_island_can_enter_without_a_two_ended_scan_gap(self):
+        for mirror in (False,True):
+            image=self.fork_image(79)
+            for row in range(25,81):image[row*188:row*188+94]=bytes([220])*94
+            for row in range(42,69):
+                half=int(20*(max(0,1-((row-55)/14)**2))**.5)
+                image[row*188+55-half:row*188+56+half]=bytes([20])*(2*half+1)
+            if mirror:image=bytearray().join(image[y*188:(y+1)*188][::-1] for y in range(120))
+            self.lib.reset();phases=[]
+            for n in range(8):phases.append(self.feed(image,n*20,n*5)[0])
+            self.assertIn(3,phases);self.assertIn(4,phases)
+
+    def test_rectangular_dark_block_does_not_supply_enclosed_island_evidence(self):
+        image=self.fork_image(79)
+        for row in range(25,117):
+            width=44+(row-30)*123//86;left=93-width//2
+            image[row*188+max(0,left):row*188+94]=bytes([220])*(94-max(0,left))
+        for row in range(25,81):image[row*188:row*188+94]=bytes([220])*94
+        for row in range(42,69):image[row*188+35:row*188+76]=bytes([20])*41
+        self.lib.reset()
+        self.assertFalse(any(self.feed(image,n*20,n*5)[0]>=4 for n in range(8)))
+
+    def test_recorded_cross_exit_association_and_island_entry(self):
+        # Frozen recording pixels have interpolated overlays; zero-distance replay
+        # checks perception only. Exact adjacent duplicates are not new samples.
+        with zipfile.ZipFile(ROOT/'car/tests/fixtures/video1438-cross-ring.zip') as z:
+            segments=json.loads(z.read('metadata.json'))['segments']
+            for name,info in segments.items():
+                self.lib.reset();raw=z.read(info['file']);results={}
+                for n,m in enumerate(info['frames']):
+                    results[m['frame']]=self.feed(bytearray(raw[n*22560:(n+1)*22560]),m['ms'],m['mm'])
+                if name=='20-24.5':
+                    self.assertIn(4,{v[0] for v in results.values()})
+                for frame in (1138,1146,1825,2115):
+                    if frame in results:
+                        v=results[frame]
+                        self.assertEqual(v[2],1,(name,frame,v))
+                        self.assertLessEqual(abs(v[7]),25,(name,frame,v))
 
     def test_angled_cross_preserves_the_incoming_corridor(self):
         result=self.sequence('cross_angled')[-1]
@@ -230,8 +281,8 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
                          '近场仍有明显转弯偏差时不把远处分叉提交为本车入口')
 
     def test_lower_reverse_merging_branch_is_not_a_ring_entry(self):
-        self.assertFalse(any(r[0]>=3 for r in self.sequence('reverse_merge')),
-                         '远端灰岛、近端直边的反向汇入口不能作为环岛入口')
+        self.assertFalse(any(r[0]>=4 for r in self.sequence('reverse_merge')),
+                         '远端灰岛可预告，但近端直边的反向汇入口不能正式入环')
 
     def test_cross_releases_when_near_exit_closes_before_a_curve(self):
         result=self.sequence('cross_exit_curve')
@@ -310,7 +361,7 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
         for ms,mm in ((0,0),(20,5),(40,10)):result=self.feed(first,ms,mm)
         self.assertEqual(result[0],2)
         result=self.feed(first,60,1600)
-        self.assertTrue(result[4]&1);self.assertEqual(result[14],2)
+        self.assertFalse(result[4]&1);self.assertLess(result[0],2);self.assertEqual(result[14],2)
         self.assertEqual(result[15],1);self.assertGreater(result[16],1500)
         original=result[14:18]
         plain=bytearray([20])*(188*120)

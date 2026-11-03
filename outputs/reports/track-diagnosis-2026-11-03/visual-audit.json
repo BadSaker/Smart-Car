@@ -1,0 +1,79 @@
+{
+  "total_frames": 4579,
+  "reviewed_group_sheets": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "reviewed_distinct_consecutive_groups": 1862,
+  "exact_repeat_frames": 2717,
+  "covered_frames": 4579,
+  "cross_runs_current_approximate_replay": [
+    {
+      "first": 1161,
+      "last": 1207,
+      "start_s": 23.22,
+      "end_s": 24.16
+    },
+    {
+      "first": 1382,
+      "last": 1429,
+      "start_s": 27.64,
+      "end_s": 28.6
+    },
+    {
+      "first": 2778,
+      "last": 2806,
+      "start_s": 55.56,
+      "end_s": 56.14
+    }
+  ],
+  "method": "Visual review of all 39 ordered contact sheets at native 188x120 per tile; adjacent byte-identical frames grouped, every frame range covered; original overlays separate from computed labels",
+  "notes": [
+    "0-7s start zebra approaches and exits below image",
+    "8-19s successive curves; far branch edges can become current row endpoints",
+    "23-24s expanded crossing with midline discontinuity",
+    "27.6-28.6s another expanded crossing with split midline",
+    "31-53s largely stationary curved-road scene with pixel and overlay variation",
+    "54.02-54.08s left candidate reaches 3 and 4 but island reject bit8 remains",
+    "55.56-56.16s crossing classification competes around side opening",
+    "61-75s largely stationary view before returning to zebra",
+    "76.4-91.58s return zebra visible; tail remains before marker leaves image, no complete tail-crossing visual evidence"
+  ]
+}

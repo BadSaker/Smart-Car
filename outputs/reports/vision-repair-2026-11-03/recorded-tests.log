@@ -1,0 +1,10 @@
+test_distant_island_does_not_authorize_the_lower_branch_arc (test_recorded_vision_repair.RecordedVisionRepairTests.test_distant_island_does_not_authorize_the_lower_branch_arc) ... ok
+test_first_recorded_corner_keeps_the_observed_turn (test_recorded_vision_repair.RecordedVisionRepairTests.test_first_recorded_corner_keeps_the_observed_turn) ... ok
+test_following_corners_recover_with_or_without_odometry (test_recorded_vision_repair.RecordedVisionRepairTests.test_following_corners_recover_with_or_without_odometry) ... ok
+test_recorded_brick_confirmation_survives_one_damaged_row_group (test_recorded_vision_repair.RecordedVisionRepairTests.test_recorded_brick_confirmation_survives_one_damaged_row_group) ... ok
+test_recorded_ring_has_valid_entry_and_inside_paths (test_recorded_vision_repair.RecordedVisionRepairTests.test_recorded_ring_has_valid_entry_and_inside_paths) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 5.521s
+
+OK

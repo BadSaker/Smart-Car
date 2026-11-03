@@ -1,0 +1,129 @@
+{
+  "exact_duplicate_adjacent_frames": 2717,
+  "longest_identical_runs": [
+    {
+      "first": 2243,
+      "last": 2255,
+      "duration_s": 0.26
+    },
+    {
+      "first": 1857,
+      "last": 1867,
+      "duration_s": 0.22
+    },
+    {
+      "first": 2333,
+      "last": 2342,
+      "duration_s": 0.2
+    },
+    {
+      "first": 2974,
+      "last": 2983,
+      "duration_s": 0.2
+    },
+    {
+      "first": 690,
+      "last": 698,
+      "duration_s": 0.18
+    },
+    {
+      "first": 1089,
+      "last": 1097,
+      "duration_s": 0.18
+    },
+    {
+      "first": 1822,
+      "last": 1830,
+      "duration_s": 0.18
+    },
+    {
+      "first": 1985,
+      "last": 1993,
+      "duration_s": 0.18
+    },
+    {
+      "first": 268,
+      "last": 275,
+      "duration_s": 0.16
+    },
+    {
+      "first": 1474,
+      "last": 1481,
+      "duration_s": 0.16
+    }
+  ],
+  "interpolated_overlay": {
+    "frames": 916,
+    "valid": 724,
+    "zebra": 236,
+    "obstacle": 0,
+    "elements": {
+      "0": 200,
+      "1": 705,
+      "2": 11,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "interpolated_overlay_static3": {
+    "frames": 184,
+    "valid": 144,
+    "zebra": 47,
+    "obstacle": 0,
+    "elements": {
+      "0": 40,
+      "1": 143,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "luminance_with_overlay": {
+    "frames": 916,
+    "valid": 587,
+    "zebra": 238,
+    "obstacle": 0,
+    "elements": {
+      "0": 199,
+      "1": 705,
+      "2": 12,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "luminance_with_overlay_static3": {
+    "frames": 184,
+    "valid": 120,
+    "zebra": 48,
+    "obstacle": 0,
+    "elements": {
+      "0": 39,
+      "1": 144,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "limitations": [
+    "Overlay pixels are lost; interpolation is approximate.",
+    "No encoder/time/firmware identity metadata.",
+    "Sequential replay sampled every 100 ms and distance fixed at zero; not a closed loop or vehicle fault reconstruction.",
+    "Static3 repeats a frame artificially to probe appearance eligibility only."
+  ],
+  "compiler": "E:\\AA\\car\\Autodrive\\simulation\\toolchain\\mingw64\\bin\\gcc.exe",
+  "source_sha256": {
+    "car\\src\\track_vision.c": "c5c1f689f2f1ebe3ee10bb9c1fd2045452a9fb909548255f7e4157b0e22685d2",
+    "car\\config\\vision_config.h": "447c39b5ea4b43cd771f60c022d449781f0451c086f2fcb0e4995d24ebbdc8b6",
+    "car\\src\\autonomous_drive.c": "9c20229c506679d188c793982bcd5d676158669f99914fc42640be1de0b49316",
+    "car\\src\\autonomous_control.c": "6b89dc71437d35123dfba618ce1adf16268381d64aa1a231eedd9cfd4da41451",
+    "car\\config\\autonomous_config.h": "9a91303171a74ec78b2ed4b8cb13627aac427382ff0d5a351ff57061e7e858b8"
+  }
+}

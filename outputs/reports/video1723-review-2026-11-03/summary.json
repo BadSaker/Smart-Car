@@ -1,0 +1,17 @@
+{
+  "frames": 2963,
+  "unique_groups": 789,
+  "duration_s": 59.26,
+  "fps_assumption": 50,
+  "video_sha256": "ee069b26bea5afc5bf9dbd323bb6ca5cfffdc180455da0e2b361a6d5161eba1a",
+  "pages": 8,
+  "firmware": {
+    "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.hex": "0b8bb9491b72bdd2e808894417c31c26f57eca765ba4d8b8870b7885329a0206",
+    "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.bin": "275773374fb5eeb4726efc5439707cccc812e0badc8a8f1d07c08e58c259b1fb"
+  },
+  "sources": {
+    "E:\\AA\\car\\Autodrive\\car\\src\\track_vision.c": "70a5b8eb775a7ff61d0587faf97a17a5e4740e29fbcfeb88deeac8f96c7d5928",
+    "E:\\AA\\car\\Autodrive\\car\\config\\vision_config.h": "228a1d06d996859593b02fac5b4c75933a76c38b66b3911d18ace16ae5465a44",
+    "E:\\AA\\car\\Autodrive\\car\\src\\autonomous_drive.c": "a2bb1924d3a4c09bb8261c6e8503843306785c73048ef6226786a3e1120bfc9c"
+  }
+}

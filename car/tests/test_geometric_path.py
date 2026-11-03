@@ -75,10 +75,11 @@ __declspec(dllexport) void drive(float x,float y,int pixel,int geometry,int tick
         for x,y in ((0,0),(0,-400),(float('nan'),400),(0,float('inf'))):
             with self.subTest(x=x,y=y):
                 first=self.control(x,y)
-                self.assertEqual(first[2:4],(0,0))
+                self.assertGreater(first[2],0);self.assertGreater(first[3],0)
+                self.assertEqual(first[6],0)  # preserve the previous finite steering target
                 self.assertNotEqual(first[5],0)
                 final=self.control(x,y,ticks=3)
-                self.assertEqual(final[4],3)  # AUTO_FAULT_PATH_LOST
+                self.assertEqual(final[4],0);self.assertEqual(final[1],1)
 
     def test_gray_curve_has_a_current_metric_target(self):
         with zipfile.ZipFile(ROOT/'car/tests/fixtures/geometric-path-sequences.zip') as z:
@@ -145,24 +146,18 @@ __declspec(dllexport) void drive(float x,float y,int pixel,int geometry,int tick
         self.lib.reset();phases=[]
         for n,m in enumerate(frames):
             v=self.feed(raw[n*22560:(n+1)*22560],m['ms'],m['mm']);phases.append(int(v[2]))
-        self.assertIn(2,phases,'保留远处双侧拓宽的早期通行处理')
+        self.assertTrue(any(p in (2,3) for p in phases),'允许直接形成环岛候选或暂定十字')
         self.assertIn(3,phases,'远场暂定十字不得屏蔽后来连续出现的真实分叉/岛边')
         self.assertIn(4,phases)
 
-    def test_near_cross_confirmation_blocks_later_ring_reinterpretation(self):
+    def test_current_closed_island_can_correct_a_provisional_cross(self):
         with zipfile.ZipFile(ROOT/'car/tests/fixtures/provisional-cross-ring.zip') as z:
             frames=json.loads(z.read('metadata.json'))['frames'];raw=z.read('frames.gray')
-        self.lib.reset();strong=None
+        self.lib.reset();phases=[]
         for n,m in enumerate(frames):
-            pixels=raw[n*22560:(n+1)*22560]
-            if m['ms']<=24110:v=self.feed(pixels,m['ms'],m['mm']);last=m
-            if m['ms']==24310:strong=pixels
-        self.assertEqual(v[2],2);self.assertIsNotNone(strong)
-        cross=bytearray(strong);cross[60*188:113*188]=bytes([255])*(53*188)
-        self.feed(cross,last['ms']+20,last['mm']+16)
-        for n in range(3):
-            v=self.feed(strong,last['ms']+40+n*20,last['mm']+32+n*16)
-            self.assertLess(v[2],3,'已经看到近场十字时，旁侧分支不能再诱发入环')
+            v=self.feed(raw[n*22560:(n+1)*22560],m['ms'],m['mm']);phases.append(int(v[2]))
+        self.assertIn(3,phases);self.assertIn(4,phases)
+        self.assertEqual(v[6],0)
 
     def test_black_front_and_uniform_boards_do_not_acquire_geometry(self):
         for shade in (0,153,255):

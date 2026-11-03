@@ -1,0 +1,126 @@
+[
+  {
+    "start": 20,
+    "end": 32,
+    "assumed_speed": 0,
+    "valid": 146,
+    "elements": {
+      "1.0": 61,
+      "0.0": 64,
+      "2.0": 475
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 9
+  },
+  {
+    "start": 20,
+    "end": 32,
+    "assumed_speed": 500,
+    "valid": 146,
+    "elements": {
+      "1.0": 61,
+      "0.0": 64,
+      "2.0": 475
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 9
+  },
+  {
+    "start": 35,
+    "end": 39,
+    "assumed_speed": 0,
+    "valid": 200,
+    "elements": {
+      "1.0": 49,
+      "2.0": 131,
+      "0.0": 20
+    },
+    "left_fork_open": 3,
+    "reject_on_left_fork_open": {
+      "26.0": 3
+    },
+    "left_island": 6,
+    "right_island": 0
+  },
+  {
+    "start": 35,
+    "end": 39,
+    "assumed_speed": 500,
+    "valid": 200,
+    "elements": {
+      "1.0": 49,
+      "2.0": 131,
+      "0.0": 20
+    },
+    "left_fork_open": 3,
+    "reject_on_left_fork_open": {
+      "26.0": 3
+    },
+    "left_island": 6,
+    "right_island": 0
+  },
+  {
+    "start": 40,
+    "end": 44,
+    "assumed_speed": 0,
+    "valid": 118,
+    "elements": {
+      "1.0": 78,
+      "0.0": 1,
+      "2.0": 121
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 2
+  },
+  {
+    "start": 40,
+    "end": 44,
+    "assumed_speed": 500,
+    "valid": 118,
+    "elements": {
+      "1.0": 78,
+      "0.0": 1,
+      "2.0": 121
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 2
+  },
+  {
+    "start": 67,
+    "end": 71,
+    "assumed_speed": 0,
+    "valid": 200,
+    "elements": {
+      "1.0": 119,
+      "0.0": 47,
+      "2.0": 34
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 0
+  },
+  {
+    "start": 67,
+    "end": 71,
+    "assumed_speed": 500,
+    "valid": 200,
+    "elements": {
+      "1.0": 119,
+      "0.0": 47,
+      "2.0": 34
+    },
+    "left_fork_open": 0,
+    "reject_on_left_fork_open": {},
+    "left_island": 0,
+    "right_island": 0
+  }
+]

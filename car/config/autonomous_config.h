@@ -16,7 +16,7 @@
 #define AUTO_CURVE_SPEED_MM_S 900.0f
 /* 仅用于已运行且本帧可靠外侧支持充分的普通弯道。 */
 #define AUTO_CURVE_OUTER_SPEED_MM_S 800.0f
-#define AUTO_CURVE_OUTER_MIN_CONFIDENCE 40U
+#define AUTO_CURVE_OUTER_MIN_CONFIDENCE 35U
 #define AUTO_ELEMENT_SPEED_MM_S 800.0f
 #define AUTO_FINISH_SPEED_MM_S 100.0f
 #define AUTO_ACCEL_MM_S2 200.0f
@@ -59,17 +59,20 @@
 #define AUTO_CENTER_SETTLE_MS 500U
 /* 同步图传期间沿用最新有效控制，不按视觉或舵机服务年龄停车。 */
 #define AUTO_FEEDBACK_MAX_AGE_MS 30U
-#define AUTO_MIN_CONFIDENCE 45U
+#define AUTO_MIN_CONFIDENCE 40U
 #if AUTO_CURVE_OUTER_MIN_CONFIDENCE == 0U || AUTO_CURVE_OUTER_MIN_CONFIDENCE > AUTO_MIN_CONFIDENCE
 #error "外侧循迹Q门限必须在1到普通Q门限之间"
 #endif
 /* 已确认且限距的十字/环岛允许部分缺边；未确认候选不得使用此门限。 */
-#define AUTO_ELEMENT_MIN_CONFIDENCE 35U
-#define AUTO_START_GOOD_FRAMES 3U
-#define AUTO_BAD_FRAMES_TO_STOP 3U
+#define AUTO_ELEMENT_MIN_CONFIDENCE 30U
 #define AUTO_WRONG_DIRECTION_MM_S 30
 #define AUTO_WRONG_DIRECTION_MS 100U
-#define AUTO_MAX_MEASURED_SPEED_MM_S 2500
+#define AUTO_MAX_MEASURED_SPEED_MM_S 4000
+/* 可恢复空转抑制使用原始轮速；硬故障上限与此独立。 */
+#define AUTO_SPEED_CUT_MM_S 2500
+#define AUTO_SPEED_RESUME_MM_S 2200
+#define AUTO_SPEED_RESUME_SAMPLES 3U
+#define AUTO_RECOVERY_SPEED_MM_S 200.0f
 #define AUTO_STALL_SPEED_MM_S 10
 #define AUTO_STALL_DUTY_PERMILLE 55U
 #define AUTO_STALL_TIME_MS 1500U
@@ -79,20 +82,15 @@
 #define AUTO_ZEBRA_CONFIRM_FRAMES 3U
 #define AUTO_ZEBRA_CLEAR_FRAMES 5U
 #define AUTO_ZEBRA_CLEAR_DISTANCE_MM 500U
-/* 接近/通过阶段即使用终点低速；有界标记过程不覆盖一般失路保护。 */
-#define AUTO_ZEBRA_PASS_MAX_MS 15000U
-#define AUTO_ZEBRA_PASS_MAX_MM 1500U
+/* 标记时效只供诊断/测试，不作为识别停车门槛。 */
 #define AUTO_ZEBRA_FRAME_MAX_AGE_MS 250U
 #define AUTO_MIN_LAP_DISTANCE_MM 5000U
 #define AUTO_MIN_LAP_TIME_MS 8000U
-/* 从近场标记确认位置继续前进的参考距离；须实测相机视野、车长、制动余量。 */
-#define AUTO_FINISH_ADVANCE_MM 500U
-#define AUTO_FINISH_MAX_TIME_MS 10000U
+/* 末端可靠离开视野后继续前进的参考距离；须实测后轮越线及制动余量。 */
+#define AUTO_FINISH_ADVANCE_MM 1000U
+#define AUTO_FINISH_EXIT_ROW 112U
 #if AUTO_ZEBRA_CONFIRM_FRAMES < 1U || AUTO_ZEBRA_CONFIRM_FRAMES > 255U || AUTO_ZEBRA_CLEAR_FRAMES < 1U || AUTO_ZEBRA_CLEAR_FRAMES > 255U || AUTO_ZEBRA_MIN_ROW > 117U
 #error "斑马线控制确认配置无效"
-#endif
-#if AUTO_ZEBRA_PASS_MAX_MS == 0U || AUTO_ZEBRA_PASS_MAX_MM == 0U || AUTO_ZEBRA_FRAME_MAX_AGE_MS == 0U
-#error "斑马线过程必须具有有限距离、时间与图像时效"
 #endif
 #if AUTO_TICK_MS != 10U
 #error "自动驾驶控制周期必须为10ms"
@@ -109,7 +107,10 @@
 #if AUTO_MOTOR1_IS_LEFT != 0 && AUTO_MOTOR1_IS_LEFT != 1
 #error "电机左右映射只能为0或1"
 #endif
-#if AUTO_FINISH_ADVANCE_MM == 0U || AUTO_FINISH_ADVANCE_MM > 900U
-#error "终点参考推进距离必须在1..900mm内，并另行实测停车位置"
+#if AUTO_FINISH_ADVANCE_MM == 0U || AUTO_FINISH_ADVANCE_MM > 1500U
+#error "终点参考推进距离必须在1..1500mm内，并另行实测停车位置"
+#endif
+#if AUTO_SPEED_RESUME_MM_S <= 0 || AUTO_SPEED_RESUME_MM_S >= AUTO_SPEED_CUT_MM_S || AUTO_SPEED_CUT_MM_S > AUTO_MAX_MEASURED_SPEED_MM_S || AUTO_SPEED_RESUME_SAMPLES < 1U
+#error "轮速抑制/恢复/硬故障门限必须有序且有恢复确认"
 #endif
 #endif

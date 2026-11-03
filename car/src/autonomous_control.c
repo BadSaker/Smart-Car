@@ -10,7 +10,7 @@
 
 typedef struct {
     uint32_t sequence,time_ms;
-    uint8_t valid,confidence,zebra,element_fault,element_slow,element_supported,curve;
+    uint8_t valid,confidence,observation_confidence,zebra,element_fault,element_slow,element_supported,curve;
     uint8_t zebra_visible,zebra_far_row,zebra_near_row,zebra_reject,zebra_clipped,geometry_reject;
     uint8_t near_supported,outer_supported,outer_side,outer_near_rows,outer_far_rows,element;
     autonomous_path_reason_t outer_reject_reason;
@@ -46,8 +46,9 @@ void autonomous_control_publish_vision(const track_vision_result_t *v,uint32_t s
     uint32_t mask;
     if(!v)return;
     m.sequence=sequence;m.time_ms=frame_ms;m.valid=v->valid;m.confidence=v->confidence;
+    m.observation_confidence=v->observation_confidence;
     m.zebra=v->zebra && v->zebra_near_row!=255 && v->zebra_near_row>=AUTO_ZEBRA_MIN_ROW;
-    m.zebra_visible=v->zebra;m.zebra_far_row=v->zebra_far_row;m.zebra_near_row=v->zebra_near_row;
+    m.zebra_visible=v->zebra || v->zebra_candidate;m.zebra_far_row=v->zebra_far_row;m.zebra_near_row=v->zebra_near_row;
     m.zebra_reject=v->zebra_reject;m.zebra_clipped=v->zebra_clipped;m.geometry_reject=v->geometry.reject_reason;
     m.element_fault=(v->fault & TRACK_FAULT_ELEMENT_TIMEOUT)!=0;
     m.element_slow=v->element>=TRACK_ELEMENT_CROSS;
@@ -108,6 +109,7 @@ void autonomous_control_tick_10ms(uint32_t now_ms)
     i.forward_step_um=(int32_t)(counts*ENCODER_WHEEL_CIRCUMFERENCE_UM*ENCODER_TO_WHEEL_RATIO_DEN/
         (2LL*ENCODER_PULSES_PER_REV*ENCODER_STEP_EDGE_FACTOR*ENCODER_TO_WHEEL_RATIO_NUM));
     i.frame_sequence=v.sequence;i.frame_ms=v.time_ms;i.vision_valid=v.valid;i.confidence=v.confidence;
+    i.observation_confidence=v.observation_confidence;
     i.zebra=v.zebra;i.element_fault=v.element_fault;i.element_slow=v.element_slow;i.element_supported=v.element_supported;i.curve=v.curve;
     i.zebra_visible=v.zebra_visible;i.zebra_far_row=v.zebra_far_row;i.zebra_near_row=v.zebra_near_row;
     i.zebra_reject=v.zebra_reject;i.zebra_clipped=v.zebra_clipped;i.geometry_reject=v.geometry_reject;
@@ -177,6 +179,7 @@ uint8_t autonomous_control_service(uint32_t now_ms)
     uint32_t mask,sequence;
     uint16_t pulse_before;
     uint8_t consumed;
+    /* 只由主循环在停车状态同步视觉模式，避免PIT与视觉处理并发reset。 */
     /* 同时快照控制结果及其帧确认；硬件调用期间新PIT不能替旧输出确认。 */
     mask=__get_PRIMASK();__disable_irq();
     s=published_status;consumed=frame_consumed;sequence=vision_mailbox.sequence;

@@ -1,0 +1,20 @@
+[
+  {
+    "frame": 1146,
+    "valid": 1,
+    "near": 1,
+    "far": 1
+  },
+  {
+    "frame": 1825,
+    "valid": 1,
+    "near": -3,
+    "far": -14
+  },
+  {
+    "frame": 2115,
+    "valid": 1,
+    "near": -14,
+    "far": -13
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\src\\track_vision.c",
+    "Hash": "A1603B0827BA2D0919BE31F2DA5035972AB5FB0D2C68DE273CC05208DBFF41D6"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\src\\autonomous_drive.c",
+    "Hash": "A2BB1924D3A4C09BB8261C6E8503843306785C73048EF6226786A3E1120BFC9C"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\src\\autonomous_control.c",
+    "Hash": "B89EEBBEF1EA5B3613DAB0F75370C955A2D9A96C31825B4EB4928DC01035CC3F"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\src\\camera_display.c",
+    "Hash": "2C34BEBAB87984D811164D4FA99CFBCFEEBCDA920698274B89A4D2BDD43731F8"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\config\\vision_config.h",
+    "Hash": "691C5DFDB497F65B98A0A6E0D7538101F2008F992BC1E080DE1E0240D0CADEFB"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\config\\autonomous_config.h",
+    "Hash": "D3C61B8954E489E75274B264012246191D6176AD6A702A71597E7C47DA761007"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\include\\track_vision.h",
+    "Hash": "A1581059BD019CB842CB22E3F4E1369C810642447AABD54023057C208320856B"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\include\\autonomous_drive.h",
+    "Hash": "77E268A871D361D903B75138AF3689198AACED407553E252BEB3FAF8195EDC1C"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\car\\tests\\fixtures\\video1438-cross-ring.zip",
+    "Hash": "2EBC9A7802ED28AAC4390ED8A087D2D3D8FEA9B9E095991E451122DB704CF618"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.hex",
+    "Hash": "0B8BB9491B72BDD2E808894417C31C26F57ECA765BA4D8B8870B7885329A0206"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.bin",
+    "Hash": "275773374FB5EEB4726EFC5439707CCCC812E0BADC8A8F1D07C08E58C259B1FB"
+  }
+]

@@ -21,7 +21,7 @@ typedef struct {
     uint32_t now_ms, frame_sequence, frame_ms, feedback_sequence;
     uint32_t servo_generation, servo_service_ms;
     uint8_t ready, remote_busy, start_pressed, stop_pressed, cancel_pressed;
-    uint8_t vision_valid, confidence, zebra, element_fault, element_slow, element_supported, curve;
+    uint8_t vision_valid, confidence, observation_confidence, zebra, element_fault, element_slow, element_supported, curve;
     uint8_t zebra_visible,zebra_far_row,zebra_near_row,zebra_reject,zebra_clipped,geometry_reject;
     uint8_t vision_near_supported, curve_outer_supported, curve_outer_side;
     uint8_t curve_outer_near_rows, curve_outer_far_rows, element;
@@ -35,6 +35,8 @@ typedef struct {
     autonomous_state_t state;
     autonomous_fault_t fault;
     uint8_t active, start_marker_seen, confidence;
+    uint8_t live_confidence,live_observation_confidence,live_vision_valid;
+    uint8_t speed_limited,odometry_trusted,recovering_path,finish_exit_confirmed;
     uint8_t minimum_confidence, vision_valid, element, curve_outer_side, curve_outer_supported;
     uint8_t curve_outer_near_rows, curve_outer_far_rows;
     /* marker_phase:0无标记，1接近，2通过，3离开；Z行号255为无当前证据。 */
@@ -62,9 +64,12 @@ typedef struct {
     uint32_t key_time_ms, wrong_left_ms, wrong_right_ms, stall_left_ms, stall_right_ms;
     uint32_t steering_frame_ms;
     uint32_t marker_pass_ms,marker_pass_mm;
+    uint32_t finish_clear_mm;
+    float finish_entry_speed,finish_speed_cap;
+    uint8_t speed_resume_left,speed_resume_right;
+    uint8_t finish_tail_seen,finish_clear_pending;
     float left_filtered, right_filtered;
     float steering_position, steering_velocity;
-    uint8_t path_suspended;
     uint8_t config_valid, key_sample, key_stable, key_armed, good_frames, bad_frames;
     uint8_t marker_present, marker_armed, zebra_frames, clear_frames, steering_initialized;
     uint8_t steering_geometry;

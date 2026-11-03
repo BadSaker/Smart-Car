@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar_normalization_check_20261014_184702.bin",
+    "Hash": "D6B4A3098AC216FCD91ABA681F2FB95E9302FBCC8F9BFFAD21DDA52661A5D6CF"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar_normalization_check_20261014_184702.hex",
+    "Hash": "147566201A6314E832D6258D034F71F062734952A833B88DC0EB158CAF375373"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.bin",
+    "Hash": "275773374FB5EEB4726EFC5439707CCCC812E0BADC8A8F1D07C08E58C259B1FB"
+  },
+  {
+    "Path": "E:\\AA\\car\\Autodrive\\outputs\\firmware\\autocar.hex",
+    "Hash": "0B8BB9491B72BDD2E808894417C31C26F57ECA765BA4D8B8870B7885329A0206"
+  }
+]

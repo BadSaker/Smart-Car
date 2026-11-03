@@ -1,0 +1,360 @@
+{
+  "video_sha256": "2b0def5617e8f4cce505845f2513bf031e1f712f39a8bc978f89dde15cda5df7",
+  "frames": 3763,
+  "unique_groups": 1297,
+  "duplicates": 2466,
+  "duration_s": 75.26,
+  "sources": {
+    "car\\src\\track_vision.c": "fe2911f604dfe5cd1fe0a5a8a85168bc070f465bd6f9fc065d329cb8f8e47d8d",
+    "car\\config\\vision_config.h": "691c5dfdb497f65b98a0a6e0d7538101f2008f992bc1e080de1e0240d0cadefb",
+    "car\\src\\autonomous_drive.c": "a2bb1924d3a4c09bb8261c6e8503843306785c73048ef6226786a3e1120bfc9c"
+  },
+  "cases": [
+    {
+      "case": "segment_17_21_0",
+      "processed": 66,
+      "valid": 62,
+      "elements": {
+        "1": 27,
+        "0": 39
+      },
+      "circle_models": 9,
+      "valid_circle_models": 9,
+      "reconstructed_frames": 66,
+      "transitions": [
+        [
+          17.08,
+          1
+        ],
+        [
+          18.1,
+          0
+        ],
+        [
+          19.14,
+          1
+        ],
+        [
+          19.92,
+          0
+        ]
+      ]
+    },
+    {
+      "case": "segment_17_21_800",
+      "processed": 66,
+      "valid": 62,
+      "elements": {
+        "1": 27,
+        "0": 39
+      },
+      "circle_models": 9,
+      "valid_circle_models": 9,
+      "reconstructed_frames": 63,
+      "transitions": [
+        [
+          17.08,
+          1
+        ],
+        [
+          18.1,
+          0
+        ],
+        [
+          19.14,
+          1
+        ],
+        [
+          19.92,
+          0
+        ]
+      ]
+    },
+    {
+      "case": "segment_33_43_0",
+      "processed": 178,
+      "valid": 122,
+      "elements": {
+        "1": 114,
+        "0": 6,
+        "2": 7,
+        "3": 1,
+        "4": 50
+      },
+      "circle_models": 105,
+      "valid_circle_models": 75,
+      "reconstructed_frames": 178,
+      "transitions": [
+        [
+          33.02,
+          1
+        ],
+        [
+          33.62,
+          0
+        ],
+        [
+          33.72,
+          1
+        ],
+        [
+          34.14,
+          2
+        ],
+        [
+          34.46,
+          1
+        ],
+        [
+          34.68,
+          0
+        ],
+        [
+          34.88,
+          1
+        ],
+        [
+          39.92,
+          0
+        ],
+        [
+          40.08,
+          3
+        ],
+        [
+          40.1,
+          4
+        ]
+      ]
+    },
+    {
+      "case": "segment_33_43_800",
+      "processed": 178,
+      "valid": 122,
+      "elements": {
+        "1": 114,
+        "0": 6,
+        "2": 7,
+        "3": 1,
+        "4": 15,
+        "5": 35
+      },
+      "circle_models": 88,
+      "valid_circle_models": 59,
+      "reconstructed_frames": 178,
+      "transitions": [
+        [
+          33.02,
+          1
+        ],
+        [
+          33.62,
+          0
+        ],
+        [
+          33.72,
+          1
+        ],
+        [
+          34.14,
+          2
+        ],
+        [
+          34.46,
+          1
+        ],
+        [
+          34.68,
+          0
+        ],
+        [
+          34.88,
+          1
+        ],
+        [
+          39.92,
+          0
+        ],
+        [
+          40.08,
+          3
+        ],
+        [
+          40.1,
+          4
+        ],
+        [
+          41.0,
+          5
+        ]
+      ]
+    },
+    {
+      "case": "segment_46_59_0",
+      "processed": 205,
+      "valid": 146,
+      "elements": {
+        "1": 48,
+        "0": 4,
+        "2": 153
+      },
+      "circle_models": 37,
+      "valid_circle_models": 30,
+      "reconstructed_frames": 205,
+      "transitions": [
+        [
+          46.0,
+          1
+        ],
+        [
+          46.14,
+          0
+        ],
+        [
+          46.16,
+          1
+        ],
+        [
+          46.62,
+          2
+        ],
+        [
+          49.62,
+          1
+        ],
+        [
+          50.22,
+          0
+        ],
+        [
+          50.32,
+          1
+        ],
+        [
+          51.08,
+          0
+        ],
+        [
+          51.12,
+          1
+        ],
+        [
+          51.14,
+          2
+        ],
+        [
+          51.6,
+          1
+        ],
+        [
+          51.88,
+          2
+        ],
+        [
+          58.2,
+          1
+        ]
+      ]
+    },
+    {
+      "case": "segment_46_59_800",
+      "processed": 205,
+      "valid": 147,
+      "elements": {
+        "1": 98,
+        "0": 7,
+        "2": 100
+      },
+      "circle_models": 47,
+      "valid_circle_models": 40,
+      "reconstructed_frames": 205,
+      "transitions": [
+        [
+          46.0,
+          1
+        ],
+        [
+          46.14,
+          0
+        ],
+        [
+          46.16,
+          1
+        ],
+        [
+          46.62,
+          2
+        ],
+        [
+          48.58,
+          1
+        ],
+        [
+          49.3,
+          0
+        ],
+        [
+          49.32,
+          1
+        ],
+        [
+          50.22,
+          0
+        ],
+        [
+          50.32,
+          1
+        ],
+        [
+          51.08,
+          0
+        ],
+        [
+          51.12,
+          1
+        ],
+        [
+          51.14,
+          2
+        ],
+        [
+          51.6,
+          1
+        ],
+        [
+          51.88,
+          2
+        ],
+        [
+          53.82,
+          0
+        ],
+        [
+          53.9,
+          1
+        ],
+        [
+          54.74,
+          0
+        ],
+        [
+          54.82,
+          2
+        ],
+        [
+          56.76,
+          1
+        ],
+        [
+          58.1,
+          2
+        ],
+        [
+          58.3,
+          1
+        ]
+      ]
+    }
+  ],
+  "limitations": "Overlay interpolation; exact adjacent duplicates excluded in unique cases; assumed distance is not measured odometry; no closed-loop vehicle validation."
+}

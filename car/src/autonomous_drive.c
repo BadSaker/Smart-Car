@@ -31,10 +31,11 @@ static uint8_t minimum_confidence(const autonomous_drive_t *d,const autonomous_d
 static void update_path_status(autonomous_drive_t *d,const autonomous_drive_input_t *i)
 {
     autonomous_path_reason_t previous_reason=d->status.path_reason;
-    /* 路径及元素故障锁存触发帧；停车后新图像不能改写Q/V/E与拒绝原因。 */
-    if(d->status.state==AUTO_DRIVE_FAULT &&
-       (d->status.fault==AUTO_FAULT_PATH_LOST || d->status.fault==AUTO_FAULT_ELEMENT ||
-        d->status.fault==AUTO_FAULT_MARKER_LIMIT)) return;
+    /* 实时观测与故障触发证据分开；故障锁存不阻止实时Q更新。 */
+    d->status.live_confidence=i->confidence;
+    d->status.live_observation_confidence=i->observation_confidence;
+    d->status.live_vision_valid=i->vision_valid;
+    /* 单一识别模式持续更新诊断；硬件故障证据另由trace保存。 */
     d->status.confidence=i->confidence;d->status.minimum_confidence=minimum_confidence(d,i);
     d->status.vision_valid=i->vision_valid;d->status.element=i->element;
     d->status.curve_outer_side=i->curve_outer_side;d->status.curve_outer_supported=i->curve_outer_supported;
@@ -64,8 +65,16 @@ static uint16_t duty_slew(uint16_t previous,float target)
 /* 限制最终每个执行器；差速不能绕过单边上升/下降约束。保护停车另行直接置零。 */
 static void coordinated_duty_slew(autonomous_drive_t *d,float left,float right)
 {
+    uint16_t previous_left=d->status.left_duty_permille,previous_right=d->status.right_duty_permille;
     d->status.left_duty_permille=duty_slew(d->status.left_duty_permille,left);
     d->status.right_duty_permille=duty_slew(d->status.right_duty_permille,right);
+    /* 空转立即撤该轮动力，另一轮不加力；输出跟踪在调用者中回算。 */
+    if(d->status.speed_limited) {
+        if(d->status.speed_limited&1U)d->status.left_duty_permille=0;
+        else if(d->status.left_duty_permille>previous_left)d->status.left_duty_permille=previous_left;
+        if(d->status.speed_limited&2U)d->status.right_duty_permille=0;
+        else if(d->status.right_duty_permille>previous_right)d->status.right_duty_permille=previous_right;
+    }
 }
 static float approach(float previous,float target,float up,float down)
 {
@@ -103,7 +112,7 @@ static void zero_output(autonomous_drive_t *d)
     d->status.left_target_mm_s=d->status.right_target_mm_s=0;
     d->status.left_integral=d->status.right_integral=0;
     d->status.left_pid_request=d->status.right_pid_request=0;d->status.speed_limit_mm_s=0;
-    d->steering_position=d->steering_velocity=0;d->path_suspended=0;
+    d->steering_position=d->steering_velocity=0;
     control_pid_reset(&d->left_pid);control_pid_reset(&d->right_pid);
     control_pid_reset(&d->steering_pid);d->steering_initialized=0;d->steering_geometry=0;
 }
@@ -146,6 +155,11 @@ static void begin_drive(autonomous_drive_t *d,const autonomous_drive_input_t *i)
     d->started_ms=i->now_ms;d->marker_present=0;d->marker_armed=1;
     d->zebra_frames=0;d->clear_frames=0;d->wrong_left_ms=0;d->wrong_right_ms=0;
     d->stall_left_ms=0;d->stall_right_ms=0;d->bad_frames=0;
+    d->status.speed_limited=0;d->status.odometry_trusted=1;d->status.recovering_path=0;
+    d->status.finish_exit_confirmed=0;
+    d->speed_resume_left=d->speed_resume_right=0;
+    d->finish_tail_seen=d->finish_clear_pending=0;
+    d->finish_entry_speed=d->finish_speed_cap=0;
     d->left_filtered=(float)i->left_speed_mm_s;d->right_filtered=(float)i->right_speed_mm_s;
 }
 static void update_marker(autonomous_drive_t *d,const autonomous_drive_input_t *i)
@@ -175,7 +189,36 @@ static void update_marker(autonomous_drive_t *d,const autonomous_drive_input_t *
     else if(d->status.state==AUTO_DRIVE_RUNNING &&
             (uint32_t)(i->now_ms-d->marker_ms)>=AUTO_MIN_LAP_TIME_MS &&
             d->status.distance_mm-d->marker_distance_mm>=AUTO_MIN_LAP_DISTANCE_MM)
-    {d->marker_present=1;d->marker_armed=0;d->status.state=AUTO_DRIVE_FINISHING;d->finish_ms=i->now_ms;d->finish_distance_mm=d->status.distance_mm;}
+    {
+        d->marker_present=1;d->marker_armed=0;d->status.state=AUTO_DRIVE_FINISHING;
+        d->finish_ms=i->now_ms;d->finish_distance_mm=d->status.distance_mm;
+        d->finish_entry_speed=fmaxf(0,d->status.target_speed_mm_s);
+        d->finish_speed_cap=d->finish_entry_speed;
+        d->finish_tail_seen=d->finish_clear_pending=0;d->status.finish_exit_confirmed=0;
+    }
+}
+static uint8_t speed_outside(int32_t speed,int32_t limit)
+{
+    return speed>limit || speed< -limit;
+}
+static void speed_guard_sample(autonomous_drive_t *d,const autonomous_drive_input_t *i)
+{
+    unsigned wheel;uint8_t was_limited=d->status.speed_limited;
+    for(wheel=0;wheel<2;++wheel) {
+        uint8_t bit=(uint8_t)(1U<<wheel);
+        int32_t speed=wheel?i->right_speed_mm_s:i->left_speed_mm_s;
+        uint8_t *resume=wheel?&d->speed_resume_right:&d->speed_resume_left;
+        if(speed_outside(speed,AUTO_SPEED_CUT_MM_S)) {
+            d->status.speed_limited|=bit;*resume=0;
+        } else if(d->status.speed_limited&bit) {
+            if(!speed_outside(speed,AUTO_SPEED_RESUME_MM_S)) {
+                if(*resume<AUTO_SPEED_RESUME_SAMPLES)++*resume;
+                if(*resume>=AUTO_SPEED_RESUME_SAMPLES)d->status.speed_limited&=(uint8_t)~bit;
+            } else *resume=0;
+        }
+    }
+    /* 包含最后一个恢复确认样本；旧会话/重复反馈不能补足恢复计数。 */
+    d->status.odometry_trusted=(uint8_t)(!was_limited && !d->status.speed_limited);
 }
 static uint8_t feedback_guard(autonomous_drive_t *d,const autonomous_drive_input_t *i)
 {
@@ -207,7 +250,7 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
             d->bad_frames=0;if(d->good_frames<255)++d->good_frames;
         }else{d->good_frames=0;d->clear_frames=0;if(d->bad_frames<255)++d->bad_frames;}
     }
-    /* 原始停车键优先，停止后必须释放并重新按启动键。 */
+    /* S3仅停车，不再切换视觉模式；停止后释放并重新按启动键。 */
     if(i->stop_pressed || (d->status.active && i->cancel_pressed)){
         stop_drive(d,AUTO_DRIVE_STOPPED,AUTO_FAULT_NONE);d->key_time_ms=i->now_ms;return;
     }
@@ -215,62 +258,57 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     if(press){
         if(d->status.active){stop_drive(d,AUTO_DRIVE_STOPPED,AUTO_FAULT_NONE);return;}
         if(!d->config_valid){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_CONFIG);return;}
-        if(!i->ready || i->remote_busy || i->cancel_pressed || d->good_frames<AUTO_START_GOOD_FRAMES ||
-           !i->vision_valid || !geometry_input_valid(i) || i->confidence<minimum_confidence(d,i) || i->element_fault ||
+        if(!i->ready || i->remote_busy || i->cancel_pressed ||
            (uint32_t)(i->now_ms-d->feedback_ms)>AUTO_FEEDBACK_MAX_AGE_MS){
             stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_NOT_READY);return;
         }
         begin_drive(d,i);
     }
     if(!d->status.active)return;
+    if(fresh_feedback)speed_guard_sample(d,i);
     d->status.left_speed_mm_s=i->left_speed_mm_s;d->status.right_speed_mm_s=i->right_speed_mm_s;
     if((uint32_t)(i->now_ms-d->feedback_ms)>AUTO_FEEDBACK_MAX_AGE_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_ENCODER_STALE);return;}
-    if(i->element_fault){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_ELEMENT);return;}
-    if(d->bad_frames>=AUTO_BAD_FRAMES_TO_STOP){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_PATH_LOST);return;}
+    /* 识别失败只改变恢复速度与诊断，不锁存停车。 */
+    d->status.recovering_path=(uint8_t)(!i->vision_valid || !geometry_input_valid(i) ||
+        i->confidence<minimum_confidence(d,i) || i->element_fault || i->geometry_reject);
     if((uint32_t)(i->now_ms-d->started_ms)>AUTO_MAX_RUN_TIME_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_RUN_TIMEOUT);return;}
     if(!feedback_guard(d,i))return;
-    if(fresh_feedback && i->forward_step_um>0){
+    if(fresh_feedback && d->status.odometry_trusted && i->forward_step_um>0){
         uint32_t sum=d->distance_remainder_um+(uint32_t)i->forward_step_um;
         d->status.distance_mm+=sum/1000U;d->distance_remainder_um=sum%1000U;
     }
     if(fresh_frame)update_marker(d,i);
-    if(((d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING) &&
-        ((uint32_t)(i->now_ms-d->marker_pass_ms)>AUTO_ZEBRA_PASS_MAX_MS ||
-         d->status.distance_mm-d->marker_pass_mm>AUTO_ZEBRA_PASS_MAX_MM)) ||
-       ((d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING || d->status.state==AUTO_DRIVE_FINISHING) &&
-        (uint32_t)(i->now_ms-i->frame_ms)>AUTO_ZEBRA_FRAME_MAX_AGE_MS)) {
-        stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_MARKER_LIMIT);return;
-    }
     if(d->status.state==AUTO_DRIVE_FINISHING){
-        d->status.finish_advance_mm=d->status.distance_mm-d->finish_distance_mm;
-        if(fresh_frame && d->status.finish_advance_mm>=AUTO_FINISH_ADVANCE_MM &&
+        if(fresh_frame) {
+            uint8_t path_ok=i->vision_valid && geometry_input_valid(i) && i->confidence>=minimum_confidence(d,i);
+            if(i->zebra || i->zebra_visible) {
+                if(path_ok && i->zebra_near_row!=255 && i->zebra_near_row>=AUTO_FINISH_EXIT_ROW)d->finish_tail_seen=1;
+                d->finish_clear_pending=0;d->status.finish_exit_confirmed=0;
+            } else if(path_ok && d->finish_tail_seen && d->status.odometry_trusted) {
+                if(!d->finish_clear_pending) {
+                    d->finish_clear_pending=1;d->finish_clear_mm=d->status.distance_mm;
+                }
+                if(d->clear_frames>=AUTO_ZEBRA_CLEAR_FRAMES) {
+                    d->status.finish_exit_confirmed=1;d->finish_distance_mm=d->finish_clear_mm;
+                }
+            } else {d->finish_clear_pending=0;d->status.finish_exit_confirmed=0;}
+        }
+        d->status.finish_advance_mm=d->finish_clear_pending?d->status.distance_mm-d->finish_clear_mm:0;
+        if(fresh_frame && d->status.finish_exit_confirmed && d->status.odometry_trusted &&
+           d->status.finish_advance_mm>=AUTO_FINISH_ADVANCE_MM &&
            d->clear_frames>=AUTO_ZEBRA_CLEAR_FRAMES && !i->zebra && !i->zebra_visible &&
            i->vision_valid && geometry_input_valid(i) && i->confidence>=minimum_confidence(d,i)) {
             stop_drive(d,AUTO_DRIVE_FINISHED,AUTO_FAULT_NONE);return;
         }
-        if((uint32_t)(i->now_ms-d->finish_ms)>AUTO_FINISH_MAX_TIME_MS){stop_drive(d,AUTO_DRIVE_FAULT,AUTO_FAULT_FINISH_TIMEOUT);return;}
     }
     if(d->status.state==AUTO_DRIVE_STARTING){
         if((uint32_t)(i->now_ms-d->started_ms)<AUTO_CENTER_SETTLE_MS || i->servo_generation!=d->status.run_generation){zero_output(d);return;}
         d->status.state=AUTO_DRIVE_RUNNING;
         update_path_status(d,i);
     }
-    /* 短时失路立即撤动力，保留最后执行转向以免滑行时突然回中。
-     * 连续坏帧仍锁存停车；恢复重建速度目标且不继承速度积分。 */
-    if(!i->vision_valid || !geometry_input_valid(i) || i->confidence<minimum_confidence(d,i)){
-        d->status.left_duty_permille=d->status.right_duty_permille=0;
-        d->steering_velocity=0;d->status.steering_rate_permille_s=0;
-        if(!d->path_suspended){control_pid_reset(&d->left_pid);control_pid_reset(&d->right_pid);}
-        d->status.left_integral=d->status.right_integral=0;
-        d->status.left_pid_request=d->status.right_pid_request=0;
-        d->path_suspended=1;return;
-    }
-    if(d->path_suspended){
-        d->status.left_target_mm_s=fmaxf(0,minimum(d->status.left_target_mm_s,(float)i->left_speed_mm_s));
-        d->status.right_target_mm_s=fmaxf(0,minimum(d->status.right_target_mm_s,(float)i->right_speed_mm_s));
-        d->path_suspended=0;
-    }
-    if(fresh_frame){
+    /* 有近场支持时使用当前像素方向；否则保留最近方向。无效几何不进入PID。 */
+    if(fresh_frame && ((!d->status.recovering_path && geometry_input_valid(i)) ||
+       (i->vision_near_supported && i->confidence>0 && !i->geometry_reject && geometry_input_valid(i)))){
         float near_weight=AUTO_STEERING_NEAR_WEIGHT,far_weight=AUTO_STEERING_FAR_WEIGHT;
         int near_magnitude=abs(i->near_error_px);
         if((int32_t)i->near_error_px*i->far_error_px<0 && near_magnitude>AUTO_STEERING_NEAR_PRIORITY_START_PX) {
@@ -279,7 +317,7 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
             if(blend>1.0f)blend=1.0f;
             near_weight+=far_weight*blend;far_weight*=1.0f-blend;
         }
-        if(i->geometry.valid) {
+        if(i->geometry.valid && i->vision_valid) {
             float x=i->geometry.target_right_mm,y=i->geometry.target_forward_mm;
             float command=-atanf(2.0f*VEHICLE_WHEELBASE_MM*x/(x*x+y*y))*1000.0f/VEHICLE_MAX_STEER_RAD;
             if(command>AUTO_STEERING_LIMIT_PERMILLE)command=AUTO_STEERING_LIMIT_PERMILLE;
@@ -297,10 +335,19 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
     }
     steering_profile(d);
     target=AUTO_CRUISE_SPEED_MM_S;
+    if(d->status.recovering_path)target=minimum(target,AUTO_RECOVERY_SPEED_MM_S);
     if(i->curve || abs(i->near_error_px)>12 || abs(i->far_error_px)>16)target=minimum(target,AUTO_CURVE_SPEED_MM_S);
     if(i->element_slow || i->confidence<65)target=minimum(target,AUTO_ELEMENT_SPEED_MM_S);
     if(curve_outer_mode(d,i))target=minimum(target,AUTO_CURVE_OUTER_SPEED_MM_S);
-    if(d->status.state==AUTO_DRIVE_FINISHING || d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING)
+    /* 首次穿越仍低速；返回阶段保留原目标，按离线后的剩余距离制动。 */
+    if(d->status.state==AUTO_DRIVE_FINISHING) {
+        float remaining=(float)AUTO_FINISH_ADVANCE_MM-(float)d->status.finish_advance_mm;
+        float cap=sqrtf(2.0f*AUTO_DECEL_MM_S2*fmaxf(0,remaining));
+        if(cap<d->finish_speed_cap)d->finish_speed_cap=cap;
+        target=minimum(target,d->finish_speed_cap);
+    } else if((d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING) &&
+              !(d->status.start_marker_seen && (uint32_t)(i->now_ms-d->marker_ms)>=AUTO_MIN_LAP_TIME_MS &&
+                d->status.distance_mm-d->marker_distance_mm>=AUTO_MIN_LAP_DISTANCE_MM))
         target=minimum(target,AUTO_FINISH_SPEED_MM_S);
     {
         float turn=fmaxf(fabsf((float)d->status.requested_steering_permille),fabsf(d->steering_position));

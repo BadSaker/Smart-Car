@@ -58,7 +58,7 @@ class ModelTests(unittest.TestCase):
         self.assertLess(abs(s.h),.05)
         s.p['drop_camera']=True
         for _ in range(20):s.tick()
-        self.assertEqual(s.data[1],2);self.assertEqual(s.data[12],0);self.assertEqual(s.data[13],0)
+        self.assertEqual(s.data[1],0);self.assertEqual(s.data[2],1)
     def test_native_feedback_loss(self):
         p=defaults();p['scenario']='straight';s=Simulation(p);s.started=True
         for _ in range(180):s.tick()
@@ -70,10 +70,11 @@ class ModelTests(unittest.TestCase):
         for _ in range(180):s.tick()
         s.p['blackout']=True
         for _ in range(20):s.tick()
-        self.assertEqual(s.data[1],3);self.assertEqual(s.data[12],0)
+        self.assertEqual(s.data[1],0);self.assertEqual(s.data[2],1)
         p['blackout']=True;s=Simulation(p);s.started=True
         for _ in range(100):s.tick()
-        self.assertEqual(s.data[1],12);self.assertEqual(s.distance,0)
+        self.assertEqual(s.data[1],0);self.assertEqual(s.data[2],1)
+        self.assertLessEqual(s.data[14],200);self.assertGreater(s.distance,0)
     def test_bad_parameters_rejected(self):
         for key,value in [('height',0),('hfov',180),('kp',float('nan')),('outer_enabled',.5),('min_q',42.5)]:
             p=defaults();p[key]=value

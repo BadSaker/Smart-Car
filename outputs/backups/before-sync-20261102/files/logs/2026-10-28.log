@@ -1,0 +1,30 @@
+[2026-10-28 19:37:27 +08:00] 任务：src 代码精简与可读性只读分析
+范围：用户批准读取 car/src、相关 include/config/tests、构建和仿真入口，并对照 GitHub 智能车源码；交付分析报告及日志，不实施重构。
+变更：
+  - 新增 outputs/reports/src-readability-review-2026-10-28.md；统计15个C文件共5179行，重点分析视觉1648行、电机665行、自动驾驶312行。
+  - 对照 FredBill1/RT1064_Smartcar@d0c6a78、bigandstone/SmartCar-Line-Following-RT1064@9f7cb07、Blackerrr/16th-smart-car@37aa433、0clock/smartcar2022@fd7b468 的具体源码，报告保留完整提交链接。
+  - 建议原文件内分阶段、同义计算复用、台架阶段整理；明确旧PID/图像接口退役与保留全部功能的区别，保留屏幕和Wi-Fi冻结边界。
+验证：
+  - car/scripts/check_project_layout.ps1 exit 0：365个工程引用及11份仿真共享输入存在，当前路径匹配。
+  - 代码统计/符号检索及现存 car/build/listings/autocar.map 交叉核对；旧PID和三个旧图像函数被现存链接产物剔除，不能据源码删除量承诺BIN缩减。
+  - 报告初次校验exit 0：15个文件行数一致、13个Markdown链接中的本地目标均存在；新增日志链接在交付前复核。
+  - car/src、car/include、car/config、outputs/firmware共45个文件分析前后SHA-256完全相同；排序路径/哈希映射JSON摘要bc00e2fa0156d7fafd7bdef1e48571164044a00e0dd8b46b2f4e01639b0044e6。
+  - 未运行主机行为回归、Keil构建、仿真或实车；未写入算法、配置、工程文件或固件；未执行git add/commit/push。
+  - PowerShell公共GitHub读取遇到TLS认证异常，改用Python urllib正常读取；一次检索使用不兼容的花括号语法，已改显式路径重查，无最终阻塞。
+产物：outputs/reports/src-readability-review-2026-10-28.md；本日志。
+未解决：建议尚未实施，净减少量为工程估计；完整行为等价性需后续逐帧/逐拍差分、配置回归、板端时序与实车验证。任务临时目录tmp/src-readability-2026-10-28已按绝对路径和登记文件清单核验后清理；tmp根目录保留。
+
+[2026-10-28 19:50:00 +08:00] 任务：simulation 项目内独立 Python
+范围：simulation 启动、初始化、依赖清单和验证脚本；.gitignore、环境文档、交付报告。用户批准执行推荐方案。
+变更：部署CPython 3.13.18 x64/Tk/Tcl、NumPy2.5.0、Pillow12.3.0到simulation/python；固定发行包/wheel SHA-256；启动器取消外部解释器发现及旧缓存读取；隔离Python/Tcl/Conda、用户包与PATH；初始化禁用外部pip配置/缓存。未改car算法、系统设置或Anaconda，未提交Git。
+验证：完整仿真59/59通过；真实GUI/参数/渲染检查通过；pythonw、Tk/Tcl及NumPy/Pillow实际模块全部来自项目内，加载模块无Anaconda；中文空格路径迁移、重复初始化、污染变量和缺失环境回归通过；项目内GCC新编译DLL并加载通过。代码审查发现pip配置注入后已复现、修复、回归通过。git diff --check通过。
+产物：simulation/python（Git忽略）、setup_python.ps1、run_python.ps1、锁定清单；outputs/reports/simulation-python-2026-10-28.md及同名证据目录。
+未解决：受限沙箱Tcl初始化受限，正常桌面权限下全部验证通过；软件验证不代表实车验收。其他任务的文件与日志记录保留。
+
+[2026-10-28 23:05:31 +08:00] 任务：修复行驶图传时非必要SERVO GAP
+范围：用户批准前次方案内的图传与调度修改；car应用、Wi-Fi SPI增量接口、相关测试、文档和固件。
+变更：正式main启用完整协议快照与就绪门控单事务发送；取消行驶路径的模块等待和同步RX排空；忙时跳过新帧，1000ms无进展复位隔离半帧，停车后恢复。同步建链期间禁止新起跑，行驶中开启/重连请求延后到停车。100ms舵机及150ms视觉保护、全部驾驶参数、屏幕实现与逐飞协议组件保持。
+验证：真实驱动边界及新增调度专项通过；750ms模块未就绪时真实控制状态机仍RUNNING，恢复后22936字节协议一致；快照、时钟回绕、半帧隔离、停车重连和缓存RX检查通过。全套car/tests146项首次140通过/6项临时目录WinError5，正常权限定向重跑7项全通过。Keil全量0错误0警告，Code140400/RO13296/RW300/ZI133340；365工程引用和11共享输入通过；发布AXF/HEX/BIN与缓存哈希一致。
+产物：outputs/reports/servo-gap-fix-2026-10-28.md；outputs/firmware/autocar.{axf,hex,bin}；过程记录car/build/servo-gap-*.log。HEX SHA256=68a93f66da63045ef6849dc2c598e757b5b99281c3096b30b5357c95990f2e4d；BIN SHA256=60ab0b647d20b98f002fdc333dbb3e32a328a95b64bc127f5b1dd28268a8154a。
+未解决：NO_FLASH，未操作车辆或网络设备；板端耗时、实际FPS与赛道收图须新固件实测。持续断链时录像仍会中断且等待停车恢复。未执行git add/commit/push，原独立Python改动保留。临时测试材料在收尾核验后清理。
+收尾：已核验20个本轮回归生成的tmp子目录均位于项目tmp内且无重解析点，按清单清理；tmp仅保留.gitkeep。正常权限用于处理测试临时目录ACL。

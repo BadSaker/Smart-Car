@@ -68,6 +68,7 @@ typedef struct {
     uint8_t preview_first_row,preview_last_row; /* 本帧可见的实际远预瞄窗口。 */
     track_path_geometry_t geometry;
     uint8_t zebra;
+    uint8_t zebra_candidate; /* 远场弱条纹只预告，不授权黑区通行或计圈。 */
     uint8_t zebra_near_row; /* 最靠近车辆的斑马线证据行；无证据时255。 */
     uint8_t zebra_rows;
     uint8_t zebra_far_row, zebra_clipped, zebra_reject;

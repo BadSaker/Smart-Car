@@ -1,0 +1,194 @@
+[
+  {
+    "input_left_mm_s": 2501,
+    "after_ms": 0,
+    "left_pwm": 633.0,
+    "right_pwm": 647.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 2501,
+    "after_ms": 10,
+    "left_pwm": 621.0,
+    "right_pwm": 649.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 2501,
+    "after_ms": 20,
+    "left_pwm": 609.0,
+    "right_pwm": 651.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 2501,
+    "after_ms": 30,
+    "left_pwm": 597.0,
+    "right_pwm": 653.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 2501,
+    "after_ms": 40,
+    "left_pwm": 585.0,
+    "right_pwm": 655.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 2501,
+    "after_ms": 50,
+    "left_pwm": 573.0,
+    "right_pwm": 657.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 3000,
+    "after_ms": 0,
+    "left_pwm": 633.0,
+    "right_pwm": 647.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 3000,
+    "after_ms": 10,
+    "left_pwm": 621.0,
+    "right_pwm": 649.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 3000,
+    "after_ms": 20,
+    "left_pwm": 609.0,
+    "right_pwm": 651.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 3000,
+    "after_ms": 30,
+    "left_pwm": 597.0,
+    "right_pwm": 653.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 3000,
+    "after_ms": 40,
+    "left_pwm": 585.0,
+    "right_pwm": 655.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 3000,
+    "after_ms": 50,
+    "left_pwm": 573.0,
+    "right_pwm": 657.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 5999,
+    "after_ms": 0,
+    "left_pwm": 633.0,
+    "right_pwm": 647.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 5999,
+    "after_ms": 10,
+    "left_pwm": 621.0,
+    "right_pwm": 649.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 5999,
+    "after_ms": 20,
+    "left_pwm": 609.0,
+    "right_pwm": 651.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 5999,
+    "after_ms": 30,
+    "left_pwm": 597.0,
+    "right_pwm": 653.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 5999,
+    "after_ms": 40,
+    "left_pwm": 585.0,
+    "right_pwm": 655.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 5999,
+    "after_ms": 50,
+    "left_pwm": 573.0,
+    "right_pwm": 657.0,
+    "fault": 0.0,
+    "active": 1.0
+  },
+  {
+    "input_left_mm_s": 6001,
+    "after_ms": 0,
+    "left_pwm": 0.0,
+    "right_pwm": 0.0,
+    "fault": 6.0,
+    "active": 0.0
+  },
+  {
+    "input_left_mm_s": 6001,
+    "after_ms": 10,
+    "left_pwm": 0.0,
+    "right_pwm": 0.0,
+    "fault": 6.0,
+    "active": 0.0
+  },
+  {
+    "input_left_mm_s": 6001,
+    "after_ms": 20,
+    "left_pwm": 0.0,
+    "right_pwm": 0.0,
+    "fault": 6.0,
+    "active": 0.0
+  },
+  {
+    "input_left_mm_s": 6001,
+    "after_ms": 30,
+    "left_pwm": 0.0,
+    "right_pwm": 0.0,
+    "fault": 6.0,
+    "active": 0.0
+  },
+  {
+    "input_left_mm_s": 6001,
+    "after_ms": 40,
+    "left_pwm": 0.0,
+    "right_pwm": 0.0,
+    "fault": 6.0,
+    "active": 0.0
+  },
+  {
+    "input_left_mm_s": 6001,
+    "after_ms": 50,
+    "left_pwm": 0.0,
+    "right_pwm": 0.0,
+    "fault": 6.0,
+    "active": 0.0
+  }
+]

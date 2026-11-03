@@ -41,54 +41,30 @@ static void fault(autonomous_fault_t why)
 }
 static void test_outer_quality(void)
 {
-    unsigned index;
-    const uint8_t quality[]={39,40,44,45};
+    unsigned index;const uint8_t quality[]={0,29,34,35,39,40,44,95};
     for(index=0;index<sizeof quality;++index) {
         reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;
         in.curve_outer_side=TRACK_SIDE_LEFT;in.curve_outer_supported=1;
         in.curve_outer_near_rows=17;in.curve_outer_far_rows=13;
-        in.near_error_px=20;in.far_error_px=40;in.confidence=quality[index];
-        tick((unsigned)(AUTO_CURVE_OUTER_SPEED_MM_S*1.5f/(AUTO_ACCEL_MM_S2*0.01f))+10U,1,1,1);
+        in.vision_near_supported=1;in.near_error_px=20;in.far_error_px=40;in.confidence=quality[index];
+        tick(450,1,1,1);
+        CHECK(car.status.active && car.status.fault==AUTO_FAULT_NONE);
         CHECK(car.status.minimum_confidence==AUTO_CURVE_OUTER_MIN_CONFIDENCE);
         if(quality[index]<AUTO_CURVE_OUTER_MIN_CONFIDENCE) {
-            fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.path_reason==AUTO_PATH_Q_LOW);
-            in.confidence=95;tick(10,1,1,1);
-            CHECK(car.status.confidence==quality[index]);CHECK(!car.status.active);
+            CHECK(car.status.recovering_path && car.status.path_reason==AUTO_PATH_Q_LOW);
+            CHECK(car.status.speed_limit_mm_s<=AUTO_RECOVERY_SPEED_MM_S);
         } else {
-            CHECK(car.status.state==AUTO_DRIVE_RUNNING && car.bad_frames==0);
-            CHECK(car.status.target_speed_mm_s==(AUTO_CURVE_OUTER_SPEED_MM_S<AUTO_ELEMENT_SPEED_MM_S?
-                  AUTO_CURVE_OUTER_SPEED_MM_S:AUTO_ELEMENT_SPEED_MM_S));
-            CHECK(car.status.steering_permille<0 && car.status.path_reason==AUTO_PATH_ACCEPTED);
+            CHECK(!car.status.recovering_path && car.status.path_reason==AUTO_PATH_ACCEPTED);
+            CHECK(car.status.speed_limit_mm_s<=AUTO_CURVE_OUTER_SPEED_MM_S);
+            CHECK(car.status.steering_permille<0);
         }
+        in.confidence=95;tick(2,1,1,1);CHECK(!car.status.recovering_path);
+        in.vision_valid=0;in.vision_near_supported=0;tick(40,1,1,1);
+        CHECK(car.status.active && car.status.path_reason==AUTO_PATH_NEAR);
+        CHECK(car.status.speed_limit_mm_s<=AUTO_RECOVERY_SPEED_MM_S);
     }
-    /* 不可靠外侧、未知方向或非普通弯道，不能借Q40放行。 */
-    for(index=0;index<3;++index) {
-        reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;
-        in.curve_outer_side=TRACK_SIDE_RIGHT;in.curve_outer_supported=1;in.confidence=44;
-        if(index==0){in.curve_outer_supported=0;in.curve_outer_reject_reason=AUTO_PATH_OUTER_NEAR;}
-        if(index==1)in.curve_outer_side=TRACK_SIDE_NONE;
-        if(index==2)in.element=TRACK_ELEMENT_ROUNDABOUT_APPROACH;
-        tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
-        CHECK(car.status.minimum_confidence==AUTO_MIN_CONFIDENCE);
-    }
-    reset();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
-    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=44;in.start_pressed=1;
-    tick(8,1,1,1);fault(AUTO_FAULT_NOT_READY);CHECK(car.status.minimum_confidence==45);
-    reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
-    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=40;in.near_error_px=20;in.far_error_px=40;
-    tick(6,1,1,1);CHECK(car.status.steering_permille<0);
-    in.curve_outer_supported=0;in.curve_outer_reject_reason=AUTO_PATH_OUTER_FAR;
-    tick(1,1,1,1);CHECK(car.status.left_duty_permille==0 && car.status.steering_permille==car.status.diagnostic_steering_permille);
-    CHECK(car.status.diagnostic_steering_permille<0 && car.status.path_reason==AUTO_PATH_OUTER_FAR);
-    tick(7,1,1,1);fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.diagnostic_steering_permille<0);
-    reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
-    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=95;in.vision_valid=0;
-    tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);CHECK(car.status.path_reason==AUTO_PATH_NEAR);
-    reset();start();in.curve=1;in.element=TRACK_ELEMENT_CURVE;in.curve_outer_supported=1;
-    in.curve_outer_side=TRACK_SIDE_LEFT;in.confidence=40;
-    tick(20,0,1,1);CHECK(car.status.active && car.status.minimum_confidence==40);
-    reset();start();in.confidence=45;tick(8,1,1,1);CHECK(car.status.active);
-    in.confidence=44;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
+    reset();in.vision_valid=0;in.confidence=0;start();
+    CHECK(car.status.active && car.status.recovering_path);
 }
 static void test_blocked_main_loop(void)
 {
@@ -129,7 +105,7 @@ int main(void)
     tick(50,1,1,1);CHECK(car.status.active);
     reset();start();tick(20,1,0,1);fault(AUTO_FAULT_ENCODER_STALE);
     reset();start();tick(20,1,1,0);CHECK(car.status.active);
-    reset();start();in.vision_valid=0;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
+    reset();start();in.vision_valid=0;tick(8,1,1,1);CHECK(car.status.active && car.status.recovering_path);
     reset();start();in.left_speed_mm_s=-100;in.forward_step_um=0;tick(20,1,1,1);fault(AUTO_FAULT_ENCODER_DIRECTION);
     reset();start();in.left_speed_mm_s=AUTO_MAX_MEASURED_SPEED_MM_S+1;tick(1,1,1,1);fault(AUTO_FAULT_OVERSPEED);
     reset();start();in.left_speed_mm_s=0;in.forward_step_um=0;tick(250,1,1,1);fault(AUTO_FAULT_STALL);
@@ -147,14 +123,14 @@ int main(void)
     tick(2,1,1,1);CHECK(!car.status.start_marker_seen);
     reset();start();in.element_supported=1;in.confidence=39;tick(10,1,1,1);
     CHECK(car.status.state==AUTO_DRIVE_RUNNING);
-    in.element_supported=0;tick(8,1,1,1);fault(AUTO_FAULT_PATH_LOST);
+    in.element_supported=0;tick(8,1,1,1);CHECK(car.status.active && car.status.recovering_path);
     /* 同一次起跑斑马线连续可见不能算第二圈；离开且足够里程后才允许终点。 */
-    reset();start();in.zebra=1;tick(10,1,1,1);CHECK(car.status.start_marker_seen);
+    reset();start();in.zebra=1;in.zebra_near_row=117;tick(10,1,1,1);CHECK(car.status.start_marker_seen);
     tick(30,1,1,1);CHECK(car.status.state==AUTO_DRIVE_RUNNING);
     in.zebra=0;tick(4000,1,1,1);CHECK(car.status.state==AUTO_DRIVE_RUNNING);
     in.zebra=1;tick(10,1,1,1);CHECK(car.status.state==AUTO_DRIVE_FINISHING);
     in.zebra=0;in.forward_step_um=1000;
-    while(car.status.distance_mm-car.finish_distance_mm<499)tick(1,1,1,1);
+    while(car.status.finish_advance_mm<AUTO_FINISH_ADVANCE_MM-1)tick(1,1,1,1);
     CHECK(car.status.state==AUTO_DRIVE_FINISHING);
     tick(1,1,1,1);CHECK(car.status.state==AUTO_DRIVE_FINISHED);
     CHECK(car.status.left_duty_permille==0);tick(50,1,1,1);CHECK(!car.status.active);

@@ -1,0 +1,55 @@
+{
+  "before": {
+    "frames": 4579,
+    "valid": 3631,
+    "intermediate_q": 741,
+    "zebra": 1185,
+    "zebra_valid": 470,
+    "elements": {
+      "0": 1017,
+      "1": 3438,
+      "2": 124,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "strict": {
+    "frames": 4579,
+    "valid": 3631,
+    "intermediate_q": 4579,
+    "zebra": 1185,
+    "zebra_valid": 470,
+    "elements": {
+      "0": 1017,
+      "1": 3438,
+      "2": 124,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "relaxed": {
+    "frames": 4579,
+    "valid": 4345,
+    "intermediate_q": 4579,
+    "zebra": 1211,
+    "zebra_valid": 1210,
+    "elements": {
+      "0": 1464,
+      "1": 2991,
+      "2": 124,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    }
+  },
+  "limitations": "Interpolated overlays; duplicate recording frames; zero distance; no real vehicle feedback. Not a closed-loop performance claim.",
+  "sources": {
+    "car\\src\\track_vision.c": "7bdb7876c3874d9a5ac38bd12cb28977a1abb052a2bc45d81d4ce128634ed523",
+    "car\\config\\vision_config.h": "0465150d68c047103996e2f62d5b7e5daf31e3f7ae21e062ac4b7b237f925f5a"
+  }
+}

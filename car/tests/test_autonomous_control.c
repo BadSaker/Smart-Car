@@ -183,9 +183,13 @@ int main(void)
             autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
         }
         autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
-        CHECK(s.fault==AUTO_FAULT_PATH_LOST && s.zebra_reject==2 && s.geometry_reject==3);
-        CHECK(t.frozen && t.first_bad.zebra && t.first_bad.zebra_reject==2 && t.fault_frame.geometry_reject==3);
-        CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);
+        CHECK(s.active && s.recovering_path && s.zebra_reject==2 && s.geometry_reject==3);
+        CHECK(!t.frozen && t.first_bad.zebra && t.first_bad.zebra_reject==2);
+        CHECK(s.speed_limit_mm_s<=AUTO_RECOVERY_SPEED_MM_S);
     }
+    /* 长按S3只停车，持续按住不重新起跑。 */
+    keys[C14]=0;step(250,1,1);autonomous_control_get_status(&s);
+    CHECK(!s.active && s.state==AUTO_DRIVE_STOPPED);
+    CHECK(!duties[PWM2_MODULE0_CHA_C6] && !duties[PWM2_MODULE1_CHA_C8]);
     printf("%u autonomous integration checks passed\n",checks);return 0;
 }
