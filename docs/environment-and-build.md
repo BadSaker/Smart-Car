@@ -1,5 +1,19 @@
 # 环境、构建与调试
 
+## 当前构建与回归（2026-11-03）
+
+当前源码已通过主工程 `car/scripts/build.ps1` 实际Keil全量编译，0错误0警告；Code=153504、RO-data=13340、RW-data=300、ZI-data=135548字节。`outputs/firmware/autocar.axf/.hex/.bin` 已生成，分别与 `car/build/objects/` 对应文件的SHA-256一致。未烧录，编译不代表实车验收。
+
+| 固件 | SHA-256 |
+| --- | --- |
+| autocar.axf | D30C3AB01435DEDFF494A9024D8A79C855E2DEC09028B698528CA97E1973B05E |
+| autocar.hex | 4DF143E779FA45CC9B5779ADB40BFDC4E64F15ACF889D9EB8EE13DB15F089EEF |
+| autocar.bin | 6BAEA72A83A4E39550D7348D5231D67B43886A88517596692CF9929847D523C5 |
+
+原生图像处理/PID检查19/19通过；工程主机回归一次完整170项，167通过、3失败、0环境错误；仿真回归一次完整59项全部通过。三个失败的名称和断言值与此前基线一致，具体见[已知问题](known-issues.md)。本轮从开始使用继承权限的临时目录和Windows PowerShell模块路径设置，未修改测试逻辑或断言。完整运行日志保存在不提交的 `car/build/restore-validation-20261103/`：`build-console.log`、`algorithm-tests.log`、`host-tests.log`、`simulation-tests.log`，运行入口为其中的 `run_suite.py car` 与 `run_suite.py simulation`，解释器为项目内 `simulation/python/python.exe`。
+
+最新源码及实车边界见[自动驾驶指南](autonomous-driving.md)。下方为历史构建与环境记录，不作为当前固件身份。
+
 2026-11-01当前：已按用户批准恢复冻结版同步整帧图传路径，调整为本帧视觉及控制先完成、显示与图传随后执行，并去除视觉年龄/舵机服务间隔门槛。控制计算仍在PIT，主循环确认本帧已消费并应用舵机后发送。1200/900/800/800mm/s及现有PID、视觉参数保持；未烧录。实现和验证见[同步控制报告](../outputs/reports/sync-control-2026-11-01.txt)。
 
 历史（2026-10-30）：已按用户要求回退到今天10:26:13的1200档版本（AuTop环岛/十字改造之前）。12项共享源码/配置哈希及重新编译的AXF/HEX/BIN均与当时记录完全一致；1200/900/800/800mm/s保持。Keil0错误0警告，灰度181断言通过；本次未重跑全套回归和双向仿真，历史结果见[10:26版本报告](../outputs/reports/align1200-2026-10-30.md)。后续入口改造与修复报告保留为历史，不代表当前固件；未烧录。

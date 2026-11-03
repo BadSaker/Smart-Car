@@ -18,7 +18,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File simulation/setup_python.ps1
 
 Windows x64 GCC可通过`toolchain/downloads/fetch_gcc.py`下载经SHA-256校验的独立发行包，或指定现有安装。工具链二进制不提交Git，发行标识和许可证保留；已有匹配DLL可以在无编译器时加载。首次运行新C参数需要编译器。
 
-当前版本采用2026-10-14运动稳定性软件交付；当前分档与复现方法见[控制说明](docs/control-tuning.md)，软件验收及实车限制见[交付报告](../outputs/reports/motion-stability-2026-10-14.md)。选择参数后应用并重置，再启动；仿真参数不会回写固件。
+仿真共享C算法来自当前主工程 `../car`，并随该处源码变化重新编译；2026-10-14运动稳定性[交付报告](../outputs/reports/motion-stability-2026-10-14.md)中的双向分档结果属于当时的软件验收，不能直接作为当前源码的闭环结论。2026-11-03本轮仿真回归59/59通过，工程回归167/170通过、保留3项既有失败，详见[当前构建与验证](../docs/environment-and-build.md)及[已知问题](../docs/known-issues.md)。参数复现方法见[控制说明](docs/control-tuning.md)，当前车端状态见[自动驾驶指南](../docs/autonomous-driving.md)。选择参数后应用并重置，再启动；仿真参数不会回写固件。主机测试通过不代表实车转向、环岛、避障及终点已验收。
 
 倍速只改变现实时间中的推进率，控制仍每10ms、摄像头按原仿真时间采样。工具栏显示实际倍率，高倍速减少绘图并保留待计算时间；暂停/重置清除积压。默认双线性采样使用与NumPy参考逐像素一致的C渲染，采样数、相机与动力模型保持。验收见[本轮报告](../outputs/reports/element-speed-2026-10-13.md)，真实事件循环检查入口tools/check_speed_ui.py。
 

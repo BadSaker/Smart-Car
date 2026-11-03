@@ -62,3 +62,7 @@
 恢复：按ignore_restore/move-manifest-20261103.json复制244文件/96.90MiB回原相对路径，无冲突，最终逐项SHA256一致；归档副本保留。
 验证：Keil全量0错误0警告；算法19/19；工程170项167通过3既有相同断言失败、0环境错误；仿真59/59一次完整通过。源码/配置/测试哈希无变化，AXF/HEX/BIN与上轮和本轮构建缓存一致。
 报告：outputs/reports/restore-exclusions-validation-2026-11-03.md；日志car/build/restore-validation-20261103/。NO_FLASH，未Git暂存/提交/推送，未实车验收。
+
+[2026-11-03 22:40:36 +08:00] 任务：补齐当前文档状态（按用户澄清，导航为docs/README.md）
+变更：同步docs/README.md、environment-and-build.md、autonomous-driving.md、known-issues.md及simulation/README.md，补齐当前构建/回归/固件身份和实车未验收边界；区分历史状态，未补写迁移恢复内容，未新增根目录README。
+验证：新增段落本地链接全部存在，git diff --check通过；实际固件SHA256与文档一致。仅文档变更，未重新编译或运行回归，未烧录，未Git暂存/提交/推送。
