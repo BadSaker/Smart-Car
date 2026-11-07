@@ -264,8 +264,12 @@ static void servo_control_apply(uint8_t enabled, int16_t steering_permille, uint
 
     servo_status.target_pulse_us = (uint16_t)target_us;
     /* 遥控固定2us/20ms，不受台架试验步长变化影响；新目标不重置步进时钟。 */
-    servo_advance_motion(now_ms, owner == 2U ? AUTO_SERVO_STEP_US : 2U,
-                         owner == 2U ? AUTO_SERVO_INTERVAL_MS : 20U);
+    if(owner==2U) {
+        if(servo_status.current_pulse_us!=(uint16_t)target_us) {
+            servo_status.current_pulse_us=(uint16_t)target_us;
+            pwm_set_duty(SERVO_PWM_CHANNEL,servo_pulse_to_duty((uint16_t)target_us));
+        }
+    } else servo_advance_motion(now_ms,2U,20U);
 }
 
 /* 自动驾驶由主循环所有权门控，遥控接口无权覆盖其转向。 */

@@ -1,0 +1,21 @@
+2026-11-07更新：按实车起步触发OVERSPEED的反馈，恢复单层可调单轮目标加速度AUTO_ACCEL_MM_S2，默认1000mm/s²，0关闭。差速分配后每10ms限制左右轮目标上升，复用上一拍目标；降速及故障停车立即执行。PWM仍由PID直接输出，硬超速4000、STALL、视觉及图传保持。直道目标0→1200约1.2秒，不包含500ms起步中位等待。仿真“加速度”入口同步可调。此变更优先于下文11月6日“不设加速度限制”的历史描述；尚未实车验证是否消除OVERSPEED。
+
+修改位置：car/config/autonomous_config.h 的 AUTO_ACCEL_MM_S2。增大响应更快，减小起步更柔和。仅目标轮速上升受限，不是物理加速度保证。无需新增状态或积分跟踪。未烧录。
+
+仿真62/62通过；Keil0错误0警告；发布固件与构建缓存完全一致。
+[
+  {
+    "file": "outputs\\firmware\\autocar.axf",
+    "sha256": "010a29971f4e4d546d3d9e4bb25d572e23898d4709203cf965bd6719c3b62f4b"
+  },
+  {
+    "file": "outputs\\firmware\\autocar.hex",
+    "sha256": "922c1fd7bd0f4d94db21c8f6b5651f29061f7eee6334444e8f928e6159c6b603"
+  },
+  {
+    "file": "outputs\\firmware\\autocar.bin",
+    "sha256": "a83a4b7a429ae2ce30cd4efc75373620a3ee417d84bd15138a5098ef998db983"
+  }
+]
+
+最终主机回归117/117通过。日志：car/build/accel-20261107-host.log、accel-20261107-sim.log、accel-20261107-build.log。

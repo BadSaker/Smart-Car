@@ -106,10 +106,8 @@ static void app_run_once(void)
         memcpy(left_line,vision.left,sizeof left_line);
         memcpy(mid_line,vision.center,sizeof mid_line);
         memcpy(right_line,vision.right,sizeof right_line);
-        /* PIT仍负责控制计算；等它消费本帧并由主循环实际更新舵机后再图传。
-         * 不关中断、不重复计算PID；停车立即解除等待。 */
-        do { app_service_controls(); }
-        while(!autonomous_control_frame_is_serviced(sequence));
+        /* 控制不等待本帧确认；下一次10ms中断自然消费最新偏差。 */
+        app_service_controls();
         camera_debug_capture_frame(image[0]);
         app_service_controls();
         binaryzation_process(image[0],MT9V03X_H,MT9V03X_W,vision.threshold);

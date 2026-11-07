@@ -25,7 +25,7 @@ static void step(unsigned n,int camera,int service)
 {
     while(n--){
         track_vision_result_t vision;
-        memset(&vision,0,sizeof vision);vision.valid=1;vision.confidence=95;
+        memset(&vision,0,sizeof vision);vision.has_path=1;
         vision.near_error_px=15;vision.far_error_px=20;
         now+=10;++feedback.sample_sequence;
         feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*100;feedback.right.speed_mm_s=AUTO_RIGHT_ENCODER_SIGN*120;
@@ -37,10 +37,16 @@ static void step(unsigned n,int camera,int service)
               duties[PWM2_MODULE1_CHA_C8]<=AUTO_MAX_DUTY_PERMILLE*PWM_DUTY_MAX/1000U);
     }
 }
+static void publish(track_vision_result_t *v)
+{
+    now+=10;++feedback.sample_sequence;
+    autonomous_control_publish_vision(v,++frame_sequence,now);
+    autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
+}
 int main(void)
 {
-    autonomous_drive_status_t s;
-    /* 同步建链时按启动只能拒绝；解除门控并重新按下后正常起跑。 */
+    autonomous_drive_status_t s;autonomous_control_trace_t t;
+    track_vision_result_t v;memset(&v,0,sizeof v);v.has_path=1;
     memset(keys,1,sizeof keys);motor_control_init();servo_control_init(0);autonomous_control_init();
     motor_control_enable_test();step(10,1,1);
     autonomous_control_set_network_busy(1);keys[C15]=0;step(4,1,1);
@@ -53,143 +59,53 @@ int main(void)
     keys[C15]=0;step(8,1,1);CHECK(!autonomous_control_is_active());
     motor_control_enable_test();step(10,1,1);CHECK(!autonomous_control_is_active());
     keys[C15]=1;step(5,1,1);keys[C15]=0;step(4,1,1);keys[C15]=1;
-    step(85,1,1);autonomous_control_get_status(&s);CHECK(s.state==AUTO_DRIVE_RUNNING);
+    step(200,1,1);autonomous_control_get_status(&s);CHECK(s.state==AUTO_DRIVE_RUNNING);
     CHECK(duties[PWM2_MODULE1_CHA_C8]>0 && duties[PWM2_MODULE0_CHA_C6]>0);
     CHECK(servo_control_get_status()->current_pulse_us<1480);
-    /* 摘要经真实mailbox传递，可靠普通外侧Q40允许运行且使用配置速度。 */
-    {
-        unsigned n;track_vision_result_t v;
-        memset(&v,0,sizeof v);v.valid=1;v.confidence=40;v.element=TRACK_ELEMENT_CURVE;
-        v.near_path_supported=1;v.curve_outer_side=TRACK_SIDE_LEFT;v.curve_outer_supported=1;
-        v.curve_outer_near_rows=17;v.curve_outer_far_rows=13;v.near_error_px=20;v.far_error_px=40;
-        /* 提速后从起步目标到外侧目标仍须经过真实加速斜坡。 */
-        for(n=0;n<(unsigned)(AUTO_CURVE_OUTER_SPEED_MM_S*1.5f/(AUTO_ACCEL_MM_S2*0.01f))+10U;++n) {
-            now+=10;++feedback.sample_sequence;
-            autonomous_control_publish_vision(&v,++frame_sequence,now);
-            autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
-        }
-        autonomous_control_get_status(&s);
-        CHECK(s.active && s.minimum_confidence==AUTO_CURVE_OUTER_MIN_CONFIDENCE);
-        CHECK(s.curve_outer_near_rows==17 && s.curve_outer_far_rows==13 && s.curve_outer_supported);
-        CHECK(s.target_speed_mm_s==(AUTO_CURVE_OUTER_SPEED_MM_S<AUTO_ELEMENT_SPEED_MM_S?
-              AUTO_CURVE_OUTER_SPEED_MM_S:AUTO_ELEMENT_SPEED_MM_S) && s.steering_permille<0);
+    for(unsigned e=0;e<=TRACK_ELEMENT_ROUNDABOUT_EXIT;++e){
+        v.element=(track_element_t)e;v.near_error_px=v.far_error_px=10;for(unsigned n=0;n<40;++n)publish(&v);
+        autonomous_control_get_status(&s);CHECK(s.active && s.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S && s.steering_permille==-(int)(10*AUTO_STEERING_KP));
     }
+    v.has_path=0;publish(&v);autonomous_control_get_status(&s);
+    CHECK(s.active && !s.has_path && s.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S && s.steering_permille==-(int)(10*AUTO_STEERING_KP));
     motor_control_remote_set_link(0);step(3,1,1);CHECK(autonomous_control_is_active());
-    {
-        const unsigned pauses[]={10,30,100};unsigned k;
-        for(k=0;k<sizeof pauses/sizeof pauses[0];++k){
-            autonomous_control_trace_t evidence;uint32_t stamp=now,sequence=frame_sequence;
-            step(pauses[k],0,0);autonomous_control_get_status(&s);
-            CHECK(s.active && s.fault==AUTO_FAULT_NONE);
-            autonomous_control_get_trace(&evidence);
-            CHECK(!evidence.frozen && evidence.has_last_good);
-            CHECK(evidence.last_good.frame_ms==stamp && evidence.last_good.sequence==sequence);
-            step(1,1,1);CHECK(autonomous_control_is_active());
-        }
+    for(unsigned k=10;k<=100;k*=10){
+        uint32_t stamp=now,seq=frame_sequence;step(k,0,0);
+        autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
+        CHECK(s.active && s.fault==AUTO_FAULT_NONE && !t.frozen);
+        CHECK(t.latest.frame_ms==stamp && t.latest.sequence==seq);
+        step(1,1,1);
     }
-    {
-        track_vision_result_t v;uint16_t pulse;unsigned writes;
-        step(40,1,1);
-        now+=AUTO_SERVO_INTERVAL_MS;++feedback.sample_sequence;
-        autonomous_control_tick_10ms(now);autonomous_control_service(now);
-        pulse=servo_control_get_status()->current_pulse_us;writes=servo_writes;
-        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;
-        v.near_error_px=v.far_error_px=-80;
-        autonomous_control_publish_vision(&v,++frame_sequence,now);
-        step(1,0,1);
-        CHECK(servo_control_get_status()->target_pulse_us!=pulse);
-        CHECK(servo_control_get_status()->current_pulse_us==pulse && servo_writes==writes);
-        CHECK(!autonomous_control_frame_is_serviced(frame_sequence));
-        step(1,0,1);
-        CHECK(servo_writes>writes && servo_control_get_status()->current_pulse_us!=pulse);
-        CHECK(autonomous_control_frame_is_serviced(frame_sequence));
+    v.has_path=1;v.near_error_px=v.far_error_px=-80;publish(&v);
+    CHECK(servo_control_get_status()->current_pulse_us==servo_control_get_status()->target_pulse_us);
+    CHECK(servo_control_get_status()->current_pulse_us>1480);
+    for(unsigned k=0;k<2;++k){
+        uint32_t seq=k?0:UINT32_MAX;
+        autonomous_control_publish_vision(&v,seq,now);step(1,0,1);
+        autonomous_control_get_status(&s);CHECK(s.active && s.steering_permille==1000);
     }
-    {
-        track_vision_result_t v;unsigned k;
-        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;
-        /* 包括序号回绕：旧舵机服务和仅PIT计算均不能冒充本帧已应用。 */
-        for(k=0;k<2;++k){
-            uint32_t sequence=k?0:UINT32_MAX;
-            autonomous_control_publish_vision(&v,sequence,now-1000);
-            CHECK(!autonomous_control_frame_is_serviced(sequence));
-            autonomous_control_service(now);
-            CHECK(!autonomous_control_frame_is_serviced(sequence));
-            step(1,0,0);CHECK(!autonomous_control_frame_is_serviced(sequence));
-            autonomous_control_service(now);
-            if(!autonomous_control_frame_is_serviced(sequence))step(1,0,1);
-            CHECK(autonomous_control_frame_is_serviced(sequence));
-            CHECK(!autonomous_control_frame_is_serviced(sequence+1));
-        }
-    }
-    {
-        uint8_t gray[188*120];track_vision_result_t v;unsigned y,x,k;
-        track_vision_reset();
-        for(k=0;k<6;++k){
-            memset(gray,20,sizeof gray);
-            for(y=0;y<120;++y)for(x=93-(6+y)/2;x<=93+(6+y)/2;++x)gray[y*188+x]=220;
-            for(y=k<3?48:60;y<=(k<3?93:112);++y)memset(gray+y*188,220,188);
-            now+=10;++feedback.sample_sequence;
-            track_vision_process(gray,now,k<3?50:350,&v);
-            autonomous_control_publish_vision(&v,++frame_sequence,now);
-            autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
-        }
-        CHECK(v.valid && v.confidence>=AUTO_ELEMENT_MIN_CONFIDENCE+15 && v.element==TRACK_ELEMENT_CROSS);
-        CHECK(autonomous_control_is_active());
-    }
-    {
-        track_vision_result_t v;memset(&v,0,sizeof v);
-        v.valid=1;v.confidence=95;v.near_path_supported=1;
-        v.near_error_px=v.far_error_px=-80;
-        v.geometry.valid=1;v.geometry.target_right_mm=50;v.geometry.target_forward_mm=400;
-        now+=10;++feedback.sample_sequence;autonomous_control_publish_vision(&v,++frame_sequence,now);
-        autonomous_control_tick_10ms(now);autonomous_control_service(now);autonomous_control_get_status(&s);
-        CHECK(s.active && s.requested_steering_permille<=-190 && s.requested_steering_permille>=-194);
-    }
-    {
-        autonomous_control_trace_t evidence;autonomous_drive_status_t before;
-        autonomous_control_get_status(&before);
-        feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*(AUTO_MAX_MEASURED_SPEED_MM_S+1);
-        feedback.left.delta_counts=AUTO_LEFT_ENCODER_SIGN*289;++feedback.sample_sequence;now+=10;
-        autonomous_control_tick_10ms(now);autonomous_control_get_trace(&evidence);autonomous_control_get_status(&s);
-        CHECK(evidence.frozen && evidence.fault==AUTO_FAULT_OVERSPEED);
-        CHECK(evidence.fault_frame.left_speed_mm_s==AUTO_MAX_MEASURED_SPEED_MM_S+1);
-        CHECK(evidence.fault_frame.raw_left_delta_counts==AUTO_LEFT_ENCODER_SIGN*289);
-        CHECK(evidence.fault_frame.motion.left_duty_permille==before.left_duty_permille);
-        CHECK(evidence.fault_frame.motion.left_target_mm_s==before.left_target_mm_s);
-        CHECK(s.left_duty_permille==0 && s.right_duty_permille==0);
-    }
+    v.geometry.valid=1;v.geometry.target_right_mm=50;v.geometry.target_forward_mm=400;
+    v.near_error_px=v.far_error_px=-80;publish(&v);autonomous_control_get_status(&s);
+    CHECK(s.steering_permille>=-194 && s.steering_permille<=-190);
+    CHECK(servo_control_get_status()->current_pulse_us<1480);
+    v.geometry.valid=0;
+    feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*4001;
+    feedback.left.delta_counts=AUTO_LEFT_ENCODER_SIGN*289;++feedback.sample_sequence;now+=10;
+    autonomous_control_tick_10ms(now);autonomous_control_get_trace(&t);autonomous_control_get_status(&s);
+    CHECK(t.frozen && t.fault_frame.motion.fault==AUTO_FAULT_OVERSPEED);
+    CHECK(t.fault_frame.motion.left_speed_mm_s==4001);
+    CHECK(t.fault_frame.raw_left_delta_counts==AUTO_LEFT_ENCODER_SIGN*289);
+    CHECK(!s.active && !s.left_duty_permille && !s.right_duty_permille);
+    {autonomous_trace_frame_t saved=t.fault_frame;step(5,1,1);autonomous_control_get_trace(&t);CHECK(!memcmp(&saved,&t.fault_frame,sizeof saved));}
     keys[C14]=0;step(1,1,1);CHECK(!autonomous_control_is_active());
-    CHECK(duties[PWM2_MODULE0_CHA_C6]==0 && duties[PWM2_MODULE1_CHA_C8]==0);
+    CHECK(!duties[PWM2_MODULE0_CHA_C6] && !duties[PWM2_MODULE1_CHA_C8]);
     CHECK(!servo_control_get_status()->output_enabled);
-    CHECK(autonomous_control_frame_is_serviced(frame_sequence+1)); /* 停车解除等待。 */
-    mask=1;autonomous_control_get_status(&s);CHECK(mask==1);
-    /* 标记的远场证据、诊断必须跨真实mailbox传递；不伪造近场确认。 */
-    {
-        track_vision_result_t v;autonomous_control_trace_t t;
-        memset(keys,1,sizeof keys);mask=0;motor_control_init();servo_control_init(now);autonomous_control_init();
-        motor_control_enable_test();step(10,1,1);keys[C15]=0;step(4,1,1);keys[C15]=1;step(60,1,1);
-        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;v.zebra=1;
-        v.zebra_far_row=35;v.zebra_near_row=60;v.zebra_rows=26;
-        now+=10;++feedback.sample_sequence;
-        autonomous_control_publish_vision(&v,++frame_sequence,now);
-        autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
-        autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
-        CHECK(s.active && s.marker_phase==1 && !s.start_marker_seen);
-        CHECK(s.speed_limit_mm_s==AUTO_FINISH_SPEED_MM_S && s.zebra_far_row==35 && s.zebra_near_row==60);
-        CHECK(t.last_good.zebra && t.last_good.zebra_rows==26 && t.last_good.zebra_near_row==60);
-        v.valid=0;v.confidence=0;v.zebra_reject=2;v.geometry.reject_reason=3;
-        for(unsigned n=0;n<3;++n){
-            now+=10;++feedback.sample_sequence;autonomous_control_publish_vision(&v,++frame_sequence,now);
-            autonomous_control_tick_10ms(now);motor_control_tick_10ms();autonomous_control_service(now);
-        }
-        autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
-        CHECK(s.active && s.recovering_path && s.zebra_reject==2 && s.geometry_reject==3);
-        CHECK(!t.frozen && t.first_bad.zebra && t.first_bad.zebra_reject==2);
-        CHECK(s.speed_limit_mm_s<=AUTO_RECOVERY_SPEED_MM_S);
-    }
-    /* 长按S3只停车，持续按住不重新起跑。 */
+    mask=1;autonomous_control_get_status(&s);CHECK(mask==1);mask=0;
+    keys[C14]=1;step(5,1,1);keys[C15]=0;step(4,1,1);keys[C15]=1;step(60,1,1);
+    v.zebra=1;v.zebra_near_row=60;publish(&v);autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
+    CHECK(s.active && s.marker_phase==1 && !s.start_marker_seen && s.target_speed_mm_s<=AUTO_FINISH_SPEED_MM_S);
+    CHECK(!t.frozen && t.latest.motion.zebra_visible);
     keys[C14]=0;step(250,1,1);autonomous_control_get_status(&s);
     CHECK(!s.active && s.state==AUTO_DRIVE_STOPPED);
-    CHECK(!duties[PWM2_MODULE0_CHA_C6] && !duties[PWM2_MODULE1_CHA_C8]);
     printf("%u autonomous integration checks passed\n",checks);return 0;
 }

@@ -8,8 +8,8 @@ from parameters import defaults
 
 
 class CameraTimingTests(unittest.TestCase):
-    def test_startup_ramp_does_not_hide_a_brief_lost_frame(self):
-        p=defaults();p.update(scenario='straight',cruise=800,curve_speed=800,outer_speed=800,element_speed=800)
+    def test_missing_observation_does_not_reduce_target(self):
+        p=defaults();p.update(scenario='straight',cruise=800)
         s=Simulation(p);s.started=True
         for _ in range(180):s.tick()
         self.assertEqual(int(s.data[0]),2)
@@ -19,8 +19,10 @@ class CameraTimingTests(unittest.TestCase):
         self.assertEqual(s.zero_pwm_ticks,previous)
         self.assertEqual(int(s.data[1]),0)
         self.assertEqual(int(s.data[2]),1)
-        self.assertLess(s.min_path_margin,0)
-        self.assertEqual(s.running_ticks,0)  # speed floor still excludes acceleration
+        for _ in range(10):s.tick()
+        self.assertEqual(s.data[3],0)
+        self.assertEqual(s.data[11],800)
+        self.assertEqual(s.zero_pwm_ticks,previous)
 
     def test_30hz_does_not_quantize_to_25hz(self):
         p=defaults();p.update(scenario='straight',fps=30)
@@ -32,7 +34,7 @@ class CameraTimingTests(unittest.TestCase):
         p=defaults();p.update(scenario='straight',camera_latency_ms=40)
         s=Simulation(p);s.now=100;s.x=9;s.y=8
         s.pose_history.clear();s.pose_history.extend([(40,1.,0.,0.),(50,2.,0.,0.),(60,3.,0.,0.)])
-        s.data[15]=1234;s.distance=999
+        s.data[12]=1234;s.distance=999
         s._frame();s.capture_frame();m=s.frame_buffer[-1]['meta']
         self.assertEqual(s.frame_pose,(2.,0.,0.))
         self.assertEqual(m['capture_time_ms'],60)

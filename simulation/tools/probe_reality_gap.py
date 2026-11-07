@@ -85,13 +85,12 @@ def prepare_workspace(output):
     for header in ('zf_driver_gpio.h', 'zf_driver_pwm.h'):
         (work / header).write_text(platform, encoding='utf-8')
     text = (ROOT / 'native_bridge.c').read_text(encoding='utf-8')
-    anchor = 'static unsigned frame_sequence, frame_ms, feedback_sequence;'
+    anchor = 'static unsigned frame_sequence,frame_ms,feedback_sequence;'
     assert text.count(anchor) == 1
     text = text.replace(anchor, anchor + '\n/* Platform SHA256 '+hashlib.sha256(platform.encode()).hexdigest()+' */\n' + SERVO_PROBE)
-    old = 'i.servo_generation=drive.status.run_generation;i.servo_service_ms=now;'
+    old = 'i.servo_generation=drive.status.run_generation;'
     assert text.count(old) == 1
-    text = text.replace(old, 'i.servo_generation=probe_hardware?probe_generation:drive.status.run_generation;'
-                        'i.servo_service_ms=probe_hardware?probe_ms:now;')
+    text = text.replace(old, 'i.servo_generation=probe_hardware?probe_generation:drive.status.run_generation;')
     old = 'autonomous_drive_tick(&drive,&i);'
     assert text.count(old) == 1
     text = text.replace(old, old + '\n    probe_service(now);')
@@ -201,23 +200,23 @@ def main():
         before_steer = sim.steer
         sim.tick()
         lib.probe_values(values)
-        requested_angle = float(sim.data[11])/1000*p['steer_max_deg']
+        requested_angle = float(sim.data[8])/1000*p['steer_max_deg']
         gap = abs(requested_angle-math.degrees(sim.steer))
         ratio = math.tan(sim.steer)*p['track']/(2*p['wheelbase'])
         differential = sim.native.motion['right_target_mm_s']-sim.native.motion['left_target_mm_s']
-        mismatch = abs(differential-2*float(sim.data[14])*ratio)
+        mismatch = abs(differential-2*float(sim.data[11])*ratio)
         row = dict(time_ms=sim.now, state=int(sim.data[0]), fault=int(sim.data[1]),
                    progress_m=sim.route_progress, speed_mm_s=sim.v*1000,
-                   command=float(sim.data[11]), requested=sim.native.motion['requested_steering_permille'],
+                   command=float(sim.data[8]),
                    model_pulse_us=sim.pulse, c_pulse_us=float(values[0]),
                    pwm_nominal_pulse_us=float(values[1]), actual_angle_deg=math.degrees(sim.steer),
                    steering_gap_deg=gap, wheel_target_steer_mismatch_mm_s=mismatch,
                    service_age_ms=sim.now-int(values[2]), frame_age_ms=sim.now-int(values[5]),
                    rendered_frame_id=sim.frame_id, consumed_frame_id=consumed['sequence'],
                    consumed_frame_time_ms=consumed['stamp'],
-                   q=int(sim.data[3]), valid=int(sim.data[4]),
-                   min_q=int(sim.data[16]), element=int(sim.data[7]),
-                   left_pwm=float(sim.data[12]), right_pwm=float(sim.data[13]),
+                   has_path=int(sim.data[3]),
+                   element=int(sim.data[6]),
+                   left_pwm=float(sim.data[9]), right_pwm=float(sim.data[10]),
                    left_speed_mm_s=sim.left_v*1000, right_speed_mm_s=sim.right_v*1000,
                    measured_left_mm_s=float(sim.measured[0]), measured_right_mm_s=float(sim.measured[1]),
                    **sim.native.motion)
@@ -226,7 +225,7 @@ def main():
         if row['state'] == 2:
             peak['command_minus_actual_deg'] = max(peak['command_minus_actual_deg'], gap)
             peak['wheel_target_vs_steer_mismatch_mm_s'] = max(peak['wheel_target_vs_steer_mismatch_mm_s'], mismatch)
-        bad = row['fault'] or (row['state'] == 2 and (not row['valid'] or min(row['left_pwm'],row['right_pwm']) == 0))
+        bad = row['fault'] or (row['state'] == 2 and min(row['left_pwm'],row['right_pwm']) == 0)
         if first_bad is None and bad:
             first_bad = row.copy()
         if sim.completed or sim.stop_event or sim.max_route_deviation > sim.track.width/2+.02:

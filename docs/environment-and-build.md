@@ -1,18 +1,28 @@
 # 环境、构建与调试
 
-## 当前构建与回归（2026-11-03）
+2026-11-07最新纠正：按用户要求恢复原几何目标生成与几何转向，像素PID只作回退，并恢复原近场优先算法；不恢复评分/视觉停车等机制。保留当前600mm/s、加速度1000、Kp15。主机123/123、仿真62/62，Keil0错误0警告，固件已更新、未烧录。圆弧及完整赛道B→A仿真完成，A→B仍偏离未通过；斑马线候选误降速未改。详见[几何恢复记录](../outputs/reports/geometry-restoration-2026-11-07.txt)。下文“统一像素PID”等为历史行为，已被本次纠正。
 
-当前源码已通过主工程 `car/scripts/build.ps1` 实际Keil全量编译，0错误0警告；Code=153504、RO-data=13340、RW-data=300、ZI-data=135548字节。`outputs/firmware/autocar.axf/.hex/.bin` 已生成，分别与 `car/build/objects/` 对应文件的SHA-256一致。未烧录，编译不代表实车验收。
+2026-11-07更新：按实车起步触发OVERSPEED的反馈，恢复单层可调单轮目标加速度AUTO_ACCEL_MM_S2，默认1000mm/s²，0关闭。差速分配后每10ms限制左右轮目标上升，复用上一拍目标；降速及故障停车立即执行。PWM仍由PID直接输出，硬超速4000、STALL、视觉及图传保持。直道目标0→1200约1.2秒，不包含500ms起步中位等待。仿真“加速度”入口同步可调。此变更优先于下文11月6日“不设加速度限制”的历史描述；尚未实车验证是否消除OVERSPEED。
+
+2026-11-06当前：已执行“视觉选路→像素偏差→转向PID；统一速度→轮速PID→PWM”。删除评分/轮迹审核、恢复低速、正常加减速斜坡、自动舵机/转向渐变及逐帧执行握手；保留必要选路、起终点及STALL等硬故障。主机117/117、仿真61/61、独立算法19/19通过，Keil0错误0警告。固件已生成，未烧录。直道闭环完成，双向圆弧/完整赛道因偏航未通过；同步图传延迟未改。新流程、参数与局限见[本轮交付](../outputs/reports/vision-pid-simplification-2026-11-06.txt)。
+
+以下2026-11-05及更早内容为历史记录，不代表当前控制接口。
+
+## 当前构建与回归（2026-11-05）
+
+动力恢复链精简已通过主工程 `car/scripts/build.ps1` 实际Keil全量编译，0错误0警告；Code=152208、RO-data=13332、RW-data=300、ZI-data=135524字节。`outputs/firmware/autocar.axf/.hex/.bin` 与 `car/build/objects/` 对应文件逐字节一致。BIN为172352字节，较本轮修改前减少1280字节。未烧录，编译不代表实车验收。
 
 | 固件 | SHA-256 |
 | --- | --- |
-| autocar.axf | D30C3AB01435DEDFF494A9024D8A79C855E2DEC09028B698528CA97E1973B05E |
-| autocar.hex | 4DF143E779FA45CC9B5779ADB40BFDC4E64F15ACF889D9EB8EE13DB15F089EEF |
-| autocar.bin | 6BAEA72A83A4E39550D7348D5231D67B43886A88517596692CF9929847D523C5 |
+| autocar.axf | D1E069D989BA9D1CE2E523C1D3B35D536F0402600F768DBA14CF29A1C01E6B90 |
+| autocar.hex | 78237F5D06454992A88002EFC69C8C44C3E5D3FA324E52D9CEF44ACF33115BE9 |
+| autocar.bin | 8554DF44047685D00CE0B9E4B78A939A96696484559F2557993C913A588F909C |
 
-原生图像处理/PID检查19/19通过；工程主机回归一次完整170项，167通过、3失败、0环境错误；仿真回归一次完整59项全部通过。三个失败的名称和断言值与此前基线一致，具体见[已知问题](known-issues.md)。本轮从开始使用继承权限的临时目录和Windows PowerShell模块路径设置，未修改测试逻辑或断言。完整运行日志保存在不提交的 `car/build/restore-validation-20261103/`：`build-console.log`、`algorithm-tests.log`、`host-tests.log`、`simulation-tests.log`，运行入口为其中的 `run_suite.py car` 与 `run_suite.py simulation`，解释器为项目内 `simulation/python/python.exe`。
+动力专项304检查、原生图像处理/PID检查19/19、仿真59/59通过；工程主机回归168项，165通过、3项与既有基线相同的失败，见[已知问题](known-issues.md)。删除已撤销API的2项测试，没有放宽保留断言。仿真首次在沙箱中57/59通过，2项启动测试因Tcl初始化失败；相同运行库自检在沙箱外通过，最终同一59项套件在沙箱外全部通过，未修改运行库或启动脚本。
 
-最新源码及实车边界见[自动驾驶指南](autonomous-driving.md)。下方为历史构建与环境记录，不作为当前固件身份。
+本轮日志位于不提交的 `car/build/power-chain-20261105/`：`red.log`、`red-pwm.log`、`green.log`、`host.log`、`simulation-verified.log`、`runtime-unsandboxed.log`、`build.log`；算法日志为 `car/build/power-chain-algorithms.log`。测试入口为项目Python的 `-B -m unittest discover -s car/tests -p 'test_*.py' -v` / `-s simulation/tests`，算法入口 `car/scripts/test.ps1`。完整范围、验证与待实车确认项见[交付报告](../outputs/reports/power-chain-simplification-2026-11-05.txt)。
+
+下方为历史构建与环境记录，不作为当前固件身份。
 
 2026-11-01当前：已按用户批准恢复冻结版同步整帧图传路径，调整为本帧视觉及控制先完成、显示与图传随后执行，并去除视觉年龄/舵机服务间隔门槛。控制计算仍在PIT，主循环确认本帧已消费并应用舵机后发送。1200/900/800/800mm/s及现有PID、视觉参数保持；未烧录。实现和验证见[同步控制报告](../outputs/reports/sync-control-2026-11-01.txt)。
 

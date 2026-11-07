@@ -47,10 +47,6 @@ uint8_t autonomous_control_service(uint32_t n){
     }
     return state.active;
 }
-uint8_t autonomous_control_frame_is_serviced(uint32_t s){
-    assert(s==published_sequence);assert(!irq_mask);
-    return !state.active || applied;
-}
 void remote_control_service(uint32_t n){(void)n;}
 void remote_control_poll(uint32_t (*clock_ms)(void)){assert(clock_ms()==app_uptime_ms);event('R');}
 void track_vision_process(const uint8_t *p,uint32_t n,uint32_t d,track_vision_result_t *v){
@@ -63,12 +59,12 @@ uint8_t camera_debug_init(uint8_t *l,uint8_t *m,uint8_t *r){assert(l && m && r);
 void camera_debug_configure_scheduler(uint32_t (*clock_ms)(void),uint8_t (*driving)(void),void (*busy)(uint8_t)){
     assert(clock_ms==NULL && driving==autonomous_control_is_active && busy==autonomous_control_set_network_busy);
 }
-void camera_debug_capture_frame(const uint8_t *p){assert(p==image[0] && submitted && (!state.active || applied));event('D');}
+void camera_debug_capture_frame(const uint8_t *p){assert(p==image[0] && submitted);event('D');}
 void binaryzation_process(unsigned char *p,unsigned short h,unsigned short w,unsigned int t){
     assert(p==image[0] && h==120 && w==188 && t==99);event('B');
 }
 void camera_debug_send_frame(const uint8_t *p){
-    assert(p==image[0] && submitted && (!state.active || applied));
+    assert(p==image[0] && submitted);
     event('S');++sends;app_uptime_ms+=send_delay;
 }
 void camera_debug_poll(uint32_t n){assert(n==app_uptime_ms);event('N');}
@@ -82,13 +78,13 @@ int main(void){
         camera_frame_sequence=k+1;expected_stamp=camera_frame_completed_ms=7;
         app_uptime_ms=2000;mt9v03x_finish_flag=1;send_delay=delays[k];
         app_run_once();
-        assert(strcmp(events,"VPTADBSN")==0);
-        assert(sends==k+1 && app_uptime_ms==2000+delays[k] && services>before+3);
+        assert(strcmp(events,"VPDTBSAN")==0);
+        assert(sends==k+1 && app_uptime_ms==2000+delays[k] && services==before+5);
     }
     state.active=0;event_count=0;events[0]=0;mt9v03x_finish_flag=1;
     app_run_once();assert(strcmp(events,"VPDBSNR")==0);
     event_count=0;events[0]=0;mt9v03x_finish_flag=0;
     app_run_once();assert(strcmp(events,"NR")==0);
-    puts("PASS: real main loop applies current-frame control before display/full send; aged frames retained; 100/300/1000 ms sends; idle polling");
+    puts("PASS: real main loop does not wait for current-frame execution before display/full send; aged frames retained; 100/300/1000 ms sends; idle polling");
     return 0;
 }

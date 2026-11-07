@@ -1,92 +1,56 @@
 #ifndef AUTOCAR_AUTONOMOUS_CONFIG_H
 #define AUTOCAR_AUTONOMOUS_CONFIG_H
 #include "vehicle_geometry.h"
+/* 速度mm/s，PID输出千分比。基础速度与PID为本车待实测调定初值。 */
 
-/* 自动驾驶源代码调参入口。速度mm/s、时间ms、PWM千分比，当前为中低速复核档，尚须实车标定及分级确认。 */
 #define AUTO_START_KEY_PIN C15
 #define AUTO_STOP_KEY_PIN C14
 #define AUTO_CANCEL_KEY_PIN C12
 #define AUTO_KEY_DEBOUNCE_MS 30U
 #define AUTO_TICK_MS 10U
-/* 用户确认M1左/M2右；编码器正号尚未实测，前进为负时将对应值改为-1。 */
 #define AUTO_MOTOR1_IS_LEFT 1
 #define AUTO_LEFT_ENCODER_SIGN 1
 #define AUTO_RIGHT_ENCODER_SIGN -1
-#define AUTO_CRUISE_SPEED_MM_S 1200.0f
-#define AUTO_CURVE_SPEED_MM_S 900.0f
-/* 仅用于已运行且本帧可靠外侧支持充分的普通弯道。 */
-#define AUTO_CURVE_OUTER_SPEED_MM_S 800.0f
-#define AUTO_CURVE_OUTER_MIN_CONFIDENCE 35U
-#define AUTO_ELEMENT_SPEED_MM_S 800.0f
+#define AUTO_CRUISE_SPEED_MM_S 600.0f
+/* 单轮目标上升速度，mm/s²；0关闭。降速和硬故障停车不受此限制。 */
+#define AUTO_ACCEL_MM_S2 1000.0f
 #define AUTO_FINISH_SPEED_MM_S 100.0f
-#define AUTO_ACCEL_MM_S2 200.0f
-#define AUTO_DECEL_MM_S2 800.0f
-/* 曲率规划上限，单位mm/s²；并非已测轮胎附着极限。 */
-#define AUTO_LATERAL_ACCEL_MM_S2 2400.0f
-/* 两种视觉控制共享转向轨迹；每10ms运行，不能在换模式时跳过。 */
-#define AUTO_STEERING_RATE_PERMILLE_S 5000.0f
-#define AUTO_STEERING_ACCEL_PERMILLE_S2 50000.0f
-/* 最大差速比例由Ackermann几何给出；设0可关闭。机械尺寸/满幅舵角仍须标定。 */
+/* 仅用于终点剩余距离的制动曲线，不限制正常行驶的目标变化。 */
+#define AUTO_FINISH_DECEL_MM_S2 800.0f
 #define AUTO_TURN_DIFFERENTIAL_RATIO (VEHICLE_REAR_TRACK_MM * 0.5f * tanf(VEHICLE_MAX_STEER_RAD) / VEHICLE_WHEELBASE_MM)
 #define AUTO_MAX_DUTY_PERMILLE 1000U
-#define AUTO_DUTY_STEP_PER_TICK 3U
-#define AUTO_DUTY_FALL_STEP_PER_TICK 12U
 #define AUTO_SPEED_KP 0.50f
 #define AUTO_SPEED_KI 1.0f
 #define AUTO_SPEED_KD 0.0f
 #define AUTO_SPEED_INTEGRAL_LIMIT 600.0f
 #define AUTO_SPEED_FEEDFORWARD 0.50f
-#define AUTO_SPEED_TRACKING_GAIN 10.0f
 #define AUTO_SPEED_FILTER_ALPHA 0.30f
 #define AUTO_SPEED_DERIVATIVE_TAU_S 0.04f
-/* 像素误差右正；舵机命令左正，负号在控制器内统一变换。 */
-/* 像素备用增益按实测34.743度重新归一化，约保持原36×28度的角度尺度。 */
-#define AUTO_STEERING_KP 29.0f
+#define AUTO_STEERING_KP 15.0f
 #define AUTO_STEERING_KI 0.0f
 #define AUTO_STEERING_KD 0.0f
 #define AUTO_STEERING_DERIVATIVE_TAU_S 0.06f
 #define AUTO_STEERING_NEAR_WEIGHT 0.45f
 #define AUTO_STEERING_FAR_WEIGHT 0.55f
-/* 遇到远处分支时，明显的近场偏差不能被反向远场误差抵消。
- * 在12..32px间连续转移权重，保留小偏差下的原预瞄响应。 */
+/* 原像素回退算法：近远异号且近场偏差大时，逐步优先近场。 */
 #define AUTO_STEERING_NEAR_PRIORITY_START_PX 12
 #define AUTO_STEERING_NEAR_PRIORITY_FULL_PX 32
 #define AUTO_STEERING_LIMIT_PERMILLE 1000.0f
-/* 1480us中位；自动驾驶摆幅统一由servo_config.h的
- * SERVO_AUTONOMOUS_EXCURSION_US管理，步进速度在下方调整。 */
-#define AUTO_SERVO_STEP_US 20U
-#define AUTO_SERVO_INTERVAL_MS 20U
 #define AUTO_CENTER_SETTLE_MS 500U
-/* 同步图传期间沿用最新有效控制，不按视觉或舵机服务年龄停车。 */
 #define AUTO_FEEDBACK_MAX_AGE_MS 30U
-#define AUTO_MIN_CONFIDENCE 40U
-#if AUTO_CURVE_OUTER_MIN_CONFIDENCE == 0U || AUTO_CURVE_OUTER_MIN_CONFIDENCE > AUTO_MIN_CONFIDENCE
-#error "外侧循迹Q门限必须在1到普通Q门限之间"
-#endif
-/* 已确认且限距的十字/环岛允许部分缺边；未确认候选不得使用此门限。 */
-#define AUTO_ELEMENT_MIN_CONFIDENCE 30U
 #define AUTO_WRONG_DIRECTION_MM_S 30
 #define AUTO_WRONG_DIRECTION_MS 100U
 #define AUTO_MAX_MEASURED_SPEED_MM_S 4000
-/* 可恢复空转抑制使用原始轮速；硬故障上限与此独立。 */
-#define AUTO_SPEED_CUT_MM_S 2500
-#define AUTO_SPEED_RESUME_MM_S 2200
-#define AUTO_SPEED_RESUME_SAMPLES 3U
-#define AUTO_RECOVERY_SPEED_MM_S 200.0f
 #define AUTO_STALL_SPEED_MM_S 10
 #define AUTO_STALL_DUTY_PERMILLE 55U
 #define AUTO_STALL_TIME_MS 1500U
 #define AUTO_MAX_RUN_TIME_MS 480000U
-/* 近场斑马线需要连续3帧；第一次为出发，离开后返回才为终点。 */
 #define AUTO_ZEBRA_MIN_ROW 80U
 #define AUTO_ZEBRA_CONFIRM_FRAMES 3U
 #define AUTO_ZEBRA_CLEAR_FRAMES 5U
 #define AUTO_ZEBRA_CLEAR_DISTANCE_MM 500U
-/* 标记时效只供诊断/测试，不作为识别停车门槛。 */
-#define AUTO_ZEBRA_FRAME_MAX_AGE_MS 250U
 #define AUTO_MIN_LAP_DISTANCE_MM 5000U
 #define AUTO_MIN_LAP_TIME_MS 8000U
-/* 末端可靠离开视野后继续前进的参考距离；须实测后轮越线及制动余量。 */
 #define AUTO_FINISH_ADVANCE_MM 1000U
 #define AUTO_FINISH_EXIT_ROW 112U
 #if AUTO_ZEBRA_CONFIRM_FRAMES < 1U || AUTO_ZEBRA_CONFIRM_FRAMES > 255U || AUTO_ZEBRA_CLEAR_FRAMES < 1U || AUTO_ZEBRA_CLEAR_FRAMES > 255U || AUTO_ZEBRA_MIN_ROW > 117U
@@ -94,9 +58,6 @@
 #endif
 #if AUTO_TICK_MS != 10U
 #error "自动驾驶控制周期必须为10ms"
-#endif
-#if AUTO_STEERING_NEAR_PRIORITY_START_PX < 0 || AUTO_STEERING_NEAR_PRIORITY_FULL_PX <= AUTO_STEERING_NEAR_PRIORITY_START_PX
-#error "近场优先渐变范围无效"
 #endif
 #if AUTO_MAX_DUTY_PERMILLE == 0U || AUTO_MAX_DUTY_PERMILLE > 1000U
 #error "自动驾驶PWM上限必须在1..1000千分比内"
@@ -109,8 +70,5 @@
 #endif
 #if AUTO_FINISH_ADVANCE_MM == 0U || AUTO_FINISH_ADVANCE_MM > 1500U
 #error "终点参考推进距离必须在1..1500mm内，并另行实测停车位置"
-#endif
-#if AUTO_SPEED_RESUME_MM_S <= 0 || AUTO_SPEED_RESUME_MM_S >= AUTO_SPEED_CUT_MM_S || AUTO_SPEED_CUT_MM_S > AUTO_MAX_MEASURED_SPEED_MM_S || AUTO_SPEED_RESUME_SAMPLES < 1U
-#error "轮速抑制/恢复/硬故障门限必须有序且有恢复确认"
 #endif
 #endif

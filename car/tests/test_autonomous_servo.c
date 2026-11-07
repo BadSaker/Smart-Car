@@ -92,15 +92,15 @@ int main(void)
     unsigned n;
     reset(0);servo_control_autonomous_apply(1,1000,0);
     CHECK(status()->current_pulse_us==1480,"auto starts centered");
-    for(n=1;n<=100;++n)servo_control_autonomous_apply(1,1000,n*AUTO_SERVO_INTERVAL_MS);
+    for(n=1;n<=100;++n)servo_control_autonomous_apply(1,1000,n*10U);
     CHECK(status()->current_pulse_us==SERVO_REFERENCE_CENTER_US+SERVO_AUTONOMOUS_EXCURSION_US,"auto reaches configured left endpoint");
     servo_control_remote_apply(0,0,2020);
     CHECK(status()->output_enabled,"remote disable cannot release auto owner");
     servo_control_remote_apply(1,-1000,2040);
     CHECK(status()->target_pulse_us==SERVO_REFERENCE_CENTER_US+SERVO_AUTONOMOUS_EXCURSION_US,"remote target cannot overwrite auto owner");
     servo_control_autonomous_apply(1,-1000,10000);
-    CHECK(status()->current_pulse_us==SERVO_REFERENCE_CENTER_US+SERVO_AUTONOMOUS_EXCURSION_US-AUTO_SERVO_STEP_US,"late auto service cannot catch up with a jump");
-    for(n=1;n<=100;++n)servo_control_autonomous_apply(1,-1000,10000+n*AUTO_SERVO_INTERVAL_MS);
+    CHECK(status()->current_pulse_us==SERVO_REFERENCE_CENTER_US-SERVO_AUTONOMOUS_EXCURSION_US,"automatic output immediately follows the current PID command");
+    for(n=1;n<=100;++n)servo_control_autonomous_apply(1,-1000,10000+n*10U);
     CHECK(status()->current_pulse_us==SERVO_REFERENCE_CENTER_US-SERVO_AUTONOMOUS_EXCURSION_US,"auto reaches configured right endpoint");
     stop_key=GPIO_LOW;servo_control_autonomous_apply(1,1000,12020);
     CHECK(!status()->output_enabled,"S3 overrides auto steering");

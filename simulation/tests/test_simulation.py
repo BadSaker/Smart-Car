@@ -54,7 +54,7 @@ class ModelTests(unittest.TestCase):
     def test_native_visual_start_and_camera_loss(self):
         p=defaults();p['scenario']='straight';s=Simulation(p);s.started=True
         for _ in range(180):s.tick()
-        self.assertEqual(s.data[0],2);self.assertGreater(s.distance,.05);self.assertGreater(s.data[3],80)
+        self.assertEqual(s.data[0],2);self.assertGreater(s.distance,.05);self.assertEqual(s.data[3],1)
         self.assertLess(abs(s.h),.05)
         s.p['drop_camera']=True
         for _ in range(20):s.tick()
@@ -74,9 +74,11 @@ class ModelTests(unittest.TestCase):
         p['blackout']=True;s=Simulation(p);s.started=True
         for _ in range(100):s.tick()
         self.assertEqual(s.data[1],0);self.assertEqual(s.data[2],1)
-        self.assertLessEqual(s.data[14],200);self.assertGreater(s.distance,0)
+        self.assertGreater(s.data[11],0);self.assertLessEqual(s.data[11],p['cruise']);self.assertGreater(s.distance,0)
+        for _ in range(150):s.tick()
+        self.assertEqual(s.data[11],p['cruise'])
     def test_bad_parameters_rejected(self):
-        for key,value in [('height',0),('hfov',180),('kp',float('nan')),('outer_enabled',.5),('min_q',42.5)]:
+        for key,value in [('height',0),('hfov',180),('kp',float('nan')),('outer_enabled',.5),('width_top',42.5)]:
             p=defaults();p[key]=value
             with self.assertRaises(ValueError):validate(p)
     def test_full_finish_uses_progress_not_nominal_distance(self):

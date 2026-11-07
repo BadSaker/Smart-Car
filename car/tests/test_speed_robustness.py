@@ -21,10 +21,10 @@ class SpeedRobustnessTests(unittest.TestCase):
 #include <math.h>
 __declspec(dllexport) void run(float gain,int turn,float *result) {
  autonomous_drive_t d;autonomous_drive_input_t i;unsigned now;float speed=0,sum=0,left_before=0,right_before=0;
- autonomous_drive_init(&d);memset(&i,0,sizeof i);i.ready=i.vision_valid=i.vision_near_supported=1;i.confidence=95;
+ autonomous_drive_init(&d);memset(&i,0,sizeof i);i.ready=i.has_path=1;
  if(turn){i.geometry.valid=1;i.geometry.target_right_mm=50;i.geometry.target_forward_mm=400;}
  for(now=0;now<12000;now+=10) {
-  float target;i.now_ms=i.servo_service_ms=now;++i.feedback_sequence;
+  float target;i.now_ms=now;++i.feedback_sequence;
   if(now%20==0){++i.frame_sequence;i.frame_ms=now;}
   i.servo_generation=d.status.run_generation;i.start_pressed=now>=160 && now<240;
   /* (50,400)mm目标、190mm轴距、153mm轮距，1m/s时右转外左轮约1047，内右轮约953。 */

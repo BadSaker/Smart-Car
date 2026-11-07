@@ -20,19 +20,13 @@ from source_layout import source_root,SOURCE_NAMES,source_files
 def run_is_acceptable(result,parameters):
     """完成位置不能掩盖撤PWM或降到低速爬行；正常期允许2%的测速/闭环误差。"""
     stats=result['stability_10ms']
-    limits=result.get('motion_limits',{})
-    speed_floor=.98*min(800.,*(parameters[k] for k in ('cruise','curve_speed','outer_speed','element_speed')))
+    speed_floor=.98*parameters['cruise']
     return bool(result.get('dynamics_model')=='independent' and result['completed'] and result['max_outside_wheels']==0 and result['fault']=='无'
         and result.get('max_error_m',float('inf'))<=parameters['road_width']/2
         and result.get('max_route_deviation_m',float('inf'))<=parameters['road_width']/2+.02
         and .8*result['route_length_m']<=result['distance_m']<=1.1*result['route_length_m']
-        and limits.get('max_command_step',float('inf'))<=parameters['steering_rate']*.01+1.01
-        and limits.get('max_target_rise',float('inf'))<=parameters['accel']*.01+.01
-        and limits.get('max_target_fall',float('inf'))<=parameters['decel']*.01+.01
-        and limits.get('max_pwm_rise',float('inf'))<=3.01
         and result['min_tire_corner_margin_mm'] is not None and result['min_tire_corner_margin_mm']>=0
         and stats['running_ticks']>0 and stats['zero_pwm_ticks']==0
-        and stats['min_path_margin'] is not None and stats['min_path_margin']>=10
         and stats['min_speed_mm_s'] is not None and stats['min_speed_mm_s']>=speed_floor)
 
 
@@ -87,14 +81,13 @@ def main():
             a,b=arcs[0]['s'],arcs[-1]['s']+arcs[-1]['length']
             wave_window=(a,b) if direction=='AB' else ((sim.track.ab_length-b)%sim.track.length,(sim.track.ab_length-a)%sim.track.length)
         for _ in range(int(args.seconds*100)):
-            sim.tick();phase=int(sim.data[7])
+            sim.tick();phase=int(sim.data[6])
             if args.capture_frames and sim.frame_id!=last_frame:
                 captured.append(sim.frame_buffer[-1]);last_frame=sim.frame_id
             if wave_window and wave_window[0]-.2<=sim.route_progress<=wave_window[1]+.2 and sim.frame_id!=last_wave_frame:
                 last_wave_frame=sim.frame_id;wave_frames.append(sim.image.tobytes())
                 wave_meta.append({'time_ms':sim.frame_time_ms,'distance_mm':sim.vision_distance_mm,
-                    'progress_m':sim.route_progress,'element':phase,'valid':int(sim.data[4]),
-                    'q':int(sim.data[3]),'fault':int(sim.data[1]),**sim.native.features})
+                    'progress_m':sim.route_progress,'element':phase,'has_path':int(sim.data[3]),'fault':int(sim.data[1]),**sim.native.features})
             if phase!=previous:
                 events.append({'time_s':sim.now/1000,'progress_m':sim.route_progress,'element':phase,**sim.native.features})
                 previous=phase

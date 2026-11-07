@@ -26,7 +26,7 @@ class EncoderScaleTests(unittest.TestCase):
 
     def test_element_distance_uses_encoder_odometry(self):
         sim = Simulation(defaults())
-        sim.data[15] = 1234
+        sim.data[12] = 1234
         sim.distance = 999
         # 仅截获算法边界以检查输入来源；真实渲染仍执行。
         received = []

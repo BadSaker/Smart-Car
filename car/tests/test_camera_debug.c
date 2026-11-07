@@ -296,7 +296,7 @@ static void scheduled_lock(uint8 busy) { scheduled_busy=busy; }
 static void scheduled_control_tick(void)
 {
     if(scheduled_now%10U)return;
-    scheduled_input.now_ms=scheduled_input.servo_service_ms=scheduled_now;
+    scheduled_input.now_ms=scheduled_now;
     scheduled_input.servo_generation=scheduled_drive.status.run_generation;
     ++scheduled_input.feedback_sequence;
     if(scheduled_now%20U==0){++scheduled_input.frame_sequence;scheduled_input.frame_ms=scheduled_now;}
@@ -333,22 +333,12 @@ int main(int argc, char **argv)
     }
 #endif
 #ifdef TEST_AUTONOMOUS_DISPLAY
-    auto_status.active=1;auto_status.state=AUTO_DRIVE_RUNNING;auto_status.confidence=95;
-    auto_status.distance_mm=123;auto_status.left_duty_permille=85;auto_status.right_duty_permille=87;
-    auto_status.minimum_confidence=40;auto_status.vision_valid=1;auto_status.element=TRACK_ELEMENT_CURVE;
-    auto_status.curve_outer_side=TRACK_SIDE_RIGHT;auto_status.curve_outer_supported=1;
-    auto_status.curve_outer_near_rows=17;auto_status.curve_outer_far_rows=13;
-    auto_status.live_confidence=88;auto_status.live_observation_confidence=64;
+    auto_status.active=1;auto_status.state=AUTO_DRIVE_RUNNING;auto_status.has_path=1;
+    auto_status.near_error_px=10;auto_status.far_error_px=20;auto_status.element=TRACK_ELEMENT_CURVE;
     camera_display_statistics();CHECK(strstr(telemetry_line0,"AUTO:RUN")!=NULL);
-    CHECK(strstr(telemetry_line0," P")==NULL);
-    CHECK(strstr(telemetry_line0,"Q95/40")!=NULL && strstr(telemetry_line0,"O2+")!=NULL);
-    CHECK(strstr(telemetry_line1,"LQ88 RQ64 OK")!=NULL);
-    auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_PATH_LOST;
-    auto_status.path_reason=AUTO_PATH_Q_LOW;auto_status.diagnostic_steering_permille=1000;
-    camera_display_statistics();CHECK(strstr(telemetry_line0,"LOST")!=NULL);
-    CHECK(strstr(telemetry_line1,"LQ88 RQ64 QLOW")!=NULL);
-    auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_CAMERA_STALE;
-    camera_display_statistics();CHECK(strstr(telemetry_line0,"CAMERA")!=NULL);
+    CHECK(strstr(telemetry_line0,"P1")!=NULL && strstr(telemetry_line0,"N10")!=NULL);
+    auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_STALL;
+    camera_display_statistics();CHECK(strstr(telemetry_line0,"STALL")!=NULL);
     motor_status.remote_armed=1;motor_status.remote_link=1;
     camera_display_statistics();CHECK(strstr(telemetry_line0,"RC:")!=NULL);
     puts("PASS: autonomous status and remote display arbitration");return 0;
@@ -453,8 +443,8 @@ int main(int argc, char **argv)
     }
 #ifdef TEST_SCHEDULED
     autonomous_drive_init(&scheduled_drive);memset(&scheduled_input,0,sizeof scheduled_input);
-    scheduled_input.ready=scheduled_input.vision_valid=scheduled_input.vision_near_supported=1;
-    scheduled_input.confidence=95;scheduled_input.left_speed_mm_s=scheduled_input.right_speed_mm_s=100;
+    scheduled_input.ready=scheduled_input.has_path=1;
+    scheduled_input.left_speed_mm_s=scheduled_input.right_speed_mm_s=100;
     scheduled_input.forward_step_um=1000;
     camera_debug_configure_scheduler(scheduled_clock,scheduled_active,scheduled_lock);
     camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);

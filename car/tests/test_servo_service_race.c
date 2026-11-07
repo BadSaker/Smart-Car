@@ -26,7 +26,7 @@ static void step(unsigned n,int camera,int service)
 {
     while(n--){
         track_vision_result_t vision;
-        memset(&vision,0,sizeof vision);vision.valid=1;vision.confidence=95;
+        memset(&vision,0,sizeof vision);vision.has_path=1;
         vision.near_error_px=15;vision.far_error_px=20;
         now+=10;++feedback.sample_sequence;
         feedback.left.speed_mm_s=AUTO_LEFT_ENCODER_SIGN*100;feedback.right.speed_mm_s=AUTO_RIGHT_ENCODER_SIGN*120;
@@ -34,7 +34,7 @@ static void step(unsigned n,int camera,int service)
         if(camera)autonomous_control_publish_vision(&vision,++frame_sequence,now);
         autonomous_control_tick_10ms(now);motor_control_tick_10ms();
         if(service)autonomous_control_service(now);
-        CHECK(duties[PWM2_MODULE0_CHA_C6]<=1000 && duties[PWM2_MODULE1_CHA_C8]<=1000);
+        CHECK(duties[PWM2_MODULE0_CHA_C6]<=PWM_DUTY_MAX && duties[PWM2_MODULE1_CHA_C8]<=PWM_DUTY_MAX);
     }
 }
 
@@ -62,13 +62,15 @@ int main(int argc,char **argv)
     if(strcmp(argv[1],"frame")==0){
         track_vision_result_t v;
         keys[C15]=0;step(4,1,1);keys[C15]=1;step(85,1,1);
-        memset(&v,0,sizeof v);v.valid=1;v.confidence=95;v.near_error_px=v.far_error_px=-80;
+        memset(&v,0,sizeof v);v.has_path=1;v.near_error_px=v.far_error_px=-80;
         autonomous_control_publish_vision(&v,++frame_sequence,now);
         /* 恢复中断时PIT刚消费本帧，当前service快照仍属旧控制，不能确认。 */
         review_event=2;autonomous_control_service(now);
-        CHECK(!autonomous_control_frame_is_serviced(frame_sequence));
-        step(2,0,1);CHECK(autonomous_control_frame_is_serviced(frame_sequence));
-        puts("frame: PIT consumption during service cannot acknowledge an older output");
+        step(1,0,1);
+        CHECK(autonomous_control_is_active());
+        CHECK(servo_control_get_status()->current_pulse_us>1480);
+        CHECK(servo_control_get_status()->current_pulse_us==servo_control_get_status()->target_pulse_us);
+        puts("frame: latest PID output applied on next service");
     }else if(strcmp(argv[1],"stop")==0){
         keys[C15]=0;step(4,1,1);keys[C15]=1;step(85,1,1);
         CHECK(autonomous_control_is_active());

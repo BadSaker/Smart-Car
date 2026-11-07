@@ -1,6 +1,6 @@
 """验证近场大偏差与远场分支冲突时的实际控制输出。"""
 import ctypes as C
-import os
+import os,re
 from pathlib import Path
 import subprocess
 import unittest
@@ -13,6 +13,7 @@ COMPILER=os.environ.get('AUTOCAR_HOST_CC',str(ROOT/'simulation/toolchain/mingw64
 class PreviewConflictTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.kp=float(re.search(r'#define\s+AUTO_STEERING_KP\s+([0-9.]+)',(ROOT/'car/config/autonomous_config.h').read_text(encoding='utf-8')).group(1))
         SCRATCH.mkdir(parents=True,exist_ok=True)
         wrapper=SCRATCH/'preview_bridge.c'
         wrapper.write_text('''#include "autonomous_drive.h"
@@ -23,8 +24,8 @@ __declspec(dllexport) int preview(int near_error,int far_error) {
  for(now=0;now<=2000;now+=10) {
   i.now_ms=now;i.ready=1;i.start_pressed=now>=160 && now<240;
   i.frame_ms=now;i.frame_sequence++;i.feedback_sequence++;
-  i.servo_service_ms=now;i.servo_generation=d.status.run_generation;
-  i.vision_valid=1;i.vision_near_supported=1;i.confidence=100;
+  i.servo_generation=d.status.run_generation;
+  i.has_path=1;
   i.left_speed_mm_s=100;i.right_speed_mm_s=100;i.forward_step_um=1000;
   i.near_error_px=now>=800?near_error:0;i.far_error_px=now>=800?far_error:0;
   autonomous_drive_tick(&d,&i);
@@ -40,14 +41,14 @@ __declspec(dllexport) int preview(int near_error,int far_error) {
         if result.returncode:raise AssertionError(result.stdout+result.stderr)
         cls.lib=C.CDLL(str(dll));cls.lib.preview.argtypes=[C.c_int,C.c_int];cls.lib.preview.restype=C.c_int
 
-    def test_large_near_error_is_not_cancelled_by_opposite_far_branch(self):
-        self.assertGreater(self.lib.preview(-29,22),600)
-        self.assertLess(self.lib.preview(29,-22),-600)
+    def test_large_near_error_uses_original_priority(self):
+        self.assertAlmostEqual(self.lib.preview(-32,32),32*self.kp,delta=1)
+        self.assertAlmostEqual(self.lib.preview(32,-32),-32*self.kp,delta=1)
 
     def test_small_near_error_keeps_preview_and_straight_response(self):
-        self.assertGreater(self.lib.preview(2,-20),200)
+        self.assertAlmostEqual(self.lib.preview(2,-20),10.1*self.kp,delta=1)
         # 两个预瞄误差相同时为20px；按实测转角归一化Kp29，输出应为-580‰。
-        self.assertAlmostEqual(self.lib.preview(20,20),-580,delta=2)
+        self.assertAlmostEqual(self.lib.preview(20,20),-20*self.kp,delta=2)
         self.assertEqual(self.lib.preview(0,0),0)
 
 

@@ -24,7 +24,7 @@ static uint8_t display_autonomous_status(void)
     motor_control_status_t motor;
     char text[40];
     const char *state;
-    const char *reason;
+
     const servo_control_status_t *servo=servo_control_get_status();
     autonomous_control_get_status(&automatic);motor_control_get_status(&motor);
     if(!automatic.active && (automatic.state==AUTO_DRIVE_IDLE || motor.remote_armed || motor.telemetry_visible))return 0;
@@ -36,44 +36,25 @@ static uint8_t display_autonomous_status(void)
         case AUTO_DRIVE_STOPPED:state="STOP";break;
         case AUTO_DRIVE_FAULT:
             switch(automatic.fault){
-                case AUTO_FAULT_CAMERA_STALE:state="CAMERA";break;
-                case AUTO_FAULT_PATH_LOST:state="LOST";break;
                 case AUTO_FAULT_ENCODER_STALE:state="ENCODER";break;
                 case AUTO_FAULT_ENCODER_DIRECTION:state="ENC SIGN";break;
                 case AUTO_FAULT_OVERSPEED:state="OVERSPEED";break;
                 case AUTO_FAULT_STALL:state="STALL";break;
-                case AUTO_FAULT_SERVO_STALE:state="SERVO GAP";break;
-                case AUTO_FAULT_ELEMENT:state="ELEMENT";break;
                 case AUTO_FAULT_RUN_TIMEOUT:state="TIMEOUT";break;
-                case AUTO_FAULT_FINISH_TIMEOUT:state="FIN TIME";break;
                 case AUTO_FAULT_NOT_READY:state="NOT READY";break;
-                case AUTO_FAULT_MARKER_LIMIT:state="Z LIMIT";break;
                 default:state="CONFIG";break;
             }break;
         default:state="IDLE";break;
     }
-    switch(automatic.path_reason) {
-        case AUTO_PATH_INVALID:reason="PATH";break;
-        case AUTO_PATH_NEAR:reason="NEAR";break;
-        case AUTO_PATH_Q_LOW:reason="QLOW";break;
-        case AUTO_PATH_OUTER_NEAR:reason="OUTN";break;
-        case AUTO_PATH_OUTER_FAR:reason="OUTF";break;
-        case AUTO_PATH_OUTER_CONTINUITY:reason="OUTC";break;
-        default:reason="OK";break;
-    }
-    snprintf(text,sizeof text,"AUTO:%s Q%u/%u V%u E%u O%u%c",state,automatic.confidence,
-             automatic.minimum_confidence,automatic.vision_valid,automatic.element,
-             automatic.curve_outer_side,automatic.curve_outer_supported?'+':'-');
+    snprintf(text,sizeof text,"AUTO:%s P%u E%u N%d F%d",state,automatic.has_path,
+             automatic.element,automatic.near_error_px,automatic.far_error_px);
     display_line(0,text);
-    /* S在路径被拒绝时显示首次撤输出前命令；T/C为当前舵机目标/输出脉宽。 */
-    snprintf(text,sizeof text,"LQ%u RQ%u %s T%u C%u",automatic.live_confidence,
-             automatic.live_observation_confidence,reason,
+    snprintf(text,sizeof text,"V%.0f L%ld R%ld T%u C%u",automatic.target_speed_mm_s,
+             (long)automatic.left_speed_mm_s,(long)automatic.right_speed_mm_s,
              servo->target_pulse_us,servo->current_pulse_us);
-    if(automatic.marker_phase || automatic.zebra_visible || automatic.zebra_reject ||
-       automatic.state==AUTO_DRIVE_FINISHED)
-        snprintf(text,sizeof text,"LQ%u RQ%u Z%u R%uG%u M%u D%lu",automatic.live_confidence,
-                 automatic.live_observation_confidence,automatic.marker_phase,automatic.zebra_reject,
-                 automatic.geometry_reject,automatic.start_marker_seen,(unsigned long)automatic.finish_advance_mm);
+    if(automatic.marker_phase || automatic.state==AUTO_DRIVE_FINISHED)
+        snprintf(text,sizeof text,"Z%u M%u D%lu T%u C%u",automatic.marker_phase,automatic.start_marker_seen,
+                 (unsigned long)automatic.finish_advance_mm,servo->target_pulse_us,servo->current_pulse_us);
     display_line(16,text);return 1;
 }
 

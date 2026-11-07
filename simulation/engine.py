@@ -11,9 +11,8 @@ from perturbation import Perturbation
 from dynamics import WheelDynamics
 
 STATES=['待启动','中位等待','运行','终点推进','已结束','已停止','故障']
-FAULTS=['无','配置错误','摄像头超时','路径丢失','编码器超时','编码器反向','超速','堵转','舵机服务超时','元素故障','运行超时','终点超时','启动未就绪']
+FAULTS={0:'无',1:'配置错误',4:'编码器超时',5:'编码器反向',6:'超速',7:'堵转',10:'运行超时',12:'启动未就绪'}
 ELEMENTS=['直道','弯道','十字','环岛候选','环岛入口','环岛内','环岛出口']
-REASONS=['接受','视觉无效','近场不足','Q低','外侧近场不足','外侧远场不足','外侧连续性不足']
 
 class Simulation:
     dt=.01
@@ -33,13 +32,13 @@ class Simulation:
         self.dynamics=WheelDynamics(self.p)
         self.count_total=np.zeros(2);self.last_counts=np.zeros(2,dtype=int);self.measured=np.zeros(2)
         self.rng=np.random.default_rng(int(p['seed']));self.distance=0.;self.started=False;self.stop_requested=False
-        self.data=np.zeros(22);self.rows=np.zeros((4,120),dtype=np.uint8);self.image=np.zeros((120,188),dtype=np.uint8)
+        self.data=np.zeros(14);self.rows=np.zeros((4,120),dtype=np.uint8);self.image=np.zeros((120,188),dtype=np.uint8)
         self.applied_duties=np.zeros(2);self.applied_command=0.
         self.frame_id=0;self.frame_time_ms=0;self.frame_pose=(self.x,self.y,self.h);self._new_frame=False
         self.frame_buffer=deque(maxlen=500);self.stop_event=None;self.event_frames=[]
         self.history=[];self.trajectory=[(self.x,self.y)];self.completed=False;self.max_error=0.;self.max_outside=0
-        self.min_tire_margin=float('inf');self.running_ticks=0;self.path_ticks=0;self.zero_pwm_ticks=0
-        self.min_running_speed=float('inf');self.min_path_margin=100;self.low_speed_ticks=0
+        self.min_tire_margin=float('inf');self.running_ticks=0;self.zero_pwm_ticks=0
+        self.min_running_speed=float('inf');self.low_speed_ticks=0
         self.max_route_deviation=0.
         self.motion_limits={k:0. for k in ('max_command_step','max_target_rise','max_target_fall','max_pwm_rise',
             'max_wheel_speed_mm_s','max_wheel_accel_mm_s2','max_wheel_overshoot_mm_s')}
@@ -57,34 +56,23 @@ class Simulation:
         self.brightness_offset=self.perturbation.brightness(self.now)
         if self.brightness_offset and not self.p['blackout']:
             self.image=np.clip(self.image.astype(float)+self.brightness_offset,0,255).astype(np.uint8)
-        self.vision_distance_mm=int(self.data[15])
+        self.vision_distance_mm=int(self.data[12])
         self.native.vision(self.image,self.now,self.vision_distance_mm)
         self.capture_time_ms=max(0,self.now-delay)
         self.frame_id+=1;self.frame_time_ms=self.now;self.frame_pose=pose;self._new_frame=True
     def path_diagnostic(self,locked=True):
         if locked and self.stop_event is not None:return self.stop_event['path'].copy()
-        q=int(self.data[3]);minimum=int(self.data[16]) or int(self.p['min_q'])
-        valid=bool(self.data[4]);fresh=self.now-self.frame_time_ms<=150
-        accepted=valid and q>=minimum and not (int(self.data[20])&1) and fresh
-        reason=REASONS[int(self.data[10])]
-        if accepted:reason='接受'
-        elif not fresh:reason='摄像头超时'
-        elif self.stop_event is not None:
-            reason='视觉无效' if not valid else ('Q低' if q<minimum else '元素故障')
-        elif not valid and reason=='接受':reason='视觉无效'
-        elif q<minimum and reason=='接受':reason='Q低'
-        return {'confidence':q,'minimum':minimum,'vision_valid':valid,'accepted':bool(accepted),
-                'reason':reason,'element':int(self.data[7]),'frame_fresh':fresh,
-                'frame_id':self.frame_id,'frame_time_ms':self.frame_time_ms,'sample_time_ms':self.now,
-                'near_px':int(self.data[5]),'far_px':int(self.data[6]),'vision_fault':int(self.data[20]),
-                **self.native.features}
+        has_path=bool(self.data[3])
+        return {'has_path':has_path,'reason':'几何转向' if self.native.features['geometry_valid'] else ('像素PID回退' if has_path else '保持上一转向'),
+                'element':int(self.data[6]),'frame_id':self.frame_id,'frame_time_ms':self.frame_time_ms,'sample_time_ms':self.now,
+                'near_px':int(self.data[4]),'far_px':int(self.data[5]),**self.native.features}
     def capture_frame(self):
         if not self._new_frame:return
         meta={'frame_id':self.frame_id,'frame_time_ms':self.frame_time_ms,'control_time_ms':self.now,
               'capture_time_ms':self.capture_time_ms,'vision_distance_mm':self.vision_distance_mm,
               'pose':list(self.frame_pose),'path':self.path_diagnostic(False),
               'state':int(self.data[0]),'fault':int(self.data[1]),
-              'left_pwm':float(self.data[12]),'right_pwm':float(self.data[13]),'replay':self.replay}
+              'left_pwm':float(self.data[9]),'right_pwm':float(self.data[10]),'replay':self.replay}
         meta['data']=self.data.tolist();meta['brightness_offset']=self.brightness_offset
         packet={'meta':meta,'image':self.image.copy(),'rows':self.rows.copy()}
         self.frame_buffer.append(packet);self._new_frame=False
@@ -126,7 +114,7 @@ class Simulation:
         if self.replay:return
         previous_motion=self.native.motion.copy();previous_command=self.applied_command
         previous_pwm=self.applied_duties.copy();previous_wheels=(self.left_v,self.right_v)
-        previous_good=int(self.data[0])==2 and bool(self.data[4]) and int(self.data[10])==0
+        previous_running=int(self.data[0])==2
         p=self.p;self.now+=10
         if self.now+1e-6>=self.next_frame:
             if not p['drop_camera']:self._frame()
@@ -144,7 +132,7 @@ class Simulation:
         self.data,self.rows=self.native.data()
         self.capture_frame();self.latch_stop()
         if p['controller']=='native':
-            command=self.data[11];duties=self.data[12:14];active=bool(self.data[2])
+            command=self.data[8];duties=self.data[9:11];active=bool(self.data[2])
         else:
             # Explicit ground-truth reference for model checks, never represented as vehicle C control.
             i,error,progress=self.track.nearest(self.x,self.y,getattr(self,'route_progress',0))
@@ -153,11 +141,10 @@ class Simulation:
             desired=math.atan2(2*p['wheelbase']*lateral,max(.02,dx*dx+dy*dy))
             command=np.clip(math.degrees(desired)/p['steer_max_deg']*1000,-1000,1000)
             active=self.started and not self.stop_requested
-            duties=np.full(2,min(200,p['curve_speed']/p['motor_gain']+p['motor_deadzone']) if active else 0)
+            duties=np.full(2,min(200,p['cruise']/p['motor_gain']+p['motor_deadzone']) if active else 0)
         self.applied_duties=duties.copy();self.applied_command=float(command)
         target=p['servo_center']+(command/1000*p['servo_range'] if active else 0)
-        if self.now/1000-self.last_servo+1e-9>=p['servo_interval']:
-            self.pulse+=float(np.clip(target-self.pulse,-p['servo_step'],p['servo_step']));self.last_servo=self.now/1000
+        self.pulse=target
         angle=math.radians((self.pulse-p['servo_center'])/p['servo_range']*p['steer_max_deg'])
         self.steer+=(angle-self.steer)*(1-math.exp(-self.dt/p['servo_tau']))
         if p['dynamics_model']=='independent':
@@ -180,7 +167,7 @@ class Simulation:
         self.min_tire_margin=min(self.min_tire_margin,self.tire_margin())
         metrics=self.motion_limits
         metrics['max_wheel_speed_mm_s']=max(metrics['max_wheel_speed_mm_s'],abs(self.left_v)*1000,abs(self.right_v)*1000)
-        if previous_good and int(self.data[0])==2 and bool(self.data[4]) and int(self.data[10])==0:
+        if previous_running and int(self.data[0])==2:
             metrics['max_command_step']=max(metrics['max_command_step'],abs(self.applied_command-previous_command))
             for index,(key,speed) in enumerate(zip(('left_target_mm_s','right_target_mm_s'),(self.left_v,self.right_v))):
                 change=self.native.motion[key]-previous_motion[key]
@@ -189,12 +176,10 @@ class Simulation:
                 metrics['max_pwm_rise']=max(metrics['max_pwm_rise'],float(self.applied_duties[index]-previous_pwm[index]))
                 metrics['max_wheel_accel_mm_s2']=max(metrics['max_wheel_accel_mm_s2'],(speed-previous_wheels[index])*1000/self.dt)
                 metrics['max_wheel_overshoot_mm_s']=max(metrics['max_wheel_overshoot_mm_s'],speed*1000-self.native.motion[key])
-        nominal=min(p[k] for k in ('cruise','curve_speed','outer_speed','element_speed'))
-        # 单轮独立限速后，起步预算必须包含最外轮目标，而非仍按整车斜坡计时。
-        startup_ms=1000+max(p[k] for k in ('cruise','curve_speed','outer_speed','element_speed'))*(1+self.native.motion['maximum_turn_ratio'])/p['accel']*1000
         if int(self.data[0])==2:
-            self.path_ticks+=1;self.zero_pwm_ticks+=bool(min(self.applied_duties)<=0)
-            self.min_path_margin=min(self.min_path_margin,int(self.data[3])-int(self.data[16]))
+            self.zero_pwm_ticks+=bool(min(self.applied_duties)<=0)
+        nominal=p['cruise']
+        startup_ms=1000
         if self.now>=startup_ms and int(self.data[0])==2:
             self.running_ticks+=1
             self.min_running_speed=min(self.min_running_speed,self.v*1000)
@@ -208,18 +193,16 @@ class Simulation:
         if self.now%50==0:self.trajectory.append((self.x,self.y));self.record()
     def record(self):
         _,error,progress=self.track.nearest(self.x,self.y,getattr(self,'route_progress',0))
-        path=self.path_diagnostic(False)
         self.history.append({'time_s':self.now/1000,'x_m':self.x,'y_m':self.y,'heading_deg':math.degrees(self.h),
-          'speed_mm_s':self.v*1000,'target_mm_s':float(self.data[14]) if self.p['controller']=='native' else (self.p['curve_speed'] if self.started and not self.stop_requested else 0),'pulse_us':self.pulse,
-          'steer_deg':math.degrees(self.steer),'Q':int(self.data[3]),'valid':int(self.data[4]),
-          'near_px':int(self.data[5]),'far_px':int(self.data[6]),'element':int(self.data[7]),
-          'outer_side':int(self.data[8]),'outer_supported':int(self.data[9]),'path_reason':int(self.data[10]),
-          'command':int(self.data[11]),'left_pwm':int(self.data[12]),'right_pwm':int(self.data[13]),
+          'speed_mm_s':self.v*1000,'target_mm_s':float(self.data[11]) if self.p['controller']=='native' else (self.p['cruise'] if self.started and not self.stop_requested else 0),'pulse_us':self.pulse,
+          'steer_deg':math.degrees(self.steer),'has_path':int(self.data[3]),
+          'near_px':int(self.data[4]),'far_px':int(self.data[5]),'element':int(self.data[6]),
+          'outer_side':int(self.data[7]),
+          'command':int(self.data[8]),'left_pwm':int(self.data[9]),'right_pwm':int(self.data[10]),
           'applied_command':self.applied_command,'applied_left_pwm':float(self.applied_duties[0]),'applied_right_pwm':float(self.applied_duties[1]),
           'left_mm_s':self.left_v*1000,'right_mm_s':self.right_v*1000,'state':int(self.data[0]),
           'fault':int(self.data[1]),'error_m':error,'progress_m':progress,'distance_m':self.distance,
           'outside_wheels':self.outside_wheels(),'completed':self.completed,'mode':self.p['controller'],
-          'minimum_confidence':path['minimum'],'path_accepted':path['accepted'],
           'camera_frame_id':self.frame_id,'camera_frame_time_ms':self.frame_time_ms,
           'brightness_offset':self.brightness_offset,**self.native.features,**self.native.motion})
     def result(self):
@@ -229,9 +212,8 @@ class Simulation:
          'max_route_deviation_m':self.max_route_deviation,
          'motion_limits':self.motion_limits.copy(),
          'min_tire_corner_margin_mm':self.min_tire_margin*1000 if math.isfinite(self.min_tire_margin) else None,
-         'stability_10ms':{'running_ticks':self.running_ticks,'path_ticks':self.path_ticks,'zero_pwm_ticks':self.zero_pwm_ticks,
+         'stability_10ms':{'running_ticks':self.running_ticks,'zero_pwm_ticks':self.zero_pwm_ticks,
             'min_speed_mm_s':self.min_running_speed if math.isfinite(self.min_running_speed) else None,
-            'min_path_margin':self.min_path_margin if self.path_ticks else None,
             'ticks_below_98pct_nominal':self.low_speed_ticks},
          'state':('图像回放' if self.replay else ('参考完成' if self.completed else '参考运行')) if self.replay or self.p['controller']=='reference' else STATES[int(self.data[0])],
          'fault':None if self.replay or self.p['controller']=='reference' else FAULTS[int(self.data[1])],

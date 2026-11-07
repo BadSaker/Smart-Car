@@ -11,7 +11,7 @@ from PIL import Image,ImageTk
 import numpy as np
 from parameters import ROOT,defaults,validate,save,load
 from runtime_paths import runtime_file
-from engine import Simulation,STATES,FAULTS,ELEMENTS,REASONS
+from engine import Simulation,STATES,FAULTS,ELEMENTS
 from render import map_image,scene_image,camera_image,chart_image
 from comparison import Comparison
 from calibration import ROWS, references, comparison as width_comparison, fit as fit_six_rows
@@ -48,8 +48,8 @@ def disable_window_transitions(root):
 FIELDS={
  '车辆':[('length','整车总长 m〔记录〕'),('wheelbase','轴距 m'),('track','轮胎中心距 m'),('body_width','底板最大宽 m〔近似〕'),
  ('tire_width','轮胎宽 m'),('wheel_diameter','轮径 m'),('steer_max_deg','满幅前轮转角 °〔实测端点〕'),
- ('servo_center','舵机中位 µs'),('servo_range','舵机摆幅 ±µs'),('servo_step','命令步进 µs'),
- ('servo_interval','步进间隔 s'),('servo_tau','机械响应 s〔假设〕'),('motor_gain','电机增益 mm/s/‰〔假设〕'),
+ ('servo_center','舵机中位 µs'),('servo_range','舵机摆幅 ±µs'),
+ ('servo_tau','机械响应 s〔假设〕'),('motor_gain','电机增益 mm/s/‰〔假设〕'),
  ('motor_deadzone','起转死区 ‰〔假设〕'),('motor_tau','电机响应 s〔假设〕'),('coast_tau','滑行响应 s〔假设〕')],
  '车模':[('front_overhang','前轴至底板前缘 m'),('rear_overhang','后轴至底板后缘 m'),
  ('plate_height','底板底面离地 m〔近似〕'),('plate_thickness','底板厚 m〔近似〕'),('camera_mount_gap','镜头至竖杆间距 m〔近似〕')],
@@ -58,14 +58,14 @@ FIELDS={
  ('fps','相机帧率 Hz'),('gray_road','道路灰度 0–255'),('gray_edge','边线灰度 0–255'),
  ('camera_latency_ms','图像延迟 ms'),('camera_blur_px','模糊半径 px'),
  ('gray_background','背景灰度 0–255'),('camera_lateral','镜头左偏 m'),('camera_yaw','镜头左偏航 °'),('camera_roll','镜头横滚 °')],
- '控制':[('cruise','直道目标 mm/s'),('curve_speed','弯道目标 mm/s'),('outer_speed','外侧目标 mm/s'),
- ('element_speed','元素目标 mm/s'),('max_duty','PWM上限 ‰'),('speed_guard','单轮超速保护 mm/s'),
+ '控制':[('cruise','巡航目标 mm/s'),('accel','加速度 mm/s²'),
+ ('max_duty','PWM上限 ‰'),('speed_guard','单轮超速保护 mm/s'),
  ('kp','转向 Kp'),('ki','转向 Ki'),('kd','转向 Kd'),('speed_kp','速度 Kp'),('speed_ki','速度 Ki'),
- ('min_q','普通Q门限'),('outer_q','外侧Q门限'),('outer_enabled','外侧补线 0/1'),
+ ('outer_enabled','外侧补线 0/1'),
  ('width_top','第30行标定宽 px'),('width_bottom','第116行标定宽 px')],
- '运动':[('steering_rate','转向速度 ‰/s'),('steering_accel','转向加速度 ‰/s²'),
- ('accel','单轮加速度 mm/s²'),('decel','单轮减速度 mm/s²'),('lateral_accel','横向加速度限 mm/s²'),
- ('speed_ff','速度前馈 ‰/(mm/s)'),('speed_tracking','积分跟踪 1/s')],
+ '运动':[
+
+ ('speed_ff','速度前馈 ‰/(mm/s)')],
  '动力':[('wheel_inertia_ratio','轮惯性比'),('tire_stiffness','接地刚度 1/s'),
  ('traction_left','左轮附着系数'),('traction_right','右轮附着系数'),
  ('wheel_load_left','左轮附加阻力 mm/s²'),('wheel_load_right','右轮附加阻力 mm/s²'),('curve_load','转弯阻力系数')],
@@ -78,7 +78,7 @@ FIELDS={
 # Display familiar physical units; JSON and engine retain SI units.
 MM_FIELDS={'length','wheelbase','track','body_width','tire_width','wheel_diameter',
  'front_overhang','rear_overhang','plate_height','plate_thickness','height','camera_offset','camera_lateral','camera_mount_gap','start_jitter'}
-MS_FIELDS={'servo_interval','servo_tau','motor_tau','coast_tau'}
+MS_FIELDS={'servo_tau','motor_tau','coast_tau'}
 
 def number_text(value):
     return f'{value:.10f}'.rstrip('0').rstrip('.') if value else '0'
@@ -643,27 +643,24 @@ class App:
         data=s.data;_,error,progress=s.track.nearest(s.x,s.y,getattr(s,'route_progress',0))
         state='图像回放（无控制）' if s.replay else ('理想几何参考（读取真实路径）' if s.p['controller']=='reference' else STATES[int(data[0])])
         self.run_state.set('已达终点' if s.completed else state.replace('（读取真实路径）',''))
-        path=s.path_diagnostic();self.metric_labels['quality'].configure(foreground='#58d3b2' if path['accepted'] else '#ff907f')
+        path=s.path_diagnostic();self.metric_labels['quality'].configure(foreground='#58d3b2' if path['has_path'] or path['geometry_valid'] else '#ff907f')
         metrics={'time':f'{s.now/1000:.1f} s','distance':f'{s.distance:.2f} m',
           'speed':f'{s.v*1000:.0f} mm/s','steer':f'{math.degrees(s.steer):+.1f}°',
           'error':f'{error*100:+.1f} cm',
-          'quality':f"{path['confidence']}/{path['minimum']} {'有效' if path['accepted'] else '失效'}",
-          'element':ELEMENTS[int(data[7])],'fault':('—' if s.replay or s.p['controller']=='reference' else FAULTS[int(data[1])])}
+          'quality':path['reason'],
+          'element':ELEMENTS[int(data[6])],'fault':('—' if s.replay or s.p['controller']=='reference' else FAULTS[int(data[1])])}
         for key,value in metrics.items():
             if self.metric_vars[key].get()!=value:self.metric_vars[key].set(value)
         evidence='停车触发证据' if s.stop_event is not None else '当前帧'
         live=s.path_diagnostic(False)
         self.status.set(f"{evidence}：{path['reason']}（帧{path['frame_id']}）\n"
-          f"最新图像：{live['confidence']}/{live['minimum']} {'有效' if live['accepted'] else '失效'}（帧{live['frame_id']}）\n"
-          f"原始边线Q：{live['observation_confidence']}；路径裕量：{live['confidence']-live['minimum']}\n"
-          f"几何目标：右{live['geometry_right_mm']:.0f} / 前{live['geometry_forward_mm']:.0f} mm；拒绝码{live['geometry_reject']}\n"
+          f"最新图像：{live['reason']}（帧{live['frame_id']}）\n"
           f"{evidence}近 / 远误差：{path['near_px']:+d} / {path['far_px']:+d} px\n"
-          f"外侧支持：{'有' if data[9] else '无'}；覆盖行：{int(data[18])} / {int(data[19])}\n"
           f"舵机脉宽：{s.pulse:.0f} µs\n"
           f"左 / 右轮速：{s.left_v*1000:.0f} / {s.right_v*1000:.0f} mm/s\n"
           f"左 / 右电机输出：{s.applied_duties[0]:.0f} / {s.applied_duties[1]:.0f} ‰\n"
           f"左右轮目标：{s.native.motion['left_target_mm_s']:.0f} / {s.native.motion['right_target_mm_s']:.0f} mm/s\n"
-          f"转向目标 / 执行：{s.native.motion['requested_steering_permille']:.0f} / {data[11]:.0f} ‰\n"
+          f"转向输出：{data[8]:.0f} ‰；几何目标：{s.native.features['geometry_valid']}\n"
           f"路径进度：{progress:.2f} m；出界轮数：{s.outside_wheels()}\n"
           f"C控制器诊断：{FAULTS[int(data[1])]}")
         self.mode_note.configure(text='理想几何参考' if p['controller']=='reference' else '现有 C 算法')

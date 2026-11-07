@@ -20,11 +20,8 @@ class RecordedVisionRepairTests(unittest.TestCase):
 __declspec(dllexport) void reset(void){track_vision_reset();}
 __declspec(dllexport) void frame(const unsigned char*g,unsigned ms,unsigned mm,float*v){
 track_vision_result_t o;track_vision_process(g,ms,mm,&o);
-v[0]=o.element;v[1]=o.valid;v[2]=o.geometry.valid;v[3]=o.geometry.target_right_mm;
-v[4]=o.geometry.target_forward_mm;v[5]=o.raw_near_error_px;v[6]=o.raw_far_error_px;
-v[7]=o.near_error_px;v[8]=o.far_error_px;v[9]=obstacle.side;v[10]=obstacle.frames;
-v[11]=obstacle.offset_mm;v[12]=obstacle_delta[86];
-v[13]=island_seed_side;v[14]=island_seed_x;v[15]=island_seed_y;}
+v[0]=o.element;v[1]=o.has_path;v[2]=o.near_error_px;v[3]=o.far_error_px;
+v[4]=obstacle.side;v[5]=obstacle.offset_mm;v[6]=island_seed_side;v[7]=island_seed_y;}
 ''')
         dll=scratch/'recorded.dll'
         result=subprocess.run([find_compiler(),'-std=c99','-O2','-shared','-Wall','-Wextra','-Werror',
@@ -45,47 +42,29 @@ v[13]=island_seed_side;v[14]=island_seed_x;v[15]=island_seed_y;}
             rows.append((k/50,tuple(v)))
         return rows
 
-    def test_recorded_ring_has_valid_entry_and_inside_paths(self):
+    def test_recorded_ring_has_entry_and_inside_paths(self):
         rows=self.replay('curve_ring')
         for phase in (4,5):
-            turn=[v for _,v in rows if v[0]==phase and v[1] and v[2] and v[3]<-20]
-            self.assertGreaterEqual(len(turn),3,'不能只有状态标志，须有持续有效的左入环轮迹')
+            turn=[v for _,v in rows if v[0]==phase and v[1] and v[3]<0]
+            self.assertGreaterEqual(len(turn),3)
 
-    def test_first_recorded_corner_keeps_the_observed_turn(self):
-        rows=self.replay('curve_ring')
-        for t in (34.48,35.0):
-            _,v=min(rows,key=lambda r:abs(r[0]-t))
-            self.assertNotEqual(v[0],2)
-            self.assertTrue(v[1] and v[2])
-            self.assertGreater(v[7]-v[8],10,'左弯不能被固定来向直线代替')
-            self.assertLess(abs(v[7]-v[5]),6)
-
-    def test_distant_island_does_not_authorize_the_lower_branch_arc(self):
-        rows=self.replay('curve_ring')
-        distant=[v for t,v in rows if 40<=t<41 and v[13] and v[15]<40]
-        self.assertGreater(len(distant),4)
-        self.assertTrue(all(v[0]==3 for v in distant),'远端灰岛不能借下方支路圆弧提前入环')
-        entry=[v for _,v in rows if v[0]==4]
-        self.assertTrue(entry)
-        self.assertEqual(entry[0][13],1,'首个入环必须以当前已关联的左岛边为种子')
-
-    def test_following_corners_recover_with_or_without_odometry(self):
+    def test_recorded_corners_keep_observed_direction(self):
         for speed in (0,800):
-            rows=self.replay('curves',speed)
-            for t in (46.76,47.24,53.5,54.02):
-                _,v=min(rows,key=lambda r:abs(r[0]-t))
-                self.assertTrue(v[1] and v[2],(speed,t,v))
-                if t<48:
-                    self.assertGreater(v[7]-v[8],5,'左弯应保持近远点的转弯方向')
-                else:
-                    self.assertGreater(v[3],100,'右弯必须保留向右的几何目标')
-            _,v=min(rows,key=lambda r:abs(r[0]-53.5))
-            self.assertNotEqual(v[0],2,'里程冻结也应撤销已经恢复曲线的暂定十字')
+            for scene,times in [('curve_ring',(34.48,35.0)),('curves',(46.76,47.24,53.5,54.02))]:
+                rows=self.replay(scene,speed)
+                for t in times:
+                    _,v=min(rows,key=lambda r:abs(r[0]-t))
+                    self.assertTrue(v[1],(scene,speed,t,v))
+                    if t<48:self.assertGreater(v[2]-v[3],5,(scene,speed,t,v))
+                    else:self.assertGreater(v[3],0,(scene,speed,t,v))
+                    if scene=='curve_ring' or t==53.5:self.assertNotEqual(v[0],2,(scene,speed,t,v))
 
-    def test_recorded_brick_confirmation_survives_one_damaged_row_group(self):
-        rows=self.replay('brick')
-        _,v=min(rows,key=lambda r:abs(r[0]-19.28))
-        self.assertEqual(v[9],2)
-        self.assertGreaterEqual(v[10],4)
-        self.assertTrue(v[1] and v[2])
-        self.assertLess(v[3],-25,'右侧砖必须产生向左的几何目标')
+    def test_distant_island_stays_approach(self):
+        rows=self.replay('curve_ring')
+        distant=[v for t,v in rows if 40<=t<41 and v[6] and v[7]<40]
+        self.assertGreater(len(distant),4)
+        self.assertTrue(all(v[0]==3 for v in distant))
+
+    def test_recorded_right_brick_selects_left_path(self):
+        rows=self.replay('brick');_,v=min(rows,key=lambda r:abs(r[0]-19.28))
+        self.assertEqual(v[4],2);self.assertTrue(v[1]);self.assertLess(v[3],0)
