@@ -59,6 +59,27 @@ __declspec(dllexport) void drive(float x,float y,int pixel,int geometry,int tick
     def control(self,x,y,pixel=0,geometry=1,ticks=1):
         v=(C.c_float*7)();self.lib.drive(x,y,pixel,geometry,ticks,v);return tuple(v)
 
+    def test_incomplete_cross_preview_generates_metric_path(self):
+        from test_element_sequences import ElementSequenceTests
+        self.lib.reset();plain=ElementSequenceTests.cross_order_image(20,0,-1)
+        for n in range(3):self.feed(plain,n*20,n*16)
+        first=self.feed(ElementSequenceTests.incomplete_cross_image(98),60,48)
+        self.assertEqual(first[2],2);self.assertEqual(first[3],1)
+        self.assertGreater(first[4],0);self.assertGreater(first[5],0)
+        settled=self.feed(ElementSequenceTests.incomplete_cross_image(98),80,64)
+        self.assertAlmostEqual(first[4],settled[4],delta=6)
+        self.assertAlmostEqual(first[5],settled[5],delta=20)
+
+    def test_bounded_cross_has_first_frame_metric_path(self):
+        from test_element_sequences import ElementSequenceTests
+        image=ElementSequenceTests.cross_order_image(20,60,98)
+        self.lib.reset();first=self.feed(image)
+        self.assertEqual(first[2],2);self.assertEqual(first[3],1)
+        self.assertGreater(first[4],0)
+        settled=self.feed(image,20,16)
+        self.assertAlmostEqual(first[4],settled[4],delta=6)
+        self.assertAlmostEqual(first[5],settled[5],delta=20)
+
     def test_geometry_steering_uses_mm_and_overrides_pixel_bias(self):
         # 190mm轴距、目标(50,400)mm：atan(2*190*50/(50²+400²))约6.67度。
         right=self.control(50,400,pixel=-80)

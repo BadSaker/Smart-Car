@@ -1,0 +1,50 @@
+历史记录：用户已于2026-11-07要求撤销本机制；当前源码与标准固件已回退。以下仅记录当时交付，不代表当前行为。详见wheelspin-rollback-2026-11-07.txt。
+
+单轮空转PWM抑制 — 2026-11-07
+
+用户授权：按已确认方案最小实施，由用户烧录实测。
+生产代码仅修改 car/src/autonomous_drive.c、car/include/autonomous_drive.h、car/config/autonomous_config.h。
+本次开始时src/include/config文件SHA256逐项对照，其余生产文件保持原样。
+速度表保持源码1200/1000/1000/900mm/s、横向加速度2400、目标加速度200、Kp15；未采用外轮不增速或更改差速方案。
+
+行为
+每个新10ms编码器样本，单轮原始速度严格大于本轮目标+max(300mm/s,目标35%)，当拍将该轮PWM置零并复位/暂停对应速度PID。
+原始速度严格小于目标+max(100mm/s,目标10%)连续3个新样本后，恢复PWM上限；在当前1000‰总上限下每新样本放开50‰，第20个恢复样本到1000‰。
+每10ms均有新反馈时恢复约200ms；重复反馈不推进确认或恢复。恢复中再次超限立即归零并重新清积分。
+左右轮独立；撤动力不会退出自动驾驶，不清除转向。停机、故障和重新起跑清除保护状态。
+临时收紧PID的output_max复用内部抗饱和，每次调用后恢复原上限；通用control_pid.c/.h未改，不添加外部积分回算。
+4000mm/s硬超速、STALL、反向、反馈陈旧及手动停止保持原优先级；未改里程计算、视觉、舵机、屏幕或Wi-Fi。
+现有left/right_pid_request在保护期间表示经过保护后的PID请求；没有增加屏幕字段。调试器可查看left_slip/right_slip的cutting、recovery_samples、pwm_limit。
+
+验证
+新增test_wheelspin.c/.py：旧实现首先在狂转仍输出PWM的断言失败；新实现10381断言通过，覆盖左右轮/双轮、边界、重复反馈、滞回、恢复限幅抗饱和、再次触发、转向保持、停止重启、正负4001及反馈超时。
+修改前主机129项仅新增测试失败，原有128项通过；修改后主机129/129通过。
+首次直接调用Python的仿真基线64项含4个DLL占用错误和1个子PowerShell模块错误。改用项目simulation/run_python.ps1并仅在启动进程补全PSModulePath后，仿真64/64通过；未改仿真源码。
+独立只读审查未发现重要问题。Keil全量0错误0警告，Code130152/RO10296/RW284/ZI132740。
+标准outputs/firmware/autocar.axf/.hex/.bin已更新，与car/build/objects逐字节一致；不需要使用此前corner-speed子目录旧固件。
+未烧录、未执行Git add/commit/push。
+
+实车验证
+先复测原狂转位置，观察是否减少OVERSPEED、是否能自动恢复、是否产生明显偏航或反复停走。目标1200时进入门限1620、退出门限1320mm/s。
+这些门限尚未实车标定。0 PWM的真实电机制动/滑行表现需实测；单采样直接超过4000仍锁停。
+本实现按目标超调抑制PWM，不能准确识别轮速未超目标的滑移，也不能证明已经离开低摩擦区域；空转里程误差及原有赛道方向问题仍未解决。
+
+证据目录：car/build/wheelspin-20261107/（red.log、green.log、host-before.log、host-after.log、sim-before.log、sim-after.log、build.log、before.json、task.patch、artifacts.json）。
+固件身份：
+[
+  {
+    "path": "outputs\\firmware\\autocar.axf",
+    "bytes": 1027544,
+    "sha256": "aa0be17e3ec441a526bbb4ab7c535fe93e2f330e0aa6005907ea9cf79ee24b74"
+  },
+  {
+    "path": "outputs\\firmware\\autocar.hex",
+    "bytes": 414625,
+    "sha256": "604b37206569200f18b73895c5f27dd3a68927245a5349ddff2711fd1b80352c"
+  },
+  {
+    "path": "outputs\\firmware\\autocar.bin",
+    "bytes": 147392,
+    "sha256": "1e2affc6bc1b74fad7ebf3491083ca383aa0f0a060b50edf0f4474710f9af298"
+  }
+]

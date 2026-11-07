@@ -31,7 +31,7 @@ void encoder_feedback_init(void){}
 void motor_control_init(void){}
 void motor_control_enable_test(void){}
 uint8_t motor_control_take_servo_stop(void){return 0;}
-void remote_control_init(void){}
+void wave_telemetry_reset(void){}
 void track_vision_reset(void){}
 void autonomous_control_init(void){}
 void autonomous_control_get_status(autonomous_drive_status_t *s){*s=state;}
@@ -82,9 +82,9 @@ int main(void){
         assert(sends==k+1 && app_uptime_ms==2000+delays[k] && services==before+5);
     }
     state.active=0;event_count=0;events[0]=0;mt9v03x_finish_flag=1;
-    app_run_once();assert(strcmp(events,"VPDBSNR")==0);
+    app_run_once();assert(strcmp(events,"VPDBSN")==0);
     event_count=0;events[0]=0;mt9v03x_finish_flag=0;
-    app_run_once();assert(strcmp(events,"NR")==0);
+    app_run_once();assert(strcmp(events,"N")==0);
     puts("PASS: real main loop does not wait for current-frame execution before display/full send; aged frames retained; 100/300/1000 ms sends; idle polling");
     return 0;
 }

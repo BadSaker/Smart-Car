@@ -12,7 +12,7 @@ static unsigned frame_sequence,frame_ms,feedback_sequence;
 API void sim_motion(float *o){
  const autonomous_drive_status_t *s=&drive.status;
  o[0]=s->left_target_mm_s;o[1]=s->right_target_mm_s;o[2]=s->left_filtered_mm_s;o[3]=s->right_filtered_mm_s;
- o[4]=s->left_pid_request;o[5]=s->right_pid_request;o[6]=s->left_integral;o[7]=s->right_integral;o[8]=AUTO_TURN_DIFFERENTIAL_RATIO;
+ o[4]=s->left_pid_request;o[5]=s->right_pid_request;o[6]=s->left_integral;o[7]=s->right_integral;o[8]=AUTO_TURN_DIFFERENTIAL_RATIO;o[9]=s->planned_speed_mm_s;
 }
 API void sim_reset(void){memset(&vision,0,sizeof vision);frame_sequence=frame_ms=feedback_sequence=0;track_vision_reset();autonomous_drive_init(&drive);}
 API void sim_vision(const unsigned char *gray,unsigned now,unsigned distance){track_vision_process(gray,now,distance,&vision);++frame_sequence;frame_ms=now;}
@@ -20,7 +20,7 @@ API void sim_tick(unsigned now,int fresh,int start,int stop,int left,int right,i
  autonomous_drive_input_t i;memset(&i,0,sizeof i);if(fresh)++feedback_sequence;
  i.now_ms=now;i.ready=1;i.start_pressed=(uint8_t)start;i.stop_pressed=(uint8_t)stop;
  i.frame_sequence=frame_sequence;i.frame_ms=frame_ms;i.feedback_sequence=feedback_sequence;i.servo_generation=drive.status.run_generation;
- i.geometry=vision.geometry;
+ i.geometry=vision.geometry;i.curve_outer_side=(uint8_t)vision.curve_outer_side;
  i.has_path=vision.has_path;i.element=(uint8_t)vision.element;i.near_error_px=vision.near_error_px;i.far_error_px=vision.far_error_px;
  i.zebra=vision.zebra && vision.zebra_near_row!=255 && vision.zebra_near_row>=AUTO_ZEBRA_MIN_ROW;
  i.zebra_visible=vision.zebra || vision.zebra_candidate;i.zebra_near_row=vision.zebra_near_row;

@@ -4,6 +4,12 @@
 #include <stdint.h>
 #include "camera_debug_config.h"
 
+typedef enum {
+    CAMERA_DEBUG_MODE_OFF=0, CAMERA_DEBUG_MODE_IMAGE, CAMERA_DEBUG_MODE_WAVE
+} camera_debug_mode_t;
+extern volatile camera_debug_mode_t camera_debug_mode;
+extern volatile uint32_t camera_debug_wave_samples_sent;
+
 typedef enum
 {
     CAMERA_DEBUG_DISABLED,
@@ -27,7 +33,8 @@ typedef enum
     CAMERA_DEBUG_STAGE_BOUNDARY_HEADER,
     CAMERA_DEBUG_STAGE_LEFT,
     CAMERA_DEBUG_STAGE_MIDDLE,
-    CAMERA_DEBUG_STAGE_RIGHT
+    CAMERA_DEBUG_STAGE_RIGHT,
+    CAMERA_DEBUG_STAGE_WAVE
 } camera_debug_stage_t;
 
 extern volatile camera_debug_status_t camera_debug_status;
@@ -39,7 +46,7 @@ extern volatile camera_debug_stage_t camera_debug_last_error_stage;
 extern volatile uint32_t camera_debug_last_remaining;
 
 /* 返回0表示初始化成功或主动禁用，非0表示失败。
- * 默认只初始化C13按键并保持Wi-Fi模块复位，不联网。
+ * 默认只初始化C12/C13并保持Wi-Fi模块复位，不联网。
  * 边线数组必须持续有效，每行保存一个X坐标。 */
 uint8_t camera_debug_init(uint8_t *left, uint8_t *middle, uint8_t *right);
 /* clock_ms非空启用可选分段路径，每次poll最多一次SPI事务。
@@ -49,10 +56,14 @@ void camera_debug_configure_scheduler(uint32_t (*clock_ms)(void), uint8_t (*driv
                                       void (*network_busy)(uint8_t));
 /* 每圈主循环调用，没有相机新帧时也必须调用。
  * now_ms为单调递增的uint32毫秒时钟，允许自然回绕。
- * C13稳定释放后新按下切换Wi-Fi，关闭时跳过网络工作。
+ * 停车时C12波形/C13图传；同键关闭、异键重连切换，双按忽略。
+ * 行驶中按下被消费，停车后须全部释放30ms再新按；关闭时跳过网络工作。
+ * 波形每轮至多8组、一次有限SPI事务；模块忙不等待，1s无进展报错。
  * 可选分段路径在此逐块发送；开启和恢复仅在停车状态执行同步接口。
  * 出错后等待回退间隔，再关闭并复位模块，重新建立TCP连接。 */
 void camera_debug_poll(uint32_t now_ms);
+/* PIT只报告本拍是否行驶，不访问网络；使阻塞期间的按键资格失效。 */
+void camera_debug_control_tick_10ms(uint8_t driving);
 /* 仅主循环调用：图像修改前显示原始灰度并保存图传副本。
  * 网络失败或禁用时仍可调用本地预览。 */
 void camera_debug_capture_frame(const uint8_t *gray_image);

@@ -29,10 +29,11 @@ static void reset(void)
     in.forward_step_um=1500;
     tick(5,1,1,1);
 }
+static unsigned settle_ticks(void){return AUTO_ACCEL_MM_S2>0?(unsigned)(AUTO_CRUISE_SPEED_MM_S*1.5f/(AUTO_ACCEL_MM_S2*.01f))+100U:100U;}
 static void start(void)
 {
     in.start_pressed=1;tick(4,1,1,1);in.start_pressed=0;
-    tick(180,1,1,1); CHECK(car.status.state==AUTO_DRIVE_RUNNING);
+    tick(settle_ticks(),1,1,1); CHECK(car.status.state==AUTO_DRIVE_RUNNING);
 }
 static void fault(autonomous_fault_t why)
 {
@@ -43,7 +44,7 @@ static void test_direct_control(void)
 {
     reset();start();CHECK(car.status.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S);
     for(int side=-1;side<=1;++side) {
-        in.near_error_px=in.far_error_px=(int16_t)(side*10);in.has_path=1;tick(40,1,1,1);
+        in.near_error_px=in.far_error_px=(int16_t)(side*10);in.has_path=1;tick(settle_ticks(),1,1,1);
         CHECK(car.status.steering_permille==-(int)(10*AUTO_STEERING_KP)*side);
         CHECK(car.status.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S);
         CHECK(car.status.left_duty_permille==(uint16_t)car.status.left_pid_request);

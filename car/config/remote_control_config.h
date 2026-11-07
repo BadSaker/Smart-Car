@@ -1,9 +1,9 @@
 #ifndef AUTOCAR_REMOTE_CONTROL_CONFIG_H
 #define AUTOCAR_REMOTE_CONTROL_CONFIG_H
 
-/* 1为虚拟手柄遥控，0恢复原C12电机测试/S2舵机测试；两种输出模式互斥。 */
+/* 正式固件关闭虚拟手柄；C12专用于Wi-Fi波形。历史遥控仅供显式测试配置。 */
 #ifndef REMOTE_CONTROL_ENABLED
-#define REMOTE_CONTROL_ENABLED 1
+#define REMOTE_CONTROL_ENABLED 0
 #endif
 /* 手柄为文本事件，无已证实的松手报文；仅行驶命令续期，转向不续期油门。 */
 #define REMOTE_CONTROL_DRIVE_LEASE_MS 300U

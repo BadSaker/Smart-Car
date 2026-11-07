@@ -178,7 +178,7 @@ class Simulation:
                 metrics['max_wheel_overshoot_mm_s']=max(metrics['max_wheel_overshoot_mm_s'],speed*1000-self.native.motion[key])
         if int(self.data[0])==2:
             self.zero_pwm_ticks+=bool(min(self.applied_duties)<=0)
-        nominal=p['cruise']
+        nominal=float(self.native.motion['planned_speed_mm_s']) if p['controller']=='native' else p['cruise']
         startup_ms=1000
         if self.now>=startup_ms and int(self.data[0])==2:
             self.running_ticks+=1

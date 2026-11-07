@@ -40,7 +40,7 @@ static volatile uint8_t motor_remote_link_lost;
 static volatile uint8_t motor_remote_stop;
 static volatile uint8_t motor_remote_neutral_ack;
 static uint32_t motor_remote_consumed_generation;
-#else
+#elif MOTOR_TEST_ENABLED
 static uint16_t motor_phase_elapsed_ms;
 static uint16_t motor_result_remaining_ms;
 static uint32_t motor_test_pwm_duty;
@@ -56,10 +56,12 @@ static uint8_t motor_config_is_valid(void)
             REMOTE_CONTROL_DRIVE_LEASE_MS <= 65535U &&
             REMOTE_CONTROL_DIRECTION_GAP_MS >= 10U &&
             REMOTE_CONTROL_DIRECTION_GAP_MS <= 65535U) ? 1U : 0U;
-#else
+#elif MOTOR_TEST_ENABLED
     return (MOTOR_CONTROL_TICK_MS == 10U &&
             MOTOR_TEST_DUTY_PERMILLE >= 1 &&
             MOTOR_TEST_DUTY_PERMILLE <= MOTOR_TEST_MAX_DUTY_PERMILLE) ? 1U : 0U;
+#else
+    return MOTOR_CONTROL_TICK_MS == 10U;
 #endif
 }
 
@@ -107,7 +109,7 @@ static void motor_autonomous_stop(void)
     motor_status.telemetry_visible = 0U;
     if (motor_status.state != MOTOR_TEST_CONFIG_ERROR)
         motor_status.state = MOTOR_AUTONOMOUS_STOPPED;
-#if !REMOTE_CONTROL_ENABLED
+#if !REMOTE_CONTROL_ENABLED && MOTOR_TEST_ENABLED
     motor_phase_elapsed_ms = 0U;
     motor_result_remaining_ms = 0U;
 #endif
@@ -125,8 +127,7 @@ static uint8_t motor_autonomous_tick(void)
         return 1U;
     }
     /* 按键只负责撤权，不能让持续active请求在释放按键后自动复活。 */
-    if (!motor_status.ready || motor_autonomous_blocked ||
-        gpio_get_level(MOTOR_TEST_START_KEY_PIN) == MOTOR_TEST_KEY_ACTIVE_LEVEL)
+    if (!motor_status.ready || motor_autonomous_blocked)
     {
         motor_autonomous_blocked = 1U;
         motor_autonomous_stop();
@@ -173,7 +174,7 @@ static uint8_t motor_autonomous_tick(void)
     return 1U;
 }
 
-#if !REMOTE_CONTROL_ENABLED
+#if !REMOTE_CONTROL_ENABLED && MOTOR_TEST_ENABLED
 static uint8_t motor_test_is_running(void)
 {
     return (motor_status.state >= MOTOR_TEST_CHANNEL1 &&
@@ -224,10 +225,12 @@ void motor_control_init(void)
     gpio_init(MOTOR_CHANNEL2_DIRECTION_PIN, GPO, MOTOR_CHANNEL2_REFERENCE_LEVEL, GPO_PUSH_PULL);
     pwm_init(MOTOR_CHANNEL1_PWM, MOTOR_TEST_PWM_FREQUENCY_HZ, 0U);
     pwm_init(MOTOR_CHANNEL2_PWM, MOTOR_TEST_PWM_FREQUENCY_HZ, 0U);
+#if REMOTE_CONTROL_ENABLED || MOTOR_TEST_ENABLED
     gpio_init(MOTOR_TEST_START_KEY_PIN, GPI, GPIO_HIGH, GPI_PULL_UP);
+#endif
     gpio_init(MOTOR_TEST_STOP_KEY_PIN, GPI, GPIO_HIGH, GPI_PULL_UP);
 
-#if !REMOTE_CONTROL_ENABLED
+#if !REMOTE_CONTROL_ENABLED && MOTOR_TEST_ENABLED
     motor_test_pwm_duty = motor_config_is_valid() ?
         (uint32_t)((uint64_t)PWM_DUTY_MAX * MOTOR_TEST_DUTY_PERMILLE / 1000U) : 0U;
 #endif
@@ -246,8 +249,10 @@ void motor_control_init(void)
 #else
     motor_status.state = motor_config_is_valid() ? MOTOR_TEST_IDLE : MOTOR_TEST_CONFIG_ERROR;
     motor_status.telemetry_visible = motor_config_is_valid() ? 0U : 1U;
+#if MOTOR_TEST_ENABLED
     motor_phase_elapsed_ms = 0U;
     motor_result_remaining_ms = 0U;
+#endif
 #endif
     motor_status.ready = 0U;
     motor_status.duty_permille = 0U;
@@ -287,6 +292,7 @@ void motor_control_enable_test(void)
     __set_PRIMASK(interrupt_mask);
 }
 
+#if REMOTE_CONTROL_ENABLED || MOTOR_TEST_ENABLED
 static uint8_t motor_start_key_pressed(void)
 {
     uint8_t sample = gpio_get_level(MOTOR_TEST_START_KEY_PIN);
@@ -317,7 +323,9 @@ static uint8_t motor_start_key_pressed(void)
     return 0U;
 }
 
-#if !REMOTE_CONTROL_ENABLED
+#endif
+
+#if !REMOTE_CONTROL_ENABLED && MOTOR_TEST_ENABLED
 static void motor_begin_test(void)
 {
     motor_status.state = MOTOR_TEST_CHANNEL1;
@@ -432,7 +440,7 @@ void motor_control_tick_10ms(void)
     }
 }
 
-#else
+#elif REMOTE_CONTROL_ENABLED
 static motor_remote_input_t motor_remote_take_input(void)
 {
     motor_remote_input_t input;
@@ -594,6 +602,19 @@ void motor_control_tick_10ms(void)
         return;
     }
     motor_remote_apply_request();
+
+}
+#else
+void motor_control_tick_10ms(void)
+{
+    if (!motor_initialized) return;
+    motor_update_zero_time();
+    if (gpio_get_level(MOTOR_TEST_STOP_KEY_PIN) == MOTOR_TEST_KEY_ACTIVE_LEVEL) {
+        motor_servo_stop_pending=1U;
+        if(motor_autonomous_requested || motor_status.autonomous_active)motor_autonomous_blocked=1U;
+        motor_autonomous_stop();return;
+    }
+    (void)motor_autonomous_tick();
 }
 #endif
 

@@ -7,7 +7,10 @@
 #include "camera_debug.h"
 #include "camera_display.h"
 #include "remote_control_config.h"
+#include "wave_telemetry.h"
 
+volatile camera_debug_mode_t camera_debug_mode = CAMERA_DEBUG_MODE_OFF;
+volatile uint32_t camera_debug_wave_samples_sent = 0;
 volatile camera_debug_status_t camera_debug_status = CAMERA_DEBUG_DISABLED;
 volatile uint32_t camera_debug_frames_sent = 0;
 volatile uint32_t camera_debug_error_count = 0;
@@ -20,6 +23,14 @@ static uint32_t display_updated_ms;
 static uint32_t (*scheduler_clock)(void);
 static uint8_t (*scheduler_driving)(void);
 static void (*scheduler_network_busy)(uint8_t);
+/* PIT是唯一递增端；主循环保存已观察值。阻塞期间的一段行驶也能留下证据。 */
+static volatile uint32_t driving_generation;
+static uint32_t key_driving_generation;
+
+void camera_debug_control_tick_10ms(uint8_t driving)
+{
+    if(driving)++driving_generation;
+}
 
 void camera_debug_configure_scheduler(uint32_t (*clock_ms)(void), uint8_t (*driving)(void),
                                       void (*network_busy)(uint8_t))
@@ -47,6 +58,13 @@ static uint8_t *boundary_left, *boundary_middle, *boundary_right;
 static uint8_t wifi_enabled;
 static uint8_t wifi_key_sample, wifi_key_stable, wifi_key_armed, wifi_key_timer_armed;
 static uint32_t wifi_key_changed_ms;
+/* 波形独立短批次：每poll至多8组/288字节和一次有限SPI事务。 */
+#define WAVE_BATCH_COUNT 8U
+#define WAVE_PACKET_SIZE (4U + 4U * WAVE_TELEMETRY_CHANNELS)
+static uint8_t wave_tx[WAVE_BATCH_COUNT * WAVE_PACKET_SIZE];
+static uint16_t wave_size,wave_offset;
+static uint8_t wave_building;
+static uint32_t wave_progress_ms;
 #if CAMERA_DEBUG_IMAGE_MODE != CAMERA_DEBUG_BOUNDARIES_ONLY
 static uint8_t transmit_image[MT9V03X_H][MT9V03X_W];
 #endif
@@ -97,6 +115,9 @@ static uint8_t valid_credentials(const char *ssid, const char *password)
 
 static void record_error(camera_debug_status_t status, camera_debug_stage_t stage, uint32 remaining)
 {
+    if(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE) {
+        wave_telemetry_set_enabled(0);wave_size=wave_offset=0;
+    }
     camera_debug_status = status;
     camera_debug_last_error_stage = stage;
     camera_debug_last_remaining = remaining;
@@ -127,6 +148,12 @@ static camera_debug_stage_t transfer_stage(uint8_t index)
 static uint32 camera_debug_transfer(const uint8 *data, uint32 length)
 {
     uint32 pending = length, retries = 0;
+    if(wave_building) {
+        if(length!=WAVE_PACKET_SIZE || length>sizeof wave_tx-wave_size) {
+            record_error(CAMERA_DEBUG_SEND_ERROR,CAMERA_DEBUG_STAGE_WAVE,length);return length;
+        }
+        memcpy(wave_tx+wave_size,data,length);wave_size+=(uint16_t)length;return 0;
+    }
     camera_debug_stage_t stage = transfer_stage(block_index++);
     if(scheduler_clock) {
         if(!queue_building || camera_debug_status!=CAMERA_DEBUG_READY ||
@@ -202,6 +229,10 @@ static uint8_t connect_transport_sync(void)
     seekfree_assistant_camera_boundary_config(X_BOUNDARY, MT9V03X_H, boundary_left, boundary_middle, boundary_right, NULL, NULL, NULL);
     retry_timer_armed = 0;
     camera_debug_status = CAMERA_DEBUG_READY;
+    if(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE) {
+        wave_telemetry_reset();wave_size=wave_offset=0;
+        wave_telemetry_set_enabled(1);
+    }
     camera_display_network_status(camera_debug_status);
     return 0;
 }
@@ -250,43 +281,96 @@ static uint8_t camera_debug_set_wifi_enabled(uint8_t enabled)
     return connect_transport();
 }
 
-static uint8_t camera_debug_poll_key(uint32_t now_ms)
+static uint8_t camera_debug_select_mode(camera_debug_mode_t requested)
 {
-    uint8_t sample = gpio_get_level(CAMERA_DEBUG_WIFI_KEY_PIN);
-    if (!wifi_key_timer_armed)
-    {
-        wifi_key_timer_armed = 1;
-        wifi_key_sample = sample;
-        wifi_key_changed_ms = now_ms;
+    uint8_t result;
+    /* 与起跑互锁：先关起跑门，再检查PIT是否已进入行驶。 */
+    if(scheduler_network_busy)scheduler_network_busy(1);
+    if((scheduler_driving && scheduler_driving()) || driving_generation!=key_driving_generation) {
+        if(scheduler_network_busy)scheduler_network_busy(0);
         return 0;
     }
-    if (sample != wifi_key_sample)
-    {
-        wifi_key_sample = sample;
-        wifi_key_changed_ms = now_ms;
+    /* 硬复位结束旧TCP；避免任何半图/半波形跨模式继承。 */
+    wave_telemetry_reset();wave_size=wave_offset=0;
+    camera_debug_mode=CAMERA_DEBUG_MODE_OFF;
+    (void)camera_debug_set_wifi_enabled(0);
+    camera_debug_mode=requested;
+    camera_debug_wave_samples_sent=0;
+    result=requested==CAMERA_DEBUG_MODE_OFF?0:camera_debug_set_wifi_enabled(1);
+    if(scheduler_network_busy)scheduler_network_busy(0);
+    return result;
+}
+
+static uint8_t camera_debug_poll_key(uint32_t now_ms)
+{
+    uint8_t sample=0;
+    uint32_t generation=driving_generation;
+    if(generation!=key_driving_generation) {
+        key_driving_generation=generation;
+        wifi_key_armed=0;wifi_key_timer_armed=0;
     }
-    if ((uint32_t)(now_ms - wifi_key_changed_ms) < CAMERA_DEBUG_WIFI_KEY_DEBOUNCE_MS) return 0;
-    if (sample != CAMERA_DEBUG_WIFI_KEY_ACTIVE)
-    {
-        wifi_key_stable = sample;
-        wifi_key_armed = 1;
+    if(gpio_get_level(CAMERA_DEBUG_WAVE_KEY_PIN)==CAMERA_DEBUG_WIFI_KEY_ACTIVE)sample|=1U;
+    if(gpio_get_level(CAMERA_DEBUG_WIFI_KEY_PIN)==CAMERA_DEBUG_WIFI_KEY_ACTIVE)sample|=2U;
+    /* 双按或行驶中按下立即撤销本次资格；停车后必须全释放30ms。 */
+    if(sample==3U || (sample && scheduler_driving && scheduler_driving()))wifi_key_armed=0;
+    if(!wifi_key_timer_armed || sample!=wifi_key_sample) {
+        wifi_key_timer_armed=1;wifi_key_sample=sample;wifi_key_changed_ms=now_ms;
     }
-    else if (wifi_key_stable != sample)
-    {
-        wifi_key_stable = sample;
-        if (wifi_key_armed)
-        {
-            wifi_key_armed = 0;
-            (void)camera_debug_set_wifi_enabled(!wifi_enabled);
-            return 1;
+    if((uint32_t)(now_ms-wifi_key_changed_ms)<CAMERA_DEBUG_WIFI_KEY_DEBOUNCE_MS)return 0;
+    if(!sample){wifi_key_stable=0;wifi_key_armed=1;}
+    else if(wifi_key_stable!=sample){
+        wifi_key_stable=sample;
+        if(wifi_key_armed && sample!=3U){
+            camera_debug_mode_t requested=sample==1U?CAMERA_DEBUG_MODE_WAVE:CAMERA_DEBUG_MODE_IMAGE;
+            wifi_key_armed=0;
+            if(requested==camera_debug_mode)requested=CAMERA_DEBUG_MODE_OFF;
+            (void)camera_debug_select_mode(requested);return 1;
         }
     }
     return 0;
 }
+
+static void camera_debug_send_wave(uint32_t now_ms)
+{
+    uint32_t pending,remaining;
+    unsigned n;
+    if(camera_debug_mode!=CAMERA_DEBUG_MODE_WAVE || camera_debug_status!=CAMERA_DEBUG_READY)return;
+    if(!wave_size){
+        seekfree_assistant_oscilloscope_struct packet={0};
+        wave_building=1;
+        for(n=0;n<WAVE_BATCH_COUNT && wave_telemetry_pop(packet.data);++n){
+            packet.channel_num=WAVE_TELEMETRY_CHANNELS;
+            seekfree_assistant_oscilloscope_send(&packet);
+            if(camera_debug_status!=CAMERA_DEBUG_READY)break;
+        }
+        wave_building=0;
+        wave_offset=0;wave_progress_ms=now_ms;
+    }
+    if(!wave_size || camera_debug_status!=CAMERA_DEBUG_READY)return;
+    remaining=wave_size-wave_offset;
+    pending=wifi_spi_try_send_buffer(wave_tx+wave_offset,remaining);
+    if(pending>remaining){
+        record_error(CAMERA_DEBUG_SEND_ERROR,CAMERA_DEBUG_STAGE_WAVE,pending);
+    } else {
+        if(pending<remaining)wave_progress_ms=now_ms;
+        wave_offset+=(uint16_t)(remaining-pending);
+        if(wave_offset==wave_size){
+            camera_debug_wave_samples_sent+=wave_size/WAVE_PACKET_SIZE;
+            wave_size=wave_offset=0;
+        } else if((uint32_t)(now_ms-wave_progress_ms)>=1000U){
+            record_error(CAMERA_DEBUG_SEND_ERROR,CAMERA_DEBUG_STAGE_WAVE,pending);
+        }
+    }
+    /* 未完成波形不允许接续到新TCP。故障期间停止采样，停车再重连。 */
+    if(camera_debug_status==CAMERA_DEBUG_SEND_ERROR)
+        gpio_init(WIFI_SPI_RST_PIN,GPO,GPIO_LOW,GPO_PUSH_PULL);
+}
+
 #endif
 
 uint8_t camera_debug_init(uint8_t *left, uint8_t *middle, uint8_t *right)
 {
+    key_driving_generation=driving_generation;
     camera_debug_status = CAMERA_DEBUG_DISABLED;
     camera_debug_frames_sent = 0;
     camera_debug_error_count = 0;
@@ -295,15 +379,19 @@ uint8_t camera_debug_init(uint8_t *left, uint8_t *middle, uint8_t *right)
     camera_debug_last_error_stage = CAMERA_DEBUG_STAGE_NONE;
     camera_debug_last_remaining = 0;
     display_timer_armed = 0;
+    camera_debug_mode=CAMERA_DEBUG_MODE_OFF;camera_debug_wave_samples_sent=0;
+    wave_telemetry_reset();
 #if CAMERA_DEBUG_ENABLED
+    wave_size=wave_offset=0;wave_building=0;
     retry_timer_armed = 0;
     frame_available = 0;
     transport_write = NULL;
     boundary_left = left; boundary_middle = middle; boundary_right = right;
     wifi_key_timer_armed = 0;
     wifi_key_armed = 0;
-    wifi_key_stable = CAMERA_DEBUG_WIFI_KEY_ACTIVE;
+    wifi_key_stable = 3U;
     gpio_init(CAMERA_DEBUG_WIFI_KEY_PIN, GPI, GPIO_HIGH, GPI_PULL_UP);
+    gpio_init(CAMERA_DEBUG_WAVE_KEY_PIN, GPI, GPIO_HIGH, GPI_PULL_UP);
     (void)camera_debug_set_wifi_enabled(0);
     if (left == NULL || middle == NULL || right == NULL)
     {
@@ -311,6 +399,7 @@ uint8_t camera_debug_init(uint8_t *left, uint8_t *middle, uint8_t *right)
         return 1;
     }
 #if CAMERA_DEBUG_WIFI_BOOT_ENABLED
+    camera_debug_mode=CAMERA_DEBUG_MODE_IMAGE;
     return camera_debug_set_wifi_enabled(1);
 #else
     return 0;
@@ -327,7 +416,8 @@ void camera_debug_poll(uint32_t now_ms)
 #if CAMERA_DEBUG_ENABLED
     /* 按键触发的连接可能阻塞；返回后不能用调用前时间锚定失败回退。 */
     if (camera_debug_poll_key(now_ms)) return;
-    if(scheduler_clock && wifi_enabled && camera_debug_status==CAMERA_DEBUG_READY &&
+    camera_debug_send_wave(now_ms);
+    if(camera_debug_mode==CAMERA_DEBUG_MODE_IMAGE && scheduler_clock && wifi_enabled && camera_debug_status==CAMERA_DEBUG_READY &&
        (uint32_t)(now_ms-queue_poll_ms)>=1U) {
         uint32_t pending,remaining=queued_size-queued_offset;
         queue_poll_ms=now_ms;
@@ -360,7 +450,7 @@ void camera_debug_poll(uint32_t now_ms)
 #if CAMERA_DEBUG_ENABLED
     if (!wifi_enabled) return; // 关闭时只处理本地按键和统计，不查询或重连网络。
     if(scheduler_driving && scheduler_driving())return;
-    if(scheduler_clock && camera_debug_status==CAMERA_DEBUG_INITIALIZING) {
+    if(camera_debug_status==CAMERA_DEBUG_INITIALIZING) {
         (void)connect_transport();return;
     }
     if (camera_debug_status == CAMERA_DEBUG_INIT_ERROR ||
@@ -382,7 +472,7 @@ void camera_debug_poll(uint32_t now_ms)
             camera_display_network_status(camera_debug_status);
             camera_display_statistics();
             /* 先尝试正常关闭；即使关闭失败，也继续执行硬件复位。 */
-            if (close_old_socket && !scheduler_clock) (void)wifi_spi_socket_disconnect();
+            if (close_old_socket && !scheduler_clock && camera_debug_mode!=CAMERA_DEBUG_MODE_WAVE) (void)wifi_spi_socket_disconnect();
             (void)connect_transport();
             display_timer_armed = 0;
         }
@@ -395,7 +485,7 @@ void camera_debug_capture_frame(const uint8_t *gray_image)
     /* 二值化前显示原始灰度；此处的显示条件不依赖无线状态。 */
     camera_display_frame(gray_image);
 #if CAMERA_DEBUG_ENABLED
-    if (camera_debug_status != CAMERA_DEBUG_READY || gray_image == NULL) return;
+    if (camera_debug_mode != CAMERA_DEBUG_MODE_IMAGE || camera_debug_status != CAMERA_DEBUG_READY || gray_image == NULL) return;
 #if CAMERA_DEBUG_IMAGE_MODE == CAMERA_DEBUG_GRAY
     memcpy(transmit_image[0], gray_image, sizeof(transmit_image));
 #endif
@@ -408,7 +498,7 @@ void camera_debug_capture_frame(const uint8_t *gray_image)
 void camera_debug_send_frame(const uint8_t *binary_image)
 {
 #if CAMERA_DEBUG_ENABLED
-    if (camera_debug_status != CAMERA_DEBUG_READY || !frame_available) return;
+    if (camera_debug_mode != CAMERA_DEBUG_MODE_IMAGE || camera_debug_status != CAMERA_DEBUG_READY || !frame_available) return;
     frame_available = 0;
     /* 正在发送的快照保持不动；跳过尚未发送的新帧，不排队旧画面。 */
     if(scheduler_clock && queued_size)return;

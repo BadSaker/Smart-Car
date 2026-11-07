@@ -1,6 +1,8 @@
 """验证界面中的元素速度和PWM上限确实进入原生C控制器。"""
 import sys
 import unittest
+import zipfile
+import numpy as np
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from parameters import defaults,validate
@@ -19,6 +21,22 @@ class ControlParameterTests(unittest.TestCase):
             s.stop_requested=True;s.tick()
             self.assertEqual(max(s.data[9:11]),0)
 
+    def test_outer_and_lateral_parameters_reach_c_controller(self):
+        root=Path(__file__).resolve().parents[2]
+        with zipfile.ZipFile(root/'car/tests/fixtures/geometric-path-sequences.zip') as z:
+            image=np.frombuffer(z.read('curve.gray')[:22560],dtype=np.uint8).reshape(120,188)
+        for outer,lateral in [(0,2400.),(1,2400.),(1,100.)]:
+            p=defaults();p.update(scenario='straight',curve_speed=710.,outer_speed=650.,outer_enabled=outer,lateral_accel=lateral)
+            s=Simulation(p);s.started=True
+            for _ in range(200):s.tick()
+            for n in range(8):
+                now=s.now+(n+1)*20;s.native.vision(image,now,100)
+                s.native.tick(now,True,False,False,500,500,5000)
+            values,_=s.native.data()
+            self.assertEqual(values[6],1)
+            if lateral==2400.:self.assertAlmostEqual(values[11],650. if outer else 710.,delta=1)
+            else:self.assertLess(values[11],300.)
+
     def test_configured_pwm_ceiling_limits_actual_c_outputs(self):
         p=defaults();p.update(scenario='straight',cruise=350.,max_duty=80)
         s=Simulation(p);s.started=True
@@ -27,8 +45,8 @@ class ControlParameterTests(unittest.TestCase):
         self.assertLessEqual(max(s.data[9:11]),80)
         self.assertEqual(max(s.data[9:11]),80)
 
-    def test_element_selection_does_not_change_cruise(self):
-        p=defaults();p.update(scenario='straight',cruise=1200.)
+    def test_element_target_reaches_actual_c_controller(self):
+        p=defaults();p.update(scenario='straight',cruise=1200.,element_speed=700.)
         s=Simulation(p);s.started=True
         for _ in range(180):s.tick()
         image=s.image.copy();image[48:94,:]=255
@@ -39,10 +57,10 @@ class ControlParameterTests(unittest.TestCase):
         values,_=s.native.data()
         self.assertEqual(int(values[6]),2)
         self.assertEqual(int(values[0]),2)
-        self.assertEqual(values[11],1200.)
+        self.assertEqual(values[11],700.)
 
     def test_invalid_limits_are_rejected(self):
-        for key,value in (('max_duty',0),('max_duty',1001),('max_duty',80.5),('cruise',0)):
+        for key,value in (('max_duty',0),('max_duty',1001),('max_duty',80.5),('cruise',0),('curve_speed',0),('outer_speed',-1),('element_speed',float('nan')),('lateral_accel',0)):
             p=defaults();p[key]=value
             with self.subTest(key=key,value=value),self.assertRaises(ValueError):validate(p)
 

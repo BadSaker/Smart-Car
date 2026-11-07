@@ -7,6 +7,7 @@
 #include "remote_control.h"
 #include "remote_control_config.h"
 #include "autonomous_control.h"
+#include "wave_telemetry.h"
 
 #if APP_ENABLE_IPS200
 static int previous_network_status = -1;
@@ -179,17 +180,23 @@ void camera_display_network_status(camera_debug_status_t status)
 #if APP_ENABLE_IPS200
     const char *text;
     char details[40];
-    if ((int)status == previous_network_status) return;
+    if ((int)status == previous_network_status && camera_debug_mode!=CAMERA_DEBUG_MODE_WAVE) return;
     previous_network_status = (int)status;
     switch (status)
     {
         case CAMERA_DEBUG_DISABLED:
 #if CAMERA_DEBUG_ENABLED
-                                        text = "Wi-Fi OFF; C13:ON"; break;
+                                        text = "WiFi:OFF C12:WAVE C13:IMAGE"; break;
 #else
                                         text = "Wi-Fi output disabled"; break;
 #endif
-        case CAMERA_DEBUG_READY:         text = "Wi-Fi ON; TCP ready; C13:OFF"; break;
+        case CAMERA_DEBUG_READY:
+            if(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE) {
+                snprintf(details,sizeof details,"WAVE:READY S%lu D%lu",
+                    (unsigned long)camera_debug_wave_samples_sent,(unsigned long)wave_telemetry_dropped());
+                text=details;
+            } else text="IMAGE:READY C13:OFF C12:WAVE";
+            break;
         case CAMERA_DEBUG_CONFIG_ERROR:  text = "Wi-Fi: check network config"; break;
         case CAMERA_DEBUG_INIT_ERROR:    text = "Wi-Fi failed; waiting to reconnect"; break;
         case CAMERA_DEBUG_CONNECT_ERROR: text = "TCP failed; waiting to reconnect"; break;
@@ -206,6 +213,7 @@ void camera_display_network_status(camera_debug_status_t status)
                 case CAMERA_DEBUG_STAGE_LEFT:            part = "left"; break;
                 case CAMERA_DEBUG_STAGE_MIDDLE:          part = "middle"; break;
                 case CAMERA_DEBUG_STAGE_RIGHT:           part = "right"; break;
+                case CAMERA_DEBUG_STAGE_WAVE:            part = "wave"; break;
                 default:                                part = "unknown"; break;
             }
             snprintf(details, sizeof(details), "TX %s rem:%lu; reconnect", part,
@@ -224,6 +232,7 @@ void camera_display_statistics(void)
 {
 #if APP_ENABLE_IPS200
     char text[40];
+    if(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE)camera_display_network_status(camera_debug_status);
     if (display_autonomous_status()) return;
 #if REMOTE_CONTROL_ENABLED
     if (display_remote_status()) return;

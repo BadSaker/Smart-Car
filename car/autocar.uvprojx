@@ -430,14 +430,9 @@
               <FilePath>.\src\encoder_feedback.c</FilePath>
             </File>
             <File>
-              <FileName>remote_command.c</FileName>
+              <FileName>wave_telemetry.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\remote_command.c</FilePath>
-            </File>
-            <File>
-              <FileName>remote_control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\remote_control.c</FilePath>
+              <FilePath>.\src\wave_telemetry.c</FilePath>
             </File>
             <File>
               <FileName>control_pid.c</FileName>
@@ -515,9 +510,9 @@
               <FilePath>.\include\remote_command.h</FilePath>
             </File>
             <File>
-              <FileName>remote_control.h</FileName>
+              <FileName>wave_telemetry.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\include\remote_control.h</FilePath>
+              <FilePath>.\include\wave_telemetry.h</FilePath>
             </File>
             <File>
               <FileName>control_pid.h</FileName>

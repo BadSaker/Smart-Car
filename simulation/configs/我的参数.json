@@ -80,5 +80,9 @@
   "max_duty": 300,
   "dynamics_model": "independent",
   "speed_ff": 0.5,
-  "accel": 1000.0
+  "accel": 1000.0,
+  "curve_speed": 900.0,
+  "outer_speed": 800.0,
+  "element_speed": 800.0,
+  "lateral_accel": 2400.0
 }

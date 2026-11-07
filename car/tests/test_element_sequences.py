@@ -51,6 +51,79 @@ __declspec(dllexport) void frame(const unsigned char *p,unsigned ms,unsigned mm,
             result.append(tuple(values))
         return result
 
+    @staticmethod
+    def cross_order_image(bend=0,top=48,bottom=70,provisional=False):
+        image=bytearray([20])*22560
+        for row in range(120):
+            width=max(6,44+(row-30)*123//86);center=93+bend*(116-row)//86
+            for col in range(max(0,center-width//2),min(188,center+width//2+1)):
+                image[row*188+col]=220
+        for row in range(top,bottom+1):image[row*188:(row+1)*188]=bytes([220])*188
+        if provisional:
+            for row in range(30,top):image[row*188:row*188+94]=bytes([220])*94
+        return image
+
+    @staticmethod
+    def incomplete_cross_image(bottom=85,mirror=False,hide_exit=False):
+        image=ElementSequenceTests.cross_order_image(20,48,bottom)
+        for row in range(bottom+1,120):image[row*188:row*188+94]=bytes([220])*94
+        if hide_exit:image[:48*188]=bytes([20])*(48*188)
+        if mirror:image=bytearray().join(image[row*188:(row+1)*188][::-1] for row in range(120))
+        return image
+
+    def test_incomplete_cross_uses_recent_direction_and_current_exit(self):
+        for mirror in (False,True):
+            for bottom in (70,85,98):
+                with self.subTest(mirror=mirror,bottom=bottom):
+                    self.lib.reset();plain=self.cross_order_image(20,0,-1)
+                    if mirror:plain=bytearray().join(plain[row*188:(row+1)*188][::-1] for row in range(120))
+                    for n in range(3):self.feed(plain,n*20,n*16)
+                    first=self.feed(self.incomplete_cross_image(bottom,mirror),60,48)
+                    self.assertEqual(first[0],2)
+
+    def test_incomplete_cross_without_recent_direction_keeps_confirmation(self):
+        image=self.incomplete_cross_image()
+        self.lib.reset();self.assertNotEqual(self.feed(image,0,0)[0],2)
+        self.assertEqual(self.feed(image,20,16)[0],2)
+        self.lib.reset();plain=self.cross_order_image(20,0,-1)
+        for n in range(3):self.feed(plain,n*20,n*16)
+        self.assertNotEqual(self.feed(image,400,320)[0],2)
+
+    def test_incomplete_cross_without_visible_exit_does_not_use_preview(self):
+        self.lib.reset();plain=self.cross_order_image(20,0,-1)
+        for n in range(3):self.feed(plain,n*20,n*16)
+        self.assertNotEqual(self.feed(self.incomplete_cross_image(hide_exit=True),60,48)[0],2)
+
+    def test_bounded_cross_enters_on_first_frame(self):
+        for bend in (0,20,-20):
+            for top,bottom in ((48,70),(48,85),(60,98)):
+                with self.subTest(bend=bend,top=top,bottom=bottom):
+                    self.lib.reset();image=self.cross_order_image(bend,top,bottom)
+                    self.assertEqual(self.feed(image,0,0)[0],2)
+
+    def test_weak_cross_still_requires_two_frames(self):
+        self.lib.reset();image=self.cross_order_image(20,provisional=True)
+        self.assertNotEqual(self.feed(image,0,0)[0],2)
+        self.assertEqual(self.feed(image,20,16)[0],2)
+
+    def test_far_cross_stays_cross_until_near_opening_arrives(self):
+        for bend in (0,20):
+            self.lib.reset();image=self.cross_order_image(bend)
+            frames=[self.feed(image,n*20,0) for n in range(20)]
+            self.assertTrue(all(v[0]==2 for v in frames[1:]),[v[0] for v in frames])
+            near=self.cross_order_image(bend,60,112)
+            for n in range(4):self.assertEqual(self.feed(near,400+n*20,200+n*16)[0],2)
+            clear=self.cross_order_image(bend,0,-1)
+            for n in range(4):last=self.feed(clear,500+n*20,400+n*16)
+            self.assertLess(last[0],2,'near opening then closure must release the cross')
+
+    def test_visible_provisional_cross_keeps_path_after_curve_recheck_time(self):
+        self.lib.reset();image=self.cross_order_image(20,provisional=True)
+        frames=[self.feed(image,n*20,n*16) for n in range(25)]
+        self.assertTrue(all(v[0]==2 for v in frames[1:]),[v[0] for v in frames])
+        self.assertTrue(all(v[6:8]==frames[2][6:8] for v in frames[3:]),
+                        'unchanged visible cross must not switch to curve reconstruction after 200ms')
+
     def test_ordinary_curves_do_not_latch_roundabout(self):
         for scene in ('ordinary_entry','ordinary_u','ordinary_s'):
             with self.subTest(scene=scene):

@@ -760,7 +760,7 @@ static int vision_cross_direction(const track_vision_result_t *out,int paired_on
 
 /* 十字内的单条近边可能是横向支路边缘，不能重定义入射方向。
  * 近场无双边走廊时，从当前灰度中关联连续、正常宽度的前向出口。 */
-static void vision_cross_update_direction(const uint8_t *gray,track_vision_result_t *out)
+static int vision_cross_update_direction(const uint8_t *gray,track_vision_result_t *out)
 {
     uint8_t lefts[TRACK_VISION_HEIGHT]={0},rights[TRACK_VISION_HEIGHT]={0},centers[TRACK_VISION_HEIGHT]={0};
     int row,run=0,best=0,best_end=0,previous=0;
@@ -788,27 +788,29 @@ static void vision_cross_update_direction(const uint8_t *gray,track_vision_resul
             previous=centers[row];if(run>best){best=run;best_end=row;}
         } else run=0;
     }
-    if(best<6)return;
+    if(best<6)return 0;
     for(row=best_end-best+1;row<=best_end;++row) {
         ++count;sx+=row;sy+=centers[row];sxx+=row*row;sxy+=row*centers[row];
     }
-    denominator=count*sxx-sx*sx;if(denominator<=0)return;
+    denominator=count*sxx-sx*sx;if(denominator<=0)return 0;
     slope=(float)(count*sxy-sx*sy)/denominator;intercept=((float)sy-slope*sx)/count;
     near_error=vision_clip((int)(intercept+slope*VISION_NEAR_FIRST_ROW),2,185)-VISION_CENTER_COL;
     far_error=vision_clip((int)(intercept+slope*VISION_FAR_FIRST_ROW),2,185)-VISION_CENTER_COL;
     if(vision_abs(near_error-vision.incoming_near)>VISION_CROSS_EXIT_SEARCH_PX ||
-       vision_abs(far_error-vision.incoming_far)>VISION_CROSS_EXIT_SEARCH_PX)return;
+       vision_abs(far_error-vision.incoming_far)>VISION_CROSS_EXIT_SEARCH_PX)return 0;
     vision.incoming_near=(int16_t)near_error;vision.incoming_far=(int16_t)far_error;
     for(row=best_end-best+1;row<=best_end;++row) {
         out->left[row]=lefts[row];out->right[row]=rights[row];out->center[row]=centers[row];
         out->row_flags[row]=TRACK_ROW_LEFT_MEASURED|TRACK_ROW_RIGHT_MEASURED|TRACK_ROW_PATH_VALID;
     }
+    return 1;
 }
 
 static uint8_t vision_current_exit_cue;
-static void vision_elements(track_vision_result_t *out,const vision_features_t *features,
+static int vision_elements(const uint8_t *gray,track_vision_result_t *out,const vision_features_t *features,
                             uint32_t now_ms,uint32_t distance_mm)
 {
+    int cross_direction_ready=0;
     uint32_t traveled=distance_mm-vision.phase_mm;
     int curved=vision_abs(out->far_error_px-out->near_error_px)>=VISION_CURVE_ERROR_PX;
     int normal=features->paired_rows>=(VISION_BOTTOM_ROW-VISION_TOP_ROW)*3/4 && !curved && out->has_path;
@@ -891,12 +893,12 @@ static void vision_elements(track_vision_result_t *out,const vision_features_t *
                 goto elements_complete;
             }
         }
-        /* 双侧开口已到达近场，随后近场双边重新闭合，即已越过十字。
+        /* 恢复0f1c035通过顺序：先见近场开口，再以近场闭合确认离开。
          * 出口的远场可以紧接弯道，不能要求整幅图恢复直道。 */
         vision.recovery=vision_increment(vision.recovery,(normal && !cross) ||
             (near_open==0 &&
-             (near_paired*100U>=(VISION_NEAR_LAST_ROW-VISION_NEAR_FIRST_ROW+1)*vision_outer_near_percent() ||
-              (vision.cross_provisional && (traveled>=VISION_CROSS_CURVE_RECHECK_MM ||
+             ((vision.cross_near_seen && near_paired*100U>=(VISION_NEAR_LAST_ROW-VISION_NEAR_FIRST_ROW+1)*vision_outer_near_percent()) ||
+              (!cross && vision.cross_provisional && (traveled>=VISION_CROSS_CURVE_RECHECK_MM ||
                  now_ms-vision.phase_ms>=VISION_CROSS_CURVE_RECHECK_MS) &&
                features->measured_rows>=VISION_MIN_MEASURED_ROWS &&
                vision_abs(out->raw_far_error_px-out->raw_near_error_px)>=VISION_CURVE_ERROR_PX))));
@@ -990,9 +992,13 @@ static void vision_elements(track_vision_result_t *out,const vision_features_t *
         vision.candidate_right=vision_ring_vote(vision.candidate_right,right &&
             (features->right_fork || features->right_blob) && (incoming_straight || features->right_blob) &&
             (out->near_path_supported || out->has_path || (features->right_blob && features->measured_rows>=6)) && !out->zebra && !vision.cooldown);
-        if(vision.candidate_cross>=VISION_CROSS_CONFIRM_FRAMES &&
+        /* 完整缺口，或近期来向关联到当前前方出口，可当帧确认；其余仍按原帧数。 */
+        if(vision.candidate_cross &&
            !(vision_ring_confirmed(vision.candidate_left) && left_entry) &&
-           !(vision_ring_confirmed(vision.candidate_right) && right_entry)) {
+           !(vision_ring_confirmed(vision.candidate_right) && right_entry) &&
+           (bounded_cross || vision.candidate_cross>=VISION_CROSS_CONFIRM_FRAMES ||
+            (vision.incoming_valid && now_ms-vision.incoming_ms<=VISION_CANDIDATE_MAX_GAP_MS &&
+             (cross_direction_ready=vision_cross_update_direction(gray,out))))) {
             if(!vision.incoming_valid || now_ms-vision.incoming_ms>VISION_CANDIDATE_MAX_GAP_MS) {
                 vision.incoming_near=out->near_error_px;vision.incoming_far=out->far_error_px;
                 /* 首次斜向十字若双边已出画面，用最近端实测边初始化。
@@ -1016,6 +1022,7 @@ elements_complete:
     out->element=vision.phase;
     out->side=vision.side;
     if(vision.phase==TRACK_ELEMENT_STRAIGHT) out->element=curved?TRACK_ELEMENT_CURVE:TRACK_ELEMENT_STRAIGHT;
+    return cross_direction_ready;
 }
 
 static float geometry_ground_a,geometry_ground_b,geometry_row_slope;
@@ -1322,47 +1329,38 @@ try_vertical:
     return 0;
 }
 
-static int vision_cross_anchor(const track_vision_result_t *out,int row)
-{
-    int predicted=VISION_CENTER_COL+vision.incoming_near+(VISION_NEAR_FIRST_ROW-row)*
-        (vision.incoming_far-vision.incoming_near)/(VISION_NEAR_FIRST_ROW-VISION_FAR_FIRST_ROW);
-    return (out->row_flags[row]&3U) &&
-        (row>=VISION_NEAR_FIRST_ROW || vision_abs(out->center[row]-predicted)<=VISION_EDGE_WINDOW_PX);
-}
-
+/* 当前双侧开口仍可见时，暂定十字不能仅凭曲率改走弯道。 */
 static int vision_cross_curve(const track_vision_result_t *out,uint32_t now_ms)
 {
     return vision.phase==TRACK_ELEMENT_CROSS && vision.cross_provisional && !vision.cross_near_seen &&
         now_ms-vision.phase_ms>=VISION_CROSS_CURVE_RECHECK_MS && out->near_path_supported &&
+        (out->left_opening_rows<VISION_OPENING_MIN_ROWS || out->right_opening_rows<VISION_OPENING_MIN_ROWS) &&
         vision_abs(out->raw_far_error_px-out->raw_near_error_px)>=VISION_CURVE_ERROR_PX;
 }
 
 static void vision_element_path(const uint8_t *gray,track_vision_result_t *out,const vision_features_t *features,
-                                uint32_t now_ms,uint32_t distance_mm)
+                                uint32_t now_ms,uint32_t distance_mm,int cross_direction_ready)
 {
     int row;
     if(out->element==TRACK_ELEMENT_CROSS) {
         if(vision_cross_curve(out,now_ms))return;
-        vision_cross_update_direction(gray,out);
-        for(row=VISION_TOP_ROW;row<=VISION_BOTTOM_ROW;++row) {
-            int lo=row-1,hi=row+1;
-            int error=vision.incoming_near + (VISION_NEAR_FIRST_ROW-row)*
-                (vision.incoming_far-vision.incoming_near)/(VISION_NEAR_FIRST_ROW-VISION_FAR_FIRST_ROW);
-            int center=vision_clip(VISION_CENTER_COL+error,2,185);
-            /* 十字只授权补缺口；实测弯道和已经关联的出口不能被直线覆盖。 */
-            if(vision_cross_anchor(out,row) &&
-               !(features->left_open[row] && features->right_open[row]))continue;
-            while(lo>=VISION_TOP_ROW && !vision_cross_anchor(out,lo))--lo;
-            while(hi<=VISION_BOTTOM_ROW && !vision_cross_anchor(out,hi))++hi;
-            if(lo>=VISION_TOP_ROW && hi<=VISION_BOTTOM_ROW)
-                center=(out->center[lo]*(hi-row)+out->center[hi]*(row-lo))/(hi-lo);
-            if(vision_white(gray,row,center,out->threshold)) {
-                out->center[row]=(uint8_t)center;
-                out->row_flags[row]|=TRACK_ROW_PATH_VALID|TRACK_ROW_RECONSTRUCTED;
-            } else if(!(out->row_flags[row]&TRACK_ROW_ZEBRA)) {
-                out->row_flags[row]&=(uint8_t)~TRACK_ROW_PATH_VALID;
+        if(!cross_direction_ready)vision_cross_update_direction(gray,out);
+        /* 恢复0f1c035：缺口沿已关联来向/出口补线，不用横支路锚点插值。 */
+        for(row=VISION_TOP_ROW;row<=VISION_BOTTOM_ROW;++row)
+            if(features->left_open[row] || features->right_open[row] ||
+               (out->row_flags[row]&(TRACK_ROW_LEFT_MEASURED|TRACK_ROW_RIGHT_MEASURED))==0) {
+                if(features->left_open[row] || features->right_open[row]) {
+                    int error=vision.incoming_near + (VISION_NEAR_FIRST_ROW-row)*
+                        (vision.incoming_far-vision.incoming_near)/(VISION_NEAR_FIRST_ROW-VISION_FAR_FIRST_ROW);
+                    int center=vision_clip(VISION_CENTER_COL+error,2,185);
+                    if(vision_white(gray,row,center,out->threshold)) {
+                        out->center[row]=(uint8_t)center;
+                        out->row_flags[row]|=TRACK_ROW_PATH_VALID|TRACK_ROW_RECONSTRUCTED;
+                    } else out->row_flags[row]&=(uint8_t)~TRACK_ROW_PATH_VALID;
+                } else if(!(out->row_flags[row]&TRACK_ROW_ZEBRA)) {
+                    out->row_flags[row]&=(uint8_t)~TRACK_ROW_PATH_VALID;
+                }
             }
-        }
     } else if(out->element==TRACK_ELEMENT_ROUNDABOUT_ENTER) {
         int direction=out->side==TRACK_SIDE_LEFT?-1:1;
         for(row=VISION_TOP_ROW;row<=VISION_BOTTOM_ROW;++row) {
@@ -1518,7 +1516,7 @@ void track_vision_process(const uint8_t *gray, uint32_t now_ms,
 
         /* 黑白板没有边界观测，不生成新路径偏差。 */
         memset(&features,0,sizeof(features));
-        vision_elements(out,&features,now_ms,distance_mm);return;
+        vision_elements(gray,out,&features,now_ms,distance_mm);return;
     }
     vision_zebra_region(gray,out,now_ms,distance_mm);
     vision_scan(gray,out,&features,TRACK_SIDE_NONE);
@@ -1576,7 +1574,7 @@ void track_vision_process(const uint8_t *gray, uint32_t now_ms,
         if(features.left_open[row])++out->left_opening_rows;
         if(features.right_open[row])++out->right_opening_rows;
     }
-    vision_elements(out,&features,now_ms,distance_mm);
+    int cross_direction_ready=vision_elements(gray,out,&features,now_ms,distance_mm);
     {
         track_side_t outer=vision_curve_outer(out,&features,now_ms);
         if(outer!=TRACK_SIDE_NONE) {
@@ -1587,7 +1585,7 @@ void track_vision_process(const uint8_t *gray, uint32_t now_ms,
     if(vision.phase==TRACK_ELEMENT_STRAIGHT)
         out->element=vision_abs(out->far_error_px-out->near_error_px)>=VISION_CURVE_ERROR_PX?
             TRACK_ELEMENT_CURVE:TRACK_ELEMENT_STRAIGHT;
-    vision_element_path(gray,out,&features,now_ms,distance_mm);
+    vision_element_path(gray,out,&features,now_ms,distance_mm,cross_direction_ready);
     contour_goal_valid=0;
     if(out->element>=TRACK_ELEMENT_ROUNDABOUT_APPROACH) {
         track_vision_result_t traced=*out;

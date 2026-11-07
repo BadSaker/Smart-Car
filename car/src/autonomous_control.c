@@ -11,7 +11,7 @@
 typedef struct {
     track_path_geometry_t geometry;
     uint32_t sequence,time_ms;
-    uint8_t has_path,element,zebra,zebra_visible,zebra_near_row;
+    uint8_t has_path,element,curve_outer_side,zebra,zebra_visible,zebra_near_row;
     int16_t near_error_px,far_error_px;
 } autonomous_vision_mailbox_t;
 static autonomous_drive_t drive;
@@ -37,7 +37,7 @@ void autonomous_control_publish_vision(const track_vision_result_t *v,uint32_t s
     autonomous_vision_mailbox_t m;
     uint32_t mask;
     if(!v)return;
-    m.geometry=v->geometry;
+    m.geometry=v->geometry;m.curve_outer_side=(uint8_t)v->curve_outer_side;
     m.sequence=sequence;m.time_ms=frame_ms;m.has_path=v->has_path;m.element=(uint8_t)v->element;
     m.near_error_px=v->near_error_px;m.far_error_px=v->far_error_px;
     m.zebra=v->zebra && v->zebra_near_row!=255 && v->zebra_near_row>=AUTO_ZEBRA_MIN_ROW;
@@ -60,7 +60,7 @@ void autonomous_control_tick_10ms(uint32_t now_ms)
         (motor.channel1_duty_permille!=0 || motor.channel2_duty_permille!=0));
     i.start_pressed=gpio_get_level(AUTO_START_KEY_PIN)==GPIO_LOW;
     i.stop_pressed=gpio_get_level(AUTO_STOP_KEY_PIN)==GPIO_LOW;
-    i.cancel_pressed=gpio_get_level(AUTO_CANCEL_KEY_PIN)==GPIO_LOW;
+    i.cancel_pressed=0; /* C12仅用于波形；C14停车、C15启停由原状态机处理。 */
     i.feedback_sequence=feedback.sample_sequence;
     i.left_speed_mm_s=AUTO_LEFT_ENCODER_SIGN*feedback.left.speed_mm_s;
     i.right_speed_mm_s=AUTO_RIGHT_ENCODER_SIGN*feedback.right.speed_mm_s;
@@ -69,7 +69,7 @@ void autonomous_control_tick_10ms(uint32_t now_ms)
     /* 含两轮平均；保持有符号64位中间量，轮径/传动比只读取现有编码器配置。 */
     i.forward_step_um=(int32_t)(counts*ENCODER_WHEEL_CIRCUMFERENCE_UM*ENCODER_TO_WHEEL_RATIO_DEN/
         (2LL*ENCODER_PULSES_PER_REV*ENCODER_STEP_EDGE_FACTOR*ENCODER_TO_WHEEL_RATIO_NUM));
-    i.geometry=v.geometry;
+    i.geometry=v.geometry;i.curve_outer_side=v.curve_outer_side;
     i.frame_sequence=v.sequence;i.frame_ms=v.time_ms;i.has_path=v.has_path;i.element=v.element;
     i.near_error_px=v.near_error_px;i.far_error_px=v.far_error_px;
     i.zebra=v.zebra;i.zebra_visible=v.zebra_visible;i.zebra_near_row=v.zebra_near_row;

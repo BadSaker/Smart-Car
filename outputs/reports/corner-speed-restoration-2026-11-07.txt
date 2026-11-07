@@ -1,0 +1,50 @@
+恢复精简弯速机制（2026-11-07）
+
+用户授权：参考0f1c03516c06d0eeff2da94fb049321eba95da4e恢复转弯速度目标与横向加速度限速，不恢复此前删除的评分/停车等冗余机制。
+
+参数（car/config/autonomous_config.h）
+AUTO_CRUISE_SPEED_MM_S=1200：直道基础目标，由用户测试档900恢复到参考版1200。
+AUTO_CURVE_SPEED_MM_S=900：已有视觉状态为普通弯道时的上限。
+AUTO_CURVE_OUTER_SPEED_MM_S=800：普通弯道采用现有外侧补线时的上限。
+AUTO_ELEMENT_SPEED_MM_S=800：十字及环岛各阶段的上限。
+AUTO_LATERAL_ACCEL_MM_S2=2400：2.4m/s²，按当前转向命令换算曲率后，v<=sqrt(a_lat/abs(kappa))。kappa为1/mm、速度为mm/s。该值是规划参数，不是实测附着能力保证。
+
+实施范围
+速度规划取巡航、适用弯速和曲率上限中的较小值，再经过现有左右轮差速及单轮上升加速度限制。普通弯900和外侧/元素800是上限，较急曲率可进一步降低；回直道后解除对应上限。新增planned_speed_mm_s用于分清规划均速与加速度限制后的左右轮平均目标。
+仅传递视觉已经输出的curve_outer_side，不新增识别算法或候选确认计数。不复制旧版abs(near)>12/abs(far)>16重复判弯，也不恢复Q门槛、LOST、旧视觉停车、200恢复档、PWM步进、自动舵机渐变、积分跟踪。
+几何算法、视觉选路、舵机、速度PID、主循环和图传保持；加速度200、转向回退Kp15保持。旧版正常减速度800、差速补偿及转向整形本次未移植，避免将整套历史控制链一并恢复。正式终点、手动停止及现有硬保护不变；此前取消的普通标记100档降速不恢复。
+仿真开放同名四个参数，并显示规划均速；已有预设缺失参数填入900/800/800/2400，已有明确值不覆盖。仿真默认旧加速度1000未擅自改写，固件等效闭环试验明确使用200及Kp15。
+
+验证
+- 新真实C测试先在旧版失败（十字目标900，期望800），改后覆盖直道、左右外侧、所有元素、左右曲率对称、急弯上限、回直道、无图不锁停、弱标记不降速和4000硬超速。
+- 主机123/123；仿真64/64；实际隐藏GUI参数读取/规划速度显示通过。
+- 独立只读审查未发现具体缺陷；曲率单位、min组合、mailbox、原生motion数组均核对。
+- Keil全量0错误0警告；Code129392、RO10296、RW284、ZI132724。几何/视觉、PID、舵机、电机、图传及视觉配置SHA256均与本轮开始一致。
+- 完整固件成功生成于car/build/objects。发布到标准outputs/firmware/autocar.axf时被正在使用该文件的程序阻止；没有关闭调试器、替换映射文件或把标准目录混成新旧版本。
+- 新AXF/HEX/BIN统一另存outputs/firmware/corner-speed-20261107/，均与构建缓存逐字节相同。应使用这个目录的新固件；标准目录可能仍为旧版。退出占用程序后重新运行car/scripts/build.ps1可更新标准目录。本次未烧录、未提交Git。
+
+闭环核验（显式1200/900/800/800、a_lat2400、加速度200、Kp15）
+circle A→B：完成=True，7.16s，3.319m，无故障=True，RUNNING零PWM计数=0。
+full A→B：完成=False，28.54s，20.953m，无故障=True，RUNNING零PWM计数=0。
+full B→A：完成=True，40.09s，30.033m，无故障=True，RUNNING零PWM计数=0。
+A→B仍因路线偏离未通过；圆弧和完整赛道B→A完成。模型未实车标定，不能声称双向实车压线、空转及停顿全部解决。目标降速也不等于PWM绝不短暂归零；当前仍由原PID计算输出。
+日志：car/build/corner-speed-host-final.log、corner-speed-sim-final.log、keil-build.log、corner-speed-build.log、corner-speed-closed-loop.json、corner-speed-before.json、corner-speed-artifacts.json。
+
+新固件身份：
+[
+  {
+    "file": "outputs\\firmware\\corner-speed-20261107\\autocar.axf",
+    "bytes": 1025484,
+    "sha256": "544ae487e92c81677ee4b5224a8545b606cf78fecfc80493b598aafb5922bf30"
+  },
+  {
+    "file": "outputs\\firmware\\corner-speed-20261107\\autocar.hex",
+    "bytes": 412465,
+    "sha256": "4906dbe68c02797c148d336fa3eace45f8174d76b780774025d9961cde186266"
+  },
+  {
+    "file": "outputs\\firmware\\corner-speed-20261107\\autocar.bin",
+    "bytes": 146624,
+    "sha256": "1f0f0e50314b4e2b47c4b860a683a6707224f44b688554d0edc0f902fc8e6282"
+  }
+]

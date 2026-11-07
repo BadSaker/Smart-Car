@@ -32,11 +32,20 @@ static void step(unsigned n,int camera,int service)
         feedback.left.delta_counts=AUTO_LEFT_ENCODER_SIGN*22;feedback.right.delta_counts=AUTO_RIGHT_ENCODER_SIGN*26;
         if(camera)autonomous_control_publish_vision(&vision,++frame_sequence,now);
         autonomous_control_tick_10ms(now);motor_control_tick_10ms();
+        {
+            autonomous_drive_status_t mapped;
+            autonomous_control_get_status(&mapped);
+            if(mapped.active) {
+                CHECK(duties[PWM2_MODULE0_CHA_C6]==(uint32_t)((uint64_t)PWM_DUTY_MAX*mapped.left_duty_permille/1000U));
+                CHECK(duties[PWM2_MODULE1_CHA_C8]==(uint32_t)((uint64_t)PWM_DUTY_MAX*mapped.right_duty_permille/1000U));
+            }
+        }
         if(service)autonomous_control_service(now);
         CHECK(duties[PWM2_MODULE0_CHA_C6]<=AUTO_MAX_DUTY_PERMILLE*PWM_DUTY_MAX/1000U &&
               duties[PWM2_MODULE1_CHA_C8]<=AUTO_MAX_DUTY_PERMILLE*PWM_DUTY_MAX/1000U);
     }
 }
+static unsigned settle_ticks(void){return AUTO_ACCEL_MM_S2>0?(unsigned)(AUTO_CRUISE_SPEED_MM_S*1.5f/(AUTO_ACCEL_MM_S2*.01f))+100U:100U;}
 static void publish(track_vision_result_t *v)
 {
     now+=10;++feedback.sample_sequence;
@@ -59,16 +68,17 @@ int main(void)
     keys[C15]=0;step(8,1,1);CHECK(!autonomous_control_is_active());
     motor_control_enable_test();step(10,1,1);CHECK(!autonomous_control_is_active());
     keys[C15]=1;step(5,1,1);keys[C15]=0;step(4,1,1);keys[C15]=1;
-    step(200,1,1);autonomous_control_get_status(&s);CHECK(s.state==AUTO_DRIVE_RUNNING);
+    step(settle_ticks(),1,1);autonomous_control_get_status(&s);CHECK(s.state==AUTO_DRIVE_RUNNING);
     CHECK(duties[PWM2_MODULE1_CHA_C8]>0 && duties[PWM2_MODULE0_CHA_C6]>0);
     CHECK(servo_control_get_status()->current_pulse_us<1480);
     for(unsigned e=0;e<=TRACK_ELEMENT_ROUNDABOUT_EXIT;++e){
-        v.element=(track_element_t)e;v.near_error_px=v.far_error_px=10;for(unsigned n=0;n<40;++n)publish(&v);
-        autonomous_control_get_status(&s);CHECK(s.active && s.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S && s.steering_permille==-(int)(10*AUTO_STEERING_KP));
+        v.element=(track_element_t)e;v.near_error_px=v.far_error_px=10;for(unsigned n=0;n<settle_ticks();++n)publish(&v);
+        autonomous_control_get_status(&s);CHECK(s.active && s.target_speed_mm_s==(e>=TRACK_ELEMENT_CROSS?AUTO_ELEMENT_SPEED_MM_S:e==TRACK_ELEMENT_CURVE?AUTO_CURVE_SPEED_MM_S:AUTO_CRUISE_SPEED_MM_S) && s.steering_permille==-(int)(10*AUTO_STEERING_KP));
     }
     v.has_path=0;publish(&v);autonomous_control_get_status(&s);
-    CHECK(s.active && !s.has_path && s.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S && s.steering_permille==-(int)(10*AUTO_STEERING_KP));
+    CHECK(s.active && !s.has_path && s.target_speed_mm_s==AUTO_ELEMENT_SPEED_MM_S && s.steering_permille==-(int)(10*AUTO_STEERING_KP));
     motor_control_remote_set_link(0);step(3,1,1);CHECK(autonomous_control_is_active());
+    keys[C12]=0;step(8,1,1);CHECK(autonomous_control_is_active());keys[C12]=1;
     for(unsigned k=10;k<=100;k*=10){
         uint32_t stamp=now,seq=frame_sequence;step(k,0,0);
         autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
@@ -102,8 +112,9 @@ int main(void)
     CHECK(!servo_control_get_status()->output_enabled);
     mask=1;autonomous_control_get_status(&s);CHECK(mask==1);mask=0;
     keys[C14]=1;step(5,1,1);keys[C15]=0;step(4,1,1);keys[C15]=1;step(60,1,1);
+    autonomous_control_get_status(&s);float before_marker_target=s.target_speed_mm_s;
     v.zebra=1;v.zebra_near_row=60;publish(&v);autonomous_control_get_status(&s);autonomous_control_get_trace(&t);
-    CHECK(s.active && s.marker_phase==1 && !s.start_marker_seen && s.target_speed_mm_s<=AUTO_FINISH_SPEED_MM_S);
+    CHECK(s.active && s.marker_phase==1 && !s.start_marker_seen && s.target_speed_mm_s>=before_marker_target);
     CHECK(!t.frozen && t.latest.motion.zebra_visible);
     keys[C14]=0;step(250,1,1);autonomous_control_get_status(&s);
     CHECK(!s.active && s.state==AUTO_DRIVE_STOPPED);

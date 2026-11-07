@@ -1,0 +1,23 @@
+单轮实测确认后恢复正常主循环 2026-11-07
+
+用户确认：当前测试驱动的是左轮；测试输出为PWM2模块0/C6，DIR=C7，驱动M2。
+当前映射：AUTO_MOTOR1_IS_LEFT=0；模块0/M2左，模块1/M1右。
+CH0=out[0]=channel2_duty_permille=模块0/C6左轮PWM。
+CH1=out[1]=channel1_duty_permille=模块1/C8右轮PWM。
+控制适配同样把左轮目标PWM提交到M2、右轮提交到M1，发送与执行使用同一映射。
+
+已完成：
+- 校验临时main.c未被并行修改后，从main.original.c逐字节恢复正常main.c。
+- 恢复后SHA256=B0650486882E69EFBB78D7CDD5C315298B0A30BC62270C1C06C2CB406868E7BB，与测试前副本一致。
+- 临时上电转轮/屏显诊断撤销，正常摄像头、自动驾驶及C12波形/C13图传主循环恢复。
+- 保留用户已确认的左右映射；未改变编码器映射、方向、PID、视觉或速度参数。
+- 相关9项回归全部通过，含主循环、实际控制输出到物理模块、FIFO通道、协议数据与模式/竞态场景；car/build/wheel-id-restore-tests.log，退出0。
+- Keil全量0错误0警告，Code134392/RO13064/RW300/ZI139368；car/build/wheel-id-restore-build.log。
+- 标准outputs/firmware/autocar.axf/.hex/.bin与car/build/objects对应文件SHA256一致；未烧录。
+- 当前使用标准正常固件，wheel-id-module0及wheel-id-diagnostic-v2子目录仅为历史测试产物。
+- 本轮未重复全部主机/仿真测试；物理左轮由用户观察确认，正常行驶仍待下载后复测。
+
+固件：
+outputs/firmware/autocar.axf 1053816 bytes SHA256=05B0EED3EF9B9A7A034108A1EAF36B3A359FBC5B042B190D5E93168790750B08
+outputs/firmware/autocar.hex 433885 bytes SHA256=FE11E31D9D8F3708CB1CCE46A8798436B39F3E7C222D5C30410D7D6F0C1D874C
+outputs/firmware/autocar.bin 154240 bytes SHA256=BEEB95860EEA5CE9069D5E9DCF81F5E8FB2332B4F1ED87FFD0EFA34975BDE656

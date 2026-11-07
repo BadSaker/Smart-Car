@@ -1,0 +1,33 @@
+防空转机制回退 — 2026-11-07
+
+用户要求：回退本轮防空转机制。
+按car/build/wheelspin-20261107/task.patch精确反向撤销三个生产文件的对应改动；未使用Git整文件恢复。
+autonomous_drive.c与autonomous_drive.h的SHA256均与加入防空转之前完全一致。
+autonomous_config.h仅移除AUTO_SLIP_*参数和检查，保留当前普通弯800、外侧800，以及直道1200、元素900、加速度200等后续设置。
+移除单轮空转状态、软门限、撤PWM/复位积分和200ms恢复；恢复原速度PID直接输出。4000硬超速、STALL等原保护保持。
+删除test_wheelspin.c/.py和本机制实施计划；保留并标明历史交付记录，日志追加撤销条目。
+以回退前src/include/config哈希对照，除上述三个文件外无其他生产文件变化；后续十字/视觉等改动保持。
+
+验证：自动驾驶、控制集成、电机、舵机、直接链路、通用PID、速度鲁棒性共22项全部通过，退出0；防空转标识在src/include/config/tests中无残留；git diff --check通过。
+Keil全量0错误0警告，Code129464/RO10296/RW284/ZI132724，标准AXF/HEX/BIN与构建缓存逐字节一致。
+本次为精确回退，只执行相关回归；未重复全套主机/仿真，未烧录或实车测试，未执行Git写操作。
+
+固件：outputs/firmware/autocar.axf/.hex/.bin。
+证据：car/build/wheelspin-rollback-20261107/control-tests.log、build.log、before.json、artifacts.json。
+[
+  {
+    "path": "outputs\\firmware\\autocar.axf",
+    "bytes": 1025592,
+    "sha256": "859fa2f6fca108ceecbcffc74925c5df9019421290320395667fe4a418b9ec8b"
+  },
+  {
+    "path": "outputs\\firmware\\autocar.hex",
+    "bytes": 412645,
+    "sha256": "b16641ee1e9df50280a205b3c2d4b2d7021422a121eba4bb5bfa15d22311158f"
+  },
+  {
+    "path": "outputs\\firmware\\autocar.bin",
+    "bytes": 146688,
+    "sha256": "b7c4864ed796a68f300cc71ca8d7638dd4df3a63ee4b99f993555fe06c099e73"
+  }
+]

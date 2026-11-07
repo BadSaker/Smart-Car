@@ -1,8 +1,13 @@
 #ifndef AUTOCAR_MOTOR_TEST_CONFIG_H
 #define AUTOCAR_MOTOR_TEST_CONFIG_H
 
+/* 正式固件不再提供C12台架驱动；旧台架回归可显式启用。 */
+#ifndef MOTOR_TEST_ENABLED
+#define MOTOR_TEST_ENABLED 0
+#endif
+
 /* 逐飞RT1064 V3.0的P8 MOTOR DRIVER1；通道编号来自双路电机例程。
- * 模块M1为C8/C9左轮，M2为C6/C7右轮；用户已确认对应关系及两路参考HIGH均为前进。 */
+ * 用户2026-11-07纠正：M1=C8/C9右轮，M2=C6/C7左轮；两路参考HIGH均为前进。 */
 #define MOTOR_CHANNEL1_PWM              PWM2_MODULE1_CHA_C8
 #define MOTOR_CHANNEL1_PWM_PIN          C8
 #define MOTOR_CHANNEL1_DIRECTION_PIN    C9

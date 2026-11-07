@@ -61,7 +61,7 @@ class MotorControlTests(unittest.TestCase):
         for name, definitions in profiles.items():
             with self.subTest(profile=name):
                 executable = SCRATCH / (name + '.exe')
-                command = [COMPILER, '-std=c99', '-Wall', '-Wextra', '-Werror',
+                command = [COMPILER, '-std=c99', '-DMOTOR_TEST_ENABLED=1', '-Wall', '-Wextra', '-Werror',
                            '-I' + str(stub), '-I' + str(ROOT / 'car/include'),
                            '-I' + str(ROOT / 'car/config')]
                 command += ['-DREMOTE_CONTROL_ENABLED=0']

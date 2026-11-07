@@ -89,5 +89,9 @@
   "brightness_jitter": 3.0,
   "camera_latency_ms": 0,
   "camera_blur_px": 0.0,
-  "accel": 1000.0
+  "accel": 1000.0,
+  "curve_speed": 900.0,
+  "outer_speed": 800.0,
+  "element_speed": 800.0,
+  "lateral_accel": 2400.0
 }

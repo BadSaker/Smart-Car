@@ -103,8 +103,9 @@ static void test_marker_control(void)
 {
     unsigned n;
     control_start();
+    for(n=0;n<1000 && drive.status.target_speed_mm_s<AUTO_CRUISE_SPEED_MM_S;++n)control_frame(0,1,0);
     control_frame(1,1,1000);
-    CHECK(drive.status.target_speed_mm_s<=AUTO_FINISH_SPEED_MM_S,"first approach slows before near confirmation");
+    CHECK(drive.status.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S,"first marker does not lower cruise target");
     control_frame(1,1,1000);control_frame(1,1,1000);
     CHECK(drive.status.start_marker_seen && drive.status.state==AUTO_DRIVE_RUNNING,"first marker continues");
     for(n=0;n<500;++n)control_frame(0,1,12000);
@@ -121,10 +122,12 @@ static void test_marker_control(void)
     control_start();
     for(n=0;n<3;++n)control_frame(1,0,1000);
     CHECK(drive.status.active && drive.status.start_marker_seen,"stripe alone cannot authorize lap confirmation");
-    control_start();input.zebra_visible=1;input.zebra_near_row=60;
+    control_start();
+    for(n=0;n<1000 && drive.status.target_speed_mm_s<AUTO_CRUISE_SPEED_MM_S;++n)control_frame(0,1,0);
+    input.zebra_visible=1;input.zebra_near_row=60;
     control_frame(0,1,1000);
-    CHECK(drive.status.marker_phase==1 && !drive.status.start_marker_seen,"far candidate slows without counting start");
-    CHECK(drive.status.target_speed_mm_s<=AUTO_FINISH_SPEED_MM_S,"far candidate already limits speed");
+    CHECK(drive.status.marker_phase==1 && !drive.status.start_marker_seen,"far candidate does not count start");
+    CHECK(drive.status.target_speed_mm_s==AUTO_CRUISE_SPEED_MM_S,"far candidate does not lower cruise target");
     input.now_ms+=100+1;++input.feedback_sequence;
     autonomous_drive_tick(&drive,&input);
     CHECK(drive.status.active && drive.status.fault==AUTO_FAULT_NONE,"frozen marker does not lock recognition stop");

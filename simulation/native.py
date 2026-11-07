@@ -4,13 +4,13 @@ from pathlib import Path
 from parameters import ROOT
 from toolchain import find_compiler,candidates
 from source_layout import source_root,source_files
-MACROS={'accel':'AUTO_ACCEL_MM_S2','cruise':'AUTO_CRUISE_SPEED_MM_S','max_duty':'AUTO_MAX_DUTY_PERMILLE','speed_guard':'AUTO_MAX_MEASURED_SPEED_MM_S',
+MACROS={'curve_speed':'AUTO_CURVE_SPEED_MM_S','outer_speed':'AUTO_CURVE_OUTER_SPEED_MM_S','element_speed':'AUTO_ELEMENT_SPEED_MM_S','lateral_accel':'AUTO_LATERAL_ACCEL_MM_S2','accel':'AUTO_ACCEL_MM_S2','cruise':'AUTO_CRUISE_SPEED_MM_S','max_duty':'AUTO_MAX_DUTY_PERMILLE','speed_guard':'AUTO_MAX_MEASURED_SPEED_MM_S',
  'kp':'AUTO_STEERING_KP','ki':'AUTO_STEERING_KI','kd':'AUTO_STEERING_KD','speed_kp':'AUTO_SPEED_KP','speed_ki':'AUTO_SPEED_KI',
  'speed_ff':'AUTO_SPEED_FEEDFORWARD','width_top':'VISION_WIDTH_TOP_PX','width_bottom':'VISION_WIDTH_BOTTOM_PX',
  'outer_enabled':'VISION_CURVE_OUTER_ENABLED','servo_center':'SERVO_REFERENCE_CENTER_US','servo_range':'SERVO_AUTONOMOUS_EXCURSION_US'}
 INTS={'width_top','width_bottom','outer_enabled','max_duty','speed_guard','servo_center','servo_range'}
 MOTION_KEYS=('left_target_mm_s','right_target_mm_s','left_filtered_mm_s','right_filtered_mm_s',
- 'left_pid_request','right_pid_request','left_integral','right_integral','maximum_turn_ratio')
+ 'left_pid_request','right_pid_request','left_integral','right_integral','maximum_turn_ratio','planned_speed_mm_s')
 FEATURE_KEYS=('ring_side','preview_first_row','preview_last_row','geometry_valid','target_right_mm','target_forward_mm')
 COMPILE_OPTIONS=['-std=c99','-shared','-O2','-Wall','-Wextra','-Werror','-static-libgcc']
 class Native:

@@ -62,6 +62,8 @@ void PIT_IRQHandler(void)
         encoder_feedback_tick_10ms();
         autonomous_control_tick_10ms(app_uptime_ms);
         motor_control_tick_10ms();
+        camera_debug_control_tick_10ms(autonomous_control_is_active());
+        wave_telemetry_capture(app_uptime_ms);
     }
     
     if(pit_flag_get(PIT_CH1))

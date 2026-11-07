@@ -10,12 +10,13 @@
 #ifndef CAMERA_DEBUG_ENABLED
 #define CAMERA_DEBUG_ENABLED         1
 #endif
-/* C13/S4为Wi-Fi软件开关；默认关闭，先稳定释放再按下才切换。
+/* C13图传、C12波形；仅停车切换，当前模式再按关闭。默认关闭。
  * 关闭时保持模块复位，不切断模块电源。 */
 #ifndef CAMERA_DEBUG_WIFI_BOOT_ENABLED
 #define CAMERA_DEBUG_WIFI_BOOT_ENABLED 0U
 #endif
 #define CAMERA_DEBUG_WIFI_KEY_PIN      C13
+#define CAMERA_DEBUG_WAVE_KEY_PIN      C12
 #define CAMERA_DEBUG_WIFI_KEY_ACTIVE   0U
 #define CAMERA_DEBUG_WIFI_KEY_DEBOUNCE_MS 30U
 #if CAMERA_DEBUG_WIFI_BOOT_ENABLED != 0 && CAMERA_DEBUG_WIFI_BOOT_ENABLED != 1

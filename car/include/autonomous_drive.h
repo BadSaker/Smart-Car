@@ -15,7 +15,7 @@ typedef struct {
     track_path_geometry_t geometry;
     uint32_t now_ms,frame_sequence,frame_ms,feedback_sequence,servo_generation;
     uint8_t ready,remote_busy,start_pressed,stop_pressed,cancel_pressed;
-    uint8_t has_path,element,zebra,zebra_visible,zebra_near_row;
+    uint8_t has_path,element,curve_outer_side,zebra,zebra_visible,zebra_near_row;
     int16_t near_error_px,far_error_px;
     int32_t left_speed_mm_s,right_speed_mm_s,forward_step_um;
 } autonomous_drive_input_t;
@@ -26,7 +26,7 @@ typedef struct {
     uint16_t left_duty_permille,right_duty_permille;
     int16_t steering_permille,near_error_px,far_error_px;
     int32_t left_speed_mm_s,right_speed_mm_s;
-    float target_speed_mm_s,left_target_mm_s,right_target_mm_s;
+    float planned_speed_mm_s,target_speed_mm_s,left_target_mm_s,right_target_mm_s;
     float left_filtered_mm_s,right_filtered_mm_s,left_pid_request,right_pid_request,left_integral,right_integral;
 } autonomous_drive_status_t;
 typedef struct {

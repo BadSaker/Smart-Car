@@ -40,6 +40,10 @@ DEFAULTS={'scenario': 'full',
  'motor_tau': 0.18,
  'coast_tau': 0.25,
  'cruise': 1200.0,
+ 'curve_speed': 900.0,
+ 'outer_speed': 800.0,
+ 'element_speed': 800.0,
+ 'lateral_accel': 2400.0,
  'accel': 1000.0,
  'max_duty': 1000,
  'speed_guard': 4000,
@@ -129,7 +133,7 @@ def validate(p):
     for key,(lo,hi) in ranges.items():
         if key not in p or not isinstance(p[key],(int,float)) or not math.isfinite(p[key]) or not lo<=p[key]<=hi:
             raise ValueError(f'{key} 必须在 {lo}～{hi} 之间')
-    for key in ('cruise',):
+    for key in ('cruise','curve_speed','outer_speed','element_speed','lateral_accel'):
         value=p.get(key)
         # 不设置比赛速度上限；只受真实C接口float表示范围约束。
         if not isinstance(value,(int,float)) or not math.isfinite(value) or not 0<value<=3.4028234663852886e38 or c_float(value).value<=0:

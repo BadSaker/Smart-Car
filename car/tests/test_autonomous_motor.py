@@ -35,7 +35,7 @@ class AutonomousMotorTests(unittest.TestCase):
                     cfg=re.sub(r'(#define\s+AUTO_MAX_DUTY_PERMILLE\s+)\S+',r'\g<1>1000U',cfg)
                 (stub/'autonomous_config.h').write_text(cfg,encoding='utf-8')
                 exe = SCRATCH / name / 'autonomous-motor.exe'
-                command = [COMPILER, '-std=c99', '-Wall', '-Wextra', '-Werror',
+                command = [COMPILER, '-std=c99', '-DMOTOR_TEST_ENABLED=1', '-Wall', '-Wextra', '-Werror',
                            '-I' + str(stub), '-I' + str(ROOT / 'car/include'),
                            '-I' + str(ROOT / 'car/config')]
                 command += ['-D' + value for value in definitions]

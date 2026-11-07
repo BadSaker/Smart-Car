@@ -44,6 +44,7 @@ PLATFORM = '''#pragma once
 #define RGB565_WHITE 0xffff
 #define RGB565_BLACK 0
 #define C13 45
+#define C12 44
 #define B16 16
 #define B17 17
 #define GPI 0
@@ -55,6 +56,9 @@ PLATFORM = '''#pragma once
 #define WIFI_SPI_RST_PIN B16
 #define WIFI_SPI_INT_PIN B17
 void gpio_init(int,int,uint8,uint32);
+uint32_t __get_PRIMASK(void);
+void __disable_irq(void);
+void __set_PRIMASK(uint32_t);
 uint8 gpio_get_level(int);
 uint8 wifi_spi_init(char*,char*);
 uint8 wifi_spi_socket_disconnect(void);
@@ -108,6 +112,9 @@ PROFILES['remote-display'] = WIFI + ['TEST_REMOTE_DISPLAY=1']
 PROFILES['autonomous-display'] = WIFI + ['TEST_AUTONOMOUS_DISPLAY=1']
 PROFILES['scheduled'] = WIFI + ['TEST_SCHEDULED=1','CAMERA_DEBUG_WIFI_BOOT_ENABLED=1','REMOTE_CONTROL_ENABLED=1']
 PROFILES['sync-gated'] = WIFI + ['TEST_SYNC_GATED=1','CAMERA_DEBUG_WIFI_BOOT_ENABLED=1','REMOTE_CONTROL_ENABLED=1']
+PROFILES['wave-mode'] = WIFI + ['TEST_WAVE_MODE=1']
+PROFILES['control-rx'] += ['REMOTE_CONTROL_ENABLED=1']
+PROFILES['remote-display'] += ['REMOTE_CONTROL_ENABLED=1']
 
 
 class CameraDebugTests(unittest.TestCase):
@@ -116,7 +123,7 @@ class CameraDebugTests(unittest.TestCase):
         stub.mkdir(parents=True, exist_ok=True)
         (stub/'zf_common_typedef.h').write_text(TYPES, encoding='utf-8')
         (stub/'camera_platform.h').write_text(PLATFORM, encoding='ascii')
-        headers = ['zf_common_headfile.h','zf_common_debug.h','zf_driver_uart.h',
+        headers = ['zf_common_headfile.h','zf_common_debug.h','zf_driver_uart.h','fsl_common.h',
                    'zf_device_wireless_uart.h','zf_device_bluetooth_ch9141.h',
                    'zf_device_wifi_uart.h','zf_device_wifi_spi.h','zf_device_ble6a20.h']
         for name in headers:
@@ -133,7 +140,7 @@ class CameraDebugTests(unittest.TestCase):
                            '-I'+str(stub),'-I'+str(ROOT/'car/include'),
                            '-I'+str(ROOT/'car/config'),'-I'+str(ROOT/'car/library/zf_components')]
                 command += ['-D'+d for d in definitions]
-                command += [str(ROOT/p) for p in ['car/tests/test_camera_debug.c','car/src/camera_debug.c',
+                command += [str(ROOT/p) for p in ['car/tests/test_camera_debug.c','car/src/camera_debug.c','car/src/wave_telemetry.c',
                              'car/library/zf_components/seekfree_assistant.c',
                              'car/library/zf_components/seekfree_assistant_interface.c']]
                 if (ROOT/'car/src/camera_display.c').exists():
@@ -145,6 +152,7 @@ class CameraDebugTests(unittest.TestCase):
                 self.assertEqual(build.returncode,0,build.stdout+build.stderr)
                 scenarios = [5,6,7,8,0,1,2,3,4,9,10,11,12,13,14] if name == 'spi-gray' else [0]
                 if name == 'wifi-switch': scenarios = list(range(7))
+                if name == 'wave-mode': scenarios = [0, 1, 2]
                 for scenario in scenarios:
                     result = subprocess.run([str(exe),str(scenario)],capture_output=True,text=True,encoding='utf-8',errors='replace')
                     self.assertEqual(result.returncode,0,f'{name}/{scenario}: '+result.stdout+result.stderr)

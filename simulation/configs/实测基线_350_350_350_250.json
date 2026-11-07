@@ -78,5 +78,9 @@
   "brightness_jitter": 3.0,
   "calibration_note": "297mm高度、前轴后110mm、道路内宽500mm为用户实测；角度为六行条件拟合。120度原称畸变角，定义未确认。黑边0和背景153为渲染选择。",
   "max_duty": 300,
-  "accel": 1000.0
+  "accel": 1000.0,
+  "curve_speed": 900.0,
+  "outer_speed": 800.0,
+  "element_speed": 800.0,
+  "lateral_accel": 2400.0
 }

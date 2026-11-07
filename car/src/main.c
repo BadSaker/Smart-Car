@@ -1,6 +1,6 @@
 #include "main.h"
 
-/* C15自动驾驶、C14停车、C12遥控允许；两种驱动模式互斥。
+/* C15自动驾驶、C14停车；C12波形/C13图传仅停车时切换。
  * 本帧视觉及控制先完成，再显示和同步整帧图传，不按视觉/舵机年龄停车。
  * 舵机仅由主循环写入，电机仅由PIT写入；图传期间PIT继续处理反馈和停车。 */
 uint8_t image[MT9V03X_H][MT9V03X_W];
@@ -30,19 +30,10 @@ static void app_service_controls(void)
     autonomous_control_get_status(&state);
     if(state.active!=was_autonomous || state.run_generation!=generation){
         /* 切换模式不继承旧网络指令或上一次环岛状态。 */
-        remote_control_init();track_vision_reset();
+        track_vision_reset();
         was_autonomous=state.active;generation=state.run_generation;
     }
-    if(!autonomous_control_service(app_uptime_ms)){
-#if REMOTE_CONTROL_ENABLED
-        remote_control_service(app_uptime_ms);
-#endif
-    }
-}
-
-static uint32_t app_clock_ms(void)
-{
-    return app_uptime_ms;
+    (void)autonomous_control_service(app_uptime_ms);
 }
 
 static void app_init(void)
@@ -51,7 +42,7 @@ static void app_init(void)
     /* 上电无舵机PWM；C15只用于自动驾驶，不再调用舵机摆动测试。 */
     servo_control_init(app_uptime_ms);
     encoder_feedback_init();
-    remote_control_init();
+    wave_telemetry_reset();
     autonomous_control_init();
     track_vision_reset();
     /* 编码器控制仍为10ms；网络与舵机状态机使用独立1ms时钟。 */
@@ -73,13 +64,13 @@ static void app_init(void)
         __set_PRIMASK(mask);
     }
     camera_display_message("Camera ready");
-    /* 默认Wi-Fi关闭，仅初始化本地按键；按C13后才走原版同步建链。 */
+    /* 默认Wi-Fi关闭；C12波形、C13图传共享同步建链，仅停车切换。 */
     (void)camera_debug_init(left_line, mid_line, right_line);
     /* 空时钟选择冻结版同步发送路径；保留停车建链和起跑门控。 */
     camera_debug_configure_scheduler(NULL,autonomous_control_is_active,
                                      autonomous_control_set_network_busy);
     camera_display_message("PC " CAMERA_DEBUG_WIFI_SERVER_IP ":" CAMERA_DEBUG_WIFI_SERVER_PORT);
-    /* 初始化过程中C12不允许启动电机；此后仍需稳定释放再新按下。 */
+    /* 初始化完成后开放C15自动驾驶；C12不再属于电机入口。 */
     motor_control_enable_test();
 }
 
@@ -114,9 +105,8 @@ static void app_run_once(void)
         camera_debug_send_frame(image[0]); // 同步发送整帧；返回后才进入后续操作。
     }
     app_service_controls();
-    /* 网络维护、遥控接收放在本帧控制和图传之后；无新图像时同样服务。 */
+    /* 网络维护与波形发送放在本帧控制之后；无新图像时同样服务。 */
     camera_debug_poll(app_uptime_ms);
-    if(!autonomous_control_is_active())remote_control_poll(app_clock_ms);
     app_service_controls();
 }
 

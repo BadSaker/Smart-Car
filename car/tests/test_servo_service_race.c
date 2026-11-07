@@ -43,7 +43,7 @@ static void review_inject(unsigned event)
 {
     now+=10;
     ++feedback.sample_sequence;
-    if(event==1)keys[C12]=0;
+    if(event==1)keys[C14]=0;
     autonomous_control_tick_10ms(now);
     motor_control_tick_10ms();
     if(event==1)review_stopped=1;

@@ -58,7 +58,7 @@ FIELDS={
  ('fps','相机帧率 Hz'),('gray_road','道路灰度 0–255'),('gray_edge','边线灰度 0–255'),
  ('camera_latency_ms','图像延迟 ms'),('camera_blur_px','模糊半径 px'),
  ('gray_background','背景灰度 0–255'),('camera_lateral','镜头左偏 m'),('camera_yaw','镜头左偏航 °'),('camera_roll','镜头横滚 °')],
- '控制':[('cruise','巡航目标 mm/s'),('accel','加速度 mm/s²'),
+ '控制':[('cruise','直道目标 mm/s'),('curve_speed','普通弯目标 mm/s'),('outer_speed','外侧补线目标 mm/s'),('element_speed','元素目标 mm/s'),('lateral_accel','横向加速度 mm/s²'),('accel','加速度 mm/s²'),
  ('max_duty','PWM上限 ‰'),('speed_guard','单轮超速保护 mm/s'),
  ('kp','转向 Kp'),('ki','转向 Ki'),('kd','转向 Kd'),('speed_kp','速度 Kp'),('speed_ki','速度 Ki'),
  ('outer_enabled','外侧补线 0/1'),
@@ -659,6 +659,7 @@ class App:
           f"舵机脉宽：{s.pulse:.0f} µs\n"
           f"左 / 右轮速：{s.left_v*1000:.0f} / {s.right_v*1000:.0f} mm/s\n"
           f"左 / 右电机输出：{s.applied_duties[0]:.0f} / {s.applied_duties[1]:.0f} ‰\n"
+          f"规划均速：{s.native.motion['planned_speed_mm_s']:.0f} mm/s\n"
           f"左右轮目标：{s.native.motion['left_target_mm_s']:.0f} / {s.native.motion['right_target_mm_s']:.0f} mm/s\n"
           f"转向输出：{data[8]:.0f} ‰；几何目标：{s.native.features['geometry_valid']}\n"
           f"路径进度：{progress:.2f} m；出界轮数：{s.outside_wheels()}\n"

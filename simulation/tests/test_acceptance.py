@@ -11,6 +11,12 @@ class AcceptanceTests(unittest.TestCase):
             'dynamics_model':'independent','motion_limits':{'max_command_step':50,'max_target_rise':2,'max_target_fall':8,'max_pwm_rise':3},
             'stability_10ms':{'running_ticks':100,'zero_pwm_ticks':0,'min_speed_mm_s':1199.8}}
 
+    def test_corner_speed_floor_uses_configured_envelope(self):
+        r=copy.deepcopy(self.result);r['stability_10ms']['min_speed_mm_s']=800.
+        self.assertTrue(run_is_acceptable(r,defaults()))
+        r['stability_10ms']['min_speed_mm_s']=700.
+        self.assertFalse(run_is_acceptable(r,defaults()))
+
     def test_small_speed_quantization_is_accepted(self):
         self.assertTrue(run_is_acceptable(self.result,defaults()))
 

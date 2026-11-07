@@ -8,6 +8,12 @@
 #include "encoder_feedback.h"
 #include "remote_control.h"
 #include "autonomous_control.h"
+#include "wave_telemetry.h"
+
+static uint32 irq_mask;
+uint32_t __get_PRIMASK(void){return irq_mask;}
+void __disable_irq(void){irq_mask=1;}
+void __set_PRIMASK(uint32_t m){irq_mask=m;}
 
 /* 仅提供屏幕状态行需要的只读桩；舵机行为由独立真实模块测试覆盖。 */
 static servo_control_status_t servo_status;
@@ -38,6 +44,8 @@ static uint8 left[MT9V03X_H], middle[MT9V03X_H], right[MT9V03X_H];
 #define CHECK(x) do { if (!(x)) { printf("FAIL line %d: %s\n", __LINE__, #x); return 1; } } while (0)
 
 static uint8 key_level = GPIO_HIGH, reset_level = GPIO_HIGH, module_ready = GPIO_HIGH;
+static uint8 wave_key_level = GPIO_HIGH;
+static uint8 hidden_driving_press;
 static unsigned control_read_calls,cached_read_calls;
 static unsigned key_initializations, reset_assertions;
 static char network_text[40];
@@ -46,16 +54,25 @@ void gpio_init(int pin, int direction, uint8 level, uint32 mode)
     if (pin == C13) {
         assert(direction == GPI && mode == GPI_PULL_UP && level == GPIO_HIGH);
         ++key_initializations;
+    } else if(pin==C12) {
+        assert(direction == GPI && mode == GPI_PULL_UP && level == GPIO_HIGH);
     } else {
         assert(pin == WIFI_SPI_RST_PIN && direction == GPO && mode == GPO_PUSH_PULL);
         reset_level = level;
         if (level == GPIO_LOW) ++reset_assertions;
     }
 }
-uint8 gpio_get_level(int pin) { assert(pin == C13 || pin == B17); return pin == C13 ? key_level : module_ready; }
+uint8 gpio_get_level(int pin) { assert(pin == C12 || pin == C13 || pin == B17); return pin == C12 ? wave_key_level : pin == C13 ? key_level : module_ready; }
 
 static uint32 capture(int transport, const uint8 *data, uint32 size)
 {
+    if(hidden_driving_press) {
+        /* 同步发送期间PIT仍运行，按键发生时主循环没有poll。 */
+        camera_debug_control_tick_10ms(1);
+        wave_key_level=hidden_driving_press==1?GPIO_LOW:GPIO_HIGH;
+        key_level=hidden_driving_press==2?GPIO_LOW:GPIO_HIGH;
+        camera_debug_control_tick_10ms(0);hidden_driving_press=0;
+    }
     selected_transport = transport;
     ++write_calls;
     if ((failure == 3 && write_calls >= 2) || (failure == 4 && write_calls >= 1)) return size;
@@ -88,7 +105,7 @@ uint32 wifi_spi_try_send_buffer(const uint8 *p, uint32 n)
 {
     uint32 count=n>4088?4088:n;
     if(!module_ready || !n)return n;
-    assert(capture(2,p,count)==0);return n-count;
+    return n-count+capture(2,p,count);
 }
 int32 wifi_spi_read_buffer_cached(uint8 *p, uint32 n) { (void)p;(void)n;++cached_read_calls;return -1; }
 UNUSED_WRITER(ble6a20_send_buffer)
@@ -306,8 +323,111 @@ static void scheduled_control_tick(void)
 }
 #endif
 
+#ifdef TEST_WAVE_MODE
+static uint8 wave_driving,wave_busy;
+static uint8 start_during_lock;
+static uint32 wave_now;
+static uint8 wave_active(void){return wave_driving;}
+static void wave_lock(uint8 value){wave_busy=value;if(value && start_during_lock){start_during_lock=0;wave_driving=1;}}
+static void wave_keys(uint8 keys){
+    wave_key_level=(keys&1)?GPIO_LOW:GPIO_HIGH;
+    key_level=(keys&2)?GPIO_LOW:GPIO_HIGH;
+    camera_debug_poll(wave_now+=1);camera_debug_poll(wave_now+=30);
+}
+static void wave_press(uint8 keys){wave_keys(0);wave_keys(keys);}
+static int test_wave_race(int scenario){
+    unsigned n;
+    camera_display_init();CHECK(!camera_debug_init(left,middle,right));
+    camera_debug_configure_scheduler(NULL,wave_active,wave_lock);
+    if(scenario==1){
+        wave_press(1);wave_keys(0);
+        wave_telemetry_capture(10);module_ready=0;
+        camera_debug_poll(wave_now+=10);camera_debug_poll(wave_now+=1000);
+        CHECK(camera_debug_status==CAMERA_DEBUG_SEND_ERROR);
+        start_during_lock=1;module_ready=1;camera_debug_poll(wave_now+=5000);
+        CHECK(camera_debug_status==CAMERA_DEBUG_INITIALIZING && spi_initializations==1 && !wave_busy);
+        camera_debug_poll(wave_now+=10);CHECK(spi_initializations==1);
+        wave_driving=0;camera_debug_poll(wave_now+=10);
+        CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==2 && !wave_busy);
+        puts("PASS reconnect/start race retries automatically when parked");
+    } else {
+        wave_press(2);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_IMAGE);
+        for(n=1;n<=2;n++){
+            wave_keys(0);hidden_driving_press=(uint8)n;
+            camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+            camera_debug_poll(wave_now+=10);camera_debug_poll(wave_now+=100);
+            CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_IMAGE && spi_initializations==1);
+        }
+        wave_press(1);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE && spi_initializations==2);
+        puts("PASS C12/C13 held during blocked image TX cannot switch after PIT stop");
+    }
+    return 0;
+}
+static int test_wave_mode(void){
+    float data[8];unsigned n;uint32 start;
+    wave_key_level=GPIO_LOW;
+    camera_display_init();CHECK(!camera_debug_init(left,middle,right));
+    camera_debug_configure_scheduler(NULL,wave_active,wave_lock);
+    camera_debug_poll(0);camera_debug_poll(100);CHECK(!spi_initializations);
+    wave_now=100;wave_press(3);CHECK(!spi_initializations);
+    wave_keys(1);CHECK(!spi_initializations); /* 双按后单独松一个仍不触发。 */
+    wave_press(1);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE);
+    CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==1 && !wave_busy);
+    CHECK(strstr(network_text,"WAVE")!=NULL);
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);
+    CHECK(preview_count==1 && wire_length==0); /* 波形模式本地预览仍工作。 */
+    motor_status.channel1_duty_permille=345;motor_status.channel2_duty_permille=67;
+    auto_status.left_speed_mm_s=2500;auto_status.right_speed_mm_s=1200;
+    encoder_status.left.speed_mm_s=2500;encoder_status.right.speed_mm_s=-1200;
+    auto_status.left_target_mm_s=800;auto_status.right_target_mm_s=900;auto_status.state=AUTO_DRIVE_RUNNING;
+    for(n=0;n<12;n++)wave_telemetry_capture(n*10);
+    camera_debug_poll(wave_now+=10);CHECK(wire_length==8*36 && wave_telemetry_queued()==4);
+    camera_debug_poll(wave_now+=10);CHECK(wire_length==12*36 && !wave_telemetry_queued());
+    for(n=0;n<12;n++){
+        uint8 sum=0;unsigned j;const uint8 *packet=wire+n*36;
+        CHECK(packet[0]==0xaa && packet[1]==0x18 && packet[3]==36);
+        for(j=0;j<36;j++)if(j!=2)sum=(uint8)(sum+packet[j]);
+        CHECK(sum==packet[2]);memcpy(data,packet+4,32);
+        CHECK(data[0]==67 && data[1]==345 && data[2]==2500 && data[6]==n*10);
+    }
+    CHECK(delay_calls==0);
+    wave_driving=1;wave_press(2);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE && spi_initializations==1);
+    wave_driving=0;camera_debug_poll(wave_now+=100);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE);
+    /* 停车后必须重新释放再按；新会话清空数据。 */
+    wave_telemetry_capture(130);wave_press(2);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_IMAGE && spi_initializations==2);
+    CHECK(!wave_telemetry_queued());wave_telemetry_capture(140);CHECK(!wave_telemetry_queued());
+    camera_debug_capture_frame(gray[0]);camera_debug_send_frame(binary_image[0]);CHECK(wire_length==22936);
+    wave_press(2);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_OFF && reset_level==GPIO_LOW);
+    wave_press(1);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_WAVE && spi_initializations==3);
+    /* 部分发送后重发仅剩余后缀，不能出现重复字节。 */
+    wire_length=write_calls=0;failure=5;
+    wave_telemetry_capture(200);camera_debug_poll(wave_now+=10);
+    wave_telemetry_capture(210);camera_debug_poll(wave_now+=10);CHECK(wire_length==53);
+    failure=0;camera_debug_poll(wave_now+=10);CHECK(wire_length==72);
+    CHECK(wire[36]==0xaa && wire[39]==36);
+    /* 模块忙不阻塞；故障只影响诊断链路，行驶中不能重连。 */
+    wave_driving=1;module_ready=0;wave_telemetry_capture(220);start=wave_now+10;
+    camera_debug_poll(wave_now=start);camera_debug_poll(wave_now=start+1000);
+    CHECK(camera_debug_status==CAMERA_DEBUG_SEND_ERROR && reset_level==GPIO_LOW);
+    CHECK(camera_debug_last_error_stage==CAMERA_DEBUG_STAGE_WAVE);
+    camera_debug_poll(wave_now+=6000);CHECK(spi_initializations==3);
+    wave_driving=0;module_ready=1;camera_debug_poll(wave_now+=1);camera_debug_poll(wave_now+=5000);
+    CHECK(spi_initializations==4 && camera_debug_status==CAMERA_DEBUG_READY && !wave_telemetry_queued());
+    motor_status.channel1_duty_permille=motor_status.channel2_duty_permille=0;
+    auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_OVERSPEED;
+    wave_telemetry_capture(1000);camera_debug_poll(wave_now+=10);CHECK(wire_length==36);
+    memcpy(data,wire+4,32);CHECK(data[0]==0 && data[1]==0 && data[7]==606);
+    wave_press(1);CHECK(camera_debug_mode==CAMERA_DEBUG_MODE_OFF);
+    CHECK(!wave_busy);puts("PASS wave modes, parked key gate, fresh TCP, 100Hz packets, partial TX, timeout, post-fault zero PWM");return 0;
+}
+#endif
+
 int main(int argc, char **argv)
 {
+#ifdef TEST_WAVE_MODE
+    if(argc>1 && atoi(argv[1]))return test_wave_race(atoi(argv[1]));
+    return test_wave_mode();
+#endif
     uint32 i, payload_size, dot_offset;
     const uint8 dot_header[] = {0xaa, 0x03, 0x03, 8, 120, 0, 7, 0};
     uint8 camera_header[] = {0xaa, 0x02, 0x43, 8, 188, 0, 120, 0};
@@ -340,8 +460,8 @@ int main(int argc, char **argv)
     auto_status.active=0;auto_status.state=AUTO_DRIVE_FAULT;auto_status.fault=AUTO_FAULT_STALL;
     camera_display_statistics();CHECK(strstr(telemetry_line0,"STALL")!=NULL);
     motor_status.remote_armed=1;motor_status.remote_link=1;
-    camera_display_statistics();CHECK(strstr(telemetry_line0,"RC:")!=NULL);
-    puts("PASS: autonomous status and remote display arbitration");return 0;
+    camera_display_statistics();CHECK(strstr(telemetry_line0,"RC:")==NULL);
+    puts("PASS: autonomous status and no default remote display");return 0;
 #endif
 #ifdef TEST_REMOTE_DISPLAY
     motor_status.remote_link = 1;
@@ -482,15 +602,17 @@ int main(int argc, char **argv)
     module_ready=1;camera_debug_poll(scheduled_now+11001U);
     CHECK(spi_initializations==2 && !scheduled_busy && disconnect_calls==0);
     CHECK(camera_debug_status==CAMERA_DEBUG_READY);
-    /* 行驶中重新开启仅登记请求；停车后才执行同步建链。 */
+    /* 行驶中操作全部消费，不登记停车后请求。 */
     scheduled_now+=11002U;scheduled_driving=1;
     key_level=GPIO_LOW;camera_debug_poll(scheduled_now);camera_debug_poll(scheduled_now+=31U);
+    CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==2);
+    scheduled_driving=0;camera_debug_poll(++scheduled_now);
+    CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==2);
+    key_level=GPIO_HIGH;camera_debug_poll(++scheduled_now);camera_debug_poll(scheduled_now+=31U);
+    key_level=GPIO_LOW;camera_debug_poll(++scheduled_now);camera_debug_poll(scheduled_now+=31U);
     CHECK(camera_debug_status==CAMERA_DEBUG_DISABLED);
     key_level=GPIO_HIGH;camera_debug_poll(++scheduled_now);camera_debug_poll(scheduled_now+=31U);
     key_level=GPIO_LOW;camera_debug_poll(++scheduled_now);camera_debug_poll(scheduled_now+=31U);
-    CHECK(camera_debug_status==CAMERA_DEBUG_INITIALIZING && spi_initializations==2);
-    camera_debug_poll(++scheduled_now);CHECK(spi_initializations==2);
-    scheduled_driving=0;camera_debug_poll(++scheduled_now);
     CHECK(camera_debug_status==CAMERA_DEBUG_READY && spi_initializations==3 && !scheduled_busy);
     puts("PASS: stalled module yields, exact immutable frame, wrap timeout, no partial splice, parked reconnect");
     return 0;

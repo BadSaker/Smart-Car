@@ -7,7 +7,7 @@
 static void zero_output(autonomous_drive_t *d)
 {
     d->status.left_duty_permille=0;d->status.right_duty_permille=0;
-    d->status.target_speed_mm_s=0;d->status.steering_permille=0;
+    d->status.planned_speed_mm_s=0;d->status.target_speed_mm_s=0;d->status.steering_permille=0;
     d->status.left_target_mm_s=d->status.right_target_mm_s=0;
     d->status.left_integral=d->status.right_integral=0;
     d->status.left_pid_request=d->status.right_pid_request=0;
@@ -30,6 +30,10 @@ void autonomous_drive_init(autonomous_drive_t *d)
     d->config_valid=control_pid_init(&d->left_pid,&speed) && control_pid_init(&d->right_pid,&speed) &&
         control_pid_init(&d->steering_pid,&steering);
     if(!(AUTO_CRUISE_SPEED_MM_S>0 && isfinite(AUTO_CRUISE_SPEED_MM_S) &&
+         AUTO_CURVE_SPEED_MM_S>0 && isfinite(AUTO_CURVE_SPEED_MM_S) &&
+         AUTO_CURVE_OUTER_SPEED_MM_S>0 && isfinite(AUTO_CURVE_OUTER_SPEED_MM_S) &&
+         AUTO_ELEMENT_SPEED_MM_S>0 && isfinite(AUTO_ELEMENT_SPEED_MM_S) &&
+         AUTO_LATERAL_ACCEL_MM_S2>0 && isfinite(AUTO_LATERAL_ACCEL_MM_S2) &&
          VEHICLE_WHEELBASE_MM>0 && VEHICLE_MAX_STEER_RAD>0 && VEHICLE_MAX_STEER_RAD<1.5f &&
          isfinite(AUTO_TURN_DIFFERENTIAL_RATIO) && AUTO_TURN_DIFFERENTIAL_RATIO>=0 && AUTO_TURN_DIFFERENTIAL_RATIO<1 &&
          isfinite(AUTO_ACCEL_MM_S2) && AUTO_ACCEL_MM_S2>=0 && AUTO_FINISH_DECEL_MM_S2>0))d->config_valid=0;
@@ -191,16 +195,23 @@ void autonomous_drive_tick(autonomous_drive_t *d,const autonomous_drive_input_t 
         }
     }
     target=AUTO_CRUISE_SPEED_MM_S;
-    /* 起终点动作独立于正常循迹；不根据路径质量切换速度。 */
+    if(i->element==TRACK_ELEMENT_CURVE) {
+        target=fminf(target,AUTO_CURVE_SPEED_MM_S);
+        if(i->curve_outer_side!=TRACK_SIDE_NONE)target=fminf(target,AUTO_CURVE_OUTER_SPEED_MM_S);
+    } else if(i->element>=TRACK_ELEMENT_CROSS)target=fminf(target,AUTO_ELEMENT_SPEED_MM_S);
+    /* a_lat=v²*kappa；kappa单位1/mm，因此速度结果为mm/s。 */
+    {
+        float curvature=fabsf(tanf(VEHICLE_MAX_STEER_RAD*d->status.steering_permille/1000.0f)/VEHICLE_WHEELBASE_MM);
+        if(curvature>.000001f)target=fminf(target,sqrtf(AUTO_LATERAL_ACCEL_MM_S2/curvature));
+    }
+    /* 起点/候选只更新标记状态；正式进入终点阶段后才减速。 */
     if(d->status.state==AUTO_DRIVE_FINISHING) {
         float remaining=(float)AUTO_FINISH_ADVANCE_MM-d->status.finish_advance_mm;
         float cap=sqrtf(2*AUTO_FINISH_DECEL_MM_S2*fmaxf(0,remaining));
         if(cap<d->finish_speed_cap)d->finish_speed_cap=cap;
         target=fminf(target,d->finish_speed_cap);
-    } else if((d->status.marker_phase==AUTO_MARKER_APPROACH || d->status.marker_phase==AUTO_MARKER_CROSSING) &&
-              !(d->status.start_marker_seen && (uint32_t)(i->now_ms-d->marker_ms)>=AUTO_MIN_LAP_TIME_MS &&
-                d->status.distance_mm-d->marker_distance_mm>=AUTO_MIN_LAP_DISTANCE_MM))
-        target=fminf(target,AUTO_FINISH_SPEED_MM_S);
+    }
+    d->status.planned_speed_mm_s=target;
     d->left_filtered+=AUTO_SPEED_FILTER_ALPHA*((float)i->left_speed_mm_s-d->left_filtered);
     d->right_filtered+=AUTO_SPEED_FILTER_ALPHA*((float)i->right_speed_mm_s-d->right_filtered);
     turn_ratio=AUTO_TURN_DIFFERENTIAL_RATIO*

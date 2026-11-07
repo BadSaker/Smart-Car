@@ -45,19 +45,18 @@ typedef struct
     uint16_t channel2_duty_permille;
 } motor_control_status_t;
 
-/* 主循环初始化时调用一次：参考DIR、17kHz零占空比、C12/S3上拉。
+/* 主循环初始化时调用一次：参考DIR、17kHz零占空比、C14上拉。
  * 此时未开放本地启动/武装。配置无效时保持零命令并进入CONFIG_ERROR。 */
 void motor_control_init(void);
 
 /* 摄像头及外设初始化完成后由主循环调用；重复调用无副作用。
- * 开放本地按键及自动驾驶门控，不直接产生运动命令；
- * C12仍须此后稳定释放再新按下，自动驾驶启动键由上层管理。
- * REMOTE_CONTROL_ENABLED=0时保留有限台架测试，=1时C12武装/解除武装。 */
+ * 正式配置只开放自动驾驶门控，不直接产生运动命令；C12专用于波形。
+ * 旧台架/遥控仅在MOTOR_TEST_ENABLED/REMOTE_CONTROL_ENABLED显式测试配置下保留。 */
 void motor_control_enable_test(void);
 
 /* 仅PIT0每10ms调用：按键消抖、邮箱消费、计时和PWM更新均在此推进。
  * S3低电平不消抖，优先零PWM并解除所有权，清除C12待决按下。
- * 自动驾驶占用时C12原始低电平同样停车；两者锁存阻断直到提交active=0。
+ * C14锁存阻断直到提交active=0；C12不再影响自动驾驶输出。
  * 自动驾驶先于遥控断链检查，遥控邮箱在此期间消费后丢弃。
  * 遥控断链必须重新C12武装及新Down确认；300ms租约超时只清除本次油门，
  * 保留武装以接受后续新命令；反向前两路PWM归零至少100ms。
@@ -66,8 +65,8 @@ void motor_control_enable_test(void);
 void motor_control_tick_10ms(void);
 
 /* 仅同一PIT0在motor_control_tick_10ms之前调用一次，不直接写硬件。
- * active非零申请自动驾驶所有权；M1为左轮、M2为右轮，单位千分比，
- * 各自按MOTOR_TEST_MAX_DUTY_PERMILLE硬限幅且仅允许已确认的前进DIR。
+ * active非零申请自动驾驶所有权；当前M1为右轮、M2为左轮，单位千分比，
+ * 各自按AUTO_MAX_DUTY_PERMILLE硬限幅且仅允许已确认的前进DIR。
  * 接管及退出均清除遥控武装和旧目标；恢复遥控须新C12再新Down。
  * 遥控后退切入时仍需100ms零PWM间隔。active=0撤销申请并解除停车锁存。
  * 两种REMOTE_CONTROL_ENABLED模式均可用；反馈/视觉超时由上层PIT控制。

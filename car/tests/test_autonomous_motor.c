@@ -157,10 +157,10 @@ static void test_startup_gate_and_stop_latches(void)
     check_duty(100U, 80U);
     start_key = GPIO_LOW;
     tick(1U, 100U, 80U);
-    check_duty(0U, 0U);
+    check_duty(100U, 80U);
     start_key = GPIO_HIGH;
     ticks(20U, 1U, 100U, 80U);
-    check_duty(0U, 0U);
+    check_duty(100U, 80U);
     tick(0U, 0U, 0U);
     tick(1U, 80U, 100U);
     check_duty(80U, 100U);

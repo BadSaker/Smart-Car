@@ -1,0 +1,36 @@
+取消普通运行标记降速：最小修改（2026-11-07）
+
+用户批准先删除“标记接近/穿越→100mm/s”分支，再实车复测右上和右下两处R50A90停顿。
+
+生产改动仅两处：
+- car/src/autonomous_drive.c删除普通RUNNING状态下的标记降速分支。
+- car/config/autonomous_config.h删除已无用途的AUTO_FINISH_SPEED_MM_S常量。
+
+起点和弱候选仍识别、更新标记、计圈，但不改变巡航目标；起点不再以100mm/s低速穿越。正式满足终点条件后仍按原剩余距离减速，并在原离线确认/推进条件成立后停车。手动停车、STALL、超速和反馈保护保持。
+巡航1000mm/s、单轮加速度200mm/s²、转向Kp15及几何算法保持。视觉、PID实现、舵机、电机、mailbox和图传源码的修改前后SHA256一致。没有增加最低PWM、积分复位或自动重启补丁。
+
+验证：
+- 起点/候选不降低巡航的新断言先在旧代码失败，改后通过；原终点停车灰度及状态机检查保持。
+- 真实C受控输入对照：候选出现前后目标1000、PWM500/500保持；之前相同输入目标100、PWM0/0。该实验固定测速与积分，不等于已复现实车停顿原因。
+- 主机123/123通过；仿真62/62通过；Keil0错误0警告。
+- 旧测试中硬编码的起步等待和每拍10mm/s增量已改为读取当前加速度；未修改实车参数来迎合测试。
+- 固件AXF/HEX/BIN与car/build/objects逐字节一致。未烧录、未提交Git。
+
+仍需用户实测图中两处是否恢复连续行驶。此修改消除一个已证实的主动降速入口，不保证其他原因导致的停车同时解决。
+日志：car/build/marker-slowdown-red.log、marker-slowdown-host-final.log、marker-slowdown-sim.log、marker-slowdown-build.log、marker-slowdown-production-probe.log、marker-slowdown-scope.json。
+
+固件：
+[
+  {
+    "file": "outputs\\firmware\\autocar.axf",
+    "sha256": "3a24e8a87f67e2276fdaba3fb25659b16f50dc2fa054a362a9fbbba805bdcf97"
+  },
+  {
+    "file": "outputs\\firmware\\autocar.hex",
+    "sha256": "ada7d841ab60209e7e351d9fae3a79696be29301b806ee67e01157e3c54cea51"
+  },
+  {
+    "file": "outputs\\firmware\\autocar.bin",
+    "sha256": "760455a1429985e47a3e0686386fc49bb47ffcd07080c91dc4aba1aa5a17eb8c"
+  }
+]

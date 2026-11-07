@@ -1,0 +1,26 @@
+临时单轮识别固件，等待用户确认后恢复
+
+当前测试：PWM2_MODULE0_CHA_C6，C6 PWM/C7 DIR，M2，即当前CH0/逻辑左轮映射。
+上电初始化双路零PWM，等待300ms，以10%占空比运行2秒，再双路归零；C14每10ms采样可提前结束，上电按住C14不运行；不自动重试。
+本次仅修改生产main.c，绕过摄像头、自动驾驶、Wi-Fi、舵机和PIT初始化。当前标准固件和Keil下载缓存均为临时测试版，不能用于正常自动驾驶。
+
+恢复副本：D:\Files\Autodrive\tmp\wheel-id-20261107\main.original.c
+原始main SHA256：B0650486882E69EFBB78D7CDD5C315298B0A30BC62270C1C06C2CB406868E7BB
+临时main SHA256：721FD5AF7D056394E89BC0D6832BF34A8D8F30E0243E6FBC390A0063EBAA298F
+待用户说明实际哪侧车轮转动后，核对上述临时main哈希；若无其他修改，原样恢复main.original.c并重新构建正常固件。恢复仅主循环，左右映射最终以用户观察结果另行确认。
+上轮左右映射已经改为AUTO_MOTOR1_IS_LEFT=0；用户说“先别改”后本轮未进一步更改该配置。
+
+验证：单轮/10%/2秒/上电按停/等待阶段按停/运行中按停主机测试通过；Keil0错误0警告，标准固件与构建缓存哈希一致。未烧录、未实车验证；正常主循环回归不适用于本临时版本。
+日志：car/build/wheel-id-test.log；car/build/wheel-id-build.log。
+交付：outputs/firmware/wheel-id-module0/autocar.axf/.hex/.bin；标准outputs/firmware/autocar.*同时为此临时固件。
+请架空驱动轮观察；用户确认之前保留恢复副本，不清理该任务tmp。
+
+诊断V2更新：用户确认已烧录、完全断电电池重启、C14松开、轮架空；10%和自行在Keil改为20%的版本均无车轮动作。
+静态核对未找到确定原因，PWM初始化/启动/引脚与官方例程一致，GPT延时不依赖PIT。当前只改临时main.c增加屏显，保持用户20%、单轮2秒，不继续加大占空比。
+屏幕WHEEL DIAG V2；RESULT显示DONE或C14 STOP，WRITE表示是否执行非零PWM写入，END表示循环结束时间；SAMPLE=1时RUN/OUT/PER/CMP/CNT是输出期间保存的PWM2模块0寄存器；ALIVE递增说明主循环继续运行。RUN/OUT是外设配置位，不等于实测C6电压或驱动工作正常。
+独立诊断固件：outputs/firmware/wheel-id-diagnostic-v2/autocar.hex，标准固件及Keil下载缓存也已更新到V2。
+验证：单轮/20%/2秒/C14各阶段停止及诊断记录主机测试通过，Keil0错误0警告，发布与缓存哈希一致；未烧录/未实车验证。
+正常主循环副本未改，新增保留用户20%临时源码tmp/wheel-id-20261107/main.user20-before-diagnostic.c；恢复时以restore-state.json最新临时哈希校验。
+待用户提供RESULT、WRITE、SAMPLE、RUN、OUT及ALIVE是否递增；目前不能据无动作判断左右轮。
+
+已结束：用户确认模块0/C6驱动左轮；正常main.c已按原始哈希恢复，标准固件和下载缓存重建为正常版本，临时任务目录在校验恢复后清理。最终状态见wheel-id-restored-2026-11-07.txt。

@@ -20,7 +20,9 @@ from source_layout import source_root,SOURCE_NAMES,source_files
 def run_is_acceptable(result,parameters):
     """完成位置不能掩盖撤PWM或降到低速爬行；正常期允许2%的测速/闭环误差。"""
     stats=result['stability_10ms']
-    speed_floor=.98*parameters['cruise']
+    curvature=math.tan(math.radians(parameters['steer_max_deg']))/(parameters['wheelbase']*1000)
+    speed_floor=.98*min(parameters[k] for k in ('cruise','curve_speed','outer_speed','element_speed'))
+    speed_floor=min(speed_floor,.98*math.sqrt(parameters['lateral_accel']/curvature))
     return bool(result.get('dynamics_model')=='independent' and result['completed'] and result['max_outside_wheels']==0 and result['fault']=='无'
         and result.get('max_error_m',float('inf'))<=parameters['road_width']/2
         and result.get('max_route_deviation_m',float('inf'))<=parameters['road_width']/2+.02

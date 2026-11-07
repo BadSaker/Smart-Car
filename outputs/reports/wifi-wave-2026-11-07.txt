@@ -1,0 +1,38 @@
+Wi-Fi波形/图传互斥交付 2026-11-07
+
+授权：用户批准C12改为波形、C13保留图传，停车切换并重建TCP，100Hz八通道采样；本轮执行不烧录、不提交Git。
+
+结果：
+- OFF/IMAGE/WAVE三态；同键关闭、异键停车切换；上电关闭、双按忽略、30ms消抖、上电按住不触发。
+- 行驶中按键不产生停车后待执行切换；PIT记录行驶代次，即使主循环同步图传阻塞也能使旧按键资格失效。
+- 正式C12遥控/台架/自动驾驶取消入口停用，C14停车和C15自动启停保留；遥控源不再链接或由主循环调用。
+- 10ms PIT最终PWM更新后记录：左右PWM千分比、左右实时编码器mm/s、左右目标mm/s、会话时间ms、state+100*fault。
+- 200组FIFO，队满丢新点并计数；每poll最多8组(288B)及一次有限SPI事务；停止/故障后继续发送零PWM与实际轮速。
+- 波形与图像网络发送互斥，本地相机/视觉/屏幕继续；原同步图传发送参数、Wi-Fi引脚、热点、SPI及供应商库未改。
+
+验证：
+- 新C12行为、FIFO字段/时序/溢出/时间回绕/PRIMASK、左右映射测试先失败后通过。
+- 同步图传阻塞期间C12/C13按下再PIT停车、重连检查间起跑两项审查问题均有确定性RED→GREEN；未留Important/Critical。
+- 完整主机136/136，退出0：car/build/wifi-wave-verified.log。
+- 独立算法19/19，退出0：car/build/wifi-wave-algorithms.log。
+- Keil全量0错误0警告：car/build/wifi-wave-build-verified.log；Code127744、RO10212、RW284、ZI139380。
+- 项目结构检查通过，364个工程引用存在；git diff --check通过；car/library无本轮修改。
+- 最终AXF/HEX/BIN与car/build/objects对应文件SHA256逐项一致。
+- 本轮未重复完整仿真；不涉及视觉/PID算法或速度参数修改。
+
+实施选择及审查边界：
+1. 在当前checkout保留用户未提交的最新视觉/参数，不另开旧基线worktree；不执行Git add/commit/push。
+2. 旧遥控/台架源与显式历史测试配置保留，正式默认REMOTE_CONTROL_ENABLED=0、MOTOR_TEST_ENABLED=0且无遥控调用；代价是仍有历史源，不将本次扩为舵机/历史测试系统重写。重新启用旧配置必须另行审核，不可混用C12。
+3. 波形复用已有wifi_spi_try_send_buffer，不给原图传增加异步框架；真实SPI事务耗时和主循环负载仍待实测。
+4. 停车后控制状态轮速冻结，因此直接采同拍实时编码器，沿用现有左右方向符号；不改控制器。
+5. 保留原同步图传等待；波形模式负载不同，可能改变异常复现率。驱动接受数据不等于PC确认收包；D只记录当前采样会话的队列丢点/清空，传输中批次失败另记录E。重连时间戳和D重新计时计数。
+6. 审查未判定实车网络断线感知/100Hz时序/空转因果；这些不能以主机测试代替。原有视觉和速度改动不属于本轮修改。
+
+使用：停车开启助手TCP Server侦听，切到示波器并关闭Printf协议，按C12等WAVE:READY；C15起跑，C14停车，保持连接保存数据。图传停车按C13并在助手选择新客户端。详见docs/wifi-wave-debugging.md。
+
+未完成的实车验证：未烧录、未操作实车或助手联机；采样抖动、真实PWM电气波形、网络延迟、空转时PWM走势待用户采集。本固件没有新增防空转策略。
+
+固件：
+autocar.axf: 1019096 bytes, SHA256 91C4C4B091B2BD8037CD316B8D97A5EA834F83EE3008679C15E8EC20B3C77BBF
+autocar.hex: 407605 bytes, SHA256 BC94632D0CAB301E4DBFF8D6EB5A5F7356E7E520B6DB1B52A8E85C7C170C8856
+autocar.bin: 144896 bytes, SHA256 775B30E2FC9884D6472880F4ADD08AB2FA7A99DAB5C05C0A276BFAF0B5804CFD

@@ -5,7 +5,7 @@
  * 电机上电不输出，C12测试由motor_test_config.h管理；舵机1由servo_config.h管理。
  * 编码器接线、方向以及实际机械中位仍需按实物核对。 */
 #ifndef APP_ENABLE_IPS200
-#define APP_ENABLE_IPS200          (1)
+#define APP_ENABLE_IPS200          (0)
 #endif
 #define APP_IPS200_DIRECTION       IPS200_CROSSWISE
 #define APP_CONTROL_PERIOD_MS     (10)
